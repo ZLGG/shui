@@ -1,0 +1,70 @@
+@startuml
+
+object 类目
+note top:SPU只关联三级类目
+object 品牌
+
+object 商品标签
+note bottom of 商品标签
+一个SPU设置多个标签,
+标签关联三级类目
+end note
+
+object 公共商品属性
+note bottom of 公共商品属性
+与三级类目关联，
+一个属性可以关联多个三级类目
+新增SPU时可以关联出来，
+并实际需要选择或新增属性
+end note
+
+
+object 公共商品参数组
+note bottom of 公共商品参数组
+ 每个三级类目可以
+ 定义自己的商品参数
+end note
+
+object 公共商品参数键值
+
+object 公共商品规格
+note bottom of 公共商品规格
+与三级类目关联，
+一个属性可以关联多个三级类目
+新增SPU时可以关联出来，
+并实际需要选择规格生成SKU
+end note
+
+object 商品spu
+object 商品问答
+object spu扩展属性
+object spu图片
+
+object 商品sku
+note top:最小销售单元
+object sku扩展规格
+
+object sku价格
+
+object 虚拟分类
+note bottom of 虚拟分类
+与SPU直接关联
+end note
+
+类目 *-- 公共商品属性
+类目 *-- 公共商品规格
+类目 o-- 公共商品参数组
+类目 o-- 商品标签
+公共商品参数组 *-- 公共商品参数键值
+商品spu --o 类目
+商品spu --o 品牌
+商品spu --o 虚拟分类
+商品spu *-- 商品问答
+商品spu *-- spu图片
+商品spu *-- spu扩展属性
+商品spu *-- 商品sku
+
+商品sku o-- sku扩展规格
+商品sku *-- sku价格
+
+@enduml

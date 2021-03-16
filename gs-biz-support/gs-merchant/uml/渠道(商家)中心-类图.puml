@@ -1,0 +1,113 @@
+@startuml
+
+class 商家帐号权限{
+t_merchant_account_permission
+--
+ permission_id:
+ permission_name:权限名称
+ permission_req:请求地址
+ permission_remark:备注说明
+ idx:排序
+}
+
+class 商家帐号角色管理{
+t_merchant_account_role
+--
+ role_id:
+ role_name:角色名称
+ remark:备注说明
+ state:状态[10=启用 20=禁用]
+ merchant_id:商家ID
+}
+
+class 商家帐号角色权限管理{
+t_merchant_account_role_owner_permission
+--
+   role_id:角色ID
+   permission_id:权限ID
+}
+
+class 商家账号{
+    t_merchant_account
+--
+    username:登录用户名
+    password:登录密码
+    phone:电话
+    wx_openid:微信openid
+    wx_unionid:微信unionid
+    account_type:帐号类型[10=主帐号 20=其它]
+    merchant_id:商家ID
+    merchant_account_role_id:商家帐号角色ID
+}
+
+class 商家 {
+    t_merchant
+--
+    merchant_id:商家ID
+    legal_id:法人主体ID
+    merchant_type:商家类型(10=2c 20=2B)
+    merchant_account_id:商家主账号ID
+}
+
+class 店铺 {
+    t_merchant_shop
+--
+    shop_id:店ID
+    pos_code:pos店编码
+    pos_name:pos店名称
+    shop_type:店铺类型(10=2C,20=2B)
+    has_pos:是否有POS店
+    pos_loc_lgt:pos店经度
+    pos_loc_lat:pos店纬度
+    merchant_id:商家ID
+}
+
+class 店铺菜单 {
+    t_merchant_shop_menu
+--
+    shop_id:所属店铺id
+    name:菜单名称
+    idx:显示顺序
+    icon:显示图标
+    menu_type:菜单类型(展示区,链接)
+    content_type:菜单关联内容类型(产品=10,类目=20)
+    content_res:菜单关联内容值(产品id集,产品类目id集)
+}
+
+class 入驻申请 {
+    t_merchant_apply
+--
+    from_type:申请渠道类型[10=POS到2C店,20=2C到2B,30=资料到2B]
+    mobile_phone:手机号
+    pos机提交_字段
+    legal_法人字段
+}
+
+class 图片素材库{
+merchant_res_images
+--
+ image_id;
+ res_name:资源名称
+ res_type:资源分类
+ res_remark:备注
+ res_url:图片地址
+ suffix:图片后缀
+}
+
+class 商品素材库{
+merchant_res_stock
+--
+    merchant_id:
+    stock_id;商品ID
+}
+
+商家账号 <|-- 商家
+商品素材库 "n" o--* "1" 商家
+图片素材库 "n" o--* "1" 商家
+入驻申请 "n" o-- "1" 商家
+商家 "1" *-- "n" 店铺
+店铺 "1" *-- "n" 店铺菜单
+
+
+@enduml
+

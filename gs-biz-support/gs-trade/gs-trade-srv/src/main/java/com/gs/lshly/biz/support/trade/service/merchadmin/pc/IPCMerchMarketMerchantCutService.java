@@ -1,0 +1,23 @@
+package com.gs.lshly.biz.support.trade.service.merchadmin.pc;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchMarketMerchantCutDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchMarketMerchantCutQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantCutVO;
+
+public interface IPCMerchMarketMerchantCutService {
+
+    PageData<PCMerchMarketMerchantCutVO.ViewVO> pageData(PCMerchMarketMerchantCutQTO.QTO qto);
+
+    void addMarketMerchantCut(PCMerchMarketMerchantCutDTO.AddDTO eto);
+
+    void deleteMarketMerchantCut(PCMerchMarketMerchantCutDTO.IdDTO dto);
+
+
+    void editMarketMerchantCut(PCMerchMarketMerchantCutDTO.AddDTO eto);
+
+    PCMerchMarketMerchantCutVO.View detailMarketMerchantCut(PCMerchMarketMerchantCutDTO.IdDTO dto);
+
+    void commitMarketMerchantCut(PCMerchMarketMerchantCutDTO.IdDTO eto);
+
+    void cancelMarketMerchantCut(PCMerchMarketMerchantCutDTO.IdDTO eto);
+}

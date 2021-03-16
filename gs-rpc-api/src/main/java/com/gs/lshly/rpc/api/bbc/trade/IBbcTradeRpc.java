@@ -1,0 +1,61 @@
+package com.gs.lshly.rpc.api.bbc.trade;
+
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
+
+import java.util.List;
+
+/**
+*
+* @author oy
+* @since 2020-10-28
+*/
+public interface IBbcTradeRpc {
+
+    ResponseData<BbcTradeSettlementVO.ListVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto);
+
+    ResponseData<BbcTradeDTO.IdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
+
+    ResponseData<Void> orderPay(BbcTradePayBuildDTO.ETO dto);
+
+    PageData<BbcTradeListVO.tradeVO> tradeListPageData(BbcTradeQTO.TradeList qto);
+
+    ResponseData<BbcTradeListVO.tradeVO> orderDetail(BbcTradeDTO.IdDTO dto);
+
+    ResponseData<Void> orderConfirmReceipt(BbcTradeDTO.IdDTO dto);
+
+    ResponseData<Void> deliveryAmount( BbcTradeBuildDTO.DTO dto);
+
+    String payNotify(BbcTradeResultNotifyVO.notifyVO notifyVO);
+
+    String paySuccess(String tradeCode);
+
+    ResponseData<Void> orderHide(BbcTradeDTO.IdDTO dto);
+
+    ResponseData<Void> orderCancel(BbcTradeCancelDTO.CancelDTO dto);
+
+    List<BbcTradeListVO.stateCountVO> tradeStateCount(BbcTradeDTO.IdDTO dto);
+
+    List<BbcTradeListVO.InnerGoodsCompareTo> innerCommpareTo(BbcTradeDTO.innerCommpareTo dto);
+
+    PageData<BbcTradeListVO.PageData> myUserCard(BbcTradeQTO.UserCardQTO qto);
+
+    List<BbcTradeListVO.UseCard> useCard(BbcTradeDTO.UseCard dto);
+
+    void offlinePay(BbcTradeDTO.OfflinePayDTO dto);
+
+    /**
+     * 商品的月销售数量
+     * @param goodsId
+     * @return
+     */
+    int innerMonthSaleNum(String goodsId);
+}

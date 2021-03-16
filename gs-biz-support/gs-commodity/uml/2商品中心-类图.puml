@@ -1,0 +1,227 @@
+@startuml
+
+class 类别 {
+     t_goods_category
+    --
+        id:商品类别id
+        gs_category_name:商品类别名称
+        parent_id:商品类别父id
+        gs_category_level:商品类别级别
+        gs_category_logo:商品类别logo
+        gs_category_money:商品类别平台使用费(只有一级有)
+        gs_category_fee:商品类别服务费率(只有三级有)
+        sort:商品类别排序
+        create_time:创建时间
+        update_time:修改时间
+        operator:操作人
+}
+
+class 类别_品牌{
+    t_category_brand
+   --
+        id:主键id
+        brand_id:品牌id
+        category_id:类别id
+}
+
+class 品牌 {
+    t_goods_brand
+--
+    id:品牌id
+    brand_name:品牌名称
+    brand_alias:品牌别名
+    brand_logo:品牌logo
+    sort:排序
+    create_time:创建时间
+    update_time:修改时间
+    operator:操作人
+}
+
+class 公共商品属性信息{
+    t_goods_attribute_dictionary
+--
+    id:属性字典id
+    name:属性名称
+    type:类型
+    attribute_remark:属性备注
+    sort:排序
+
+}
+
+
+class 公共商品属性值详情{
+    t_goods_attribute_dictionary_item
+--
+    id:属性值id
+    attribute_id:属性id
+    attribute_value:属性值名称
+    attribute_img:属性图片
+    attribute_sort:排序
+
+}
+
+class 商品属性拓展信息{
+    t_goods_attribute_info
+--
+    goods_id:商品id
+    attribute_dictionary_id:属性id
+    attribute_item_id:属性值id
+    （其他字段）
+    sort:排序
+}
+
+class 公共商品规格信息{
+    t_goods_specs_dictionary
+--
+    id:规格id
+    name:规格名称
+    type:类型
+    specs_remark:规格备注
+    sort:排序
+
+}
+
+class 公共商品规格值详情{
+    t_goods_specs_dictionary_item
+--
+    id:规格值id
+    specs_id:规格id
+    attribute_value:属性值名称
+    attribute_img:属性图片
+    attribute_sort:排序
+
+}
+
+class 商品规格拓展信息{
+    t_goods_specs_info
+--
+    goods_id:商品id
+    specs_dictionary_id:规格id
+    specs_item_id:规格值id
+    （其他字段）
+    sort:排序
+}
+
+class 商品{
+    t_goods_info
+--
+    id:商品id
+    shop_id:店铺id
+    brand_id:品牌id
+    category_id:商品类目id
+    virtual_category_id:商品虚拟类目id
+    attribute_info_id:商品拓展属性id
+    specs_info_id:规格拓展id
+    template_id:运费模板id
+    name:商品名称
+    goods_alias:商品副标题
+    goods_state:商品状态
+    goods_no:商品编号
+    price:商品价格
+    good_desc:商品描述
+    goods_weight:商品的重量
+    goods_num:商品的库存数量
+    goods_saleNum:商品销售数量
+    goods_valid_day:商品的有效期
+    goods_statistics_ways:商品库存计数方式
+    goods_image:商品图片
+    good_url:商品链接
+    is_supporting_poor_goods:是否是扶贫商品
+    use_platform:使用平台
+    step_price:阶梯价格
+    grade_price:等级价格
+
+}
+
+
+class sku商品{
+    t_sku_goods_info
+ --
+    sku_id:sku商品id
+    good_id:商品id
+    shop_id:店铺id
+    category_id:商品类目id
+    virtual_category_id:商品虚拟类目id
+    specs_key:规格id拼接规格值id
+    specs_value:规格名称规格属性值
+    sale_price:商品售卖价格
+    price:商品成本价
+    cost_price:商品原价
+    sku_goods_num:商品库存
+    sku_goods_no:商品货号
+    barcode:商品条形码
+    image:商品图片
+    step_price:阶梯价格
+    grade_price:等级价格
+    state:状态
+}
+
+class 商品问答{
+    t_goods_QA
+--
+      id:主键id
+      goods_id:商品id
+      shop_id:店铺id
+      quiz_title:提问标题
+      quiz_content:提问内容
+      content:回答内容
+      operator:操作人
+      contact_way:联系方式
+      ip:参与者ip地址
+}
+
+class 商品标签{
+    t_goods_label
+--
+    id:标签id
+    label_name:标签名称
+    label_remark:标签备注
+    label_color:标签颜色
+    label_type:标签类型
+}
+
+class 公共商品参数组{
+    t_goods_params
+--
+    id:参数组id
+    name:参数组名称
+}
+
+class 公共商品参数键值{
+    t_goods_param_info
+--
+    id:参数id
+    params_id:参数组id
+    name:参数名称
+    alias:参数别名
+}
+
+class 商品自定义分类(虚拟分类){
+    t_goods_virtual_category
+--
+     id:商品虚拟类别id
+     good_id:商品id
+     virtual_category_name:商品虚拟类别名称
+     virtual_parent_id:商品虚拟类别父id
+     virtual_category_level:商品虚拟类别级别
+     filter:筛选条件(???)
+     use_platform:虚拟分类使用平台使用平台
+     sort:商品类别排序
+}
+
+class 商品素材库{
+    t_goods_library
+--
+    id:主键id
+    shop_id:店铺id
+    name:商品名称
+    barcode:商品条形码
+    desc:商品描述
+    params:商品参数
+    attribute_value:商品属性
+    image:商品图片
+}
+
+公共商品属性信息 "1" *-- "n" 类别
+
+@enduml

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>gs-biz-support</artifactId>
+        <groupId>wholesale.grainoil.gs</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>wholesale.grainoil.gs</groupId>
+    <artifactId>gs-user</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>gs-user-repository</module>
+        <module>gs-user-repository-fuyou</module>
+        <module>gs-user-rpc</module>
+        <module>gs-user-srv</module>
+        <module>gs-user-srv-fuyou</module>
+    </modules>
+
+</project>

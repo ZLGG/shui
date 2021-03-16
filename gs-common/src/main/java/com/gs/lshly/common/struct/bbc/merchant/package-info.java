@@ -1,0 +1,1 @@
+package com.gs.lshly.common.struct.bbc.merchant;

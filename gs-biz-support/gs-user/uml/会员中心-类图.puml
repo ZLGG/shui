@@ -1,0 +1,117 @@
+@startuml
+
+class 帐号{
+    t_user_account
+--
+    user_account_id;
+    username:登录用户名
+    password:登录密码
+    phone:电话
+    wx_openid:微信openid
+    wx_unionid:微信unionid
+}
+
+class 法人单位 {
+    t_legal_entity
+--
+    legal_type:类型(10-个人,20-单位)
+    person_name:个人姓名
+    person_idcard_no:个人身份证号
+    corp_name:单位名称
+    corp_tax_no:单位统一纳税识别码
+    corp_bank_name:单位开户行
+    corp_bank_card_no:单位银行卡号
+    corp_address:单位地址
+    corp_phone:单位电话
+}
+
+class 会员 {
+    t_user
+--
+    legal_id:所属法人
+    name:名称
+    nick_name:昵称
+    head_img:头像
+    user_type:会员类型
+    user_account_id：帐号ID
+}
+
+
+
+class 我的可见店铺 {
+    t_user_show_shop
+--
+    user_id:所属用户
+    shop_id:店铺id
+}
+
+class 购物车 {
+    t_user_shopping_car
+--
+    user_id:所属用户
+    spu_id:商品id
+    sku_id:sku id
+    quantity:数量
+}
+
+class 收货地址 {
+    t_user_shopping_address
+--
+    user_id:所属用户
+    province:省
+    city:市
+    county:县区
+    street:街道
+    house:详细门牌号
+    recipient_name:收件人姓名
+    recipient_phone:收件人电话
+    defaults:默认地址
+    flag:标签(公司,家,...)
+}
+
+class 消息 {
+    t_message
+--
+    user_id:所属用户
+    title:标题
+    content:内容
+    read:是否已读
+}
+
+class 意见反馈 {
+    t_feedback
+--
+    user_id:所属用户
+    title:标题
+    content:内容
+    process:是否已处理
+    reply:回复内容
+    reply_read:回复是否已读
+}
+
+class 我的收藏{
+  t_user_favorites
+--
+  user_id:所属用户
+  fav_type:收藏内容类型(10-店铺,20-商品)
+  fav_id:收藏对象id
+}
+
+帐号 "1" *-- "n" 会员
+
+法人单位 "1" o-- "n" 会员
+
+消息 "n" --* "1" 会员
+
+意见反馈 "n" --* "1" 会员
+
+我的收藏 "n" --* "1" 会员
+
+我的可见店铺 "n" --* "1" 会员
+
+购物车 "n" --* "1" 会员
+
+收货地址 "n" --* "1" 会员
+
+@enduml
+

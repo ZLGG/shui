@@ -1,0 +1,32 @@
+@startuml
+
+
+class 优惠券 {
+    t_coupon
+--
+    user_id:发放商家id
+    name:优惠券名称
+    num:发放数量
+    issue_time:发放时间
+    valid_start:生效时间
+    valid_end:失效时间
+    deduction:抵扣金额
+    remain_num:剩余数量
+}
+
+class 抵扣规则 {
+    t_coupon_rule
+--
+    coupon_id:优惠券id
+    spu_ids:适用产品(集)
+    sku_ids:适用sku(集)
+    category_ids:适用类目(集)
+    brand_ids:适用品牌(集)
+    shop_ids:适用店铺(集)
+    price_over:满
+    price_minus:减
+}
+
+
+@enduml
+

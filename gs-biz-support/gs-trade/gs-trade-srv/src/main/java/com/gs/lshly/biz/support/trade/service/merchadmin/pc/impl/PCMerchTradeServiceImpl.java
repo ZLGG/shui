@@ -1,0 +1,838 @@
+package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.trade.entity.Trade;
+import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
+import com.gs.lshly.biz.support.trade.entity.TradeGoods;
+import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
+import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
+import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
+import com.gs.lshly.common.enums.TradeReportTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
+import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.CommonUserVO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.TradeGoodsDTO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
+import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
+import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonUserRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
+import com.lakala.boss.api.common.Common;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+* <p>
+*  服务实现类
+* </p>
+* @author oy
+* @since 2020-11-16
+*/
+@Component
+public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
+
+    private final ITradeRepository tradeRepository;
+    private final ITradeGoodsRepository tradeGoodsRepository;
+    private final ITradeDeliveryRepository tradeDeliveryRepository;
+
+    @DubboReference
+    private ICommonShopRpc commonShopRpc;
+    @DubboReference
+    private ICommonUserRpc commonUserRpc;
+    @DubboReference
+    private ICommonLogisticsCompanyRpc commonLogisticsCompanyRpc;
+    @DubboReference
+    private IPCMerchUserRpc ipcMerchUserRpc;
+    @Autowired
+    private TradeMapper tradeMapper;
+
+    public PCMerchTradeServiceImpl(ITradeRepository tradeRepository, ITradeGoodsRepository tradeGoodsRepository, ITradeDeliveryRepository tradeDeliveryRepository) {
+        this.tradeRepository = tradeRepository;
+        this.tradeGoodsRepository = tradeGoodsRepository;
+        this.tradeDeliveryRepository = tradeDeliveryRepository;
+    }
+
+    @Override
+    public PageData<PCMerchTradeListVO.tradeVO> tradeListPageData(PCMerchTradeQTO.TradeList qto) {
+        QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
+        wrapper.and(i -> i.eq("t.`shop_id`",qto.getJwtShopId()));
+        if(ObjectUtils.isNotEmpty(qto.getCreateTime())){
+            wrapper.and(i -> i.eq("",qto.getCreateTime()));
+        }
+        if(StringUtils.isNotBlank(qto.getTradeCode())){
+            wrapper.and(i -> i.eq("t.`trade_code`",qto.getTradeCode()));
+        }
+        if(StringUtils.isNotBlank(qto.getRecvPersonName())){
+            wrapper.and(i -> i.eq("t.`recv_person_name`",qto.getRecvPersonName()));
+        }
+        if(StringUtils.isNotBlank(qto.getRecvPhone())){
+            wrapper.and(i -> i.eq("t.`recv_phone`",qto.getRecvPhone()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getTradeState())){
+            wrapper.and(i -> i.eq("t.`trade_state`",qto.getTradeState()));//交易状态,不传则查所有状态数据
+        }
+        if(ObjectUtils.isNotEmpty(qto.getSourceType())){
+            wrapper.and(i -> i.eq("t.`source_type`",qto.getSourceType()));//区分2b2c
+        }
+        if(ObjectUtils.isNotEmpty(qto.getDeliveryType())){
+            wrapper.and(i -> i.eq("t.`delivery_type`",qto.getDeliveryType()));
+        }
+        if(StringUtils.isNotBlank(qto.getUserName())){
+            CommonUserVO.DetailVO userDetailVO = commonUserRpc.detailsByUserName(qto.getUserName());
+            if(ObjectUtils.isNotEmpty(userDetailVO) && StringUtils.isNotBlank(userDetailVO.getId())){
+                //查询用户id
+                wrapper.and(i -> i.eq("t.`user_id`",userDetailVO.getId()));
+            }
+        }
+
+        wrapper.orderByDesc("cdate");
+
+        IPage<PCMerchTradeListVO.tradeVO> page = MybatisPlusUtil.pager(qto);
+
+        tradeRepository.selectPCMerchTradePage(page,wrapper);
+
+        List<PCMerchTradeListVO.tradeVO> voList = new ArrayList<>();
+        for(PCMerchTradeListVO.tradeVO tradeVO : page.getRecords()){
+            //查询店铺信息
+            CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(tradeVO.getShopId());
+            if (ObjectUtils.isNotEmpty(simpleVO)) {
+                tradeVO.setShopName(simpleVO.getShopName());
+            }
+            //根据交易ID查询交易商品集合
+            fillTradeVO(tradeVO);
+            if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
+                tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
+            }
+            voList.add(tradeVO);
+        }
+
+        return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
+    }
+
+    @Override
+    public PCMerchTradeListVO.tradeVO detail(PCMerchTradeDTO.IdDTO dto) {
+        PCMerchTradeListVO.tradeVO tradeVO = new PCMerchTradeListVO.tradeVO();
+        Trade trade = tradeRepository.getById(dto.getId());
+        if(ObjectUtils.isEmpty(trade)){
+            throw new BusinessException("无订单数据");
+        }
+        BeanUtils.copyProperties(trade, tradeVO);
+        //填充商家信息
+        fillShop(tradeVO);
+        fillTradeVO(tradeVO);
+        if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
+            tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
+        }
+        //查询物流信息
+        if(tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
+                (tradeVO.getTradeState().equals(TradeStateEnum.待收货.getCode()) ||
+                tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))){//快递配送/已发货/已收货
+            //填充物流信息
+            fillLogisticsCompany(tradeVO);
+        }
+        //填充用户信息
+        fillUserInfo(tradeVO);
+
+        return tradeVO;
+    }
+
+    @Override
+    public List<PCMerchTradeListVO.innerGoodsIdAndName> innergoodsIdsCheck(PCMerchTradeDTO.GoodsIdsDTO dto) {
+        if (ObjectUtils.isEmpty(dto.getGoodsId())){
+            throw new BusinessException("请传入参数");
+        }
+        QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
+        query.and(i->i.ne("tg.`trade_state`",TradeStateEnum.已完成.getCode()).or().ne("tg.`trade_state`",TradeStateEnum.已取消.getCode()));
+        if (ObjectUtils.isNotEmpty(dto.getGoodsId())){
+            query.and(i->i.in("t.`goods_id`",dto.getGoodsId()));
+        }
+        List<PCMerchTradeListVO.innerGoodsIdAndName> list = tradeGoodsRepository.selectTradeIng(query);
+        if (list.size()>0){
+            return list;
+        }
+        return null;
+    }
+
+    @Override
+    public PCMerchTradeListVO.innerGoodsIdAndName innergoodsIdCheck(PCMerchTradeDTO.GoodsIdDTO dto) {
+        if (ObjectUtils.isEmpty(dto.getGoodsId())){
+            throw new BusinessException("请传入参数");
+        }
+        QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
+        query.and(i->i.ne("tg.`trade_state`",TradeStateEnum.已完成.getCode()).or().ne("tg.`trade_state`",TradeStateEnum.已取消.getCode()));
+        if (ObjectUtils.isNotEmpty(dto.getGoodsId())){
+            query.and(i->i.eq("t.`goods_id`",dto.getGoodsId()));
+        }
+        List<PCMerchTradeListVO.innerGoodsIdAndName> list = tradeGoodsRepository.selectTradeIng(query);
+        if (list.size()>0){
+            return list.get(0);
+        }
+        return null;
+
+
+    }
+    @Override
+    public void editOrderAmount(PCMerchTradeDTO.orderAmountOrFreight dto) {
+        if (StringUtils.isBlank(dto.getId())){
+            throw new BusinessException("请传入订单ID");
+        }
+        Trade trade = tradeRepository.getById(dto.getId());
+        if (ObjectUtils.isEmpty(trade)){
+            throw new BusinessException("没有查询到订单");
+        }
+        if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())){
+            if (ObjectUtils.isNotEmpty(dto.getOrderAmount())){
+                //修改交易总金额
+                trade.setTradeAmount(dto.getOrderAmount());
+            }
+            if (ObjectUtils.isNotEmpty(dto.getFreight())){
+                //修改运费
+                BigDecimal differencePrice=dto.getFreight().subtract(trade.getDeliveryAmount());
+                trade.setDeliveryAmount(dto.getFreight());
+                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
+            }
+        }
+        tradeRepository.saveOrUpdate(trade);
+
+    }
+
+    private void fillUserInfo(PCMerchTradeListVO.tradeVO tradeVO) {
+        PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(tradeVO.getUserId());
+        if(ObjectUtils.isNotEmpty(userSimpleVO)){
+            tradeVO.setUserName(userSimpleVO.getUserName());
+        }
+    }
+
+    private void fillShop(PCMerchTradeListVO.tradeVO tradeVO) {
+        CommonShopVO.SimpleVO innerDetailVO = commonShopRpc.shopDetails(tradeVO.getShopId());
+        if(ObjectUtils.isNotEmpty(innerDetailVO)){
+            tradeVO.setShopName(innerDetailVO.getShopName());
+        }
+    }
+
+    private void fillLogisticsCompany(PCMerchTradeListVO.tradeVO tradeVO) {
+        QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
+        tradeDeliveryQueryWrapper.eq("trade_id", tradeVO.getId());
+        TradeDelivery tradeDelivery = tradeDeliveryRepository.getOne(tradeDeliveryQueryWrapper);
+        if(ObjectUtils.isNotEmpty(tradeDelivery)){
+            tradeVO.setDeliveryRemark(tradeDelivery.getDeliveryRemark());
+            CommonLogisticsCompanyVO.DetailVO logisticsDetailVO = commonLogisticsCompanyRpc.getLogisticsCompany(tradeDelivery.getLogisticsId());
+            if(ObjectUtils.isNotEmpty(logisticsDetailVO)){
+                tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
+                tradeVO.setLogisticsCompanyCode(logisticsDetailVO.getCode());
+                tradeVO.setLogisticsCompanyName(logisticsDetailVO.getName());
+            }
+        }
+    }
+
+    /**
+     * 组装TradeVO、tradeGoodsVO数据
+     * @param tradeVO
+     */
+    private void fillTradeVO(PCMerchTradeListVO.tradeVO tradeVO) {
+        QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
+        tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
+        List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
+        List<PCMerchTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
+        for(TradeGoods tradeGoods : tradeGoodsList){
+            PCMerchTradeListVO.TradeGoodsVO tradeGoodsVO = new PCMerchTradeListVO.TradeGoodsVO();
+            BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
+            tradeGoodsVO.setShopName(tradeVO.getShopName());
+            tradeGoodsVOS.add(tradeGoodsVO);
+        }
+        tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
+    }
+
+
+    @Override
+    public TradeVO.PayDatelistVO payDateList(TradeDTO.PayDateList dto) {
+        TradeVO.PayDatelistVO payDatelistVO = new TradeVO.PayDatelistVO();
+        QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("shop_id",dto.getJwtShopId());
+        wrapper.groupBy("DATE_FORMAT(cdate,'%Y-%m-%d')");
+        wrapper.orderByDesc("DATE_FORMAT(cdate,'%Y-%m-%d')");
+        wrapper.last("limit 0,10");
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            BigDecimal avgAmount = BigDecimal.ZERO;
+            TradeVO.AvgAmountlistVO avgAmountlistVOS = new TradeVO.AvgAmountlistVO();
+            switch (dto.getQueryTimes()){
+                case 10:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                payDatelistVO.setPackDatelist(tradeMapper.payDatelist(wrapper));
+                                break;
+                            case 20:
+                                payDatelistVO.setPackDatelist(tradeMapper.payDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.payDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOS.setAvgAmount(avgAmount);
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }
+                                }
+                                break;
+                            case 40:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.packCancelDatelist(wrapper));
+                                break;
+                            case 50:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.packCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                case 20:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                payDatelistVO.setPackDatelist(tradeMapper.anteayerPayDatelist(wrapper));
+                                break;
+                            case 20:
+                                payDatelistVO.setPackDatelist(tradeMapper.anteayerPayDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.anteayerPayDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOS.setAvgAmount(avgAmount);
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }
+                                }
+                                break;
+                            case 40:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.anteayerPackCancelDatelist(wrapper));
+                                break;
+                            case 50:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.anteayerPackCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                case 30:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                payDatelistVO.setPackDatelist(tradeMapper.weekPayDatelist(wrapper));
+                                break;
+                            case 20:
+                                payDatelistVO.setPackDatelist(tradeMapper.weekPayDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.weekPayDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOS.setAvgAmount(avgAmount);
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }
+                                }
+                                break;
+                            case 40:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.weekPackCancelDatelist(wrapper));
+                                break;
+                            case 50:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.weekPackCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                case 40:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                payDatelistVO.setPackDatelist(tradeMapper.monthPayDatelist(wrapper));
+                                break;
+                            case 20:
+                                payDatelistVO.setPackDatelist(tradeMapper.monthPayDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.monthPayDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOS.setAvgAmount(avgAmount);
+                                        payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
+                                    }
+                                }
+                                break;
+                            case 40:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.monthPackCancelDatelist(wrapper));
+                                break;
+                            case 50:
+                                payDatelistVO.setPackCancelDatelist(tradeMapper.monthPackCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    throw new BootstrapMethodError("时间查询方式错误");
+            }
+        }
+
+        //封装数据
+        packPayDate(dto,payDatelistVO);
+        return payDatelistVO;
+    }
+
+    public void packPayDate(TradeDTO.PayDateList dto ,TradeVO.PayDatelistVO payDatelistVO) {
+        //新增订单金额
+        BigDecimal addTradeAmount = BigDecimal.ZERO;
+        //新增订单数量
+        Integer addTradeCount = null;
+        //平均单价
+        BigDecimal avgAmount = BigDecimal.ZERO;
+
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
+            wrapper.eq("shop_id",dto.getJwtShopId());
+            switch (dto.getQueryTimes()){
+                case 10:
+                    addTradeAmount = tradeMapper.yesterdayAddTradeAmount(wrapper);
+                    payDatelistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.yesterdayAddTradeCount(wrapper);
+                    payDatelistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        payDatelistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            payDatelistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    payDatelistVO.setPayTradeAmount(tradeMapper.yesterdayPayTradeAmount(wrapper));
+                    payDatelistVO.setPayTradeCount(tradeMapper.yesterdayPayTradeCount(wrapper));
+                    payDatelistVO.setCancelTradeAmount(tradeMapper.yesterdayCancelTradeAmount(wrapper));
+                    payDatelistVO.setCancelTradeCount(tradeMapper.yesterdayCancelTradeCount(wrapper));
+                    break;
+                case 20:
+                    addTradeAmount = tradeMapper.anteayerAddTradeAmount(wrapper);
+                    payDatelistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.anteayerAddTradeCount(wrapper);
+                    payDatelistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        payDatelistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            payDatelistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    payDatelistVO.setPayTradeAmount(tradeMapper.anteayerPayTradeAmount(wrapper));
+                    payDatelistVO.setPayTradeCount(tradeMapper.anteayerPayTradeCount(wrapper));
+                    payDatelistVO.setCancelTradeAmount(tradeMapper.anteayerCancelTradeAmount(wrapper));
+                    payDatelistVO.setCancelTradeCount(tradeMapper.anteayerCancelTradeCount(wrapper));
+                    break;
+                case 30:
+                    addTradeAmount = tradeMapper.weekAddTradeAmount(wrapper);
+                    payDatelistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.weekAddTradeCount(wrapper);
+                    payDatelistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        payDatelistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            payDatelistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    payDatelistVO.setPayTradeAmount(tradeMapper.weekPayTradeAmount(wrapper));
+                    payDatelistVO.setPayTradeCount(tradeMapper.weekPayTradeCount(wrapper));
+                    payDatelistVO.setCancelTradeAmount(tradeMapper.weekCancelTradeAmount(wrapper));
+                    payDatelistVO.setCancelTradeCount(tradeMapper.weekCancelTradeCount(wrapper));
+                    break;
+                case 40:
+                    addTradeAmount = tradeMapper.monthAddTradeAmount(wrapper);
+                    payDatelistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.monthAddTradeCount(wrapper);
+                    payDatelistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        payDatelistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            payDatelistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    payDatelistVO.setPayTradeAmount(tradeMapper.monthPayTradeAmount(wrapper));
+                    payDatelistVO.setPayTradeCount(tradeMapper.monthPayTradeCount(wrapper));
+                    payDatelistVO.setCancelTradeAmount(tradeMapper.monthCancelTradeAmount(wrapper));
+                    payDatelistVO.setCancelTradeCount(tradeMapper.monthCancelTradeCount(wrapper));
+                    break;
+                 default:
+                     throw new BootstrapMethodError("查询时间条件错误！");
+            }
+        }
+    }
+
+
+    @Override
+    public TradeVO.OperationlistVO operationList(TradeDTO.OperationList dto) {
+        TradeVO.OperationlistVO operationlistVO = new TradeVO.OperationlistVO();
+        QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("shop_id",dto.getJwtShopId());
+        wrapper.groupBy("DATE_FORMAT(cdate,'%Y-%m-%d')");
+        wrapper.orderByDesc("DATE_FORMAT(cdate,'%Y-%m-%d')");
+        wrapper.last("limit 0,10");
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            BigDecimal avgAmount = BigDecimal.ZERO;
+            List<BigDecimal> avgAmountlistVOS = new ArrayList<>();
+
+            TradeVO.AvgAmountlistVO avgAmountlistVOArrayList = new TradeVO.AvgAmountlistVO();
+
+            List<TradeVO.AvgAmountlistVO> avgAmountlistVOArrayList2 = new ArrayList<>();
+            switch (dto.getQueryTimes()){
+                case 10:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                operationlistVO.setPackDatelist(tradeMapper.payDatelist(wrapper));
+                                break;
+                            case 20:
+                                operationlistVO.setPackDatelist(tradeMapper.payDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.payDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOArrayList.setAvgAmount(avgAmount);
+                                        avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
+                                        continue;
+                                    }
+                                }
+
+                                operationlistVO.setAvgAmountlist2(avgAmountlistVOArrayList2);
+                                break;
+                            case 40:
+                                operationlistVO.setPackDatelist(tradeMapper.yesterDayFinishlist(wrapper));
+                                break;
+                            case 50:
+                                operationlistVO.setPackDatelist(tradeMapper.yesterDayFinishlist(wrapper));
+                                break;
+                            case 60:
+                                operationlistVO.setPackCancelDatelist(tradeMapper.packCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                case 20:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                operationlistVO.setPackDatelist(tradeMapper.anteayerPayDatelist(wrapper));
+                                break;
+                            case 20:
+                                operationlistVO.setPackDatelist(tradeMapper.anteayerPayDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.anteayerPayDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOArrayList.setAvgAmount(avgAmount);
+                                        avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
+                                        continue;
+                                    }
+                                }
+                                operationlistVO.setAvgAmountlist2(avgAmountlistVOArrayList2);
+                                break;
+                            case 40:
+                                operationlistVO.setPackDatelist(tradeMapper.anteayerFinishlist(wrapper));
+                                break;
+                            case 50:
+                                operationlistVO.setPackDatelist(tradeMapper.anteayerFinishlist(wrapper));
+                                break;
+                            case 60:
+                                operationlistVO.setPackCancelDatelist(tradeMapper.anteayerPackCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                case 30:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                operationlistVO.setPackDatelist(tradeMapper.weekFinishlist(wrapper));
+                                break;
+                            case 20:
+                                operationlistVO.setPackDatelist(tradeMapper.weekFinishlist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.weekFinishlist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOArrayList.setAvgAmount(avgAmount);
+                                        avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
+                                        continue;
+                                    }
+                                }
+                                operationlistVO.setAvgAmountlist2(avgAmountlistVOArrayList2);
+                                break;
+                            case 40:
+                                operationlistVO.setPackDatelist(tradeMapper.weekFinishlist(wrapper));
+                                break;
+                            case 50:
+                                operationlistVO.setPackDatelist(tradeMapper.weekFinishlist(wrapper));
+                                break;
+                            case 60:
+                                operationlistVO.setPackCancelDatelist(tradeMapper.weekPackCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                case 40:
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
+                            case 10:
+                                operationlistVO.setPackDatelist(tradeMapper.monthPayDatelist(wrapper));
+                                break;
+                            case 20:
+                                operationlistVO.setPackDatelist(tradeMapper.monthPayDatelist(wrapper));
+                                break;
+                            case 30:
+                                List<TradeVO.PackDatelistVO> list = tradeMapper.monthPayDatelist(wrapper);
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
+                                        operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
+                                    }else {
+                                        avgAmount = packDatelistVO.getTradeAmount()
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
+                                        avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
+                                        avgAmountlistVOArrayList.setAvgAmount(avgAmount);
+                                        avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
+                                        continue;
+                                    }
+                                }
+                                operationlistVO.setAvgAmountlist2(avgAmountlistVOArrayList2);
+                                break;
+                            case 40:
+                                operationlistVO.setPackDatelist(tradeMapper.monthFinishlist(wrapper));
+                                break;
+                            case 50:
+                                operationlistVO.setPackDatelist(tradeMapper.monthFinishlist(wrapper));
+                                break;
+                            case 60:
+                                operationlistVO.setPackCancelDatelist(tradeMapper.monthPackCancelDatelist(wrapper));
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    throw new BootstrapMethodError("时间查询方式错误");
+            }
+
+        }
+        //封装数据
+        packOperationDate(dto,operationlistVO);
+        //封装扇形图数据
+        packDiagramDate(dto,operationlistVO);
+        return operationlistVO;
+    }
+
+
+    public void packOperationDate(TradeDTO.OperationList dto ,TradeVO.OperationlistVO operationlistVO) {
+        //新增订单金额
+        BigDecimal addTradeAmount = BigDecimal.ZERO;
+        //新增订单数量
+        Integer addTradeCount = null;
+        //平均单价
+        BigDecimal avgAmount = BigDecimal.ZERO;
+
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
+            wrapper.eq("shop_id",dto.getJwtShopId());
+            switch (dto.getQueryTimes()){
+                case 10:
+                    addTradeAmount = tradeMapper.yesterdayAddTradeAmount(wrapper);
+                    operationlistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.yesterdayAddTradeCount(wrapper);
+                    operationlistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        operationlistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            operationlistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    operationlistVO.setIndependentUV(new BigDecimal(1));
+                    operationlistVO.setAftermarketCount(tradeMapper.yesterDayAftermarketCount(wrapper));
+                    break;
+                case 20:
+                    addTradeAmount = tradeMapper.anteayerAddTradeAmount(wrapper);
+                    operationlistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.anteayerAddTradeCount(wrapper);
+                    operationlistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        operationlistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            operationlistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    operationlistVO.setIndependentUV(new BigDecimal(1));
+                    operationlistVO.setAftermarketCount(tradeMapper.anteayerAftermarketCount(wrapper));
+                    break;
+                case 30:
+                    addTradeAmount = tradeMapper.weekAddTradeAmount(wrapper);
+                    operationlistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.weekAddTradeCount(wrapper);
+                    operationlistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        operationlistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            operationlistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    operationlistVO.setIndependentUV(new BigDecimal(1));
+                    operationlistVO.setAftermarketCount(tradeMapper.weekAftermarketCount(wrapper));
+                    break;
+                case 40:
+                    addTradeAmount = tradeMapper.monthAddTradeAmount(wrapper);
+                    operationlistVO.setAddTradeAmount(addTradeAmount);
+                    addTradeCount = tradeMapper.monthAddTradeCount(wrapper);
+                    operationlistVO.setAddTradeCount(addTradeCount);
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
+                        operationlistVO.setAvgAmount(avgAmount);
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
+                            operationlistVO.setAvgAmount(avgAmount);
+                        }
+                    }
+                    operationlistVO.setIndependentUV(new BigDecimal(1));
+                    operationlistVO.setAftermarketCount(tradeMapper.monthAftermarketCount(wrapper));
+                    break;
+                default:
+                    throw new BootstrapMethodError("查询时间条件错误！");
+            }
+        }
+    }
+
+
+    public void packDiagramDate(TradeDTO.OperationList dto ,TradeVO.OperationlistVO operationlistVO) {
+        //订单完成数据集合
+        TradeVO.PayTradeVO payTradeVO = new TradeVO.PayTradeVO();
+        //总订单金额集合
+        TradeVO.PayTradeAmountVO payTradeAmountVO = new TradeVO.PayTradeAmountVO();
+        //访问量数据
+        TradeVO.VisitorDateVO visitorDateVO = new TradeVO.VisitorDateVO();
+
+       if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+           QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
+//           wrapper.eq("shop_id",dto.getJwtShopId());
+           switch (dto.getQueryTimes()){
+               case 10:
+                   payTradeVO.setPayTradeCount(tradeMapper.yesterdayPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.yesterDayNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.yesterdayPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.yesterDayNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+               case 20:
+                   payTradeVO.setPayTradeCount(tradeMapper.anteayerPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.anteayerNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.anteayerPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.anteayerNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+               case 30:
+                   payTradeVO.setPayTradeCount(tradeMapper.weekPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.weekNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.weekPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.weekNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+               case 40:
+                   payTradeVO.setPayTradeCount(tradeMapper.monthPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.monthNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.monthPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.monthNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+                default:
+                    throw new BootstrapMethodError("错误时间查询方式");
+           }
+
+       }
+
+    }
+
+}

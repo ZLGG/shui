@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: hztest
+  application:
+    name: biz-support-trade
+  cloud:
+    nacos:
+      config:
+        group: biz-support
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        namespace: cdb38a42-7128-46ee-8b5d-8e7a543df100
+      discovery:
+        server-addr: 127.0.0.1:8848

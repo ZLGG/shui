@@ -1,0 +1,78 @@
+@startuml
+
+class 管理账号 {
+    t_account
+--
+    username:登录用户名
+    password:登录密码
+    phone:电话
+    wx_openid:微信openid
+    wx_unionid:微信unionid
+}
+
+class 商家 {
+    t_merchant
+--
+    merchant_scope:商家权限范围([2C],[2B])
+    account_id:帐号ID
+}
+
+class 店铺 {
+    t_merchant_shop
+--
+    user_id:所属商家id
+    type:店铺类型(2C,2B)
+    has_pos:是否有POS店
+    pos_code:pos店编码
+    pos_name:pos店名称
+    pos_loc_lgt:pos店经度
+    pos_loc_lat:pos店纬度
+}
+class 店铺菜单 {
+    t_merchant_shop_menu
+--
+    shop_id:所属店铺id
+    name:菜单名称
+    idx:显示顺序
+    icon:显示图标
+    menu_type:菜单类型(展示区,链接)
+    re_content_type:菜单关联内容类型(产品,类目)
+    re_content:菜单关联内容值(产品id[集],产品类目[集])
+
+}
+class 开店申请 {
+    t_user_apply_merchant
+--
+    user_id:所属用户
+}
+
+
+
+class 优惠券领用记录 {
+    t_coupon_using_detail
+--
+    coupon_id:优惠券id
+    user_id:领取用户id
+    status:领用状态(已使用,未使用,失效)
+    using_order_id:用于订单id
+    trigger_coupon_rule_id:触发规则id
+    trigger_coupon_rule_text:触发规则描述
+}
+
+管理账号 <|-- 商家
+
+开店申请 "n" o-- "1" 商家
+
+优惠券 "n" o-- "1" 商家
+
+优惠券 "1" *-- "n" 抵扣规则
+
+优惠券 "1" *-- "n" 优惠券领用记录
+
+商家 "1" *-- "n" 店铺
+
+店铺 "1" *-- "n" 店铺菜单
+
+
+@enduml
+

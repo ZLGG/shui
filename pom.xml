@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-build</artifactId>
+        <version>2.1.11.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>wholesale.grainoil.gs</groupId>
+    <artifactId>gs-all</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>gs-biz-support</module>
+        <module>gs-common</module>
+        <module>gs-facade</module>
+        <module>gs-middleware</module>
+        <module>gs-rpc-api</module>
+    </modules>
+
+    <properties>
+        <ali.version>2.1.2.RELEASE</ali.version>
+
+        <spring-cloud-commons.version>2.1.5.RELEASE</spring-cloud-commons.version>
+        <dubbo.version>2.7.7</dubbo.version>
+        <lombok.version>1.18.12</lombok.version>
+        <swagger.version>2.7.0</swagger.version>
+        <hutool.version>5.4.4</hutool.version>
+        <poi.version>3.17</poi.version>
+
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+
+        <docker.repostory>registry.cn-shenzhen.aliyuncs.com</docker.repostory>
+        <docker.registry.name>lxus</docker.registry.name>
+
+    </properties>
+
+    <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+            <version>${ali.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons-dependencies</artifactId>
+            <version>${spring-cloud-commons.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-dependencies-bom</artifactId>
+            <version>${dubbo.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-framework-bom</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+            <version>${dubbo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-spring-boot-actuator</artifactId>
+            <version>${dubbo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+    </dependencies>
+    </dependencyManagement>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>aliyun</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>rebel.xml</exclude>
+                    <exclude>config/dev/**</exclude>
+                    <exclude>config/test/**</exclude>
+                    <exclude>config/hlyprod/**</exclude>
+                    <exclude>config/hlytest/**</exclude>
+                    <exclude>config/fytest/**</exclude>
+                    <exclude>config/fyprod/**</exclude>
+                    <exclude>config/cluster/**</exclude>
+                    <exclude>config/local/**</exclude>
+                    <exclude>config/sztest/**</exclude>
+                    <exclude>config/szprod/**</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/config/${profiles.active}</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+    <profiles>
+        <!-- 开发环境配置 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env.dscs>dev</env.dscs>
+                <profiles.active>dev</profiles.active>
+            </properties>
+        </profile>
+        <!-- 开发集群环境配置 -->
+        <profile>
+            <id>cluster</id>
+            <properties>
+                <env.dscs>cluster</env.dscs>
+                <profiles.active>cluster</profiles.active>
+            </properties>
+        </profile>
+        <!-- 测试环境配置 -->
+        <profile>
+            <id>test</id>
+            <properties>
+                <env.dscs>test</env.dscs>
+                <profiles.active>test</profiles.active>
+            </properties>
+        </profile>
+        <!-- 好粮油正式环境配置 -->
+        <profile>
+            <id>hlyprod</id>
+            <properties>
+                <env.dscs>hlyprod</env.dscs>
+                <profiles.active>hlyprod</profiles.active>
+            </properties>
+        </profile>
+        <!-- 好粮油测试配置 -->
+        <profile>
+            <id>hlytest</id>
+            <properties>
+                <env.dscs>hlytest</env.dscs>
+                <profiles.active>hlytest</profiles.active>
+            </properties>
+        </profile>
+        <!-- 富友商城正式环境配置 -->
+        <profile>
+            <id>fyprod</id>
+            <properties>
+                <env.dscs>fyprod</env.dscs>
+                <profiles.active>fyprod</profiles.active>
+            </properties>
+        </profile>
+        <!-- 富友商城测试配置 -->
+        <profile>
+            <id>fytest</id>
+            <properties>
+                <env.dscs>fytest</env.dscs>
+                <profiles.active>fytest</profiles.active>
+            </properties>
+        </profile>
+        <!-- 深圳正式环境配置 -->
+        <profile>
+            <id>szprod</id>
+            <properties>
+                <env.dscs>szprod</env.dscs>
+                <profiles.active>szprod</profiles.active>
+            </properties>
+        </profile>
+        <!-- 深圳商城测试配置 -->
+        <profile>
+            <id>sztest</id>
+            <properties>
+                <env.dscs>sztest</env.dscs>
+                <profiles.active>sztest</profiles.active>
+            </properties>
+        </profile>
+        <!-- 杭州正式环境配置 -->
+        <profile>
+            <id>hzprod</id>
+            <properties>
+                <env.dscs>hzprod</env.dscs>
+                <profiles.active>hzprod</profiles.active>
+            </properties>
+        </profile>
+        <!-- 杭州商城测试配置 -->
+        <profile>
+            <id>hztest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <env.dscs>hztest</env.dscs>
+                <profiles.active>hztest</profiles.active>
+            </properties>
+        </profile>
+        <!-- 本地环境 -->
+        <profile>
+            <id>local</id>
+            <properties>
+                <env.dscs>local</env.dscs>
+                <profiles.active>local</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+</project>

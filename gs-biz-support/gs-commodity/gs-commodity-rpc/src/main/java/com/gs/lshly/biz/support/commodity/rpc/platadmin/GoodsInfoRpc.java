@@ -1,0 +1,126 @@
+package com.gs.lshly.biz.support.commodity.rpc.platadmin;
+
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsFupinService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoService;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
+import com.gs.lshly.common.struct.platadmin.commodityfupin.dto.GoodsFupinDTO;
+import com.gs.lshly.common.struct.platadmin.commodityfupin.qto.GoodsFupinQTO;
+import com.gs.lshly.common.struct.platadmin.commodityfupin.vo.GoodsFupinVO;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+/**
+ * @Author Starry
+ * @Date 17:12 2020/10/14
+ */
+@DubboService
+public class GoodsInfoRpc implements IGoodsInfoRpc {
+    @Autowired
+    private IGoodsInfoService goodsInfoService;
+    @Autowired
+    private IGoodsFupinService fupinService;
+
+    @Override
+    public PageData<GoodsInfoVO.SpuListVO> pageGoodsData(GoodsInfoQTO.QTO qto) {
+        return goodsInfoService.pageGoodsInfoData(qto);
+    }
+
+    @Override
+    public GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto) {
+        GoodsInfoVO.DetailVO detailVO = goodsInfoService.getGoodsDetail(dto);
+
+        //商品扶贫信息
+        GoodsFupinQTO.QTO qto = new GoodsFupinQTO.QTO();
+        qto.setGoodsId(dto.getId());
+        GoodsFupinVO.DetailVO fupin = fupinService.detailGoodsFupin(qto);
+        if (ObjectUtils.isNotEmpty(fupin)){
+            detailVO.setFupinInfo(fupin);
+        }
+        return detailVO;
+    }
+
+    @Override
+    public void underCarriageGoods(GoodsInfoDTO.IdListDTO dto) {
+        goodsInfoService.underCarriageGoods(dto);
+    }
+
+
+    @Override
+    public void deleteGoodsBatches(GoodsInfoDTO.IdListDTO dto) {
+        goodsInfoService.deleteGoodsBatches(dto);
+    }
+
+    @Override
+    public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto) {
+        goodsInfoService.checkGoods(dto);
+    }
+
+    @Override
+    public PageData<GoodsInfoVO.ShopFloorCommodityVO> getShopFloorCommodityVO(GoodsInfoQTO.ShopFloorQTO qto) {
+        return goodsInfoService.getShopFloorCommodityVO(qto);
+    }
+
+    @Override
+    public PageData<GoodsInfoVO.FupinFloorCommodityVO> getFupinFloorCommodityVO(GoodsInfoQTO.FupinFloorQTO qto) {
+        List<String> goodsIdList = fupinService.listFuPinGoodsId(qto);
+        if (ObjectUtils.isEmpty(goodsIdList)){
+            return new PageData<>();
+        }
+        qto.setGoodsId(goodsIdList);
+        return goodsInfoService.getFupinFloorCommodityVO(qto);
+    }
+
+    @Override
+    public PageData<GoodsInfoVO.BindCategoryGoodsVO> getBindCategoryGoodsVO(GoodsInfoQTO.CategoryIdQTO qto) {
+        return goodsInfoService.getBindCategoryGoodsVO(qto);
+    }
+
+    @Override
+    public List<GoodsInfoVO.InnerServiceGoodsVO> innerServiceGoodsVO(GoodsInfoDTO.IdsInnerServiceDTO dto) {
+        return goodsInfoService.innerServiceGoodsVO(dto);
+    }
+
+    @Override
+    public List<GoodsInfoVO.ListVO> innerServiceSpuGoodsInfo(GoodsInfoDTO.IdsInnerServiceDTO dto) {
+        return goodsInfoService.innerServiceSpuGoodsInfo(dto);
+    }
+
+    @Override
+    public List<GoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceGoodsInfo(GoodsInfoDTO.IdsInnerServiceDTO dto) {
+        return goodsInfoService.innerServiceGoodsInfo(dto);
+    }
+
+    @Override
+    public List<GoodsInfoVO.InnerServiceGoodsVO> innerServiceAllGoodsVO(GoodsInfoDTO.IdsInnerServiceDTO dto) {
+        return goodsInfoService.innerServiceAllGoodsVO(dto);
+    }
+
+    @Override
+    public List<GoodsInfoVO.ListVO> innerServiceAllSpuGoodsInfo(GoodsInfoDTO.IdsInnerServiceDTO dto) {
+        return goodsInfoService.innerServiceAllSpuGoodsInfo(dto);
+    }
+
+    @Override
+    public List<GoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceAllGoodsInfo(GoodsInfoDTO.IdsInnerServiceDTO dto) {
+        return goodsInfoService.innerServiceGoodsInfo(dto);
+    }
+
+    @Override
+    public void innerServiceUnderShelfGoods(List<String> shopId) {
+        goodsInfoService.innerServiceUnderShelfGoods(shopId);
+    }
+
+	@Override
+	public List<ListVO> listGoodsData() {
+		return goodsInfoService.listGoodsData();
+	}
+
+}

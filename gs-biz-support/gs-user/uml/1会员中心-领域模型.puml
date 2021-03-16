@@ -1,0 +1,14 @@
+@startuml
+
+object 会员
+object 法人单位
+object 我的购物车
+object 我的收藏
+object 会员积分
+法人单位 "1" o-- "1" 会员
+我的收藏 "n" --* "1" 会员
+会员积分 "n" --* "1" 会员
+我的购物车 "n" --* "1" 会员
+
+@enduml
+

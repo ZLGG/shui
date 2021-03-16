@@ -1,0 +1,69 @@
+@startuml
+
+ class 物流公司 {
+     t_logistics_company
+ --
+     company_id:公司编号
+     company_name:公司名
+ }
+
+ class 店铺运费模板 {
+     t_shipping_templates
+ --
+     shop_id:所属店铺
+     templates_id:模板编号
+     price_to_free:免费价格
+     price:收费
+ }
+
+ class 物流单信息 {
+     t_logistics_information
+ --
+     id:编号
+     receiver_address:收货地址
+     receiver_name:收货人姓名
+     receiver_phone：收货人电话
+     consignor_address:发货人地址
+     consignor_name:发货人姓名
+     consignor_phone:发货人电话
+ }
+
+ class 物流记录 {
+     t_logistics_records
+ --
+     id:变化编号
+     logistics_id:物流单号
+     goods_location:货物地点
+     leave_time:货物离开经停点时间
+     arrive_time:预计到达时间
+ }
+
+ class SKU库存 {
+     t_SKU_stock
+ --
+     goods_id:商品编号
+     number:数量
+ }
+
+ class POS店同步库存记录 {
+     t_POS_to_stock_records
+ --
+     records_id:记录编号
+     goods_id:SKU商品编号
+     change_time:变更时间
+     num_before_change:变更前数量
+     num_after_change:变更后数量
+ }
+
+ class 会员收货地址 {
+     t_receiver_address
+ --
+     address_id:地址编号
+     member_id:会员编号
+     receiver_address:收货地址
+     receiver_name:收货人姓名
+     receiver_phone：收货人电话
+ }
+
+
+ @enduml

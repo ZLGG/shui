@@ -1,0 +1,26 @@
+@startuml
+
+object 仓储物流中心
+object 仓库
+object SKU库存
+object POS店库存同步记录
+object 物流公司
+object 店铺运费模板
+object 物流单信息
+object 物流过程记录
+object 地址
+object 会员收货地址
+object 发票寄送地址
+
+仓库  --*  仓储物流中心
+仓库  --> SKU库存
+仓库  --> POS店库存同步记录
+POS店库存同步记录 ..> SKU库存
+物流公司--* 仓储物流中心
+店铺运费模板 --* 仓储物流中心
+物流单信息 --* 仓储物流中心
+物流过程记录 <..  物流单信息
+地址 --* 仓储物流中心
+会员收货地址 --|> 地址
+发票寄送地址 --|> 地址
+@enduml

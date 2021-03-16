@@ -1,0 +1,37 @@
+package com.gs.lshly.common.struct.bbb.h5.foundation.qto;
+
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+
+/**
+* @author xxfc
+* @since 2020-11-02
+*/
+public abstract class BbbH5SiteFloorQTO implements Serializable {
+
+    @Data
+    @ApiModel("BbbH5SiteFloorQTO.QTO")
+    @Accessors(chain = true)
+    public static class QTO extends BaseDTO {
+
+    }
+
+    @Data
+    @ApiModel("BbbH5SiteFloorQTO.GoodsListQTO")
+    @Accessors(chain = true)
+    public static class GoodsListQTO extends BaseQTO {
+
+        @ApiModelProperty(value = "楼层ID",hidden = true)
+        private String floorId;
+
+        @ApiModelProperty("楼层最大商品显示数量")
+        private Integer goodsMax;
+    }
+
+}

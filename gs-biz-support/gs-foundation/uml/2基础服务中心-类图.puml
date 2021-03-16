@@ -1,0 +1,70 @@
+@startuml
+
+class 消息 {
+    t_message
+--
+    send_time:消息发送时间
+    is_read:是否已读
+    sender:发送人
+    recipient:收件人
+    message_content:消息内容
+}
+
+class 公告 {
+    t_notice
+--
+    send_time:消息发送时间
+    is_read:是否已读
+    recipient:收件方（商家、会员、全体）
+    notice_content:公告内容
+}
+
+class 意见反馈 {
+    t_feedback
+--
+    send_time:消息发送时间
+    sender:发送人
+    feedback_content:意见反馈内容
+}
+
+class 文章类目 {
+    t_article_category
+--
+    category_id:类目编号
+    parent_id:父类编号
+    category_name:类目名称
+}
+
+class 文章 {
+    t_article
+--
+    category_id:所属类目编号
+    article_title:文章标题
+    article_content:文章内容
+}
+
+class 背景图 {
+    t_background
+--
+    background_address:背景图地址
+    background_platform:背景图所属平台
+}
+
+class banner {
+    t_banner
+--
+    banner_address:banner地址
+    banner_platform:banner所属平台
+    link:链接（活动、店铺、商品）
+}
+
+class 商品图片 {
+    t_goods_picture
+--
+    shop_id:所属店铺
+    goods_id:所属商品
+    picture_address:图片地址
+    link:商品链接
+}
+@enduml
+

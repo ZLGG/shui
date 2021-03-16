@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: fytest,sms,oss,redis,mybatis
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://114.116.35.42:3306/fy_mall?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    username: fy_mall_dev
+    password: Dev_fy_mall@2020
+#日志
+log:
+  dir: /data/fy_mall/log/user
+  level: INFO
+
+#dubbo config
+dubbo:
+  application:
+    id: biz-support-user
+    name: biz-support-user  #应用名称
+    owner: lshly #应用所属者
+    organization: lshly   #应用所属组织
+  registry:
+    address: nacos://127.0.0.1:8848 #注册中心地址
+  consumer:
+    check: false #关闭所有服务的启动时检查：（没有provider时报错）
+    timeout: 30000
+    retries: 0
+  protocol:
+    name: dubbo   #协议名称
+    port: 20886   #协议端口
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+wallet:
+  privateKey: "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANsRcKY/In5e6CF/fWpi+uwMZT2gZYnBLkSQ4YxH6j1mU6WY9QK8Nee7lI+zjfxrBCxQqDLhKSASxBrBSjBEmVRarmLKLv66jBMeVyL8ZCM47jT1/4/Mnuk2X6NM95RNqrvSNBzMC8JLQEfvCFDopGm2ub0AxZzfOUehWttfCxdjAgMBAAECgYBpWVs3j6AKbqCqT1GkQkJSFunu934s/3o9HgFhgUoLyfRK7CJTdOhlbwdUDfCnpV1F5GnmwfIRiwTEqxR+3tZu3p8M4LorRbD4rgfEoUPgVj59kZeRj91EfALwfSKLWyGFxbByQu/sJlBB8KbJxSiXghlb8BDezEjnnpif5X4F8QJBAP8typWrztrEBURUJ5G8qJ2003A4+B2Qwggqpx01OBhVPXT54ilPy6atpqPd4Arqac0b5dEbCX/rK1MN++pkspMCQQDbxebY3gxAx/c+/FgyvtOu60phVxMGINYodv6VCHvZWFRIW791oZvJyKPcc3091O3g6PrFwW8jvEWU3VC7+vnxAkA9MVn3cm/0fjVVIWkrxbYZu5dIviCh1mjxVGkm0/BTxX0rZBEcHwqTOelQOpDTjUs56IrADl/E0TxeemgC2YsJAkEAngUT0QcHZGTjX8RtXj9bUUAYwRissxFVKs80idAJzOL35vchGOFUdKfxOgdIG/dH+xlJhntpABbVKQ5giGkS4QJBAPPSDXq608QYaUHQ0KDCwlYBmHdTWCuFJZZXjtvDl8eaeFSImAmWHDbGtm8wXUIq6Z9ySg4OYpEEywLHbs+pLbQ="
+#  privateKey: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKuA1sA6udDmzuDntM3TMtJC7/L5hH+0Lag+bkzu+786yiYboj+dczG32BYsdirRv2JygF4VAA4Gx8Cu2AyW+JKQxUH99va5LNKBfO36aOELE/lKUcUOu5SzlELS1hULwZdbSRQrnr+eBwEPbdOykzfXwNV7MDzHZ5NmUqGQkJm9AgMBAAECgYBfSUoHq5kp09MFajcuVDVcVQxz9uYC/dyQKX+nBvCgIs3FtnzC03v5F6fbSgCtcbPfwrZHj2tkX6gECiDHfenEu8G2Q1Mp03d0Nj/B8FN1TarceS3caAJzsaGuy24OEvGQpWFAPP9VbBID33ZpcRXGALVO5gOMH+qRdSxMKjtTkQJBANxMRVHFWe5RL0dgHUIMLllZYXtxcMvsDaVpHVOnp3Tv6B84UisCavpNTJ7v2BsyJX+fX8Wr+evRq/5e99yak/cCQQDHTCxq4hLcV1nmQE4BeJWNI+Wms2f9aYA4kVdLSgitoQkJmaWx+57/+LMp3DcaLtKvdMoxsFek5XP+JGsHLerrAkEA18pOTJ8ITI1xxnS7tCrCa/tFpemlF9uOMm0YsQ0U11L5CTveIQspRy3Y1AcUpO8mFDFFWxfuo7SqyWy1Vn6EWQJAP/0THdYsXBanxKfM4+gFjGWELLvZnaGsC32O25uPob/cmPp+GuFBMcp2K/CKuJtkBfWnncCSw1zwmx6yRoHVtQJBAJNdN1Xm2qtE3CCMnzhCzmSUOesgsoBd97cil+KHizM86EwmeK67Qn5AF2gPJ5rGxVkyDzFcRF1iY9ziC/zoHB8="
+  publicKey: "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbEXCmPyJ+Xughf31qYvrsDGU9oGWJwS5EkOGMR+o9ZlOlmPUCvDXnu5SPs438awQsUKgy4SkgEsQawUowRJlUWq5iyi7+uowTHlci/GQjOO409f+PzJ7pNl+jTPeUTaq70jQczAvCS0BH7whQ6KRptrm9AMWc3zlHoVrbXwsXYwIDAQAB"
+  fuYouPublicKey: "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrgNbAOrnQ5s7g57TN0zLSQu/y+YR/tC2oPm5M7vu/OsomG6I/nXMxt9gWLHYq0b9icoBeFQAOBsfArtgMlviSkMVB/fb2uSzSgXzt+mjhCxP5SlHFDruUs5RC0tYVC8GXW0kUK56/ngcBD23TspM318DVezA8x2eTZlKhkJCZvQIDAQAB"
+  requestUrl: https://ghb-test.fuioupay.com/ghbWallet.html
+  fuMerchantNum: FU000015
+  merchantNo: 115634200010000761
+  gongHuiPublicKey: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyTvTyB88W2A1O/tt6gucvrgnWABvP7OIsEjU1hJviiEjbClxGGZoqekVYDLuzp4jafBlstR8mdAoDHkAsbznNF9bMC5+co1DY23p9y81XJIiaHhCMJ8BB290+eBIvs7VIvOcNAm7uFORXHth4viuBA1EDNzce2Lkk+gqPz9iNDO66eTWjQVCHf/wjMf71Icgt8M7GL+xqafwIaknLj/m1E2T98S3CmgMEdQSbJVSb08aIdH841VogA6eEhqzQMG6fdH5saoW2737Q2o3ufzQ0bU8T0dwWu7LIKOW8Z95PoP6q4Vrb4zQ1nQASK3HMu3wUfK0DUpiAOOE389qaPYVbQIDAQAB"
