@@ -64,3 +64,8 @@ ADD COLUMN `address` varchar(120) COMMENT '联系地址' AFTER `flag`;
 
 ALTER TABLE `fy_mall`.`gs_merchant`
 ADD COLUMN `merchant_type` int(3) COMMENT '商户类别' AFTER `flag`;
+
+ALTER TABLE `fy_mall`.`gs_user`
+ADD COLUMN `level` int(11) COMMENT '用户星级' AFTER `flag`,
+ADD COLUMN `overdue` int(11) COMMENT '年底过期积分' AFTER `level`,
+ADD COLUMN `direction_integral` int(11) COMMENT '定向积分' AFTER `overdue`;
