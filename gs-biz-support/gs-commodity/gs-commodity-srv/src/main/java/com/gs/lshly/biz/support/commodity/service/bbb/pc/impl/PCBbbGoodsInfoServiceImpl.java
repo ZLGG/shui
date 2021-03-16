@@ -129,6 +129,15 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())) {
             wrapper.orderByAsc("sale_price", "id");
         }
+        if(qto.getIsPointGood()!=null){
+            wrapper.eq("is_point_good",qto.getIsPointGood());
+        }
+        if(qto.getIsInMemberGift()!=null){
+            wrapper.eq("is_in_member_gift",qto.getIsInMemberGift());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() !=-1){
+            wrapper.eq("sale_type",qto.getSaleType());
+        }
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());
         wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
@@ -239,6 +248,15 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         }
         if (StringUtils.isNotBlank(qto.getShopId())) {
             wrapper.eq("shop_id", qto.getShopId());
+        }
+        if(qto.getIsPointGood()!=null){
+            wrapper.eq("is_point_good",qto.getIsPointGood());
+        }
+        if(qto.getIsInMemberGift()!=null){
+            wrapper.eq("is_in_member_gift",qto.getIsInMemberGift());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() !=-1){
+            wrapper.eq("sale_type",qto.getSaleType());
         }
         wrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());

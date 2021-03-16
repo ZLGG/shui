@@ -19,32 +19,32 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/bbb/goodsInfo")
-@Api(tags = "2Bpc端商品信息管理")
+@Api(tags = "2Bpc端商品信息管理-v1.1.0")
 public class PCBbbGoodsInfoController {
 
     @DubboReference
     private IPCBbbGoodsInfoRpc goodsInfoRpc;
 
-    @ApiOperation("商品列表")
+    @ApiOperation("商品列表-v1.1.0")
     @PostMapping("")
     public ResponseData<PageData<PCBbbGoodsInfoVO.GoodsDetailListVO>> pageDataResponseData(@RequestBody PCBbbGoodsInfoQTO.GoodsSearchQTO qto) {
         return ResponseData.data(goodsInfoRpc.pageGoodsDetailVO(qto));
     }
 
-    @ApiOperation("商品详情")
+    @ApiOperation("商品详情-v1.1.0")
     @GetMapping("{id}")
     public ResponseData<PCBbbGoodsInfoVO.GoodsDetailVO> getGoodsDetailVO(@PathVariable String id) {
         PCBbbGoodsInfoDTO.IdDTO dto = new PCBbbGoodsInfoDTO.IdDTO(id);
         return ResponseData.data(goodsInfoRpc.getGoodsDetailVO(dto));
     }
 
-    @ApiOperation("商品搜索列表")
+    @ApiOperation("商品搜索列表-v1.1.0")
     @GetMapping("/searchGoods")
     public ResponseData<PageData<PCBbbGoodsInfoVO.GoodsListVO>> getGoodsListVO(PCBbbGoodsInfoQTO.SearchByGoodsNameQTO qto) {
         return ResponseData.data(goodsInfoRpc.getSearchGoods(qto));
     }
 
-    @ApiOperation("店铺自定义分类下面的商品列表")
+    @ApiOperation("店铺自定义分类下面的商品列表-v1.1.0")
     @PostMapping("/pageShopNavigationGoods")
     public ResponseData<PageData<PCBbbGoodsInfoVO.GoodsDetailListVO>> pageShopNavigationGoods(@RequestBody PCBbbGoodsInfoQTO.ShopNavigationIdQTO qto) {
         return ResponseData.data(goodsInfoRpc.pageShopNavigationGoodsVO(qto));
