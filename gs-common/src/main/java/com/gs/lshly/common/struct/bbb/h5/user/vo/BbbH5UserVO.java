@@ -49,7 +49,7 @@ public abstract class BbbH5UserVO implements Serializable {
         private Integer isInUser;
 
         @ApiModelProperty("电信星级")
-        private String telecoms_level;
+        private String telecomsLevel;
 
         @ApiModelProperty("电信积分")
         private Integer telecomsIntegral;
