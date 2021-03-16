@@ -33,7 +33,7 @@ import java.util.List;
 */
 @RestController
 @RequestMapping("/merchant/pc/goodsInfo")
-@Api(tags = "商品信息管理")
+@Api(tags = "商品信息管理-v1.1.0")
 public class PCMerchGoodsInfoController {
 
     @DubboReference
@@ -79,7 +79,7 @@ public class PCMerchGoodsInfoController {
         return ResponseData.data(goodsInfoRpc.getEditDetailEto(dto));
     }
 
-    @ApiOperation("修改商品信息管理")
+    @ApiOperation("修改商品信息管理-v1.1.0")
     @PutMapping(value = "/{id}")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody PCMerchGoodsInfoDTO.AddGoodsETO eto) {
         eto.setId(id);
@@ -115,14 +115,14 @@ public class PCMerchGoodsInfoController {
         ExcelUtil.export(exportData, response);
     }
 
-    @ApiOperation("下载模板")
+    @ApiOperation("下载模板-v1.1.0")
     @GetMapping(value = "/downExcel")
     public void downExcel(@ApiIgnore HttpServletResponse response) throws Exception{
         ExportDataDTO exportData = goodsInfoRpc.downExcelMode();
         ExcelUtil.export(exportData, response);
     }
 
-    @ApiOperation("从Excel表格导入商品相关数据")
+    @ApiOperation("从Excel表格导入商品相关数据-v1.1.0")
     @PostMapping(value = "/importData")
     public void importData( @RequestParam MultipartFile file,BaseDTO dto) throws Exception {
         List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO> dataVOS = HuToolExcelUtil.importData(PCMerchGoodsInfoDTO.ExcelGoodsDataETO.class,file);

@@ -146,6 +146,9 @@ public abstract class GoodsInfoVO implements Serializable {
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;
 
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
     }
 
     @Data
@@ -263,6 +266,9 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
     }
 
     @Data

@@ -43,6 +43,7 @@ import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsRpc;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -842,6 +843,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         importGoodsDataVO.setShopNavigation2cName("2c店铺分类名称");
         importGoodsDataVO.setStockSubtractType("10");
         importGoodsDataVO.setStockNum("10");
+        importGoodsDataVO.setIsPointGood("false");
+        importGoodsDataVO.setPointPrice("0");
+        importGoodsDataVO.setRemarks("办理备注");
+        importGoodsDataVO.setIsInMemberGift("false");
+        importGoodsDataVO.setInMemberPointPrice("0");
+        importGoodsDataVO.setSaleType("0");
+        importGoodsDataVO.setThirdProductId("信天游产品号");
         importGoodsDataVOS.add(importGoodsDataVO);
         return importGoodsDataVOS;
     }

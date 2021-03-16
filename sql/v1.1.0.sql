@@ -69,3 +69,6 @@ ALTER TABLE `fy_mall`.`gs_user`
 ADD COLUMN `level` int(11) COMMENT '用户星级' AFTER `flag`,
 ADD COLUMN `overdue` int(11) COMMENT '年底过期积分' AFTER `level`,
 ADD COLUMN `direction_integral` int(11) COMMENT '定向积分' AFTER `overdue`;
+
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `third_product_id` int(11) NULL DEFAULT NULL COMMENT '信天游产品号' AFTER `sale_type`;
