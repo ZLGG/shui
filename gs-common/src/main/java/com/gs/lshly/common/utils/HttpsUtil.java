@@ -1,25 +1,33 @@
 package com.gs.lshly.common.utils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import java.net.URLEncoder;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Project: boss-sdk
@@ -29,8 +37,13 @@ import java.net.URL;
  * @date Date: 2019年10月23日 18:00
  * @version: V1.0.0
  */
+@Slf4j
 public class HttpsUtil {
-
+	private final static Integer SOCKET_TIMEOUT = 10000;
+	private final static Integer CONNECT_TIMEOUT = 10000;
+	
+	static RequestConfig newRequestConfig = RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build();
+    	
 	private HttpsUtil(){}
 
 	/**
@@ -165,5 +178,78 @@ public class HttpsUtil {
 					.build();
 			return client;
 		}
-
+		
+		
+	    /**
+	     * 没有请求参数的GET请求
+	     *
+	     * @param url
+	     * @return
+	     * @throws Exception
+	     */
+	    public static String get(String url) throws Exception {
+	        return get(url, null, null);
+	    }
+	    
+	    /**
+	     * 包含请求头和请求参数的GET请求
+	     *
+	     * @param url
+	     * @param params
+	     * @param headers
+	     * @return
+	     * @throws Exception
+	     */
+	    public static String get(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
+	        //拼接请求URL
+	        String newUrl = appedParamsToUrl(url, params);
+	        log.info("请求方式:[{}],请求地址:[{}],请求头:{},请求参数:{}", "GET", url, headers, params);
+	        //创建请求客户端
+	        CloseableHttpClient httpClient = HttpClients.createDefault();
+	        //构造GET请求链接
+	        HttpGet httpGet = new HttpGet(newUrl);
+	        httpGet.setConfig(newRequestConfig);
+	        //创建响应客户端
+	        CloseableHttpResponse response = null;
+	        //设置请求头
+	        if (null != headers) {
+	            for (String header : headers.keySet()) {
+	                String value = headers.get(header);
+	                httpGet.setHeader(header, value);
+	            }
+	        }
+	        String content = "";
+	        try {
+	            response = httpClient.execute(httpGet);
+	            Integer statusCode = response.getStatusLine().getStatusCode();
+	            if (statusCode == 200) {
+	                //获取请求体内容
+	                content = EntityUtils.toString(response.getEntity(), "UTF-8");
+	            }
+	        } finally {
+	            if (response != null) {
+	                response.close();
+	            }
+	            httpClient.close();
+	        }
+	        return content;
+	    }
+	    public static String appedParamsToUrl(String url, Map<String, String> params) throws Exception {
+	        String body = "";
+	        if (params != null) {
+	            boolean first = true;
+	            for (String param : params.keySet()) {
+	                if (first) {
+	                    first = false;
+	                } else {
+	                    body += "&";
+	                }
+	                String value = params.get(param);
+	                body += URLEncoder.encode(param, "UTF-8") + "=";
+	                body += URLEncoder.encode(value, "UTF-8");
+	            }
+	            return url + "?" + body;
+	        } else
+	            return url;
+	    }
 }
