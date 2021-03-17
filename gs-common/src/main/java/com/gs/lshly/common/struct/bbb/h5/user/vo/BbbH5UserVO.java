@@ -45,11 +45,17 @@ public abstract class BbbH5UserVO implements Serializable {
         @ApiModelProperty("微信openid")
         private String wxOpenid;
 
-        @ApiModelProperty("星级")
-        private Integer level;
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
 
-        @ApiModelProperty("年底过期积分")
-        private Integer overdue;
+        @ApiModelProperty("电信星级")
+        private String telecoms_level;
+
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+
+        @ApiModelProperty("年底过期积分（电信）")
+        private Integer telecomsPass;
 
         @ApiModelProperty("定向积分")
         private Integer directionIntegral;

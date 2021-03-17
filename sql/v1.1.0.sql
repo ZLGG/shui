@@ -69,6 +69,11 @@ ALTER TABLE `fy_mall`.`gs_user`
 ADD COLUMN `level` int(11) COMMENT '用户星级' AFTER `flag`,
 ADD COLUMN `overdue` int(11) COMMENT '年底过期积分' AFTER `level`,
 ADD COLUMN `direction_integral` int(11) COMMENT '定向积分' AFTER `overdue`;
+ADD COLUMN `is_in_user` tinyint(1) COMMENT '是否为in会员(1-是 0-否)' AFTER `flag`,
+ADD COLUMN `telecoms_integral` int(11) COMMENT '电信积分' AFTER `is_in_user`,
+ADD COLUMN `telecoms_pass` int(11) COMMENT '年底过期积分(电信)' AFTER `telecoms_integral`,
+ADD COLUMN `direction_integral` int(11) COMMENT '电信定向积分' AFTER `telecoms_pass`,
+ADD COLUMN `telecoms_level` varchar(24) COMMENT '电信等级' AFTER `direction_integral`;
 
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `third_product_id` int(11) NULL DEFAULT NULL COMMENT '信天游产品号' AFTER `sale_type`;
