@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 */
 @RestController
 @RequestMapping("/bbc/goodsInfo")
-@Api(tags = "2C商城商品信息管理管理")
+@Api(tags = "2C商城商品信息管理管理-v1.1.0")
 public class BbcGoodsInfoController {
 
     @DubboReference
@@ -30,37 +30,37 @@ public class BbcGoodsInfoController {
     @DubboReference
     private IBbcShopRpc bbcShopRpc;
 
-    @ApiOperation("2C商城商品信息管理列表")
+    @ApiOperation("2C商城商品信息管理列表-v1.1.0")
     @GetMapping("")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> pageDataResponseData(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsListVO(qto));
     }
 
-    @ApiOperation("2C商城商家商品信息管理列表")
+    @ApiOperation("2C商城商家商品信息管理列表-v1.1.0")
     @GetMapping("/getMerchantGoods")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> pageDataResponseData(BbcGoodsInfoQTO.MerchantGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageMerchantGoods(qto));
     }
 
-    @ApiOperation("2C商城商品信息管理详情")
+    @ApiOperation("2C商城商品信息管理详情-v1.1.0")
     @GetMapping(value = "/{id}")
     public ResponseData<BbcGoodsInfoVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(id)));
     }
 
-    @ApiOperation("搜素2C商城首页商品信息")
+    @ApiOperation("搜素2C商城首页商品信息-v1.1.0")
     @GetMapping(value = "getHomeGoods")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getHomeGoods(BbcGoodsInfoQTO.GoodsListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(qto));
     }
 
-    @ApiOperation("根据商品所选规格信息获取sku信息")
+    @ApiOperation("根据商品所选规格信息获取sku信息-v1.1.0")
     @GetMapping(value = "getSkuVO")
     public ResponseData<BbcSkuGoodInfoVO.SkuVO> getSkuVO(BbcGoodsInfoQTO.GoodsSkuQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getSkuVO(qto));
     }
 
-    @ApiOperation("获取推荐商品列表")
+    @ApiOperation("获取推荐商品列表-v1.1.0")
     @GetMapping(value = "getRecommendGoodsList")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getRecommendGoodsList(BbcGoodsInfoQTO.OrderGoodsListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getRecommendGoodsList(qto));

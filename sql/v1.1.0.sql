@@ -62,9 +62,6 @@ ADD COLUMN `in_member_point_price` decimal(12, 0) NULL DEFAULT NULL COMMENT 'in�
 ALTER TABLE `fy_mall`.`gs_merchant_account`
 ADD COLUMN `address` varchar(120) COMMENT '联系地址' AFTER `flag`;
 
-ALTER TABLE `fy_mall`.`gs_merchant`
-ADD COLUMN `merchant_type` int(3) COMMENT '商户类别' AFTER `flag`;
-
 ALTER TABLE `fy_mall`.`gs_user`
 ADD COLUMN `is_in_user` tinyint(1) COMMENT '是否为in会员(1-是 0-否)' AFTER `flag`,
 ADD COLUMN `telecoms_integral` int(11) COMMENT '电信积分' AFTER `is_in_user`,
@@ -74,3 +71,18 @@ ADD COLUMN `telecoms_level` varchar(24) COMMENT '电信等级' AFTER `direction_
 
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `third_product_id` int(11) NULL DEFAULT NULL COMMENT '信天游产品号' AFTER `sale_type`;
+
+ALTER TABLE `fy_mall`.`gs_merchant_account`
+ADD COLUMN `address` varchar(50) COMMENT '联系地址' AFTER `flag`,
+ADD COLUMN `name` varchar(50) COMMENT '商户名称' AFTER `address`,
+ADD COLUMN `type` int(11) COMMENT '商户类别（10=积分商户 20=普通商户）' AFTER `name`,
+ADD COLUMN `province` varchar(32) COMMENT '商户属地（省名称）' AFTER `type`,
+ADD COLUMN `city` varchar(32) COMMENT '商户属地（市名称）' AFTER `province`,
+ADD COLUMN `expiration_time` datetime(0) COMMENT '协议到期时间' AFTER `city`,
+ADD COLUMN `agreement_code` varchar(120) COMMENT '协议号' AFTER `expiration_time`,
+ADD COLUMN `tax_type` int(11) COMMENT '供应商纳税性质(10=一般纳税人 20=小规模纳税人)' AFTER `agreement_code`,
+ADD COLUMN `tax_rate` decimal(10, 0) COMMENT '税率(%)' AFTER `tax_type`;
+
+ALTER TABLE `fy_mall`.`gs_user`
+ADD COLUMN `user_type` int(11) DEFAULT 1 COMMENT '用户类型(1-普通用户 2-电信用户)' AFTER `flag`,
+MODIFY COLUMN `is_in_user` int(11) DEFAULT 0 COMMENT '是否为in会员(1-是 0-否)' AFTER `user_type`;
