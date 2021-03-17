@@ -222,4 +222,9 @@ public class GoodsInfo extends Model {
      * 出售类型（0普通，1活动）
      */
     private Integer saleType;
+
+    /**
+     * 信天游产品号
+     */
+    private Integer thirdProductId;
 }
