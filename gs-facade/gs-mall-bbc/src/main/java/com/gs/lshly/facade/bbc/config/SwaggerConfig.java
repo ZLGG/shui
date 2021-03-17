@@ -1,12 +1,13 @@
 package com.gs.lshly.facade.bbc.config;
 
-import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
-import com.gs.lshly.common.utils.DocketUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.gs.lshly.common.utils.DocketUtils;
+
 import springfox.documentation.spring.web.plugins.Docket;
 
 /**
@@ -15,7 +16,6 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @author lxus
  * @since 2020/9/14
  */
-@EnableSwaggerBootstrapUI
 @Configuration
 @Profile(value = {"dev", "test", "hlytest", "fytest", "hztest"})
 public class SwaggerConfig implements WebMvcConfigurer {

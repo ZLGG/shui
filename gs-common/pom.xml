@@ -41,16 +41,6 @@
             <version>${swagger.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>${swagger-ui-bootstrap.version}</version>
-        </dependency>
-        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
@@ -149,6 +139,10 @@
             <artifactId>javase</artifactId>
             <version>2.0</version>
         </dependency>
-        
+        <dependency>
+        	<groupId>com.aliyun</groupId>
+        	<artifactId>aliyun-java-sdk-core</artifactId>
+            <version>3.2.3</version>
+        </dependency>
     </dependencies>
 </project>

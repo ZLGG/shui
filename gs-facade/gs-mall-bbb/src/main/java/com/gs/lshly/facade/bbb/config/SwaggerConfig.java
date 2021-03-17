@@ -6,11 +6,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import com.gs.lshly.common.utils.DocketUtils;
 
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * SwaggerConfig
@@ -18,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author lxus
  * @since 2020/9/14
  */
-@EnableSwaggerBootstrapUI
+//@EnableSwaggerBootstrapUI
 @Configuration
 @Profile(value = {"dev","test","hlytest","hztest"})
 public class SwaggerConfig implements WebMvcConfigurer {

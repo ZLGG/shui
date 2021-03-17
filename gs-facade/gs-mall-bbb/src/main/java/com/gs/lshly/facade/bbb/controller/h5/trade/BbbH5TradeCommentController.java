@@ -1,4 +1,12 @@
 package com.gs.lshly.facade.bbb.controller.h5.trade;
+import javax.validation.Valid;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
@@ -6,18 +14,10 @@ import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5TradeCommentBuildDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5TradeCommentDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5TradeCommentQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeCommentListVO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbTradeCommentBuildDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbTradeCommentDTO;
 import com.gs.lshly.rpc.api.bbb.h5.trade.IBbbH5TradeCommentRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 /**
 * <p>

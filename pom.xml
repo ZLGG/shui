@@ -37,8 +37,6 @@
 
         <docker.repostory>registry.cn-shenzhen.aliyuncs.com</docker.repostory>
         <docker.registry.name>lxus</docker.registry.name>
-        <swagger-ui-bootstrap.version>1.9.0</swagger-ui-bootstrap.version>
-        <swagger-ui.version>2.7.0</swagger-ui.version>
     </properties>
 
     <dependencyManagement>
@@ -116,21 +114,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger-ui.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger-ui.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>${swagger-ui-bootstrap.version}</version>
         </dependency>
     </dependencies>
     </dependencyManagement>

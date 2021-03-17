@@ -1,22 +1,22 @@
 package com.gs.lshly.facade.bbb.controller.h5.merchant;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.dto.BbbH5ShopDTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.qto.BbbH5ShopQTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopVO;
-import com.gs.lshly.common.struct.bbb.pc.merchant.dto.BbbShopDTO;
-import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbShopHomeVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.rpc.api.bbb.h5.merchant.IBbbH5ShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
 * <p>
