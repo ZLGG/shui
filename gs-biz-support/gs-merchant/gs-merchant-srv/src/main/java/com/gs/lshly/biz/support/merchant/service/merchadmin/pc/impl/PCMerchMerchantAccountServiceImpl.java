@@ -135,6 +135,15 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         QueryWrapper<AccountShopView> queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("act.account_type",MerchantAccountTypeEnum.子帐号.getCode());
         queryWrapper.eq("act.shop_id",qto.getJwtShopId());
+        if(StringUtils.isNotBlank(qto.getName())){
+            queryWrapper.eq("act.name",qto.getName());
+        }
+        if(null!=qto.getType()&&0!=qto.getType()){
+            queryWrapper.eq("act.type",qto.getType());
+        }
+        if(StringUtils.isNotBlank(qto.getMerAddress())){
+            queryWrapper.like("CONCAT( act.province,'', act.city )",qto.getMerAddress());
+        }
         merchantAccountMapper.mapperPage(page,queryWrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMerchantAccountVO.ListVO.class, page);
     }

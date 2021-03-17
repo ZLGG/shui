@@ -32,14 +32,14 @@ public class PCMerchMerchantAccountController {
     @DubboReference
     private IPCMerchMerchantAccountRpc pcMerchMerchantAccountRpc;
 
-    @ApiOperation("商家帐号列表")
+    @ApiOperation("商家帐号列表-v1.1.0")
     @GetMapping("")
     @Func(code="view", name="查")
     public ResponseData<PageData<PCMerchMerchantAccountVO.ListVO>> list(PCMerchMerchantAccountQTO.QTO qto) {
         return ResponseData.data(pcMerchMerchantAccountRpc.pageData(qto));
     }
 
-    @ApiOperation("商家帐号详情")
+    @ApiOperation("商家帐号详情-v1.1.0")
     @GetMapping(value = "/{id}")
     @Func(code="view", name="查")
     public ResponseData<PCMerchMerchantAccountVO.DetailVO> get(@PathVariable String id) {

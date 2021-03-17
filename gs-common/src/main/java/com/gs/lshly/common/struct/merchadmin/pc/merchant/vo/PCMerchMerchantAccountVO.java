@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +38,17 @@ public abstract class PCMerchMerchantAccountVO implements Serializable {
         @ApiModelProperty("店铺id")
         private String shopId;
 
+        @ApiModelProperty("商户名称")
+        private String name;
+
+        @ApiModelProperty("商户类别（10=积分商户 20=普通商户）")
+        private Integer type;
+
+        @ApiModelProperty("联系人")
+        private String realName;
+
+        @ApiModelProperty("商户属地")
+        private String merAddress;
     }
 
     @Data
@@ -67,6 +79,29 @@ public abstract class PCMerchMerchantAccountVO implements Serializable {
         @ApiModelProperty("商家所有的角色数组")
         private List<RoleItemVO> roleList;
 
+        @ApiModelProperty("商户名称")
+        private String name;
+
+        @ApiModelProperty("商户类别（10=积分商户 20=普通商户）")
+        private Integer type;
+
+        @ApiModelProperty("商户属地（省名称）")
+        private String province;
+
+        @ApiModelProperty("商户属地（市名称）")
+        private String city;
+
+        @ApiModelProperty("协议到期时间")
+        private Date expirationTime;
+
+        @ApiModelProperty("协议号")
+        private String agreementCode;
+
+        @ApiModelProperty("供应商纳税性质(10=一般纳税人 20=小规模纳税人)")
+        private Integer taxType;
+
+        @ApiModelProperty("税率(%)")
+        private Double taxRate;
     }
 
     @Data

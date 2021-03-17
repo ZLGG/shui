@@ -21,7 +21,8 @@ import org.springframework.stereotype.Repository;
 public interface MerchantAccountMapper extends BaseMapper<MerchantAccount> {
 
 
-    @Select("select distinct act.*,rd.id role_id,rd.role_name,sp.shop_name,sp.shop_type " +
+    @Select("select distinct act.*,rd.id role_id,rd.role_name,sp.shop_name,sp.shop_type,act.name,act.type," +
+            "act.real_name,CONCAT( act.province,'', act.city ) as merAddress " +
             "from gs_merchant_account act " +
             "left join gs_merchant_account_role aro on act.id = aro.account_id " +
             "left join gs_merchant_role_dict rd on rd.id = aro.role_id " +
