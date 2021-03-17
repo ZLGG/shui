@@ -66,9 +66,6 @@ ALTER TABLE `fy_mall`.`gs_merchant`
 ADD COLUMN `merchant_type` int(3) COMMENT '商户类别' AFTER `flag`;
 
 ALTER TABLE `fy_mall`.`gs_user`
-ADD COLUMN `level` int(11) COMMENT '用户星级' AFTER `flag`,
-ADD COLUMN `overdue` int(11) COMMENT '年底过期积分' AFTER `level`,
-ADD COLUMN `direction_integral` int(11) COMMENT '定向积分' AFTER `overdue`;
 ADD COLUMN `is_in_user` tinyint(1) COMMENT '是否为in会员(1-是 0-否)' AFTER `flag`,
 ADD COLUMN `telecoms_integral` int(11) COMMENT '电信积分' AFTER `is_in_user`,
 ADD COLUMN `telecoms_pass` int(11) COMMENT '年底过期积分(电信)' AFTER `telecoms_integral`,
