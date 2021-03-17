@@ -83,8 +83,11 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
         @ApiModelProperty("是否仅显示现货 10=显示 20=不显示")
         private Integer hasStock;
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格  40积分  50上架时间")
         private Integer orderByProperties;
+        
+        @ApiModelProperty(value = "排序条件字段 10=升序 20=降序")
+        private Integer orderByAscDesc;
 
         @ApiModelProperty("是否是积分商品")
         private Boolean isPointGood;

@@ -110,4 +110,32 @@ public abstract class BbcSiteTopicVO implements Serializable {
         private Integer idx;
         
     }
+    
+    /**
+     * IN会员专区
+     *
+     * 
+     * @author yingjun
+     * @date 2021年3月17日 上午1:23:43
+     */
+	@Data
+    @ApiModel("BbcSiteTopicVO.InMemberGoodsVO")
+    @Accessors(chain = true)
+    public static class InMemberGoodsVO implements Serializable{
+		
+		@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("标题")
+        private String name;
+        
+        @ApiModelProperty("内容")
+        private List list;
+        
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+        
+        @ApiModelProperty("积分值")
+        private Integer telecomsIntegral;
+    }
 }

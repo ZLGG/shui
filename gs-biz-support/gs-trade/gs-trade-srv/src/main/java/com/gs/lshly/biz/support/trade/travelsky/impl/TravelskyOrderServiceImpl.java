@@ -40,6 +40,14 @@ import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+/**
+ * 
+ *
+ * 
+ * @author yingjun
+ * @date 2021年3月16日 下午2:42:29
+ */
 @Component
 @Slf4j
 public class TravelskyOrderServiceImpl implements ITravelskyOrderService {

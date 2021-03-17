@@ -126,8 +126,30 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getBrandId())) {
             wrapper.in("brand_id", qto.getBrandId());
         }
-        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())) {
-            wrapper.orderByAsc("sale_price", "id");
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode())) {
+            //wrapper.orderByAsc("sale_price", "id");
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+            if(ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())){
+            	if(qto.getOrderByAscDesc().equals(10)){
+            		wrapper.orderByAsc("in_member_point_price", "id");
+            	}else{
+            		wrapper.orderByDesc("in_member_point_price", "id");
+            	}
+            }else{
+            	wrapper.orderByAsc("in_member_point_price", "id");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+        	if(ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())){
+            	if(qto.getOrderByAscDesc().equals(10)){
+            		wrapper.orderByAsc("publish_time", "id");
+            	}else{
+            		wrapper.orderByDesc("publish_time", "id");
+            	}
+            }else{
+            	wrapper.orderByAsc("publish_time", "id");
+            }
         }
         if(qto.getIsPointGood()!=null){
             wrapper.eq("is_point_good",qto.getIsPointGood());

@@ -12,6 +12,7 @@ import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.InMemberGoodsVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;;
 
@@ -46,6 +47,11 @@ public class BbcSiteTopicRpc implements IBbcSiteTopicRpc{
 	@Override
 	public CategoryListVO topicGoods(String topicId) {
 		return bbcSiteTopicService.topicGoods(topicId);
+	}
+
+	@Override
+	public InMemberGoodsVO inMemberGoods() {
+		return bbcSiteTopicService.inMemberGoods();
 	}
 
 }

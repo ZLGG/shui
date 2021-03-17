@@ -28,6 +28,7 @@ import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.InMemberGoodsVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
@@ -259,6 +260,34 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		
 		QueryWrapper<SiteTopicGoods> goodsWrapper =  MybatisPlusUtil.query();
 		goodsWrapper.eq("topic_id",topicId);
+		List<SiteTopicGoods> goodslist =goodsRepository.list(goodsWrapper);
+		
+		if(CollectionUtils.isNotEmpty(goodslist)){
+			List<GoodsInfoVO.DetailVO> goodsInfoList =new ArrayList<GoodsInfoVO.DetailVO>();
+			for(SiteTopicGoods siteTopicGoods:goodslist){
+				
+				String goodsId = siteTopicGoods.getGoodsId();
+        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+        		goodsInfoList.add(goodsInfoDetailVO);
+				
+			}
+			categoryListVO.setList(goodsInfoList);
+		}
+		return categoryListVO;
+	}
+
+	@Override
+	public InMemberGoodsVO inMemberGoods() {
+		InMemberGoodsVO categoryListVO = new InMemberGoodsVO();
+		SiteTopic siteTopic = repository.getById("1369498302813863937");
+		if(siteTopic==null)
+			throw new BusinessException("未查询到数据");
+		categoryListVO.setId(siteTopic.getId());
+		categoryListVO.setImageUrl(siteTopic.getImageUrl());
+		categoryListVO.setName(siteTopic.getName());
+		categoryListVO.setTelecomsIntegral(0);
+		QueryWrapper<SiteTopicGoods> goodsWrapper =  MybatisPlusUtil.query();
+		goodsWrapper.eq("topic_id","1369498302813863937");
 		List<SiteTopicGoods> goodslist =goodsRepository.list(goodsWrapper);
 		
 		if(CollectionUtils.isNotEmpty(goodslist)){
