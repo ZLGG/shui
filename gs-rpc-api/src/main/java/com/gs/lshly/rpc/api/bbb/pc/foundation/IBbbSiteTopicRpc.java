@@ -1,7 +1,9 @@
 package com.gs.lshly.rpc.api.bbb.pc.foundation;
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteTopicQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteTopicVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 
 /**
 *
@@ -11,4 +13,8 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteTopicVO;
 public interface IBbbSiteTopicRpc {
 
     List<BbbSiteTopicVO.ListVO> list();
+    
+    
+    
+    List<GoodsInfoVO.DetailVO> listHotsearch(BbbSiteTopicQTO.QTO qto);
 }

@@ -6,7 +6,9 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.foundation.service.bbb.pc.IBbbSiteTopicService;
+import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteTopicQTO.QTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteTopicVO.ListVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteTopicRpc;
 
 /**
@@ -25,6 +27,11 @@ public class BbbSiteTopicRpc implements IBbbSiteTopicRpc {
 	@Override
 	public List<ListVO> list() {
 		return bbbSiteTopicService.list();
+	}
+
+	@Override
+	public List<DetailVO> listHotsearch(QTO qto) {
+		return bbbSiteTopicService.listHotsearch(qto);
 	}
 
 	

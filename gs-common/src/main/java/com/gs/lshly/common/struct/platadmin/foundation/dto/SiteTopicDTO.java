@@ -54,6 +54,11 @@ public abstract class SiteTopicDTO implements Serializable {
         
         @ApiModelProperty(value="排序字段",required=false)
         private Integer idx;
+        
+        @ApiModelProperty(value="是否首页显示 1：是；0：否",required=false)
+        private Integer isDefault;
+        
+        
     }
 
 

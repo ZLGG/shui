@@ -162,4 +162,15 @@ public class BbcHomeController {
         return ResponseData.data(bbbSiteVideoRpc.list(qto));
     }
 
+    @ApiOperation("专区产品列表-v1.1.0")
+    @GetMapping("/topicGoods")
+    public ResponseData<BbcSiteTopicVO.CategoryListVO> topicGoods(String topicId) {
+        return ResponseData.data(bbcSiteTopicRpc.topicGoods(topicId));
+    }
+    
+    @ApiOperation("IN会员产品专区-v1.1.0")
+    @GetMapping("/inMemberGoods")
+    public ResponseData<BbcSiteTopicVO.InMemberGoodsVO> inMemberGoods() {
+        return ResponseData.data(bbcSiteTopicRpc.inMemberGoods());
+    }
 }

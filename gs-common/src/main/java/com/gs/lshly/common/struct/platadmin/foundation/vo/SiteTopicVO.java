@@ -46,7 +46,7 @@ public abstract class SiteTopicVO implements Serializable {
         
         @ApiModelProperty(value="排序字段")
         private Integer idx;
-
+        
     }
     
     

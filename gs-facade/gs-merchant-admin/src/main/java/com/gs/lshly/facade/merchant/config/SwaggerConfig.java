@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.merchant.config;
 
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import com.gs.lshly.common.utils.DocketUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,8 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @since 2020/9/14
  */
 @Configuration
-@Profile(value = {"dev", "test", "hlytest", "fytest"})
+@EnableSwaggerBootstrapUI
+@Profile(value = {"dev", "test", "hlytest", "fytest","hztest"})
 public class SwaggerConfig implements WebMvcConfigurer {
 
     @Value("${swagger.title}")

@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.platform.config;
 
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import com.gs.lshly.common.utils.DocketUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
+@EnableSwaggerBootstrapUI
 @Profile(value = {"dev","test", "hlytest", "fytest","hztest"})
 public class SwaggerConfig implements WebMvcConfigurer {
 

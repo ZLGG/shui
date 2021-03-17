@@ -17,4 +17,6 @@ public interface IBbcSiteTopicService {
     List<CategoryListVO> listPointHome(BbcSiteTopicQTO.QTO qto);
     
     CategoryListVO topicGoods(String topicId);
+    
+    BbcSiteTopicVO.InMemberGoodsVO inMemberGoods();
 }

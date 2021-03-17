@@ -35,4 +35,10 @@ public interface IBbcSiteTopicRpc {
      */
     BbcSiteTopicVO.CategoryListVO topicGoods(String topicId);
     
+    /**
+     * IN会员专区
+     * @return
+     */
+    BbcSiteTopicVO.InMemberGoodsVO inMemberGoods();
+    
 }
