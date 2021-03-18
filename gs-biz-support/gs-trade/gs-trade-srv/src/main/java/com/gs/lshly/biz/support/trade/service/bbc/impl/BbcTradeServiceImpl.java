@@ -13,6 +13,7 @@ import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSettleService;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
@@ -414,6 +415,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public synchronized ResponseData<BbcTradeDTO.IdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto) {
+        log.info("-----------------进入orderSubmit()----------------");
         BbcStockAddressDTO.IdDTO idDto = new BbcStockAddressDTO.IdDTO(dto.getAddressId());
         idDto.setJwtUserId(dto.getJwtUserId());
         // 收货地址
@@ -434,20 +436,21 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         //根据SKU ID数组检查库存
         checkStock(goodsItemList);
 
-        // TODO 查询店铺信息
+        // TODO 查询店铺信息 merchant
 
         // 假设商城商品和积分商城商品是分开下单
         // 判断商品来源是商城还是积分商城
         BbcTradeCommitGoodsCalculateDTO bbcTradeCommitGoodsCalculateDTO;
-        // TODO Enum，商品来源类型：1:商城商品，2:积分商品
-        if ("1".equals(dto.getGoodsSourceType())) {
-            // 计算商城商品总金额
+        if (GoodsSourceTypeEnum.商城商品.getCode().equals(dto.getGoodsSourceType())) {
+            // 计算商城商品总金额和一些商品相关的校验
             bbcTradeCommitGoodsCalculateDTO = calculateAmountOfGood(dto.getProductData(), dto.getShopId(), dto.getJwtUserId());
             dto.setShopProductAmount(bbcTradeCommitGoodsCalculateDTO.getShopProductAmount());
-        } else {
+        } else if (GoodsSourceTypeEnum.积分商品.getCode().equals(dto.getGoodsSourceType())) {
             // 计算积分商城商品总积分
             bbcTradeCommitGoodsCalculateDTO = calculateAmountOfPointGood(dto.getProductData(), dto.getShopId(), dto.getJwtUserId());
             dto.setGoodsPointAmount(bbcTradeCommitGoodsCalculateDTO.getShopProductPointAmount());
+        } else {
+            throw new BusinessException("商品来源有误，请检查");
         }
 
         //计算运费
@@ -457,20 +460,24 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             deliveryAmount = getDeliveryAmount(dto.getShopId(), dto.getProductData(), dto.getDeliveryType(), addressVO.getId());
         }
         dto.setDeliveryAmount(deliveryAmount);
-        //营销结算 TODO
-        try {
-            marketSettleService.settlement(bbcTradeCommitGoodsCalculateDTO.getTradeGoodsDTOSet(), dto);
-        } catch (Exception e) {
-            log.error("营销结算异常:" + e.getMessage(), e);
+
+        //营销结算
+        if (GoodsSourceTypeEnum.商城商品.getCode().equals(dto.getGoodsSourceType())) {
+            try {
+                marketSettleService.settlement(bbcTradeCommitGoodsCalculateDTO.getTradeGoodsDTOSet(), dto);
+            } catch (Exception e) {
+                log.error("营销结算异常:" + e.getMessage(), e);
+            }
         }
+
         // 创建订单信息
         Trade trade = saveTrade(dto, addressVO);
 
         // 创建交易订单商品信息
         saveTradeGoods(trade.getId(), bbcTradeCommitGoodsCalculateDTO.getTradeGoodsDTOSet());
 
-        // 创建支付信息
-        saveTradePay(trade);
+        // 创建支付信息 打算一个订单创建多个支付信息
+//        saveTradePay(trade);
 
         // 根据SKU ID、数量减库存
         boolean subtractStockResult = commonStockRpc.innerSubtractStockForTrade(bbcTradeCommitGoodsCalculateDTO.getSubtractStockItems());
@@ -481,6 +488,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         if (ObjectUtils.isNotEmpty(bbcTradeCommitGoodsCalculateDTO.getCartIdList())) {
             bbcUserShoppingCarRpc.innerClearShopCarList(bbcTradeCommitGoodsCalculateDTO.getCartIdList());
         }
+
+        // 积分商城的校验用户积分余额
 
         return ResponseData.data(new BbcTradeDTO.IdDTO(trade.getId()));
     }
@@ -512,6 +521,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 throw new BusinessException("无商品数据或已下架");
             } else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
                 throw new BusinessException("商品已下架");
+            }
+
+            // 验证商品是否是商城商品
+            if (innerServiceGoodsVO.getIsPointGood()) {
+                throw new BusinessException("商品来源传参错误");
             }
 
             //单品小计金额
@@ -564,11 +578,15 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 throw new BusinessException("无商品数据或已下架");
             } else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
                 throw new BusinessException("商品已下架");
-            } else if (!innerServiceGoodsVO.getIsPointGood()) {
-                throw new BusinessException("不是积分商品");
+            }
+
+            // 验证商品是否是积分商城商品
+            if (!innerServiceGoodsVO.getIsPointGood()) {
+                throw new BusinessException("商品来源传参错误");
             }
 
             // 单品小计积分
+//            innerServiceGoodsVO.setPointPrice(new BigDecimal(5));
             BigDecimal pointPrice = innerServiceGoodsVO.getPointPrice().multiply(new BigDecimal(singleProductData.getQuantity()));
             shopProductPointAmount = shopProductPointAmount.add(pointPrice);
             CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
@@ -619,15 +637,60 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      * @param trade
      */
     private void saveTradePay(Trade trade) {
-        TradePay tradePay = new TradePay();
-        tradePay.setTradeId(trade.getId());
-        tradePay.setUserId(trade.getUserId());
-        tradePay.setShopId(trade.getShopId());
-        tradePay.setTradeCode(trade.getTradeCode());
-        tradePay.setPayType(trade.getPayType());
-        tradePay.setPayState(TradePayStateEnum.待支付.getCode());
-        tradePay.setTotalAmount(trade.getTradeAmount());
-        tradePayRepository.save(tradePay);
+        // TODO 待优化
+
+        // 判断是商城商品还是积分商城商品
+        if (GoodsSourceTypeEnum.商城商品.getCode().equals(trade.getGoodsSourceType())) {
+            TradePay tradePay = new TradePay();
+            tradePay.setTradeId(trade.getId());
+            tradePay.setUserId(trade.getUserId());
+            tradePay.setShopId(trade.getShopId());
+            tradePay.setTradeCode(trade.getTradeCode());
+            tradePay.setPayType(trade.getPayType());
+            tradePay.setPayState(TradePayStateEnum.待支付.getCode());
+            tradePay.setTotalAmount(trade.getTradeAmount());
+            tradePayRepository.save(tradePay);
+            return;
+        }
+
+        TradePayTypeEnum tradePayTypeEnum = TradePayTypeEnum.getEnum(trade.getPayType());
+        if (tradePayTypeEnum.getMixedPayment()) {
+            // 混合支付
+            for (TradePayTypeEnum subType : tradePayTypeEnum.getSubTypes()) {
+                if (TradePayTypeEnum.积分支付.getCode().equals(subType.getCode())) {
+                    TradePay tradePay = new TradePay();
+                    tradePay.setTradeId(trade.getId());
+                    tradePay.setUserId(trade.getUserId());
+                    tradePay.setShopId(trade.getShopId());
+                    tradePay.setTradeCode(trade.getTradeCode());
+                    tradePay.setPayType(subType.getCode());
+                    tradePay.setPayState(TradePayStateEnum.待支付.getCode());
+                    tradePay.setTotalAmount(trade.getPointPriceActuallyPaid());
+                    tradePayRepository.save(tradePay);
+                } else {
+                    TradePay tradePay = new TradePay();
+                    tradePay.setTradeId(trade.getId());
+                    tradePay.setUserId(trade.getUserId());
+                    tradePay.setShopId(trade.getShopId());
+                    tradePay.setTradeCode(trade.getTradeCode());
+                    tradePay.setPayType(subType.getCode());
+                    tradePay.setPayState(TradePayStateEnum.待支付.getCode());
+                    tradePay.setTotalAmount(trade.getAmountActuallyPaid());
+                    tradePayRepository.save(tradePay);
+                }
+            }
+        } else {
+            // 积分商城不是混合支付，肯定是纯积分
+            TradePay tradePay = new TradePay();
+            tradePay.setTradeId(trade.getId());
+            tradePay.setUserId(trade.getUserId());
+            tradePay.setShopId(trade.getShopId());
+            tradePay.setTradeCode(trade.getTradeCode());
+            tradePay.setPayType(tradePayTypeEnum.getCode());
+            tradePay.setPayState(TradePayStateEnum.待支付.getCode());
+            tradePay.setTotalAmount(trade.getPointPriceActuallyPaid());
+            tradePayRepository.save(tradePay);
+        }
     }
 
     /**
@@ -756,7 +819,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             String payResult = paySuccess(trade.getTradeCode());
             return ResponseData.success(payResult);
         }
-        //查询支付数据
+        //查询支付数据 TODO 2条及以上
         QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
         tradePayWrapper.eq("trade_id", trade.getId());
         TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);

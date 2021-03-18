@@ -86,3 +86,6 @@ ADD COLUMN `tax_rate` decimal(10, 0) COMMENT '税率(%)' AFTER `tax_type`;
 ALTER TABLE `fy_mall`.`gs_user`
 ADD COLUMN `user_type` int(11) DEFAULT 1 COMMENT '用户类型(1-普通用户 2-电信用户)' AFTER `flag`,
 MODIFY COLUMN `is_in_user` int(11) DEFAULT 0 COMMENT '是否为in会员(1-是 0-否)' AFTER `user_type`;
+
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `sale_quantity` int(11) NULL DEFAULT NULL COMMENT '销售数量（临时排序用）' AFTER `third_product_id`;

@@ -13,16 +13,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
-* @author oy
-* @since 2020-10-28
-*/
+ * @author oy
+ * @since 2020-10-28
+ */
 public abstract class BbcTradeListVO implements Serializable {
 
 
     @Data
     @ApiModel("BbcTradeListVO.tradeVO")
     @Accessors(chain = true)
-    public static class tradeVO implements Serializable{
+    public static class tradeVO implements Serializable {
 
         @ApiModelProperty("交易订单号(ID)")
         private String id;
@@ -72,8 +72,16 @@ public abstract class BbcTradeListVO implements Serializable {
         private Integer tradeState;
 
 
-        @ApiModelProperty("商品总金额")
+        @ApiModelProperty("商品来源类型：1:商城商品，2:积分商品")
+        private Integer goodsSourceType;
+
+
+        @ApiModelProperty("商品总金额（商城用）")
         private BigDecimal goodsAmount;
+
+
+        @ApiModelProperty("商品总积分（积分商城用）")
+        private BigDecimal goodsPointAmount;
 
 
         @ApiModelProperty("优惠金额")
@@ -84,26 +92,34 @@ public abstract class BbcTradeListVO implements Serializable {
         private BigDecimal deliveryAmount;
 
 
-        @ApiModelProperty("交易总金额")
+        @ApiModelProperty("交易总金额（商城用）")
         private BigDecimal tradeAmount;
 
 
+        @ApiModelProperty("实付积分（积分商城用）")
+        private BigDecimal pointPriceActuallyPaid;
+
+
+        @ApiModelProperty("实付现金（积分商城用）")
+        private BigDecimal amountActuallyPaid;
+
+
         @ApiModelProperty("创建时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime createTime;
 
 
         @ApiModelProperty("支付时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payTime;
 
         @ApiModelProperty("支付截止时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payDeadline;
 
 
         @ApiModelProperty("收货时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime recvTime;
 
 
@@ -166,7 +182,7 @@ public abstract class BbcTradeListVO implements Serializable {
     @Data
     @ApiModel("BbcTradeListVO.TradeGoodsVO")
     @Accessors(chain = true)
-    public static class TradeGoodsVO implements Serializable{
+    public static class TradeGoodsVO implements Serializable {
 
         @ApiModelProperty("交易商品ID")
         private String id;
@@ -246,9 +262,10 @@ public abstract class BbcTradeListVO implements Serializable {
         private Integer commentFlag;
 
     }
+
     @Data
     @ApiModel("BbcTradeListVO.stateCount")
-    public static class stateCountVO implements Serializable{
+    public static class stateCountVO implements Serializable {
 
         @ApiModelProperty("交易状态")
         private Integer tradeState;
@@ -284,18 +301,19 @@ public abstract class BbcTradeListVO implements Serializable {
         private String shopName;
 
         @ApiModelProperty("有效时间开始")
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime validStartTime;
 
         @ApiModelProperty("有效时间结束")
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime validEndTime;
 
     }
+
     @Data
     @ApiModel("BbcTradeListVO.UseCard")
     @Accessors(chain = true)
-    public static class UseCard implements Serializable{
+    public static class UseCard implements Serializable {
 
         @ApiModelProperty("优惠卷id")
         private String cardId;
@@ -322,11 +340,12 @@ public abstract class BbcTradeListVO implements Serializable {
         private Integer isHide;
 
     }
+
     @Data
     @ApiModel("BbcTradeListVO.InnerGoodsCompareTo")
     @Accessors(chain = true)
     @AllArgsConstructor
-    public static class InnerGoodsCompareTo implements Serializable{
+    public static class InnerGoodsCompareTo implements Serializable {
         @ApiModelProperty("商品ID")
         private String id;
 

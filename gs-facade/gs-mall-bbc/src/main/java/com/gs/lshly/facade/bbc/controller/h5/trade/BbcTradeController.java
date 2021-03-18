@@ -19,6 +19,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bbc")
 @Api(tags = "交易订单管理")
+@Slf4j
 public class BbcTradeController {
 
     @DubboReference
@@ -58,6 +60,7 @@ public class BbcTradeController {
     @ApiOperation("提交订单")
     @PostMapping("/userCenter/orderSubmit")
     public ResponseData<BbcTradeDTO.IdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
+        log.info("----------------------提交订单-----------------");
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.orderSubmit(dto);
     }

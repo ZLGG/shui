@@ -104,22 +104,22 @@ public class Trade extends Model {
     private BigDecimal merchantAmount;
 
     /**
-     * 应付积分
+     * 应付积分（积分商城用）
      */
     private BigDecimal pointPricePayable;
 
     /**
-     * 应付现金
+     * 应付现金（积分商城用）
      */
     private BigDecimal amountPayable;
 
     /**
-     * 实付积分
+     * 实付积分（积分商城用）
      */
     private BigDecimal pointPriceActuallyPaid;
 
     /**
-     * 实付现金
+     * 实付现金（积分商城用）
      */
     private BigDecimal amountActuallyPaid;
 

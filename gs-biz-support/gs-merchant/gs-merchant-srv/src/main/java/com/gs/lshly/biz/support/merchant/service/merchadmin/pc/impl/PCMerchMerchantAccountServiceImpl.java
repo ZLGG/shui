@@ -189,6 +189,7 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteMerchantAccount(PCMerchMerchantAccountDTO.IdDTO dto) {
+        //todo 判断商户下是否存在普通商品
         QueryWrapper<MerchantAccount> removeQueryWrapper = MybatisPlusUtil.query();
         removeQueryWrapper.eq("id",dto.getId());
         removeQueryWrapper.eq("account_type",MerchantAccountTypeEnum.子帐号.getCode());
