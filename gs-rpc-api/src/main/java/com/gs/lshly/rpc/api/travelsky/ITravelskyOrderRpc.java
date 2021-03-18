@@ -1,5 +1,7 @@
 package com.gs.lshly.rpc.api.travelsky;
 
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTravelskyDTO;
+
 /**
  * 
  *
@@ -9,5 +11,5 @@ package com.gs.lshly.rpc.api.travelsky;
  */
 public interface ITravelskyOrderRpc {
 	
-    String createOrder();
+    void createOrder(BbcTravelskyDTO.ETO eto);
 }

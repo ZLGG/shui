@@ -46,6 +46,7 @@ import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
+import com.gs.lshly.middleware.sms.utils.CcsMsgCrypt;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbMerchantAccountRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IPCBbbMerchantUserTypeRpc;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
@@ -430,8 +431,8 @@ public class BbbUserServiceImpl implements IBbbUserService {
         json.put("headImg", user.getSex());
         json.put("tenantId", TerminalEnum.BBB.getCode());
         json.put("userId", user.getId());
-        return "x5BjTkg7Ieky+MTqaRJ/Qk8AhLqTTLjaMft+09cX36OWvPMHNUNIV5+jl0siUX5yDx8ZNfJD+o7kt0BudAKIEledsHrjoMYn2cW8VJKFFGHaz0OINShG/vxccmGiB8/zvqF4KiPFZOcfak1CUIS33e3UfPwpaZ1hMKXAZ4c4ejc=";
-        //return CcsMsgCrypt.encrypt(json.toJSONString(),"aHV6aG91SHp6c3RIenpzdA==");
+        //return "x5BjTkg7Ieky+MTqaRJ/Qk8AhLqTTLjaMft+09cX36OWvPMHNUNIV5+jl0siUX5yDx8ZNfJD+o7kt0BudAKIEledsHrjoMYn2cW8VJKFFGHaz0OINShG/vxccmGiB8/zvqF4KiPFZOcfak1CUIS33e3UfPwpaZ1hMKXAZ4c4ejc=";
+        return CcsMsgCrypt.encrypt(json.toJSONString(),"aHV6aG91SHp6c3RIenpzdA==");
 	}
 
 

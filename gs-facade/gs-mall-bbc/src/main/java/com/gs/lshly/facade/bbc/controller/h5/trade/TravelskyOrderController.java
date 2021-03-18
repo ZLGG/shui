@@ -1,11 +1,16 @@
 package com.gs.lshly.facade.bbc.controller.h5.trade;
 
+import javax.validation.Valid;
+
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTravelskyDTO;
 import com.gs.lshly.rpc.api.travelsky.ITravelskyOrderRpc;
 
 import io.swagger.annotations.Api;
@@ -27,9 +32,10 @@ public class TravelskyOrderController {
     @DubboReference
     private ITravelskyOrderRpc travelskyOrderRpc;
 
-    @ApiOperation("订购电子票-v1.1.0")
-    @GetMapping("/order/create")
-    public ResponseData<String> createOrder() {
-        return ResponseData.data(travelskyOrderRpc.createOrder());
+    @ApiOperation("订购电子票test-v1.1.0")
+    @PostMapping("/order/create")
+    public ResponseData<Void> createOrder(@Valid @RequestBody BbcTravelskyDTO.ETO eto) {
+    	travelskyOrderRpc.createOrder(eto);
+        return ResponseData.data(MsgConst.SUBMIT_SUCCESS);
     }
 }
