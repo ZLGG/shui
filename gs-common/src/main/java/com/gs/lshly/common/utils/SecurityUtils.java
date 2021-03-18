@@ -11,17 +11,17 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.aliyuncs.auth.AcsURLEncoder;
-import com.aliyuncs.utils.Base64Helper;
+import org.apache.commons.codec.binary.Base64;
+
 //import com.citydo.xclouddesk.exception.AesException;
 import com.gs.lshly.common.exception.BusinessException;
-
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Created by jack on 17/12/8.
  */
 public class SecurityUtils {
+/**
+ * 
 
     private final static String AGLORITHM_NAME = "HmacSHA256";
 
@@ -65,4 +65,6 @@ public class SecurityUtils {
             throw new BusinessException("signString出错");
         }
     }
+      */
+     
 }

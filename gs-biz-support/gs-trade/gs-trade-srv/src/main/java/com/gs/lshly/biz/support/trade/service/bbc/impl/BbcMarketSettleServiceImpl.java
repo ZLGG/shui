@@ -284,7 +284,7 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
         //2,购买产品与持有优惠券的对应关系-SkuCard, 同一spu合并 -ok
         CommonMarketDTO.MarketSku skuCards = cardUsersService.activeCardSku(dto.getJwtUserId(), skuIds, dto.getTerminal());
 
-        //1.5满赠, 匹配到spuId, 同一spu合并-ok
+        //1.5满赠, 匹配到spuId, 同一spu合并-ok  TODO
         CommonMarketDTO.SkuId giveSkuId = giftGoodsGiveService.activeGiveSku(skuIds, dto.getTerminal());
         BbcTradeGoodsDTO.ETO giftGiveSku = giftGoodsGiveService.fillBbcGoodsInfoOrderVO(giveSkuId, dto);
 

@@ -44,6 +44,7 @@ import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsRpc;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -859,9 +860,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Transactional(rollbackFor = Exception.class)
     public void addGoodsBatch(List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO> list,BaseDTO baseDTO) {
         // TODO 数据校验
-
+        if(list==null||list.size()<=0){
+            throw new BusinessException("excel内容为空");
+        }
         //同一商品为一组
-        Map<String,List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO>> listMap = list.parallelStream()
+        Map<String,List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO>> listMap = list.parallelStream().filter(item->StringUtils.isNotBlank(item.getGoodsNo()))
         .collect(Collectors.groupingBy(PCMerchGoodsInfoDTO.ExcelGoodsDataETO::getGoodsNo));
 
         for (String keys : listMap.keySet()){

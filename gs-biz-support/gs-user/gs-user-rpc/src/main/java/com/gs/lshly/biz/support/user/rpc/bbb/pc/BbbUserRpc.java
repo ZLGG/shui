@@ -111,5 +111,10 @@ public class BbbUserRpc implements IBbbUserRpc {
         return bbbUserService.innerUserVo(dto);
     }
 
+	@Override
+	public String customerAuthorize(BaseDTO dto) {
+		return bbbUserService.customerAuthorize(dto);
+	}
+
 
 }
