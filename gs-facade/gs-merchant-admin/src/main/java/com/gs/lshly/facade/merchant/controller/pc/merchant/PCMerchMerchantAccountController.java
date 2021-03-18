@@ -46,7 +46,7 @@ public class PCMerchMerchantAccountController {
         return ResponseData.data(pcMerchMerchantAccountRpc.detailMerchantAccount(new PCMerchMerchantAccountDTO.IdDTO(id)));
     }
 
-    @ApiOperation("新增商家帐号")
+    @ApiOperation("新增商家帐号-v1.1.0")
     @PostMapping("")
     @Func(code="add", name="增")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchMerchantAccountDTO.AddDTO dto) {
@@ -54,7 +54,7 @@ public class PCMerchMerchantAccountController {
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("删除商家帐号")
+    @ApiOperation("删除商家帐号-v1.1.0")
     @DeleteMapping(value = "/{id}")
     @Func(code="delete", name="删")
     public ResponseData<Void> delete(@PathVariable String id) {
