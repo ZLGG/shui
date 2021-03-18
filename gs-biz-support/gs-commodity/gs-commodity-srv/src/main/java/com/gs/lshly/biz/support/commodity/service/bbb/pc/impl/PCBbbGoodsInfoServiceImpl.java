@@ -127,13 +127,15 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
             wrapper.in("brand_id", qto.getBrandId());
         }
         if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode())) {
-            //wrapper.orderByAsc("sale_price", "id");
+            wrapper.orderByAsc("sale_quantity", "id");
         }
         if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
             if(ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())){
+                //升序
             	if(qto.getOrderByAscDesc().equals(10)){
             		wrapper.orderByAsc("in_member_point_price", "id");
             	}else{
+            	    //降序
             		wrapper.orderByDesc("in_member_point_price", "id");
             	}
             }else{
