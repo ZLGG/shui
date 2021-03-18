@@ -56,4 +56,10 @@ public interface IBbbUserRpc {
     BbbUserVO.UserIntegralStatusVO signInIntegralLogState(BaseDTO dto);
 
     BbbUserVO.InnerUserInfoVO innerUserVo(BaseDTO dto);
+    
+    /**
+     * 客服授权信息
+     * @return
+     */
+    String customerAuthorize(BaseDTO dto);
 }

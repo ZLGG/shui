@@ -54,4 +54,9 @@ public interface IBbbUserService {
     BbbUserVO.UserIntegralStatusVO signInIntegralLogState(BaseDTO dto);
 
     BbbUserVO.InnerUserInfoVO innerUserVo(BaseDTO dto);
+    /**
+     * 授权信息
+     * @return
+     */
+    String customerAuthorize(BaseDTO dto);
 }

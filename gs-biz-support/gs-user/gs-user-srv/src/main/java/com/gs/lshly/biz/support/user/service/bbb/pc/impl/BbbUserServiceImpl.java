@@ -1,9 +1,18 @@
 package com.gs.lshly.biz.support.user.service.bbb.pc.impl;
 
+import java.time.LocalDateTime;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.entity.UserPrivateUser;
@@ -13,10 +22,16 @@ import com.gs.lshly.biz.support.user.enums.UserCardStatusEnum;
 import com.gs.lshly.biz.support.user.mapper.UserCardMapper;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
-import com.gs.lshly.biz.support.user.repository.*;
+import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
+import com.gs.lshly.biz.support.user.repository.IUserPrivateUserRepository;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.biz.support.user.repository.IUserSignInRepository;
+import com.gs.lshly.biz.support.user.repository.IUserUser2bApplyRepository;
 import com.gs.lshly.biz.support.user.service.bbb.pc.IBbbUserService;
 import com.gs.lshly.common.enums.ApplyStateEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
+import com.gs.lshly.common.enums.UserSexEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -25,11 +40,8 @@ import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketMerchantCardUsersQ
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbUserQTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
-import com.gs.lshly.common.struct.common.LegalDictDTO;
-import com.gs.lshly.common.struct.common.LegalDictVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsIntegralVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReportVO;
-import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
@@ -37,19 +49,11 @@ import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbMerchantAccountRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IPCBbbMerchantUserTypeRpc;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
-import com.gs.lshly.rpc.api.bbb.pc.user.IPCBbbUserSignInRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsIntegralRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReportRpc;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * <p>
@@ -404,6 +408,31 @@ public class BbbUserServiceImpl implements IBbbUserService {
         }
         return null;
     }
+
+	@Override
+	public String customerAuthorize(BaseDTO dto) {
+		if (null == dto.getJwtUserId()) {
+			throw new BusinessException("没有登录");
+		}
+		User user = userRepository.getById(dto.getJwtUserId());
+		
+//		String src = "{\"phoneNumber\":\"18267495869\",\"uname\":\"summer\",
+		//\"gender\":\"男\",\"headImg\":\"\",\"tenantId\":\"_1LWHJ9M\",\"userId\":\"bbq1221\"}";
+        JSONObject json = new JSONObject();
+        json.put("phoneNumber", user.getPhone());
+        if(StringUtils.isEmpty(user.getNick())){
+        	json.put("uname", user.getPhone());
+        }else{
+        	json.put("uname", user.getNick());
+        }
+        //性别[10=男  20=女 30=保密]
+        json.put("gender",UserSexEnum.getEnum(user.getSex()));
+        json.put("headImg", user.getSex());
+        json.put("tenantId", TerminalEnum.BBB.getCode());
+        json.put("userId", user.getId());
+        return "x5BjTkg7Ieky+MTqaRJ/Qk8AhLqTTLjaMft+09cX36OWvPMHNUNIV5+jl0siUX5yDx8ZNfJD+o7kt0BudAKIEledsHrjoMYn2cW8VJKFFGHaz0OINShG/vxccmGiB8/zvqF4KiPFZOcfak1CUIS33e3UfPwpaZ1hMKXAZ4c4ejc=";
+        //return CcsMsgCrypt.encrypt(json.toJSONString(),"aHV6aG91SHp6c3RIenpzdA==");
+	}
 
 
 }
