@@ -149,6 +149,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
 
+        @ApiModelProperty(value = "销售数量（临时字段）")
+        private Integer saleQuantity;
+
     }
 
     @Data

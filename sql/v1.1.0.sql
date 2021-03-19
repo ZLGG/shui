@@ -88,4 +88,7 @@ ADD COLUMN `user_type` int(11) DEFAULT 1 COMMENT '用户类型(1-普通用户 2-
 MODIFY COLUMN `is_in_user` int(11) DEFAULT 0 COMMENT '是否为in会员(1-是 0-否)' AFTER `user_type`;
 
 ALTER TABLE `fy_mall`.`gs_goods_info`
-ADD COLUMN `sale_quantity` int(11) NULL DEFAULT NULL COMMENT '销售数量（临时排序用）' AFTER `third_product_id`;
+ADD COLUMN `sale_quantity` int(11) NOT NULL DEFAULT 0 DEFAULT NULL COMMENT '销售数量（临时排序用）' AFTER `third_product_id`;
+
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `exchange_type` int(11) NULL DEFAULT NULL COMMENT '兑换类型（实物，虚拟）' AFTER `sale_quantity`;

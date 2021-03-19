@@ -250,6 +250,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId())?eto.getJwtShopId():eto.getShopId());
         goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId())?eto.getJwtMerchantId():eto.getMerchantId());
         goodsInfo.setGoodsPriceUnit(GoodsPriceUnitEnum.千克.getRemark());
+        //添加商品 开始销售数量为0
+        goodsInfo.setSaleQuantity(0);
         boolean flag = repository.save(goodsInfo);
         if (!flag){
             throw new BusinessException("添加商品失败");
@@ -1604,7 +1606,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     private void checkAddGoodsData(PCMerchGoodsInfoDTO.AddGoodsETO eto){
-        Integer shopState = shopRpc.innerShopState(eto.getJwtShopId());
+        Integer shopState = shopRpc.innerShopState(eto.getShopId());
         if (ObjectUtils.isEmpty(shopState) || shopState.equals(ShopStateEnum.关闭状态.getCode())){
             throw new BusinessException("店铺未开通！！");
         }
