@@ -253,10 +253,7 @@ public class BbbUserServiceImpl implements IBbbUserService {
         }
         User user =  userRepository.getById(qto.getJwtUserId());
         BbbUserVO.DetailVO detailVO = new BbbUserVO.DetailVO();
-        detailVO.setId(user.getId());
-        detailVO.setUserName(user.getUserName());
-        detailVO.setHeadImg(user.getHeadImg());
-        detailVO.setPhone(user.getPhone());
+        BeanUtils.copyProperties(user,detailVO);
         //封装优惠卷数量
         packCountCard(qto,detailVO);
         //获取用户的积分
