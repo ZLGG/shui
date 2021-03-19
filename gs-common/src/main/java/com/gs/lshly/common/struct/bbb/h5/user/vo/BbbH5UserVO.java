@@ -45,6 +45,9 @@ public abstract class BbbH5UserVO implements Serializable {
         @ApiModelProperty("微信openid")
         private String wxOpenid;
 
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer userType;
+
         @ApiModelProperty("是否为in会员(1-是 0-否)")
         private Integer isInUser;
 
