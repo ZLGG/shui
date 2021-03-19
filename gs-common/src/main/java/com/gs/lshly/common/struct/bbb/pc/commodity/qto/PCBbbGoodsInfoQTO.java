@@ -45,6 +45,9 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("是否是in会员礼品")
         private Boolean isInMemberGift;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
     }
 
     @Data

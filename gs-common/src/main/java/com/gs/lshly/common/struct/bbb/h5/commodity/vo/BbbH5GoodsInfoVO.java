@@ -196,6 +196,9 @@ public abstract class BbbH5GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
     }
 
     @Data
@@ -353,6 +356,12 @@ public abstract class BbbH5GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+
+        @ApiModelProperty(value = "销售数量（临时字段）")
+        private Integer saleQuantity;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
 
 
     }

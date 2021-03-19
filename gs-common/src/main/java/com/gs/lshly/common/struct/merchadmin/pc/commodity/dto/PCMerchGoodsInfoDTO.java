@@ -166,6 +166,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
 
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
+
     }
 
     @Data
@@ -299,6 +302,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
     }
 
 

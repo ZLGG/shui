@@ -149,8 +149,8 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
 
-        @ApiModelProperty(value = "销售数量（临时字段）")
-        private Integer saleQuantity;
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
 
     }
 
@@ -393,6 +393,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
 
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
     }
 
     @Data
@@ -478,6 +481,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private String thirdProductId;
+
+        @ApiModelProperty("兑换类型（0实物，1虚拟）")
+        private String exchangeType;
     }
 
 
@@ -520,6 +526,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
     }
 
     @Data

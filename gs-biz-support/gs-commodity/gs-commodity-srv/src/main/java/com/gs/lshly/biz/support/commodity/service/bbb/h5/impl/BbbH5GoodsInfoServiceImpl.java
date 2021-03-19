@@ -120,6 +120,32 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())  && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())){
             boost.orderByDesc("sale_price");
         }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+            //如果需要积分排序，首先得是积分商品
+            boost.eq("is_point_good", true);
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                //升序
+                if (qto.getOrderByType().equals(10)) {
+                    boost.orderByAsc("point_price", "id");
+                } else {
+                    //降序
+                    boost.orderByDesc("point_price", "id");
+                }
+            } else {
+                boost.orderByAsc("point_price", "id");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                if (qto.getOrderByType().equals(10)) {
+                    boost.orderByAsc("publish_time", "id");
+                } else {
+                    boost.orderByDesc("publish_time", "id");
+                }
+            } else {
+                boost.orderByAsc("publish_time", "id");
+            }
+        }
         //获取2B商城的商品
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> pageData = repository.page(page,boost);

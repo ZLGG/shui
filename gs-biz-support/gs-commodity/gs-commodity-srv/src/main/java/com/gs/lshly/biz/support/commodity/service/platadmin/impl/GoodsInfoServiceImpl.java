@@ -416,6 +416,8 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
         if (ObjectUtils.isEmpty(goodsInfoIPage) || ObjectUtils.isEmpty(goodsInfoIPage.getRecords())){
             return new PageData<>();
+            System.gc();
+
         }
         List<GoodsInfoVO.BindCategoryGoodsVO> categoryGoodsVOS = ListUtil.listCover(GoodsInfoVO.BindCategoryGoodsVO.class,goodsInfoIPage.getRecords());
         return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());

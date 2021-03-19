@@ -140,9 +140,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         }
         if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
             //如果需要积分排序，首先得是积分商品
-            if (qto.getIsPointGood() == null) {
-                qto.setIsPointGood(true);
-            }
+            wrapper.eq("is_point_good", true);
             if (ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())) {
                 //升序
                 if (qto.getOrderByAscDesc().equals(10)) {
@@ -165,9 +163,6 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
             } else {
                 wrapper.orderByAsc("publish_time", "id");
             }
-        }
-        if (qto.getIsPointGood() != null) {
-            wrapper.eq("is_point_good", qto.getIsPointGood());
         }
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());
         wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
@@ -288,6 +283,9 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         }
         if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() != -1) {
             wrapper.eq("sale_type", qto.getSaleType());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getExchangeType()) && qto.getExchangeType().intValue() != -1) {
+            wrapper.eq("exchange_type", qto.getExchangeType());
         }
         wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());

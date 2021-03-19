@@ -34,7 +34,7 @@ public abstract class BbbH5GoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格 40=积分 50=发布时间")
         private Integer orderByProperties;
 
         @ApiModelProperty(value = "排序方式 10=升序 20=降序")

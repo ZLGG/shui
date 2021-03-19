@@ -35,7 +35,6 @@ public abstract class GoodsInfoVO implements Serializable {
         @ApiModelProperty("店铺id")
         private String shopId;
 
-
         @ApiModelProperty("品牌id")
         private String brandId;
 
@@ -148,6 +147,9 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
 
     }
 
@@ -269,6 +271,10 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
     }
 
     @Data

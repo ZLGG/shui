@@ -250,8 +250,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId())?eto.getJwtShopId():eto.getShopId());
         goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId())?eto.getJwtMerchantId():eto.getMerchantId());
         goodsInfo.setGoodsPriceUnit(GoodsPriceUnitEnum.千克.getRemark());
-        //添加商品 开始销售数量为0
-        goodsInfo.setSaleQuantity(0);
         boolean flag = repository.save(goodsInfo);
         if (!flag){
             throw new BusinessException("添加商品失败");
@@ -853,6 +851,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         importGoodsDataVO.setInMemberPointPrice("0");
         importGoodsDataVO.setSaleType("0");
         importGoodsDataVO.setThirdProductId("信天游产品号");
+        importGoodsDataVO.setExchangeType("0");
         importGoodsDataVOS.add(importGoodsDataVO);
         return importGoodsDataVOS;
     }

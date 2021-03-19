@@ -153,5 +153,11 @@ public abstract class BbbH5SkuGoodInfoVO implements Serializable {
         @ApiModelProperty("in会员积分价格")
         private Double inMemberPointPrice;
 
+        @ApiModelProperty(value = "销售数量（临时字段）")
+        private Integer saleQuantity;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
     }
 }
