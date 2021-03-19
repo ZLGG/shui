@@ -232,4 +232,9 @@ public class GoodsInfo extends Model {
      * 销售数量（临时字段）
      */
     private Integer saleQuantity;
+
+    /**
+     * 兑换类型（虚拟，实物）
+     */
+    private Integer exchangeType;
 }
