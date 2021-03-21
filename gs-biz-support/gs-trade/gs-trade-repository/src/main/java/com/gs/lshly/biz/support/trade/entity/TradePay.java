@@ -54,6 +54,11 @@ public class TradePay extends Model {
     private String merchantId;
 
     /**
+     * 合并支付交易编号（传递给第三方支付的交易单号）
+     */
+    private String mergePaymentTradeCode;
+
+    /**
     * 交易编号
     */
     private String tradeCode;

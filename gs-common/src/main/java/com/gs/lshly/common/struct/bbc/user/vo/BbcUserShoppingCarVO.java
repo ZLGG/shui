@@ -109,9 +109,14 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         @ApiModelProperty("数量")
         private Integer quantity;
 
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
         @ApiModelProperty("销售价")
         private BigDecimal salePrice;
 
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
     }
 
     @Data

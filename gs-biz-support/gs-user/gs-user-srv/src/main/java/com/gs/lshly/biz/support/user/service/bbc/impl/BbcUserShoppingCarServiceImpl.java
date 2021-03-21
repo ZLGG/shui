@@ -429,7 +429,9 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
             innerSimpleItem.setId(shoppingCarItem.getId());
             innerSimpleItem.setSkuId(shoppingCarItem.getSkuId());
             innerSimpleItem.setQuantity(shoppingCarItem.getQuantity());
+            innerSimpleItem.setIsPointGood(shoppingCarItem.getIsPointGood());
             innerSimpleItem.setSalePrice(shoppingCarItem.getGoodsPrice());
+            innerSimpleItem.setPointPrice(shoppingCarItem.getGoodsPointPrice());
             innerSimpleVO.getItemList().add(innerSimpleItem);
         }
         return ResponseData.data(innerSimpleVO);

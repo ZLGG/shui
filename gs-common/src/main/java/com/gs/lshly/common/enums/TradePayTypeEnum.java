@@ -21,12 +21,13 @@ public enum TradePayTypeEnum {
     线下支付(90, "线下支付", false, null),
     积分支付(100, "积分支付", false, null),
 
-    积分_微信小程序混合支付(510, "积分_微信小程序混合支付", true, new TradePayTypeEnum[]{TradePayTypeEnum.积分支付, TradePayTypeEnum.微信小程序支付});
+    混合支付积分_微信小程序(510, "混合支付积分_微信小程序", true, TradePayTypeEnum.微信小程序支付);
 
-    TradePayTypeEnum(Integer code, String remark, Boolean mixedPayment, TradePayTypeEnum[] subTypes) {
+    TradePayTypeEnum(Integer code, String remark, Boolean mixedPayment, TradePayTypeEnum subType) {
         this.code = code;
         this.remark = remark;
         this.mixedPayment = mixedPayment;
+        this.subType = subType;
     }
 
     private Integer code;
@@ -41,7 +42,7 @@ public enum TradePayTypeEnum {
     /**
      * 混合支付的子类型
      */
-    private TradePayTypeEnum[] subTypes;
+    private TradePayTypeEnum subType;
 
     public static TradePayTypeEnum getEnum(Integer code) {
         TradePayTypeEnum[] values = values();
