@@ -39,4 +39,9 @@ public interface MerchantAccountMapper extends BaseMapper<MerchantAccount> {
             "WHERE act.flag = 0 and sp.flag = 0 and ${ew.sqlSegment}")
     AccountShopView mapperOne(@Param(value = "ew") QueryWrapper<AccountShopView> we);
 
+    @Select("select count(1) from gs_goods_info where shop_id = #{shopId} and flag = 0")
+    int getGoodsCount(String shopId);
+
+    @Select("select count(1) from gs_sku_good_info where shop_id = #{shopId} and flag = 0")
+    int getSkuGoodsCount(String shopId);
 }

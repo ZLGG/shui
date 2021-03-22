@@ -189,11 +189,17 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteMerchantAccount(PCMerchMerchantAccountDTO.IdDTO dto) {
-        //todo 判断商户下是否存在普通商品
+        String shopId =dto.getJwtShopId();
+        //判断商户下是否存在普通商品和sku商品
+        int goods = merchantAccountMapper.getGoodsCount(shopId!=null?shopId:"-1");
+        int skuGoods = merchantAccountMapper.getSkuGoodsCount(shopId!=null?shopId:"-1");
+        if((goods>0)||(skuGoods>0)){
+            throw new BusinessException("删除失败,该商户下存在商品！");
+        }
         QueryWrapper<MerchantAccount> removeQueryWrapper = MybatisPlusUtil.query();
         removeQueryWrapper.eq("id",dto.getId());
         removeQueryWrapper.eq("account_type",MerchantAccountTypeEnum.子帐号.getCode());
-        removeQueryWrapper.eq("shop_id",dto.getJwtShopId());
+        removeQueryWrapper.eq("shop_id",shopId);
         boolean bool =  repository.remove(removeQueryWrapper);
         if(bool == false){
             throw new BusinessException("删除失败");
