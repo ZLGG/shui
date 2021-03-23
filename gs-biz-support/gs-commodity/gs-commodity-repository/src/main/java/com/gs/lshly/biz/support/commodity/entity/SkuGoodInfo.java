@@ -138,7 +138,7 @@ public class SkuGoodInfo extends Model {
     private Boolean flag;
 
     @ApiModelProperty("积分价格")
-    private Double pointPrice;
+    private BigDecimal pointPrice;
 
     @ApiModelProperty("办理备注")
     private String remarks;

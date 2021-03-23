@@ -63,6 +63,12 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         @ApiModelProperty(value = "订单支付积分（2:积分商城商品）", hidden = true)
         private BigDecimal goodsPointAmount;
 
+        @ApiModelProperty(value = "积分商品，用户分配的现金支付金额")
+        private BigDecimal allocatedCashAmount;
+
+        @ApiModelProperty(value = "积分商品，用户分配的积分支付金额")
+        private BigDecimal allocatedPointAmount;
+
         @ApiModelProperty(value = "营销活动", hidden = true)
         private CommonMarketVO.ActiveVO marketActiveVO;
 

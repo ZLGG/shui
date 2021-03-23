@@ -201,7 +201,7 @@ public class GoodsInfo extends Model {
     /**
      * 积分价格
      */
-    private Double pointPrice;
+    private BigDecimal pointPrice;
     /**
      * 办理备注
      */

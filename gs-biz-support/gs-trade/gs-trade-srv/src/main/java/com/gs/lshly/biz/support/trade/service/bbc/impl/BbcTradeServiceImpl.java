@@ -736,12 +736,24 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         trade.setSourceType(TradeSourceTypeEnum._2C.getCode());
         trade.setGoodsSourceType(dto.getGoodsSourceType());
         // 商城
-        trade.setGoodsAmount(dto.getShopProductAmount());
-        trade.setTradeAmount(dto.getShopProductAmount().add(dto.getDeliveryAmount()));
-        // 积分商城
-        trade.setGoodsPointAmount(dto.getGoodsPointAmount());
-        trade.setPointPricePayable(dto.getGoodsPointAmount());
-        trade.setAmountPayable(dto.getDeliveryAmount());
+        if (GoodsSourceTypeEnum.商城商品.getCode().equals(dto.getGoodsSourceType())) {
+            trade.setGoodsAmount(dto.getShopProductAmount());
+            trade.setTradeAmount(dto.getShopProductAmount().add(dto.getDeliveryAmount()));
+        } else if (GoodsSourceTypeEnum.积分商品.getCode().equals(dto.getGoodsSourceType())) {
+            // 积分商城，运费逻辑无
+            trade.setGoodsPointAmount(dto.getGoodsPointAmount());
+            trade.setPointPricePayable(dto.getGoodsPointAmount());
+            trade.setAmountPayable(new BigDecimal(0));
+            // 校验分配的支付总金额是否和应付金额一致
+            if (dto.getAllocatedCashAmount().multiply(new BigDecimal(100)).add(dto.getAllocatedPointAmount())
+                    .compareTo(dto.getGoodsPointAmount()) != 0) {
+                throw new BusinessException("支付金额分配有误，请检查");
+            }
+            trade.setPointPriceActuallyPaid(dto.getAllocatedPointAmount());
+            trade.setAmountActuallyPaid(dto.getAllocatedCashAmount());
+        } else {
+            throw new BusinessException("商品来源有误，请检查");
+        }
         tradeRepository.save(trade);
 
         return trade;
@@ -845,7 +857,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         // 积分金额，涉及哪几个订单
         BigDecimal totalPointAmount = new BigDecimal(0);
         Map<String, Trade> pointTradeMap = new HashMap<>();
-        // 0元订单，最后直接支付成功
+        // 0元订单，最后直接支付成功 TODO 回调时处理为成功
         ArrayList<String> freeTradeIds = new ArrayList<>();
 
         for (Trade trade : tradeList) {
@@ -893,6 +905,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         List<TradePay> tradePayList = tradePayRepository.list(tradePayWrapper);
         if (tradePayList != null && tradePayList.size() > 0) {
             // TODO 有支付（待支付）记录则校验是否继续或删除相关
+
+            return ResponseData.data(false);
         }
 
         ArrayList<TradePay> prepareSaveTradePays = new ArrayList<>();
@@ -911,11 +925,19 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 tradePay.setTotalAmount(trade.getPointPriceActuallyPaid());
                 prepareSaveTradePays.add(tradePay);
             }
-            // 初始化积分支付相关支付记录，TODO 积分相关操作等现金支付回调成果后处理
-            // TODO 纯积分的直接调用第三方积分支付
+            // 初始化积分支付相关支付记录
             boolean saveBatchTradePayResult = tradePayRepository.saveBatch(prepareSaveTradePays);
             if (!saveBatchTradePayResult) {
                 throw new BusinessException("创建积分支付失败，请重试");
+            }
+
+            // 如果是纯积分支付，则调用积分支付  TODO 混合支付，积分相关操作等现金支付回调成果后处理
+            if (cashTradeMap == null || cashTradeMap.size() == 0) {
+                boolean result = pointPay(mergePaymentTradeCode, totalPointAmount);
+                if (!result) {
+                    throw new BusinessException("积分支付失败，请重试");
+                }
+                return ResponseData.data(true);
             }
         }
 
@@ -1003,6 +1025,17 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             // TODO 其他支付方式
         }
         return ResponseData.fail("支付失败");
+    }
+
+    /**
+     * 积分支付
+     * todo yj
+     *
+     * @return
+     */
+    private boolean pointPay(String tradeCode, BigDecimal pointAmount) {
+
+        return false;
     }
 
     private QRCodePaymentCommitResponse goPayment(String openid, Trade trade, TradePay tradePay) {
