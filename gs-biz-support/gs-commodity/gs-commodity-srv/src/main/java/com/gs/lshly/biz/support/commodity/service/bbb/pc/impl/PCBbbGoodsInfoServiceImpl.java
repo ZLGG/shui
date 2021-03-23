@@ -323,6 +323,33 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
                     && (ObjectUtils.isNotEmpty(qto.getOrderByType()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode()))) {
                 wrapper.orderByDesc("gs.sale_price", "gs.id");
             }
+            if (qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+                //如果需要积分排序，首先得是积分商品
+                wrapper.eq("is_point_good", true);
+                if (ObjectUtils.isNotEmpty(qto.getOrderByProperties())) {
+                    //升序
+                    if (qto.getOrderByType().equals(10)) {
+                        wrapper.orderByAsc("point_price", "id");
+                    } else {
+                        //降序
+                        wrapper.orderByDesc("point_price", "id");
+                    }
+                } else {
+                    wrapper.orderByAsc("point_price", "id");
+                }
+            }
+            if (qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+                if (ObjectUtils.isNotEmpty(qto.getOrderByProperties())) {
+                    if (qto.getOrderByType().equals(10)) {
+                        wrapper.orderByAsc("publish_time", "id");
+                    } else {
+                        wrapper.orderByDesc("publish_time", "id");
+                    }
+                } else {
+                    wrapper.orderByAsc("publish_time", "id");
+                }
+            }
+
         }
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = goodsInfoMapper.getGoodsPageInfo(page, wrapper);
