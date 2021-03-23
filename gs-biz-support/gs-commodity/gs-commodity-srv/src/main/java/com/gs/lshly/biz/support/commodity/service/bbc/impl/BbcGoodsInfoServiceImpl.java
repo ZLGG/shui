@@ -155,20 +155,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (qto.getOrderByProperties() != null && qto.getOrderByProperties().intValue() == OrderByConditionEnum.价格.getCode().intValue() && qto.getOrderByType().intValue() == OrderByTypeEnum.降序.getCode().intValue()) {
             boost.orderByDesc("sale_price");
         }
-        //获取2C商城的商品
-        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
-        IPage<GoodsInfo> pageData = repository.page(page, boost);
-        List<GoodsInfo> goodsInfos = pageData.getRecords();
-        //声明商品数据的储存容器
-        List<BbcGoodsInfoVO.GoodsListVO> goodsListVOS = new ArrayList<>();
-
-        //按销售或者评价排序
-        if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode()) ||
-                qto.getOrderByProperties().equals(OrderByConditionEnum.评价.getCode()))) {
-
-            goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
-
-        }
         //如果是积分查询
         else if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode()))) {
             boost.eq("is_point_good", true);
@@ -192,6 +178,21 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             } else {
                 boost.orderByAsc("publish_time", "id");
             }
+        }
+
+        //获取2C商城的商品
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> pageData = repository.page(page, boost);
+        List<GoodsInfo> goodsInfos = pageData.getRecords();
+        //声明商品数据的储存容器
+        List<BbcGoodsInfoVO.GoodsListVO> goodsListVOS = new ArrayList<>();
+
+        //按销售或者评价排序
+        if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode()) ||
+                qto.getOrderByProperties().equals(OrderByConditionEnum.评价.getCode()))) {
+
+            goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
+
         } else {
             //按价格排序
             for (GoodsInfo info : goodsInfos) {
