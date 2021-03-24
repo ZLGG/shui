@@ -92,3 +92,30 @@ ADD COLUMN `sale_quantity` int(11) NOT NULL DEFAULT 0 DEFAULT NULL COMMENT '销�
 
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `exchange_type` int(11) NULL DEFAULT NULL COMMENT '兑换类型（实物，虚拟）' AFTER `sale_quantity`;
+
+
+
+DROP TABLE IF EXISTS `gs_trade_goods_travelsky`;
+CREATE TABLE `gs_trade_goods_travelsky` (
+  `id` varchar(32) NOT NULL COMMENT '交易商品ID',
+  `trade_goods_id` varchar(32) DEFAULT NULL COMMENT '交易商品ID',
+  `goods_id` varchar(32) DEFAULT NULL COMMENT '商品ID',
+  `trade_id` varchar(32) DEFAULT NULL,
+  `third_product_id` int(11) DEFAULT NULL,
+  `user_id` varchar(32) DEFAULT NULL COMMENT '会员ID',
+  `shop_id` varchar(32) DEFAULT NULL COMMENT '店铺ID',
+  `merchant_id` varchar(32) DEFAULT NULL COMMENT '商家ID',
+  `status` varchar(32) DEFAULT NULL,
+  `result_msg` varchar(255) DEFAULT NULL,
+  `order_id` varchar(32) DEFAULT NULL,
+  `product_code` varchar(255) DEFAULT NULL,
+  `valid_date` varchar(32) DEFAULT NULL,
+  `sms_msg` varchar(255) DEFAULT NULL,
+  `cdate` datetime DEFAULT NULL COMMENT '创建时间',
+  `udate` datetime DEFAULT NULL COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT NULL COMMENT '逻辑删除标记',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='信天游商品日志表';
+
+
+

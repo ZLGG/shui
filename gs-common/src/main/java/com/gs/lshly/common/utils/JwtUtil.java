@@ -45,7 +45,8 @@ public class JwtUtil {
             long expiration = jwtUser.getRememberMe()!=null && jwtUser.getRememberMe()
                     ? SecurityConstants.EXPIRATION_REMEMBER : SecurityConstants.EXPIRATION;
             Date expire = new Date(System.currentTimeMillis() + expiration * 1000);
-
+            log.info("[createToken][expire=>{}]",expire);
+            
             String token = Jwts
                     .builder()
                     .setHeaderParam("type", SecurityConstants.TOKEN_TYPE)
@@ -54,7 +55,9 @@ public class JwtUtil {
                     .setIssuedAt(new Date())
                     .setExpiration(expire)
                     .signWith(key, SignatureAlgorithm.HS256).compact();
-            return SecurityConstants.TOKEN_PREFIX + token;
+            String retToken = SecurityConstants.TOKEN_PREFIX + token;
+            log.info("[createToken][token=>{}]",retToken);
+            return retToken;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return "Jwt 生成失败";
@@ -64,9 +67,10 @@ public class JwtUtil {
     public static Claims checkJWT(String token) {
         try {
             Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-//            log.info("jwt str:"+jws.toString());
+//                              log.info("jwt str:"+jws.toString());
             return jws.getBody();
         } catch (Exception e) {
+        	e.printStackTrace();
             throw e;
         }
     }
