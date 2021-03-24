@@ -40,6 +40,7 @@ import com.gs.lshly.rpc.api.bbb.h5.trade.IBbbH5TradeRpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserFavoritesGoodsRpc;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.common.ICommonTradeGoodsRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -94,6 +95,9 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
 
     @DubboReference
     private IBbbH5TradeRpc tradeRpc;
+
+    @DubboReference
+    private ICommonTradeGoodsRpc iCommonTradeGoodsRpc;
 
     @Autowired
     private IBbbH5GoodsLabelService bbcGoodsLabelService;
@@ -193,7 +197,9 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         if (ObjectUtils.isNotEmpty(skuVO.getWholesalePrice())){
             detailVo.setWholesalePrice(skuVO.getWholesalePrice());
         }
-
+        //销售数量
+        Integer sumQuantity = iCommonTradeGoodsRpc.sumQuantity(goodsInfo.getId());
+        detailVo.setSaleQuantity(sumQuantity);
         //获取用户默认收货地址
         BbbH5StockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(dto,StockAddressTypeEnum.收货.getCode());
         if (defaultAddresslVO != null){

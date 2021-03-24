@@ -39,6 +39,7 @@ import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.bbb.pc.user.IPCBbbUserPrivateUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.common.ICommonTradeGoodsRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -85,6 +86,8 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
     private IPCBbbUserPrivateUserRpc userPrivateUserRpc;
     @DubboReference
     private IBbbPcTradeRpc tradeRpc;
+    @DubboReference
+    private ICommonTradeGoodsRpc iCommonTradeGoodsRpc;
 
     @Override
     public PCBbbGoodsInfoVO.GoodsRecommendVO getRecommendGoodsList(PCBbbGoodsInfoQTO.QTO qto) {
@@ -260,6 +263,9 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         if (goodsInfo.getIsSingle().equals(SingleStateEnum.单品.getCode())) {
             goodsDetailVO.setSingleGoodsStock(getSkuStockNum(goodsInfo.getShopId(), skuDetailListVOS.get(0).getId()));
         }
+        //销售数量
+        Integer sumQuantity = iCommonTradeGoodsRpc.sumQuantity(goodsInfo.getId());
+        goodsDetailVO.setSaleQuantity(sumQuantity);
         return goodsDetailVO;
     }
 

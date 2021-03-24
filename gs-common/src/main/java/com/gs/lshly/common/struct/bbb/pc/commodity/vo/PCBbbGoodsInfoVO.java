@@ -272,6 +272,9 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
         @ApiModelProperty("sku规格列表")
         private List<PCBbbSkuGoodInfoVO.SkuDetailListVO> skuDetailListVOS = new ArrayList<>();
 
+        @ApiModelProperty(value = "销售数量")
+        private Integer saleQuantity;
+
     }
 
 
