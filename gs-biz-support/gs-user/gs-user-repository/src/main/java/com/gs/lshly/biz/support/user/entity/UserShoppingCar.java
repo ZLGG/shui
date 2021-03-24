@@ -1,11 +1,14 @@
 package com.gs.lshly.biz.support.user.entity;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 购物车
@@ -43,9 +46,19 @@ public class UserShoppingCar extends Model {
     private String goodsTitle;
 
     /**
+     * 是否是积分商品
+     */
+    private Boolean isPointGood;
+
+    /**
      * 商品价格
      */
     private BigDecimal goodsPrice;
+
+    /**
+     * 积分价格
+     */
+    private BigDecimal goodsPointPrice;
 
     /**
      * SKU-ID

@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
 * @author oy
@@ -20,7 +21,7 @@ public abstract class BbcTradePayBuildDTO implements Serializable {
     public static class ETO extends BaseDTO {
 
         @ApiModelProperty("交易ID")
-        private String tradeId;
+        private List<String> tradeIds;
 
         @ApiModelProperty("微信openid")
         private String openid;
