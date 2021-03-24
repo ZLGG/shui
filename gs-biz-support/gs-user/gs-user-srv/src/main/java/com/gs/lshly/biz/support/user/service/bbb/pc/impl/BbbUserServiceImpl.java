@@ -414,8 +414,6 @@ public class BbbUserServiceImpl implements IBbbUserService {
 		}
 		User user = userRepository.getById(dto.getJwtUserId());
 		
-//		String src = "{\"phoneNumber\":\"18267495869\",\"uname\":\"summer\",
-		//\"gender\":\"男\",\"headImg\":\"\",\"tenantId\":\"_1LWHJ9M\",\"userId\":\"bbq1221\"}";
         JSONObject json = new JSONObject();
         json.put("phoneNumber", user.getPhone());
         if(StringUtils.isEmpty(user.getNick())){
@@ -428,7 +426,7 @@ public class BbbUserServiceImpl implements IBbbUserService {
         json.put("headImg", user.getSex());
         json.put("tenantId", TerminalEnum.BBB.getCode());
         json.put("userId", user.getId());
-        //return "x5BjTkg7Ieky+MTqaRJ/Qk8AhLqTTLjaMft+09cX36OWvPMHNUNIV5+jl0siUX5yDx8ZNfJD+o7kt0BudAKIEledsHrjoMYn2cW8VJKFFGHaz0OINShG/vxccmGiB8/zvqF4KiPFZOcfak1CUIS33e3UfPwpaZ1hMKXAZ4c4ejc=";
+        log.info("[customerAuthorize][request][json=>{}]",json.toJSONString());
         return CcsMsgCrypt.encrypt(json.toJSONString(),"aHV6aG91SHp6c3RIenpzdA==");
 	}
 
