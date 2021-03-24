@@ -214,6 +214,8 @@ public class BbbUserServiceImpl implements IBbbUserService {
         BbbUserVO.UserTypeVO userTypeVO  = new BbbUserVO.UserTypeVO();
         userTypeVO.setId(user.getId());
         userTypeVO.setUserType(user.getType());
+        userTypeVO.setMemberType(user.getMemberType());
+        userTypeVO.setIsInUser(user.getIsInUser());
         return userTypeVO;
     }
 

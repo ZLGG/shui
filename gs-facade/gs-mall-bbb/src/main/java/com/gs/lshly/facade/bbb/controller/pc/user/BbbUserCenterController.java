@@ -51,7 +51,7 @@ public class BbbUserCenterController {
     }
 
 
-    @ApiOperation("获取用户类型")
+    @ApiOperation("获取用户类型-v1.1.0")
     @PostMapping("/userType")
     public ResponseData<BbbUserVO.UserTypeVO> userType() {
         return ResponseData.data(bbbUserRpc.userType(new BaseDTO()));

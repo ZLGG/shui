@@ -188,7 +188,7 @@ public class User extends Model {
     /**
      * 用户类型(1-普通用户 2-电信用户)
      */
-    private Integer userType;
+    private Integer memberType;
 
     /**
      * 是否为in会员(1-是 0-否)
