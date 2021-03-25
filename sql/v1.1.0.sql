@@ -117,5 +117,22 @@ CREATE TABLE `gs_trade_goods_travelsky` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='信天游商品日志表';
 
+DROP TABLE IF EXISTS `gs_in_vip_coupon`;
+CREATE TABLE `gs_in_vip_coupon` (
+  `coupon_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '优惠券id',
+  `user_id` varchar(32) NOT NULL COMMENT 'in会员userId',
+  `coupon_desc` varchar(255) DEFAULT NULL COMMENT '优惠券说明',
+  `start_time` datetime NOT NULL COMMENT '优惠券使用开始时间',
+  `end_time` datetime NOT NULL COMMENT '优惠券使用结束时间',
+  `coupon_price` decimal(10,2) NOT NULL COMMENT '优惠券抵扣金额',
+  `min_price` decimal(10,2) NOT NULL COMMENT '最低消费多少金额可用优惠券',
+  `coupon_type` tinyint(1) NOT NULL COMMENT '优惠券类型（0-成为会员赠送 1-会员每月分享赠送）',
+  `coupon_status` tinyint(1) NOT NULL COMMENT '优惠券状态（0-未使用 1-已使用 2-已过期）',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`coupon_id`) USING BTREE,
+  KEY `user_id_inx` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='in会员优惠券表';
+
 
 
