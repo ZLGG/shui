@@ -125,4 +125,25 @@ public  class DateUtils {
         }
     }
 
+    /**
+     * 判断某一日期是否大于当前日期
+     * @param date
+     * @return
+     */
+    public static Boolean isLessNowDate(Date date) {
+        Calendar c = Calendar.getInstance();
+        Date now = new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
+        if (date.after(now)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        Date date1 = new Date(2021, 3, 25);
+        Boolean result = isLessNowDate(date1);
+        System.out.println(result);
+    }
+
 }
