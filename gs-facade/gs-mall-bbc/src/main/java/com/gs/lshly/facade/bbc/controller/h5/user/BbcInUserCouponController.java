@@ -25,7 +25,7 @@ import java.util.List;
  * @create 2021/3/18 10:31
  */
 @RestController
-@RequestMapping("/bbb/userCenter/inUserCoupon")
+@RequestMapping("/bbc/userCenter/inUserCoupon")
 @Api(tags = "in会员优惠券管理")
 public class BbcInUserCouponController {
 
