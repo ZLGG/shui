@@ -469,9 +469,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         //计算运费
         BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
-        if (dto.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) ||
-                dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())) {
-            deliveryAmount = getDeliveryAmount(dto.getShopId(), dto.getProductData(), dto.getDeliveryType(), addressVO.getId());
+        // 积分商城商品无需运费
+        if (GoodsSourceTypeEnum.商城商品.getCode().equals(dto.getGoodsSourceType())) {
+            if (dto.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) ||
+                    dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())) {
+                deliveryAmount = getDeliveryAmount(dto.getShopId(), dto.getProductData(), dto.getDeliveryType(), addressVO.getId());
+            }
         }
         dto.setDeliveryAmount(deliveryAmount);
 
@@ -735,6 +738,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         trade.setDeliveryAmount(dto.getDeliveryAmount());
         trade.setSourceType(TradeSourceTypeEnum._2C.getCode());
         trade.setGoodsSourceType(dto.getGoodsSourceType());
+        trade.setIsInvoice(dto.getIsInvoice());
         // 商城
         if (GoodsSourceTypeEnum.商城商品.getCode().equals(dto.getGoodsSourceType())) {
             trade.setGoodsAmount(dto.getShopProductAmount());
