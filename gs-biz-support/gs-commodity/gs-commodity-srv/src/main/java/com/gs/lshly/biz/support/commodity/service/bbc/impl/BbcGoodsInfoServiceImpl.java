@@ -651,6 +651,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 serviceVO.setGoodsId(goodsInfo.getId());
                 serviceVO.setGoodsName(goodsInfo.getGoodsName());
                 serviceVO.setSalePrice(skuGoodInfo.getSalePrice());
+                serviceVO.setPointPrice(skuGoodInfo.getPointPrice());
                 serviceVO.setGoodsImage(skuGoodInfo.getImage());
                 serviceVO.setGoodsState(skuGoodInfo.getState());
                 serviceVO.setSkuSpecValue(StringUtils.isEmpty(skuGoodInfo.getSpecsValue()) ? "" : skuGoodInfo.getSpecsValue());

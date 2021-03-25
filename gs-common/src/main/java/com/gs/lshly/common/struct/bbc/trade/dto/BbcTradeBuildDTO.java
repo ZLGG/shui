@@ -69,6 +69,9 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         @ApiModelProperty(value = "积分商品，用户分配的积分支付金额")
         private BigDecimal allocatedPointAmount;
 
+        @ApiModelProperty("是否需要发票")
+        private Boolean isInvoice;
+
         @ApiModelProperty(value = "营销活动", hidden = true)
         private CommonMarketVO.ActiveVO marketActiveVO;
 
