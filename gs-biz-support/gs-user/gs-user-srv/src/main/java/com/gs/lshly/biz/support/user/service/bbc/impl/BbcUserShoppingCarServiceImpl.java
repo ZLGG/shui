@@ -71,9 +71,12 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
 
     @Override
     public List<BbcUserShoppingCarVO.ListVO> list(BbcUserShoppingCarQTO.QTO qto) {
+        // 用户登录校验
         if (null == qto.getJwtUserId()) {
             throw new BusinessException("没有登录");
         }
+
+        // 查询用户购物车信息
         QueryWrapper<UserShoppingCar> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("user_id", qto.getJwtUserId());
@@ -82,28 +85,45 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         if (ObjectUtils.isEmpty(userShoppingCarList)) {
             return new ArrayList<>();
         }
+
         Map<String, BbcUserShoppingCarVO.ListVO> voMap = new HashMap<>();
         List<BbcUserShoppingCarVO.ShoppingCarItemVO> tempList = new ArrayList<>();
         List<String> skuIdList = new ArrayList<>();
+        // 遍历用户购物车信息
         for (UserShoppingCar shoppingCarItem : userShoppingCarList) {
             BbcUserShoppingCarVO.ListVO listVO = voMap.get(shoppingCarItem.getShopId());
+            // 首次出现的商家，初始化
             if (null == listVO) {
                 listVO = new BbcUserShoppingCarVO.ListVO();
                 listVO.setShopId(shoppingCarItem.getShopId());
                 listVO.setShopName(shoppingCarItem.getShopName());
                 voMap.put(shoppingCarItem.getShopId(), listVO);
             }
+            // 商品项信息
             BbcUserShoppingCarVO.ShoppingCarItemVO shoppingCarItemVO = new BbcUserShoppingCarVO.ShoppingCarItemVO();
-            shoppingCarItemVO.setShopId(shoppingCarItem.getShopId());
             shoppingCarItemVO.setId(shoppingCarItem.getId());
+            shoppingCarItemVO.setGoodsId(shoppingCarItem.getGoodsId());
+//            shoppingCarItemVO.setGoodsName(shoppingCarItem.getGoodsName());
+//            shoppingCarItemVO.setGoodsTitle(shoppingCarItem.getGoodsTitle());
+//            shoppingCarItemVO.setIsPointGood(shoppingCarItem.getIsPointGood());
+//            shoppingCarItemVO.setGoodsPrice(shoppingCarItem.getGoodsPrice());
+//            shoppingCarItemVO.setGoodsPointPrice(shoppingCarItem.getGoodsPointPrice());
             shoppingCarItemVO.setSkuId(shoppingCarItem.getSkuId());
+//            shoppingCarItemVO.setSkuImage(shoppingCarItem.getSkuImage());
+//            shoppingCarItemVO.setSpecValue(shoppingCarItem.getSpecValue());
             shoppingCarItemVO.setQuantity(shoppingCarItem.getQuantity());
             shoppingCarItemVO.setIsSelect(shoppingCarItem.getIsSelect());
+            shoppingCarItemVO.setShopId(shoppingCarItem.getShopId());
+//            shoppingCarItemVO.setExchangeType(shoppingCarItem.getExchangeType());
+//            shoppingCarItemVO.setIsInMemberGift(shoppingCarItem.getIsInMemberGift());
+//            shoppingCarItemVO.setInMemberPointPrice(shoppingCarItem.getInMemberPointPrice());
             tempList.add(shoppingCarItemVO);
             skuIdList.add(shoppingCarItem.getSkuId());
         }
+
         List<String> deleteIdList = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(skuIdList)) {
+            // 获取商品最新的信息
             List<BbcGoodsInfoVO.InnerServiceVO> innerSkuGoodsList = bbcGoodsInfoRpc.innerServicePageShopGoods(new BbcGoodsInfoQTO.SkuIdListQTO().setSkuIdList(skuIdList));
             if (ObjectUtils.isNotEmpty(innerSkuGoodsList)) {
                 for (BbcUserShoppingCarVO.ShoppingCarItemVO shoppingCarItemVO : tempList) {
@@ -113,9 +133,14 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
                             shoppingCarItemVO.setGoodsId(innerSkuGoodVo.getGoodsId());
                             shoppingCarItemVO.setGoodsName(innerSkuGoodVo.getGoodsName());
                             shoppingCarItemVO.setGoodsTitle(innerSkuGoodVo.getGoodsTitle());
+                            shoppingCarItemVO.setIsPointGood(innerSkuGoodVo.getIsPointGood());
                             shoppingCarItemVO.setGoodsPrice(innerSkuGoodVo.getSalePrice());
-                            shoppingCarItemVO.setSpecValue(innerSkuGoodVo.getSkuSpecValue());
+                            shoppingCarItemVO.setGoodsPointPrice(innerSkuGoodVo.getPointPrice());
                             shoppingCarItemVO.setSkuImage(innerSkuGoodVo.getGoodsImage());
+                            shoppingCarItemVO.setSpecValue(innerSkuGoodVo.getSkuSpecValue());
+                            shoppingCarItemVO.setExchangeType(innerSkuGoodVo.getExchangeType());
+                            shoppingCarItemVO.setIsInMemberGift(innerSkuGoodVo.getIsInMemberGift());
+                            shoppingCarItemVO.setInMemberPointPrice(innerSkuGoodVo.getInMemberPointPrice());
                             break;
                         }
                     }

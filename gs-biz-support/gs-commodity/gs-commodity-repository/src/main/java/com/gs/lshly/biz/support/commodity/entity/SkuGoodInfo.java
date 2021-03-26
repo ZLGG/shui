@@ -152,5 +152,4 @@ public class SkuGoodInfo extends Model {
     @ApiModelProperty("in会员积分价格")
     private Double inMemberPointPrice;
 
-
 }

@@ -453,6 +453,15 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("条形码")
         private String barcode;
 
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
     }
 
 

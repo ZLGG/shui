@@ -7,7 +7,9 @@ import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserShoppingCarVO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserShoppingCarRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -32,6 +34,9 @@ public class BbcPcUserShoppingCarController {
     @DubboReference
     private IBbbUserShoppingCarRpc bbbUserShoppingCarRpc;
 
+    @DubboReference
+    private IBbcUserShoppingCarRpc bbcUserShoppingCarRpc;
+
     @ApiOperation("购物车商品列表")
     @GetMapping("")
     public ResponseData<List<BbbUserShoppingCarVO.ListVO>> list(BbbUserShoppingCarQTO.QTO qto) {
@@ -53,8 +58,8 @@ public class BbcPcUserShoppingCarController {
 
     @ApiOperation("新增购物车商品(实现二)")
     @PostMapping("/add")
-    public ResponseData<Void> addShopping(@Valid @RequestBody BbbUserShoppingCarDTO.AddShopingETO dto) {
-        bbbUserShoppingCarRpc.addUserShoppingCar2(dto);
+    public ResponseData<Void> addShopping(@Valid @RequestBody BbcUserShoppingCarDTO.ETO dto) {
+        bbcUserShoppingCarRpc.addUserShoppingCar(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 

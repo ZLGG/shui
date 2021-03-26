@@ -273,8 +273,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         //按销售或者评价排序
         if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode()) || qto.getOrderByProperties().equals(OrderByConditionEnum.评价.getCode()))) {
             goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
-        }
-       else {
+        } else {
             //按价格排序
             for (GoodsInfo info : goodsInfos) {
                 BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
@@ -627,10 +626,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             boost.eq("id", skuId);
             boost.eq("state", GoodsStateEnum.已上架.getCode());
             SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getOne(boost);
-
             if (skuGoodInfo == null) {
                 continue;
             }
+
             //获取spu的id
             String goodsId = skuGoodInfo.getGoodId();
             GoodsInfo goodsInfo = repository.getById(goodsId);
@@ -658,6 +657,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 serviceVO.setGoodsTitle(goodsInfo.getGoodsTitle());
                 serviceVO.setGoodsNo(goodsInfo.getGoodsNo());
                 serviceVO.setSkuGoodsNo(skuGoodInfo.getSkuGoodsNo());
+                serviceVO.setIsPointGood(skuGoodInfo.getIsPointGood());
+                serviceVO.setExchangeType(goodsInfo.getExchangeType());
+                serviceVO.setIsInMemberGift(skuGoodInfo.getIsInMemberGift());
+                serviceVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
             }
             innerServiceVOS.add(serviceVO);
         }

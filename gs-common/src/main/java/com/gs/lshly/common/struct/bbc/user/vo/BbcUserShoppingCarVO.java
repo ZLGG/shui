@@ -49,8 +49,20 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         @ApiModelProperty("商品副标题")
         private String goodsTitle;
 
+        /**
+         * 是否是积分商品
+         */
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
         @ApiModelProperty("商品价格")
         private BigDecimal goodsPrice;
+
+        /**
+         * 积分价格
+         */
+        @ApiModelProperty("积分价格")
+        private BigDecimal goodsPointPrice;
 
         @ApiModelProperty("SKU-ID")
         private String skuId;
@@ -70,6 +82,15 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         @ApiModelProperty("店铺ID")
         @JsonIgnore
         private String shopId;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
     }
 
     @Data
