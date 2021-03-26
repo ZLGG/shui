@@ -461,28 +461,28 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "同一商品标识",position =20)
         private String goodsNo;
 
-        @ApiModelProperty("积分价格")
-        private String pointPrice;
-
-        @ApiModelProperty("办理备注")
+        @ApiModelProperty(value ="办理备注",position =21)
         private String remarks;
 
-        @ApiModelProperty("是否是积分商品")
+        @ApiModelProperty(value ="是否是积分商品",position =22)
         private String isPointGood;
 
-        @ApiModelProperty("是否是in会员礼品")
+        @ApiModelProperty(value ="积分价格",position =23)
+        private String pointPrice;
+
+        @ApiModelProperty(value ="是否是in会员礼品",position =24)
         private String isInMemberGift;
 
-        @ApiModelProperty("in会员积分价格")
+        @ApiModelProperty(value ="in会员积分价格",position =25)
         private String inMemberPointPrice;
 
-        @ApiModelProperty("出售类型（0普通，1活动）")
+        @ApiModelProperty(value ="出售类型（0普通，1活动）",position =26)
         private String saleType;
 
-        @ApiModelProperty("信天游产品号")
+        @ApiModelProperty(value ="信天游产品号",position =27)
         private String thirdProductId;
 
-        @ApiModelProperty("兑换类型（0实物，1虚拟）")
+        @ApiModelProperty(value ="兑换类型（0实物，1虚拟）",position =28)
         private String exchangeType;
     }
 

@@ -850,7 +850,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         importGoodsDataVO.setIsInMemberGift("false");
         importGoodsDataVO.setInMemberPointPrice("0");
         importGoodsDataVO.setSaleType("0");
-        importGoodsDataVO.setThirdProductId("信天游产品号");
+        importGoodsDataVO.setThirdProductId("123");
         importGoodsDataVO.setExchangeType("0");
         importGoodsDataVOS.add(importGoodsDataVO);
         return importGoodsDataVOS;

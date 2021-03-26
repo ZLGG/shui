@@ -149,5 +149,11 @@ ALTER TABLE `fy_mall`.`gs_user_shopping_car`
     ADD COLUMN `is_point_good` tinyint(1) NULL COMMENT '是否是积分商品' AFTER `quantity`,
     ADD COLUMN `goods_point_price` decimal(10, 2) NULL COMMENT '商品积分价格' AFTER `is_point_good`;
 
+ALTER TABLE `fy_mall`.`gs_goods_info`
+MODIFY COLUMN `is_suport_poor_goods` int(11) NULL DEFAULT 10 COMMENT '是否是扶贫商品(10=标准商品 20=扶贫商品）' AFTER `is_show_old_price`;
+
+
+
+
 
 

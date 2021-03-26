@@ -217,7 +217,7 @@ public class GoodsInfo extends Model {
     /**
      * in会员积分价格
      */
-    private Double inMemberPointPrice;
+    private BigDecimal inMemberPointPrice;
     /**
      * 出售类型（0普通，1活动）
      */
