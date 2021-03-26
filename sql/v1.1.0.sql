@@ -134,5 +134,20 @@ CREATE TABLE `gs_in_vip_coupon` (
   KEY `user_id_inx` (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='in会员优惠券表';
 
+ALTER TABLE `fy_mall`.`gs_trade`
+    ADD COLUMN `goods_source_type` int(11) NULL COMMENT '商品来源类型：1:商城商品，2:积分商品' AFTER `trade_state`,
+    ADD COLUMN `point_price_payable` int(11) NULL COMMENT '应付积分' AFTER `goods_amount`,
+    ADD COLUMN `amount_payable` int(11) NULL COMMENT '应付现金' AFTER `point_price_payable`,
+    ADD COLUMN `point_price_actually_paid` int(11) NULL COMMENT '实付积分' AFTER `merchant_amount`,
+    ADD COLUMN `amount_actually_paid` int(11) NULL COMMENT '实付现金' AFTER `point_price_actually_paid`,
+    ADD COLUMN `goods_point_amount` decimal(12, 3) NULL COMMENT '商品总积分' AFTER `goods_amount`;
+
+ALTER TABLE `fy_mall`.`gs_trade_pay`
+    ADD COLUMN `merge_payment_trade_code` varchar(64) NULL COMMENT '合并支付交易编号（传递给第三方支付的交易单号）' AFTER `merchant_id`;
+
+ALTER TABLE `fy_mall`.`gs_user_shopping_car`
+    ADD COLUMN `is_point_good` tinyint(1) NULL COMMENT '是否是积分商品' AFTER `quantity`,
+    ADD COLUMN `goods_point_price` decimal(10, 2) NULL COMMENT '商品积分价格' AFTER `is_point_good`;
+
 
 
