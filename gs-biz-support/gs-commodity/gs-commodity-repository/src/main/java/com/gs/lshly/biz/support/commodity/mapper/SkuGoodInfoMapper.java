@@ -18,9 +18,9 @@ import org.apache.ibatis.annotations.Select;
 public interface SkuGoodInfoMapper extends BaseMapper<SkuGoodInfo> {
 
     //todo 垮业务中心，需要改造
-    @Select("SELECT s.specs_value spec_value,IFNULL(s.sale_price,g.`sale_price`) sku_price," +
+    @Select("SELECT s.specs_value spec_value,IFNULL(s.sale_price,g.`sale_price`) sku_price, " +
             "IFNULL(s.image,g.`goods_image`) sku_image, s.good_id goodsId, " +
-            "g.goods_name, g.goods_title,  g.shop_id, p.shop_name  " +
+            "g.goods_name, g.goods_title,  g.shop_id, p.shop_name, IFNULL(s.is_point_good, g.is_point_good) is_point_good, IFNULL(s.point_price, g.point_price) point_price, g.exchange_type, IFNULL(s.is_in_member_gift, g.is_in_member_gift) is_in_member_gift, IFNULL(s.in_member_point_price, g.in_member_point_price) in_member_point_price " +
             "FROM gs_sku_good_info s  " +
             "INNER JOIN gs_goods_info g ON g.id=s.good_id  " +
             "INNER JOIN gs_shop p ON p.id=g.shop_id" +
