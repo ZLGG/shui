@@ -21,8 +21,8 @@ import javax.validation.Valid;
  * @Date 15:14 2020/10/14
  */
 @RestController
-@RequestMapping("/platform/GoodsInfo-v1.1.0")
-@Api(tags = "商品管理")
+@RequestMapping("/platform/GoodsInfo")
+@Api(tags = "商品管理-v1.1.0")
 @Module(code = "commodityManagement", parent = "commodity", name = "商品管理", index =1)
 public class GoodsInfoController {
     @DubboReference
