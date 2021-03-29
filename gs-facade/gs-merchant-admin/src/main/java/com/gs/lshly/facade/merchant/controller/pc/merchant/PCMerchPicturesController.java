@@ -93,4 +93,22 @@ public class PCMerchPicturesController {
         return ResponseData.data(detailVO);
     }
 
+    @ApiOperation(value = "视频上传")
+    @PostMapping("uploadVideo")
+    public ResponseData<String> uploadVideo(
+            @ApiParam(name = "file", value = "文件", required = true)
+            @RequestParam("file") MultipartFile file,
+
+            @ApiParam(name = "host", value = "文件上传路径", required = false)
+            @RequestParam(value = "host", required = false) String host) {
+
+        if(!StringUtils.isEmpty(host)){
+            ConstantPropertiesUtil.FILE_HOST = host;
+            ConstantPropertiesUtil.LOCAL_MODULE = host;
+        }
+        String url = fileService.uploadVideo(file);
+        //返回对象
+        return ResponseData.data(url);
+    }
+
 }

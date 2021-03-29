@@ -31,7 +31,7 @@ public class BbcUserCenterController {
     @DubboReference
     private IBbcUserRpc bbcUserRpc;
 
-    @ApiOperation("我的会员信息")
+    @ApiOperation("我的会员信息-v1.1.0")
     @GetMapping("/getUserInfo")
     public ResponseData<BbcUserVO.DetailVO> getUserInfo(BbcUserQTO.QTO qto) {
         BbcUserVO.DetailVO detailVO =  bbcUserRpc.getUserInfo(qto);

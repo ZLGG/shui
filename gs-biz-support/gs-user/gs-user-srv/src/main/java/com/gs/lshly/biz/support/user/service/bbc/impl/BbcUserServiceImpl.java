@@ -51,10 +51,7 @@ public class BbcUserServiceImpl implements IBbcUserService {
         }
         User user =  repository.getById(qto.getJwtUserId());
         BbcUserVO.DetailVO detailVO = new BbcUserVO.DetailVO();
-        detailVO.setId(user.getId());
-        detailVO.setUserName(user.getUserName());
-        detailVO.setHeadImg(user.getHeadImg());
-        detailVO.setPhone(user.getPhone());
+        BeanUtils.copyProperties(user,detailVO);
         detailVO.setCountCard(10);
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(qto.getJwtUserId());
