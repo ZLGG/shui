@@ -17,6 +17,13 @@ public interface IFileService {
      * @param url
      * @return
      */
-    PicturesVO.DetailVO uploadNet (String url);
+    PicturesVO.DetailVO uploadNet(String url);
+
+    /**
+     * 视频上传至阿里云
+     * @param file
+     * @return
+     */
+    String uploadVideo(MultipartFile file);
 
 }

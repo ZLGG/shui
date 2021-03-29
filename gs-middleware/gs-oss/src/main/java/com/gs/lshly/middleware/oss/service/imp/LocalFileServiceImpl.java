@@ -3,6 +3,7 @@ package com.gs.lshly.middleware.oss.service.imp;
 import cn.hutool.core.io.FileUtil;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.CannedAccessControlList;
+import com.aliyun.oss.model.PutObjectResult;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
 import com.gs.lshly.middleware.oss.ConstantPropertiesUtil;
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -161,6 +163,28 @@ public class LocalFileServiceImpl implements IFileService {
             throw new BusinessException("上传异常");
         }
         return detailVO;
+    }
+
+    @Override
+    public String uploadVideo(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        Random random = new Random();
+        String name = "Video/"+random.nextInt(10000) + System.currentTimeMillis() + substring;
+        try {
+            InputStream stream=file.getInputStream();
+            String filename=System.currentTimeMillis()+file.getOriginalFilename();
+            OSSClient client=new OSSClient(ConstantPropertiesUtil.END_POINT, ConstantPropertiesUtil.ACCESS_KEY_ID,ConstantPropertiesUtil.ACCESS_KEY_SECRET);
+            PutObjectResult result=client.putObject(ConstantPropertiesUtil.LOCAL_BUCKET_NAME,"Video/"+name,stream);
+            client.shutdown();
+            String bucketName = ConstantPropertiesUtil.LOCAL_BUCKET_NAME;
+            String fileHost = ConstantPropertiesUtil.LOCAL_FILE_HOST;
+            String fileUrl = fileHost + "/" + name;
+            String uploadUrl = "http://" + bucketName + "." + ConstantPropertiesUtil.END_POINT + "/" + fileUrl;
+            return uploadUrl;
+        } catch (Exception e) {
+            throw new BusinessException("视频上传失败");
+        }
     }
 
     private static InputStream getUrlStream(String url) {
