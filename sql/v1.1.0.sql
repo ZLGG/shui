@@ -152,7 +152,8 @@ ALTER TABLE `fy_mall`.`gs_user_shopping_car`
 ALTER TABLE `fy_mall`.`gs_goods_info`
 MODIFY COLUMN `is_suport_poor_goods` int(11) NULL DEFAULT 10 COMMENT '是否是扶贫商品(10=标准商品 20=扶贫商品）' AFTER `is_show_old_price`;
 
-
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `click_volume` int(11) NOT NULL DEFAULT 0 COMMENT '点击量（临时）' AFTER `exchange_type`;
 
 
 

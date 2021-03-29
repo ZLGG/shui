@@ -237,4 +237,9 @@ public class GoodsInfo extends Model {
      * 兑换类型（虚拟，实物）
      */
     private Integer exchangeType;
+
+    /**
+     * 点击量（临时）
+     */
+    private Integer clickVolume;
 }
