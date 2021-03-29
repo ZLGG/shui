@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.foundation.service.platadmin;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSitePopupVO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteAdvertPopupDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertPopupQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteAdvertPopupVO;
@@ -37,5 +38,11 @@ public interface ISiteAdvertPopupService {
 	 * @param dto
 	 */
 	void onoff(SiteAdvertPopupDTO.OnoffDTO dto);
-
+	
+	/**
+	 * 获取可广告弹窗的数据
+	 * @param dto
+	 * @return
+	 */
+	BbcSitePopupVO.DetailVO getPopup(SiteAdvertPopupQTO.BBBPCQTO qto);
 }

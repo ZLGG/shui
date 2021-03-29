@@ -28,7 +28,7 @@ public abstract class BbcSitePopupVO implements Serializable {
         @ApiModelProperty("id")
         private String id;
 
-        @ApiModelProperty("是否需要弹窗")
+        @ApiModelProperty("是否需要弹窗 0:否 1:是")
         private Integer status;
 
         @ApiModelProperty("标题")

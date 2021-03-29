@@ -63,4 +63,16 @@ public abstract class SiteAdvertPopupQTO implements Serializable {
         private Integer terminal;
     }
 
+    
+    @Data
+    @ApiModel("SiteAdvertPopupQTO.BBBPCQTO")
+    @Accessors(chain = true)
+    public static class BBBPCQTO extends BaseDTO {
+
+        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏]")
+        private Integer subject;
+
+        @ApiModelProperty(value = "终端[10=2b 20=2c]",hidden = true)
+        private Integer terminal;
+    }
 }

@@ -15,16 +15,20 @@ import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcHomePageQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteBannerQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteFloorQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteBannerVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteFloorVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSitePopupVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertPopupQTO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteBannerRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteFloorRpc;
+import com.gs.lshly.rpc.api.bbc.foundation.IBbcSitePopupRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 
 import io.swagger.annotations.Api;
@@ -53,6 +57,9 @@ public class BbcPointsController {
     
     @DubboReference
     private IBbcSiteTopicRpc bbcSiteTopicRpc;
+    
+    @DubboReference
+    private IBbcSitePopupRpc bbcSitePopupRpc;
     
     @ApiOperation("banner/菜单信息-v1.1.0")
     @GetMapping("")
@@ -85,6 +92,14 @@ public class BbcPointsController {
         return ResponseData.data(bbcSiteTopicRpc.topicGoods(topicId));
     }
     
+    @ApiOperation("查询广告弹窗-v1.1.0")
+    @GetMapping("/advertPopup")
+    public ResponseData<BbcSitePopupVO.DetailVO> advertPopup() {
+    	SiteAdvertPopupQTO.BBBPCQTO qto = new SiteAdvertPopupQTO.BBBPCQTO();
+        qto.setSubject(SubjectEnum.积分商城.getCode());
+        qto.setTerminal(TerminalEnum.BBC.getCode());
+        return ResponseData.data(bbcSitePopupRpc.getPopup(qto));
+    }
     
     @ApiOperation("扶贫页轮播图")
     @GetMapping("/bannerList")

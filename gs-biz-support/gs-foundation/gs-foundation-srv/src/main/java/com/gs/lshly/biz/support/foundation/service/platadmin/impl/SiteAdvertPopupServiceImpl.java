@@ -12,9 +12,12 @@ import com.gs.lshly.biz.support.foundation.service.platadmin.ISiteAdvertPopupSer
 import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSitePopupVO.DetailVO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteAdvertPopupDTO.ETO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteAdvertPopupDTO.IdDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteAdvertPopupDTO.OnoffDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteAdvertPopupDTO.PopupDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertPopupQTO.BBBPCQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertPopupQTO.QTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteAdvertPopupVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteAdvertPopupVO.PCDetailVO;
@@ -112,4 +115,19 @@ public class SiteAdvertPopupServiceImpl implements ISiteAdvertPopupService {
         siteAdvertPopup.setOnoff(dto.getOnoff());
         repository.saveOrUpdate(siteAdvertPopup);
 	}
+
+	@Override
+	public DetailVO getPopup(BBBPCQTO qto) {
+		QueryWrapper<SiteAdvertPopup> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("onoff",TrueFalseEnum.是.getCode());
+        SiteAdvertPopup onoffEntity = repository.getOne(wrapper);
+        DetailVO detailVO = new DetailVO();
+        if(onoffEntity==null)
+        	detailVO.setStatus(TrueFalseEnum.否.getCode());
+        
+        detailVO.setStatus(TrueFalseEnum.是.getCode());
+        BeanUtils.copyProperties(onoffEntity, detailVO);
+		return detailVO;
+	}
+
 }

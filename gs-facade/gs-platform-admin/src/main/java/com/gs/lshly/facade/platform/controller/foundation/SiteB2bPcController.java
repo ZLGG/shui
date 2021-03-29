@@ -1,5 +1,7 @@
 package com.gs.lshly.facade.platform.controller.foundation;
 
+
+
 import cn.hutool.core.util.ObjectUtil;
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.enums.PcH5Enum;
@@ -17,12 +19,16 @@ import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.foundation.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
+
+@Slf4j
 @RestController
 @RequestMapping("/platform/bbb/pcSite")
 @Api(tags = "站点配置(BBB-PC)-v1.1.0",description = " ")
@@ -236,7 +242,8 @@ public class SiteB2bPcController {
     @GetMapping("/noticeList")
     @Func(code="view", name="查")
     public ResponseData<PageData<SiteNoticeVO.PCListVO>> listNotice(SiteNoticeQTO.QTO qto) {
-        qto.setTerminal(TerminalEnum.BBB.getCode());//2c
+        qto.setTerminal(TerminalEnum.BBC.getCode());//2c
+        log.info("[listNotice][request][SiteNoticeQTO.QTO qto=>{}]",qto.toString());
         return ResponseData.data(siteNoticeRpc.pageData(qto));
     }
     

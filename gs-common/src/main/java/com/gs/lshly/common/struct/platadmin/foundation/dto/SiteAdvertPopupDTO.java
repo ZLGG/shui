@@ -69,4 +69,17 @@ public abstract class SiteAdvertPopupDTO implements Serializable {
         @ApiModelProperty(value="上/下架 0上架 1下架",required=true)
         private Integer onoff;
     }
+    
+    @Data
+    @ApiModel("SiteAdvertPopupDTO.PopupDTO")
+    @Accessors(chain = true)
+    public static class PopupDTO extends BaseDTO {
+    	@ApiModelProperty(value = "终端[10=2b 20=2c]",hidden = true)
+        private Integer terminal;
+
+        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50=积分商城]",hidden = true)
+        private Integer subject;
+    }
+    
+    
 }
