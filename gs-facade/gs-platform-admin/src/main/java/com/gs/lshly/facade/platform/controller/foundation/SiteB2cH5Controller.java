@@ -291,7 +291,7 @@ public class SiteB2cH5Controller {
     
     
     @ApiOperation("广告弹窗上下线-v1.1.0")
-    @PutMapping(value = "/advertPopupOnoff/")
+    @PutMapping(value = "/advertPopupOnoff")
     @Func(code="edit", name="改")
     public ResponseData<Void> onoffAdvertPopup(@Valid @RequestBody SiteAdvertPopupDTO.OnoffDTO dto) {
         siteAdvertPopupRpc.onoff(dto);

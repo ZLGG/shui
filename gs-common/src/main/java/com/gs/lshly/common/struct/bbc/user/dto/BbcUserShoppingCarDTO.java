@@ -21,32 +21,32 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
-        @ApiModelProperty("商品ID")
-        private String goodsId;
-
-        @ApiModelProperty("商品名称")
-        private String goodsName;
-
-        @ApiModelProperty("商品副标题")
-        private String goodsTitle;
-
-        @ApiModelProperty("商品价格")
-        private BigDecimal goodsPrice;
+//        @ApiModelProperty("商品ID")
+//        private String goodsId;
+//
+//        @ApiModelProperty("商品名称")
+//        private String goodsName;
+//
+//        @ApiModelProperty("商品副标题")
+//        private String goodsTitle;
+//
+//        @ApiModelProperty("商品价格")
+//        private BigDecimal goodsPrice;
 
         @ApiModelProperty("SKU-ID")
         private String skuId;
 
-        @ApiModelProperty("SKU-图片")
-        private String skuImage;
-
-        @ApiModelProperty("规格值")
-        private String specValue;
-
-        @ApiModelProperty("店铺ID")
-        private String shopId;
-
-        @ApiModelProperty("店铺名称")
-        private String shopName;
+//        @ApiModelProperty("SKU-图片")
+//        private String skuImage;
+//
+//        @ApiModelProperty("规格值")
+//        private String specValue;
+//
+//        @ApiModelProperty("店铺ID")
+//        private String shopId;
+//
+//        @ApiModelProperty("店铺名称")
+//        private String shopName;
 
         @ApiModelProperty("数量")
         private Integer quantity;

@@ -199,6 +199,9 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
         @ApiModelProperty("兑换类型（虚拟，实物）")
         private Integer exchangeType;
 
+        @ApiModelProperty(value = "idx",hidden = true)
+        private Integer idx;
+
     }
 
     @Data

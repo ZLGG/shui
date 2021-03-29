@@ -48,6 +48,12 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("兑换类型（虚拟，实物）")
         private Integer exchangeType;
+
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格  40积分  50上架时间")
+        private Integer orderByProperties;
+
+        @ApiModelProperty(value = "排序条件字段 10=升序 20=降序")
+        private Integer orderByAscDesc;
     }
 
     @Data

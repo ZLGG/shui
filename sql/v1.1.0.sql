@@ -117,5 +117,44 @@ CREATE TABLE `gs_trade_goods_travelsky` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='信天游商品日志表';
 
+DROP TABLE IF EXISTS `gs_in_vip_coupon`;
+CREATE TABLE `gs_in_vip_coupon` (
+  `coupon_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '优惠券id',
+  `user_id` varchar(32) NOT NULL COMMENT 'in会员userId',
+  `coupon_desc` varchar(255) DEFAULT NULL COMMENT '优惠券说明',
+  `start_time` datetime NOT NULL COMMENT '优惠券使用开始时间',
+  `end_time` datetime NOT NULL COMMENT '优惠券使用结束时间',
+  `coupon_price` decimal(10,2) NOT NULL COMMENT '优惠券抵扣金额',
+  `min_price` decimal(10,2) NOT NULL COMMENT '最低消费多少金额可用优惠券',
+  `coupon_type` tinyint(1) NOT NULL COMMENT '优惠券类型（0-成为会员赠送 1-会员每月分享赠送）',
+  `coupon_status` tinyint(1) NOT NULL COMMENT '优惠券状态（0-未使用 1-已使用 2-已过期）',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`coupon_id`) USING BTREE,
+  KEY `user_id_inx` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='in会员优惠券表';
+
+ALTER TABLE `fy_mall`.`gs_trade`
+    ADD COLUMN `goods_source_type` int(11) NULL COMMENT '商品来源类型：1:商城商品，2:积分商品' AFTER `trade_state`,
+    ADD COLUMN `point_price_payable` int(11) NULL COMMENT '应付积分' AFTER `goods_amount`,
+    ADD COLUMN `amount_payable` int(11) NULL COMMENT '应付现金' AFTER `point_price_payable`,
+    ADD COLUMN `point_price_actually_paid` int(11) NULL COMMENT '实付积分' AFTER `merchant_amount`,
+    ADD COLUMN `amount_actually_paid` int(11) NULL COMMENT '实付现金' AFTER `point_price_actually_paid`,
+    ADD COLUMN `goods_point_amount` decimal(12, 3) NULL COMMENT '商品总积分' AFTER `goods_amount`;
+
+ALTER TABLE `fy_mall`.`gs_trade_pay`
+    ADD COLUMN `merge_payment_trade_code` varchar(64) NULL COMMENT '合并支付交易编号（传递给第三方支付的交易单号）' AFTER `merchant_id`;
+
+ALTER TABLE `fy_mall`.`gs_user_shopping_car`
+    ADD COLUMN `is_point_good` tinyint(1) NULL COMMENT '是否是积分商品' AFTER `quantity`,
+    ADD COLUMN `goods_point_price` decimal(10, 2) NULL COMMENT '商品积分价格' AFTER `is_point_good`;
+
+ALTER TABLE `fy_mall`.`gs_goods_info`
+MODIFY COLUMN `is_suport_poor_goods` int(11) NULL DEFAULT 10 COMMENT '是否是扶贫商品(10=标准商品 20=扶贫商品）' AFTER `is_show_old_price`;
+
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `click_volume` int(11) NOT NULL DEFAULT 0 COMMENT '点击量（临时）' AFTER `exchange_type`;
+
+
 
 

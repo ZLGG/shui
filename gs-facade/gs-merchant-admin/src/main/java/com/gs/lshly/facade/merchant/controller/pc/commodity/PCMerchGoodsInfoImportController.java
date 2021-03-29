@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("/merchant/pc/goodsInfo/import")
-@Api(tags = "商品信息-导入管理")
+@Api(tags = "商品信息-导入管理-v1.1.0")
 @Slf4j
 public class PCMerchGoodsInfoImportController {
 
@@ -37,7 +37,7 @@ public class PCMerchGoodsInfoImportController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @ApiOperation("商品导入")
+    @ApiOperation("商品导入-v1.1.0")
     @PostMapping(value = "")
     @ResponseBody
     public ResponseData<Void> importExcel(MultipartFile file) throws IOException {
