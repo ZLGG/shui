@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/bbb/h5/userCenter/inUserCoupon")
-@Api(tags = "in会员优惠券管理")
+@Api(tags = "in会员优惠券管理-v1.1.0")
 public class BbbH5InUserCouponController {
 
     @DubboReference
@@ -36,5 +36,12 @@ public class BbbH5InUserCouponController {
             throw new BusinessException("用户未登陆");
         }
         return ResponseData.data(inUserCouponRpc.queryInUserCouponList(qto));
+    }
+
+    @PostMapping("/couponByBuy")
+    @ApiOperation("通过购买in会员获得优惠券")
+    public ResponseData getCouponByBuy(@Valid @RequestBody BbbInUserCouponQTO.BuyCouponQTO qto) {
+        inUserCouponRpc.getCouponByBuy(qto);
+        return ResponseData.success();
     }
 }

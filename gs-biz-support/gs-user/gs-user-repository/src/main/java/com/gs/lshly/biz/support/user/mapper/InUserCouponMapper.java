@@ -1,10 +1,14 @@
 package com.gs.lshly.biz.support.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.gs.lshly.common.struct.bbb.pc.user.dto.PCBBBInUserCouponDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.PCBBBInUserCouponVO;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @Author yangxi

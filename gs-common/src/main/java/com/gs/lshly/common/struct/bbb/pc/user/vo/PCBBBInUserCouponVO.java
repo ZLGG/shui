@@ -33,8 +33,8 @@ public class PCBBBInUserCouponVO implements Serializable {
     @ApiModelProperty("优惠券抵扣金额")
     private BigDecimal couponPrice;
 
-    @ApiModelProperty("最低消费多少金额可用优惠券")
-    private BigDecimal minPrice;
+//    @ApiModelProperty("最低消费多少金额可用优惠券")
+//    private BigDecimal minPrice;
 
     @ApiModelProperty("优惠券说明")
     private String couponDesc;

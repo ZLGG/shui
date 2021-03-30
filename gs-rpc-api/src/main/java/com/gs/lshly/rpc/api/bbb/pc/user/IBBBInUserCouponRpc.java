@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface IBBBInUserCouponRpc {
     List<PCBBBInUserCouponVO> queryInUserCouponList(BbbInUserCouponQTO.QTO qto);
+
+    void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
 }
