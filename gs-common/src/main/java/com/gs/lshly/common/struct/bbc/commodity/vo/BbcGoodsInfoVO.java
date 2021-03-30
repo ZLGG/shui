@@ -211,6 +211,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("兑换类型（虚拟，实物）")
         private Integer exchangeType;
 
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
 
  }
     @Data
@@ -311,6 +314,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("兑换类型（虚拟，实物）")
         private Integer exchangeType;
+
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
 
 
 

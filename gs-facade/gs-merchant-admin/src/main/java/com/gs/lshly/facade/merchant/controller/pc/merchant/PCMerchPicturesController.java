@@ -32,7 +32,7 @@ import java.util.List;
 */
 @RestController
 @RequestMapping("/merchadmin/pictures")
-@Api(tags = "商家店铺图片管理管理")
+@Api(tags = "商家店铺图片管理管理-v1.1.0")
 public class PCMerchPicturesController {
 
     @DubboReference
@@ -93,7 +93,7 @@ public class PCMerchPicturesController {
         return ResponseData.data(detailVO);
     }
 
-    @ApiOperation(value = "视频上传")
+    @ApiOperation(value = "视频上传-v1.1.0")
     @PostMapping("uploadVideo")
     public ResponseData<String> uploadVideo(
             @ApiParam(name = "file", value = "文件", required = true)

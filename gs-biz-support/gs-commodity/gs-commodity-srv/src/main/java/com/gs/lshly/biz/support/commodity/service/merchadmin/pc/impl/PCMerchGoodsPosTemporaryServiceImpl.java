@@ -528,7 +528,7 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
     }
 
     private  String getSkuImage(String images){
-        if (images !=null){
+        if (images !=null&&!images.equals("{}")){
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)){
                 return null;

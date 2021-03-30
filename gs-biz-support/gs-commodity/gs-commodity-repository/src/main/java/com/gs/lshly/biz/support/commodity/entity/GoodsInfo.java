@@ -242,4 +242,9 @@ public class GoodsInfo extends Model {
      * 点击量（临时）
      */
     private Integer clickVolume;
+
+    /**
+     * 视频地址
+     */
+    private String videoUrl;
 }

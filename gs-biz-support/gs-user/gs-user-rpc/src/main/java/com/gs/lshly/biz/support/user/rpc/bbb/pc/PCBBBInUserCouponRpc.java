@@ -26,4 +26,9 @@ public class PCBBBInUserCouponRpc implements IBBBInUserCouponRpc {
         List<PCBBBInUserCouponVO> inUserCouponVOList = inUserCouponService.queryInUserCouponList(qto);
         return inUserCouponVOList;
     }
+
+    @Override
+    public void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto) {
+        inUserCouponService.getCouponByBuy(qto);
+    }
 }
