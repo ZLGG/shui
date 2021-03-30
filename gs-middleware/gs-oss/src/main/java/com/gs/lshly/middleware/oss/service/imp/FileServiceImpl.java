@@ -26,18 +26,16 @@ import java.util.UUID;
  * @author Starry
  */
 public class FileServiceImpl implements IFileService {
+
     @Override
     public PicturesVO.DetailVO upload(MultipartFile file) {
-        //获取阿里云存储相关常量
         String endPoint = ConstantPropertiesUtil.END_POINT;
         String accessKeyId = ConstantPropertiesUtil.ACCESS_KEY_ID;
         String accessKeySecret = ConstantPropertiesUtil.ACCESS_KEY_SECRET;
         String bucketName = ConstantPropertiesUtil.BUCKET_NAME;
         String fileHost = ConstantPropertiesUtil.FILE_HOST;
-
         String uploadUrl = null;
         PicturesVO.DetailVO detailVO = new PicturesVO.DetailVO();
-
         try {
             //判断oss实例是否存在：如果不存在则创建，如果存在则获取
             OSSClient ossClient = new OSSClient(endPoint, accessKeyId, accessKeySecret);
@@ -185,16 +183,26 @@ public class FileServiceImpl implements IFileService {
 
     @Override
     public String uploadVideo(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
+        String endPoint = ConstantPropertiesUtil.END_POINT;
+        String accessKeyId = ConstantPropertiesUtil.ACCESS_KEY_ID;
+        String accessKeySecret = ConstantPropertiesUtil.ACCESS_KEY_SECRET;
+        String bucketName = ConstantPropertiesUtil.BUCKET_NAME;
         String fileHost = ConstantPropertiesUtil.FILE_HOST;
+        String originalFilename = file.getOriginalFilename();
         String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
         Random random = new Random();
         String name = "Video/"+random.nextInt(10000) + System.currentTimeMillis() + substring;
         try {
             InputStream stream = file.getInputStream();
             String filename = System.currentTimeMillis() + file.getOriginalFilename();
-            OSSClient client = new OSSClient(ConstantPropertiesUtil.END_POINT, ConstantPropertiesUtil.ACCESS_KEY_ID, ConstantPropertiesUtil.ACCESS_KEY_SECRET);
-            String bucketName = ConstantPropertiesUtil.LOCAL_BUCKET_NAME;
+            //判断oss实例是否存在：如果不存在则创建，如果存在则获取
+            OSSClient client = new OSSClient(endPoint, accessKeyId, accessKeySecret);
+            if (!client.doesBucketExist(bucketName)) {
+                //创建bucket
+                client.createBucket(bucketName);
+                //设置oss实例的访问权限：公共读
+                client.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+            }
             String fileUrl = fileHost + "/" + name;
             PutObjectResult result = client.putObject(bucketName, fileUrl, stream);
             client.shutdown();
