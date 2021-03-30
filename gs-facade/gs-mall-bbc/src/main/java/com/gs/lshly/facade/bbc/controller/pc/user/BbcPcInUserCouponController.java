@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/bbc/pc/userCenter/inUserCoupon")
-@Api(tags = "in会员优惠券管理")
+@Api(tags = "in会员优惠券管理-v1.1.0")
 public class BbcPcInUserCouponController {
 
     @DubboReference

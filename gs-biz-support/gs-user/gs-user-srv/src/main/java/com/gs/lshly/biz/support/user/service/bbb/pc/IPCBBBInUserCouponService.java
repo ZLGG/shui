@@ -16,4 +16,10 @@ public interface IPCBBBInUserCouponService {
      * @return
      */
     List<PCBBBInUserCouponVO> queryInUserCouponList(BbbInUserCouponQTO.QTO qto);
+
+    /**
+     * 购买in会员获得优惠券
+     * @param qto
+     */
+    void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
 }

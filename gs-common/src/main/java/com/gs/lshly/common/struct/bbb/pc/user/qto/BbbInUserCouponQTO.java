@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -22,4 +23,18 @@ public class BbbInUserCouponQTO implements Serializable {
         @NotBlank(message = "userId不能为空")
         private String userId;
     }
+
+    @Data
+    @ApiModel("BbbInUserCouponQTO.BuyCouponQTO")
+    @Accessors(chain = true)
+    public static class BuyCouponQTO implements Serializable {
+        @ApiModelProperty("in会员userId")
+        @NotBlank(message = "userId不能为空")
+        private String userId;
+
+        @ApiModelProperty("会员类型（0-年度会员，1-月度会员）")
+        @NotNull(message = "会员类型不能为空")
+        private Integer vipType;
+    }
+
 }
