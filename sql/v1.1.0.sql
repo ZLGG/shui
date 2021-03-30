@@ -142,12 +142,16 @@ ALTER TABLE `fy_mall`.`gs_trade`
     ADD COLUMN `amount_actually_paid` int(11) NULL COMMENT '实付现金' AFTER `point_price_actually_paid`,
     ADD COLUMN `goods_point_amount` decimal(12, 3) NULL COMMENT '商品总积分' AFTER `goods_amount`;
 
+ALTER TABLE `fy_mall`.`gs_trade_goods`
+    ADD COLUMN `coupon_type` int(11) NULL COMMENT '优惠券类型（普通、IN会员）' AFTER `comment_flag`;
+
 ALTER TABLE `fy_mall`.`gs_trade_pay`
     ADD COLUMN `merge_payment_trade_code` varchar(64) NULL COMMENT '合并支付交易编号（传递给第三方支付的交易单号）' AFTER `merchant_id`;
 
 ALTER TABLE `fy_mall`.`gs_user_shopping_car`
     ADD COLUMN `is_point_good` tinyint(1) NULL COMMENT '是否是积分商品' AFTER `quantity`,
     ADD COLUMN `goods_point_price` decimal(10, 2) NULL COMMENT '商品积分价格' AFTER `is_point_good`;
+    ADD COLUMN `in_member_point_price` decimal(12, 0) NULL COMMENT 'in会员积分价格' AFTER `is_in_member_gift`;
 
 ALTER TABLE `fy_mall`.`gs_goods_info`
 MODIFY COLUMN `is_suport_poor_goods` int(11) NULL DEFAULT 10 COMMENT '是否是扶贫商品(10=标准商品 20=扶贫商品）' AFTER `is_show_old_price`;

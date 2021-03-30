@@ -65,24 +65,23 @@ public class BbcPcUserShoppingCarController {
 
     @ApiOperation("删除购物车商品")
     @PostMapping(value = "/deleteBatch")
-    public ResponseData<Void> deleteBatch(@Valid @RequestBody BbbUserShoppingCarDTO.IdListDTO dto) {
-        bbbUserShoppingCarRpc.deleteBatchUserShoppingCar(dto);
+    public ResponseData<Void> deleteBatch(@Valid @RequestBody BbcUserShoppingCarDTO.IdListDTO dto) {
+        bbcUserShoppingCarRpc.deleteBatchUserShoppingCar(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
-
 
     @ApiOperation("改变购物车商品选中状态(ID是购物车ID)")
     @PutMapping(value = "/selectState/{id}")
     public ResponseData<Void> selectState(@PathVariable String id) {
-        BbbUserShoppingCarDTO.SelectDTO eto = new BbbUserShoppingCarDTO.SelectDTO(id);
-        bbbUserShoppingCarRpc.selectState(eto);
+        BbcUserShoppingCarDTO.SelectDTO eto = new BbcUserShoppingCarDTO.SelectDTO(id);
+        bbcUserShoppingCarRpc.selectState(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
     @ApiOperation("改变购物车商品选中状态（全选/返选）")
     @PutMapping(value = "/selectStateAll")
-    public ResponseData<Void> selectStateAll(@Valid @RequestBody BbbUserShoppingCarDTO.SelectAllDTO dto) {
-        bbbUserShoppingCarRpc.selectStateAll(dto);
+    public ResponseData<Void> selectStateAll(@Valid @RequestBody BbcUserShoppingCarDTO.SelectAllDTO dto) {
+        bbcUserShoppingCarRpc.selectStateAll(dto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 

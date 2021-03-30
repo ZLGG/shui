@@ -91,35 +91,30 @@ public class BbcTradeController {
     @ApiOperation("支付回调")
     @PostMapping("/doPayNotify")
     public String doPayNotify(@Valid @RequestBody BbcTradeResultNotifyVO.notifyVO notifyVO) {
-
         return bbcTradeRpc.payNotify(notifyVO);
     }
 
     @ApiOperation("支付成功")
     @PostMapping("/doPaySuccess")
     public String doPaySuccess(@Valid @RequestBody String tradeCode) {
-
         return bbcTradeRpc.paySuccess(tradeCode);
     }
 
     @ApiOperation("订单列表")
     @PostMapping("/userCenter/orderList")
     public ResponseData<PageData<BbcTradeListVO.tradeVO>> orderList(@RequestBody BbcTradeQTO.TradeList qto) {
-
         return ResponseData.data(bbcTradeRpc.tradeListPageData(qto));
     }
 
     @ApiOperation("订单详情")
     @PostMapping("/userCenter/orderDetail")
     public ResponseData<BbcTradeListVO.tradeVO> orderDetail(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
-
         return bbcTradeRpc.orderDetail(dto);
     }
 
     @ApiOperation("订单确认收货")
     @PostMapping("/userCenter/orderConfirmReceipt")
     public ResponseData<Void> orderConfirmReceipt(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
-
         return bbcTradeRpc.orderConfirmReceipt(dto);
     }
 
@@ -154,7 +149,6 @@ public class BbcTradeController {
     @ApiOperation("使用优惠卷列表")
     @PostMapping("/useCard")
     public ResponseData<List<BbcTradeListVO.UseCard>> useCard(@Valid @RequestBody BbcTradeDTO.UseCard dto) {
-
         return ResponseData.data(bbcTradeRpc.useCard(dto));
     }
 
