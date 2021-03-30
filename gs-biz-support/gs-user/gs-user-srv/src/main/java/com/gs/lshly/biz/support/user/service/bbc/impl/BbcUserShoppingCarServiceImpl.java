@@ -103,20 +103,10 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
             BbcUserShoppingCarVO.ShoppingCarItemVO shoppingCarItemVO = new BbcUserShoppingCarVO.ShoppingCarItemVO();
             shoppingCarItemVO.setId(shoppingCarItem.getId());
             shoppingCarItemVO.setGoodsId(shoppingCarItem.getGoodsId());
-//            shoppingCarItemVO.setGoodsName(shoppingCarItem.getGoodsName());
-//            shoppingCarItemVO.setGoodsTitle(shoppingCarItem.getGoodsTitle());
-//            shoppingCarItemVO.setIsPointGood(shoppingCarItem.getIsPointGood());
-//            shoppingCarItemVO.setGoodsPrice(shoppingCarItem.getGoodsPrice());
-//            shoppingCarItemVO.setGoodsPointPrice(shoppingCarItem.getGoodsPointPrice());
             shoppingCarItemVO.setSkuId(shoppingCarItem.getSkuId());
-//            shoppingCarItemVO.setSkuImage(shoppingCarItem.getSkuImage());
-//            shoppingCarItemVO.setSpecValue(shoppingCarItem.getSpecValue());
             shoppingCarItemVO.setQuantity(shoppingCarItem.getQuantity());
             shoppingCarItemVO.setIsSelect(shoppingCarItem.getIsSelect());
             shoppingCarItemVO.setShopId(shoppingCarItem.getShopId());
-//            shoppingCarItemVO.setExchangeType(shoppingCarItem.getExchangeType());
-//            shoppingCarItemVO.setIsInMemberGift(shoppingCarItem.getIsInMemberGift());
-//            shoppingCarItemVO.setInMemberPointPrice(shoppingCarItem.getInMemberPointPrice());
             tempList.add(shoppingCarItemVO);
             skuIdList.add(shoppingCarItem.getSkuId());
         }

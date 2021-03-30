@@ -202,6 +202,9 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "idx",hidden = true)
         private Integer idx;
 
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
     }
 
     @Data

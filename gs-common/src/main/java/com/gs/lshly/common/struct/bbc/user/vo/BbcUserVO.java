@@ -138,6 +138,9 @@ public abstract class BbcUserVO implements Serializable {
         @ApiModelProperty("所在区域")
         private String region;
 
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+
     }
 
     @Data

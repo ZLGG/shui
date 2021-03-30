@@ -102,6 +102,9 @@ public abstract class BbcUserDTO implements Serializable {
 
         @ApiModelProperty(value = "验证码")
         private String validCode;
+        
+        @ApiModelProperty(value = "登录方式",required=false)
+        private Integer type;
     }
 
     @Data

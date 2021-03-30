@@ -98,6 +98,9 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;
 
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
     }
 
     @Data
