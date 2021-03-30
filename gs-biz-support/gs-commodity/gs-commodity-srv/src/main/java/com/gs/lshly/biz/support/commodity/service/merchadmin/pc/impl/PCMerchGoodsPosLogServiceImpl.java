@@ -239,7 +239,7 @@ public class PCMerchGoodsPosLogServiceImpl implements IPCMerchGoodsPosLogService
     }
 
     private  String getImage(String skuImages){
-        if (skuImages !=null){
+        if (skuImages !=null&&!skuImages.equals("{}")){
             JSONArray arr = JSONArray.parseArray(skuImages);
             if (ObjectUtils.isEmpty(arr)){
                 return "";
