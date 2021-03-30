@@ -10,9 +10,11 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeCancelQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeCancelVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeCancelRpc;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -103,5 +105,10 @@ public class BbcMarketActivityRpc implements IBbcMarketActivityRpc {
 	@Override
 	public TopicVO listFlashsale(BaseDTO dto) {
 		return iBbcMarketActivityService.listFlashsale(dto);
+	}
+
+	@Override
+	public PageData<DetailVO> pageFlashsale(QTO qto) {
+		return iBbcMarketActivityService.pageFlashsale(qto);
 	}
 }

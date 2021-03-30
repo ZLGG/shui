@@ -41,4 +41,11 @@ public interface IBbcSiteTopicRpc {
      */
     BbcSiteTopicVO.InMemberGoodsVO inMemberGoods();
     
+    /**
+     * 查询当前分类更多
+     * @param qto
+     * @return
+     */
+    PageData<GoodsInfoVO.DetailVO> pageMore(BbcSiteTopicQTO.SearchmoreQTO qto);
+    
 }

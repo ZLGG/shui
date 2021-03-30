@@ -10,6 +10,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.SearchmoreQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.InMemberGoodsVO;
@@ -52,6 +53,11 @@ public class BbcSiteTopicRpc implements IBbcSiteTopicRpc{
 	@Override
 	public InMemberGoodsVO inMemberGoods() {
 		return bbcSiteTopicService.inMemberGoods();
+	}
+
+	@Override
+	public PageData<DetailVO> pageMore(SearchmoreQTO qto) {
+		return bbcSiteTopicService.pageMore(qto);
 	}
 
 }

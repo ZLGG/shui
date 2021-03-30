@@ -28,4 +28,20 @@ public abstract class BbbSiteNoticeVO implements Serializable {
         private String name;
 
     }
+    
+    @Data
+    @ApiModel("BbbSiteNoticeVO.DetailVO")
+    @Accessors(chain = true)
+    public static class DetailVO implements Serializable{
+
+        @ApiModelProperty("ID")
+        private String id;
+
+        @ApiModelProperty("名称")
+        private String name;
+        
+        @ApiModelProperty("内容")
+        private String content;
+
+    }
 }

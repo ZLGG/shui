@@ -7,5 +7,8 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNoticeVO;
 public interface IBbbSiteNoticeService {
 
     List<BbbSiteNoticeVO.ListVO> list(BbbSiteNoticeQTO.QTO qto);
+    
+    
+    BbbSiteNoticeVO.DetailVO detail(BbbSiteNoticeQTO.IDQTO qto);
 
 }

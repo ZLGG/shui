@@ -27,9 +27,11 @@ import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
@@ -935,6 +937,43 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
         topicVO.setGoodsList(goodsList);
         
 		return topicVO;
+	}
+
+	@Override
+	public PageData<DetailVO> pageFlashsale(QTO qto) {
+		//查询生成进行的活动
+		QueryWrapper<MarketPtActivity> wrapper = new QueryWrapper<>();
+        wrapper.eq("label","秒杀");
+        wrapper.le("activity_start_time", LocalDateTime.now());
+        wrapper.ge("activity_end_time", LocalDateTime.now());
+        //查询商品的活动
+        MarketPtActivity marketPtActivity = iMarketPtActivityRepository.getOne(wrapper);
+        if(marketPtActivity==null){
+        	return null;
+        }
+        
+        if (ObjectUtils.isEmpty(marketPtActivity)){
+            return null;
+        }
+        
+        PCBbbMarketActivityVO.activityVO activityVO = new PCBbbMarketActivityVO.activityVO();
+        BeanUtils.copyProperties(marketPtActivity,activityVO);
+        IPage<PCBbbMarketActivityVO.activityGoodsVO> pager = MybatisPlusUtil.pager(new PCBbbMarketActivityQTO.QTO());
+        QueryWrapper<BbbMarketActivityDTO.IdDTO> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("goods.activity_id",marketPtActivity.getId()));
+        iMarketPtActivityRepository.selectActivityPageData(pager,query);
+        
+        List<GoodsInfoVO.DetailVO> goodsList = new ArrayList<GoodsInfoVO.DetailVO>();
+        if (ObjectUtils.isNotEmpty(pager)){
+            for (PCBbbMarketActivityVO.activityGoodsVO cutVO : pager.getRecords()) {
+            	
+            	GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(cutVO.getGoodsId()));
+            	goodsList.add(goodsInfoDetailVO);
+        		
+            }
+        }
+        return new PageData<>(goodsList,qto.getPageNum(),qto.getPageSize(),pager.getTotal());
+        
 	}
 
 

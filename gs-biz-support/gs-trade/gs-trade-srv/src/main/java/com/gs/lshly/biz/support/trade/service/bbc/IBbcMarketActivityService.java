@@ -9,6 +9,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 
 import java.util.List;
 
@@ -50,4 +51,11 @@ public interface IBbcMarketActivityService {
      * @return
      */
     BbcSiteTopicVO.TopicVO listFlashsale(BaseDTO dto);
+    
+    /**
+     * 分页查询秒杀 产品
+     * @param qto
+     * @return
+     */
+    PageData<GoodsInfoVO.DetailVO> pageFlashsale(BbcMarketActivityQTO.QTO qto);
 }

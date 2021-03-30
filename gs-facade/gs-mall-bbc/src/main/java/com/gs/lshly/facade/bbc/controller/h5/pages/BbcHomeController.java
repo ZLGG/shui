@@ -25,6 +25,7 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNoticeVO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteVideoVO;
 import com.gs.lshly.common.struct.bbb.pc.pages.qto.PCBbbHomeQTO;
 import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbHomeVO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteNoticeQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -94,6 +95,16 @@ public class BbcHomeController {
     	return ResponseData.data(bbcSiteTopicRpc.list(qto));
     }
     
+    
+    @ApiOperation("查看更多电信/秒杀专区-v1.1.0")
+    @GetMapping("/floorGoodsSearchmore")
+    public ResponseData<List<BbcSiteTopicVO.CategoryListVO>> floorGoodsSearchmore(BbcSiteTopicQTO.SearchmoreQTO qto) {
+        qto.setSubject(SubjectEnum.默认.getCode());
+        qto.setTerminal(TerminalEnum.BBC.getCode());
+    	return ResponseData.data(bbcSiteTopicRpc.pageMore(qto));
+    }
+    
+    
     @ApiOperation("猜你喜欢-v1.1.0")
     @GetMapping("/enjoyList")
     public ResponseData<PageData<GoodsInfoVO.DetailVO>> listEnjoy(BbcSiteTopicQTO.EnjoyQTO qto) {
@@ -109,6 +120,12 @@ public class BbcHomeController {
     	qto.setPageNum(1);
     	qto.setPageNum(10);
         return ResponseData.data(bbbSiteNoticeRpc.list(qto));
+    }
+    
+    @ApiOperation("公告详情-v1.1.0")
+    @GetMapping("/noticeDetail")
+    public ResponseData<BbbSiteNoticeVO.DetailVO> detailNotice(BbbSiteNoticeQTO.IDQTO qto) {
+        return ResponseData.data(bbbSiteNoticeRpc.detailNotice(qto));
     }
     
     @ApiOperation("2C PC端首页推荐商品信息")

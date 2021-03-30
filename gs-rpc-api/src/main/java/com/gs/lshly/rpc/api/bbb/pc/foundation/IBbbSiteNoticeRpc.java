@@ -16,6 +16,14 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNoticeVO;
 public interface IBbbSiteNoticeRpc {
 
    List<BbbSiteNoticeVO.ListVO> list(BbbSiteNoticeQTO.QTO qto);
-
+   
+   
+   
+   /**
+    * 查询公告详情
+    * @param qto
+    * @return
+    */
+   BbbSiteNoticeVO.DetailVO detailNotice(BbbSiteNoticeQTO.IDQTO qto);
 
 }

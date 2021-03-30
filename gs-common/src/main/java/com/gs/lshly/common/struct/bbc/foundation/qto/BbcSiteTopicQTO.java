@@ -47,4 +47,21 @@ public abstract class BbcSiteTopicQTO implements Serializable {
         private Integer terminal;
         
     }
+    
+    
+    @Data
+    @ApiModel("BbcSiteTopicQTO.SearchmoreQTO")
+    @Accessors(chain = true)
+    public static class SearchmoreQTO extends BaseQTO {
+
+        @ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏]",hidden = true)
+        private Integer subject;
+        
+        @ApiModelProperty(value="终端[10=2b 20=2c]",hidden=true)
+        private Integer terminal;
+        
+        @ApiModelProperty(value="分类ID")
+        private String id;
+        
+    }
 }

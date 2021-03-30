@@ -1,4 +1,4 @@
-package com.gs.lshly.common.struct.bbb.pc.foundation.qto;
+package com.gs.lshly.common.struct.bbc.foundation.qto;
 
 import java.io.Serializable;
 
@@ -17,11 +17,11 @@ import lombok.experimental.Accessors;
  * @author yingjun
  * @date 2021年3月11日 下午4:31:57
  */
-public abstract class BbbSiteNoticeQTO implements Serializable {
+public abstract class BbcSiteNoticeQTO implements Serializable {
 
 
     @Data
-    @ApiModel("BbbSiteNoticeQTO.QTO")
+    @ApiModel("BbcSiteNoticeQTO.QTO")
     @Accessors(chain = true)
     public static class QTO  extends BaseQTO{
 
@@ -32,7 +32,7 @@ public abstract class BbbSiteNoticeQTO implements Serializable {
 
     
     @Data
-    @ApiModel("BbbSiteNoticeQTO.IDQTO")
+    @ApiModel("BbcSiteNoticeQTO.IDQTO")
     @Accessors(chain = true)
     public static class IDQTO  extends BaseDTO{
 

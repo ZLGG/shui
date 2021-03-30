@@ -122,11 +122,12 @@ public class SiteAdvertPopupServiceImpl implements ISiteAdvertPopupService {
         wrapper.eq("onoff",TrueFalseEnum.是.getCode());
         SiteAdvertPopup onoffEntity = repository.getOne(wrapper);
         DetailVO detailVO = new DetailVO();
-        if(onoffEntity==null)
+        if(onoffEntity==null){
         	detailVO.setStatus(TrueFalseEnum.否.getCode());
-        
+        }else{
         detailVO.setStatus(TrueFalseEnum.是.getCode());
         BeanUtils.copyProperties(onoffEntity, detailVO);
+        }
 		return detailVO;
 	}
 

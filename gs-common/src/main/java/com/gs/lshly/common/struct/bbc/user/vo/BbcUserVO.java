@@ -59,6 +59,7 @@ public abstract class BbcUserVO implements Serializable {
 
         @ApiModelProperty("定向积分")
         private Integer directionIntegral;
+        
     }
 
     @Data
@@ -133,6 +134,9 @@ public abstract class BbcUserVO implements Serializable {
 
         @ApiModelProperty("电话")
         private String phone;
+        
+        @ApiModelProperty("所在区域")
+        private String region;
 
     }
 

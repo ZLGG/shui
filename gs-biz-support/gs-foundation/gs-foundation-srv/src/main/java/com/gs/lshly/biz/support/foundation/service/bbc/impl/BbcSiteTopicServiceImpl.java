@@ -26,12 +26,15 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.SearchmoreQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.InMemberGoodsVO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
@@ -103,7 +106,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		BbcSiteTopicVO.TopicVO topicVO = bbcMarketActivityRpc.listFlashsale(new BaseDTO());
 		if(topicVO!=null&&CollectionUtils.isNotEmpty(topicVO.getGoodsList())){
 			BbcSiteTopicVO.CategoryListVO model1 = new BbcSiteTopicVO.CategoryListVO();
-			model1.setId("1");
+			model1.setId("miaosha");
 			model1.setIdx(idx);
 			model1.setImageUrl("");
 			model1.setName(topicVO.getName());
@@ -302,6 +305,38 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 			categoryListVO.setList(goodsInfoList);
 		}
 		return categoryListVO;
+	}
+
+	@Override
+	public PageData<DetailVO> pageMore(SearchmoreQTO qto) {
+		
+		if(qto.getId().equals("miaosha")){
+			BbcMarketActivityQTO.QTO qto1 = new BbcMarketActivityQTO.QTO();
+			BeanCopyUtils.copyProperties(qto, qto1);
+			return bbcMarketActivityRpc.pageFlashsale(qto1);
+		}else{
+			QueryWrapper<SiteTopicGoods> wrapper =  MybatisPlusUtil.query();
+	        wrapper.eq("topic_id",qto.getId());
+	        IPage<SiteTopicGoods> page = MybatisPlusUtil.pager(qto);
+	        goodsRepository.page(page, wrapper);
+	        PageData<SiteTopicGoods> pageData = MybatisPlusUtil.toPageData(qto, SiteTopicGoods.class, page);
+	        List<SiteTopicGoods> goodsList = pageData.getContent();
+	        List<GoodsInfoVO.DetailVO> retList = new ArrayList<GoodsInfoVO.DetailVO>();
+	        if(CollectionUtils.isNotEmpty(goodsList)){
+	        	for(SiteTopicGoods goodsId:goodsList){
+	        		GoodsInfoVO.DetailVO detailVO = goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId.getGoodsId()));
+	        		retList.add(detailVO);
+	        	}
+	        }
+	        PageData<DetailVO> retPage = new PageData<DetailVO>();
+	        retPage.setContent(retList);
+	        retPage.setPageNum(pageData.getPageNum());
+	        retPage.setPageSize(pageData.getPageSize());
+	        retPage.setTotal(pageData.getTotal());
+	        return retPage;
+		}
+		
+		
 	}
 
     

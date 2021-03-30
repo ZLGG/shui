@@ -102,6 +102,12 @@ public class PCBbbPointsController {
         return ResponseData.data(bbbSiteNoticeRpc.list(qto));
     }
 
+    @ApiOperation("公告详情-v1.1.0")
+    @GetMapping("/noticeDetail")
+    public ResponseData<BbbSiteNoticeVO.DetailVO> detailNotice(BbbSiteNoticeQTO.IDQTO qto) {
+        return ResponseData.data(bbbSiteNoticeRpc.detailNotice(qto));
+    }
+    
     @ApiOperation("秒杀列表-v1.1.0")
     @GetMapping("/flashsaleList")
     public ResponseData<PCBbbMarketActivityVO.FlashsaleVO> listFlashsale() {

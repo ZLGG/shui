@@ -37,7 +37,6 @@ public class BbcSitePopupRpc implements IBbcSitePopupRpc{
 
 	@Override
 	public DetailVO getPopup(BBBPCQTO qto) {
-		// TODO Auto-generated method stub
 		return siteAdvertPopupService.getPopup(qto);
 	}
 

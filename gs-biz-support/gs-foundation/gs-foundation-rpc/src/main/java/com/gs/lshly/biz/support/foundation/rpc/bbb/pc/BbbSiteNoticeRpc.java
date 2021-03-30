@@ -6,7 +6,9 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.foundation.service.bbb.pc.IBbbSiteNoticeService;
+import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteNoticeQTO.IDQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteNoticeQTO.QTO;
+import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNoticeVO.DetailVO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNoticeVO.ListVO;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteNoticeRpc;
 
@@ -26,6 +28,11 @@ public class BbbSiteNoticeRpc implements IBbbSiteNoticeRpc {
 	@Override
 	public List<ListVO> list(QTO qto) {
 		return bbbSiteNoticeService.list(qto);
+	}
+
+	@Override
+	public DetailVO detailNotice(IDQTO qto) {
+		return bbbSiteNoticeService.detail(qto);
 	}
 
 	
