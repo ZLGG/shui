@@ -26,6 +26,11 @@ public class BbbInUserCouponRpc implements IBBBInUserCouponRpc {
     }
 
     @Override
+    public void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto) {
+        inUserCouponService.getCouponByShare(qto);
+    }
+
+    @Override
     public void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto) {
         inUserCouponService.getCouponByBuy(qto);
     }

@@ -47,4 +47,11 @@ public class BbcInUserCouponController {
         inUserCouponRpc.getCouponByBuy(qto);
         return ResponseData.success();
     }
+
+    @PostMapping("/couponByShare")
+    @ApiOperation("通过分享小程序获得优惠券")
+    public ResponseData getCouponByShare(@Valid @RequestBody BbbInUserCouponQTO.ShareCouponQTO qto) {
+        inUserCouponRpc.getCouponByShare(qto);
+        return ResponseData.success();
+    }
 }

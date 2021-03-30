@@ -14,4 +14,6 @@ public interface IBBBInUserCouponRpc {
     List<PCBBBInUserCouponVO> queryInUserCouponList(BbbInUserCouponQTO.QTO qto);
 
     void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
+
+    void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto);
 }

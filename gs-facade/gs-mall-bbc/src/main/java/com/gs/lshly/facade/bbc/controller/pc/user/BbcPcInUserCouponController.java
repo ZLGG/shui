@@ -37,4 +37,11 @@ public class BbcPcInUserCouponController {
         }
         return ResponseData.data(inUserCouponRpc.queryInUserCouponList(qto));
     }
+
+    @PostMapping("/couponByBuy")
+    @ApiOperation("通过购买in会员获得优惠券")
+    public ResponseData getCouponByBuy(@Valid @RequestBody BbbInUserCouponQTO.BuyCouponQTO qto) {
+        inUserCouponRpc.getCouponByBuy(qto);
+        return ResponseData.success();
+    }
 }
