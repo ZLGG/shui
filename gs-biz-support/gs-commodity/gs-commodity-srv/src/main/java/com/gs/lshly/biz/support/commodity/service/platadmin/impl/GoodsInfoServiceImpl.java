@@ -161,7 +161,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 spuListVO.setLabels(getLabelInfo(spuListVO));
             }
             //填充商品图片
-            spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage()))?"":getImage(spuListVO.getGoodsImage()));
+            spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage()))?"{}":getImage(spuListVO.getGoodsImage()));
 
             CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(spuListVO.getShopId());
             if (ObjectUtils.isEmpty(simpleVO)){
