@@ -157,6 +157,9 @@ ALTER TABLE `fy_mall`.`gs_in_vip_coupon`
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `click_volume` int(11) NOT NULL DEFAULT 0 COMMENT '点击量（临时）' AFTER `exchange_type`;
 
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `video_url` varchar(512) NULL COMMENT '视频地址' AFTER `click_volume`;
+
 
 
 
