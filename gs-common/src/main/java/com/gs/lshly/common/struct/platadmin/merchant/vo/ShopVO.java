@@ -155,7 +155,7 @@ public abstract class ShopVO implements Serializable {
         @ApiModelProperty(value = "纬度",position = 12)
         private BigDecimal shopLatitude;
 
-
+        
     }
 
 

@@ -24,6 +24,8 @@ public  class DateUtils {
     private final static String dateFormatStr = "yyyy-MM-dd";
 
     public final static String timeFormatStr = "yyyy-MM-dd HH:mm:ss";
+    
+    public static final String DATE_YYYY_MM_DD_PATTERN = "yyyy-MM-dd";
 
 
     /**
@@ -152,4 +154,20 @@ public  class DateUtils {
 //        }
 //    }
 
+    public static Date parseDate(String pattern, String dateStr) {
+
+        if (dateStr == null || "".equals(dateStr)) {
+            return null;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+        try {
+            return sdf.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

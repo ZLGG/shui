@@ -29,6 +29,8 @@ import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopTypeDictVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeMarginDTO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.common.utils.PwdUtil;
@@ -201,6 +203,11 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
             merchantApply.setState(MerchantApplyStateEnum.通过.getCode());
             merchantApply.setProgress(MerchantApplyProgressEnum.等待签约.getCode());
             merchantApply.setOkpassTime(LocalDateTime.now());
+            
+            merchantApply.setExpirationTime(DateUtils.parseDate(DateUtils.DATE_YYYY_MM_DD_PATTERN, dto.getExpirationTime()));
+            merchantApply.setAgreementCode(dto.getAgreementCode());
+            merchantApply.setTaxType(dto.getTaxType());
+            merchantApply.setTaxRate(dto.getTaxRate());
             repository.updateById(merchantApply);
         }
     }
@@ -232,6 +239,23 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
                 merchant.setMerchantName(legalDictVo.getCompanyVO().getCorpName());
             }
             merchant.setLakalaNo(merchantApply.getLakalaNo());
+            merchant.setAddress(merchantApply.getShopAddress());
+            merchant.setAgreementCode(merchantApply.getAgreementCode());
+            String provinceCity = merchantApply.getCorpCityAddress();
+            if(org.apache.commons.lang3.StringUtils.isNotEmpty(provinceCity)){
+            	String args[] = provinceCity.split(",");
+            	if(args.length>1){
+            		merchant.setCity(args[1]);
+            		merchant.setProvince(args[0]);
+            	}
+            }
+            merchant.setEmail(merchantApply.getShopManEmail());
+            merchant.setExpirationTime(merchantApply.getExpirationTime());
+            merchant.setLinkMan(merchantApply.getShopManName());
+            merchant.setLinkPhone(merchantApply.getShopManPhone());
+            merchant.setTaxRate(merchantApply.getTaxRate());
+            merchant.setTaxType(merchantApply.getTaxType());
+            merchant.setType(merchantApply.getType());
             merchantRepository.save(merchant);
         }
         //创建店铺信息,并把店铺的主帐号设置为申请入驻时登录的帐号

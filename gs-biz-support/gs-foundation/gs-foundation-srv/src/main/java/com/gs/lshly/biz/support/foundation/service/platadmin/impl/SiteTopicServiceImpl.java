@@ -57,6 +57,7 @@ public class SiteTopicServiceImpl implements ISiteTopicService {
 	public PageData<PCListVO> pageData(QTO qto) {
 		QueryWrapper<SiteTopic> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("terminal", qto.getTerminal());
+        wrapper.like("name", qto.getName());
         wrapper.orderByDesc("id");
         IPage<SiteTopic> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
