@@ -487,7 +487,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Boolean isInMemberGift;
 
         @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
+        private BigDecimal inMemberPointPrice;
 
     }
 

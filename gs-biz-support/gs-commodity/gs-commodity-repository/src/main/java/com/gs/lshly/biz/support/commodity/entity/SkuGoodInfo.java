@@ -150,6 +150,6 @@ public class SkuGoodInfo extends Model {
     private Boolean isInMemberGift;
 
     @ApiModelProperty("in会员积分价格")
-    private Double inMemberPointPrice;
+    private BigDecimal inMemberPointPrice;
 
 }

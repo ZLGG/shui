@@ -110,6 +110,9 @@ public abstract class BbcTradeSettlementVO implements Serializable {
         @ApiModelProperty(value = "优惠券")
         private CommonMarketVO.UserCardVO userCardVO;
 
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+
         @Data
         @ApiModel("BbcTradeSettlementVO.goodsInfoVO")
         @ToString
@@ -150,6 +153,12 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 
             @ApiModelProperty("积分价格")
             private BigDecimal pointPrice;
+
+            @ApiModelProperty("是否是in会员礼品")
+            private Boolean isInMemberGift;
+
+            @ApiModelProperty("in会员积分价格")
+            private BigDecimal inMemberPointPrice;
 
         }
 

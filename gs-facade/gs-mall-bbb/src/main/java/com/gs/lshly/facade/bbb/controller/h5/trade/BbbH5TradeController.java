@@ -3,6 +3,15 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,119 +49,95 @@ import io.swagger.annotations.ApiOperation;
 public class BbbH5TradeController {
 
     @DubboReference
-    private IBbbH5TradeRpc bbcTradeRpc;
+    private IBbcTradeRpc bbcTradeRpc;
 
-    /**
-     * 1
-     * @param dto
-     * @return
-     */
     @ApiOperation("去结算")
     @PostMapping("/userCenter/settlement")
-    public ResponseData<BbbH5TradeSettlementVO.ListVO> settlement(@Valid @RequestBody BbbH5TradeBuildDTO.cartIdsDTO dto) {
+    public ResponseData<BbcTradeSettlementVO.ListVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.settlementVO(dto);
     }
 
     @ApiOperation("计算运费")
     @PostMapping("/userCenter/deliveryAmount")
-    public ResponseData<Void> deliveryAmount(@Valid @RequestBody BbbH5TradeBuildDTO.DTO dto) {
+    public ResponseData<Void> deliveryAmount(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.deliveryAmount(dto);
     }
 
-    /**
-     * 2
-     * @param dto
-     * @return
-     */
     @ApiOperation("提交订单")
     @PostMapping("/userCenter/orderSubmit")
-    public ResponseData<BbbH5TradeDTO.IdDTO> orderSubmit(@Valid @RequestBody BbbH5TradeBuildDTO.DTO dto) {
+    public ResponseData<BbcTradeDTO.IdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.orderSubmit(dto);
     }
 
-
-    /**
-     * 3
-     * @param dto
-     * @return
-     */
     @ApiOperation("支付")
     @PostMapping("/userCenter/doPay")
-    public ResponseData<Void> doPay(@Valid @RequestBody BbbH5TradePayBuildDTO.ETO dto) {
-
+    public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
         return bbcTradeRpc.orderPay(dto);
     }
 
     @ApiOperation("支付回调")
     @PostMapping("/doPayNotify")
-    public String doPayNotify(@Valid @RequestBody BbbH5TradeResultNotifyVO.notifyVO notifyVO) {
-
+    public String doPayNotify(@Valid @RequestBody BbcTradeResultNotifyVO.notifyVO notifyVO) {
         return bbcTradeRpc.payNotify(notifyVO);
     }
 
     @ApiOperation("支付成功")
     @PostMapping("/doPaySuccess")
     public String doPaySuccess(@Valid @RequestBody String tradeCode) {
-
         return bbcTradeRpc.paySuccess(tradeCode);
     }
 
     @ApiOperation("订单列表")
     @PostMapping("/userCenter/orderList")
-    public ResponseData<PageData<BbbH5TradeListVO.tradeVO>> orderList(@RequestBody BbbH5TradeQTO.TradeList qto) {
-
+    public ResponseData<PageData<BbbH5TradeListVO.tradeVO>> orderList(@RequestBody BbcTradeQTO.TradeList qto) {
         return ResponseData.data(bbcTradeRpc.tradeListPageData(qto));
     }
 
     @ApiOperation("订单详情")
     @PostMapping("/userCenter/orderDetail")
-    public ResponseData<BbbH5TradeListVO.tradeVO> orderDetail(@Valid @RequestBody BbbH5TradeDTO.IdDTO dto) {
-
+    public ResponseData<BbcTradeListVO.tradeVO> orderDetail(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
         return bbcTradeRpc.orderDetail(dto);
     }
 
     @ApiOperation("订单确认收货")
     @PostMapping("/userCenter/orderConfirmReceipt")
-    public ResponseData<Void> orderConfirmReceipt(@Valid @RequestBody BbbH5TradeDTO.IdDTO dto) {
-
+    public ResponseData<Void> orderConfirmReceipt(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
         return bbcTradeRpc.orderConfirmReceipt(dto);
     }
 
     @ApiOperation("隐藏订单")
     @PostMapping("/userCenter/orderHide")
-    public ResponseData<Void> orderHide(@Valid @RequestBody BbbH5TradeDTO.IdDTO dto) {
-
+    public ResponseData<Void> orderHide(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
         return bbcTradeRpc.orderHide(dto);
     }
 
     @ApiOperation("取消订单")
     @PostMapping("/userCenter/orderCancel")
-    public ResponseData<Void> orderCancel(@Valid @RequestBody BbbH5TradeCancelDTO.CancelDTO dto) {
-
+    public ResponseData<Void> orderCancel(@Valid @RequestBody BbcTradeCancelDTO.CancelDTO dto) {
         return bbcTradeRpc.orderCancel(dto);
     }
 
     @ApiOperation("订单状态数量")
     @PostMapping("/userCenter/tradeStateCount")
-    public ResponseData<List<BbbH5TradeListVO.stateCountVO>> tradeStateCount(@RequestBody BbbH5TradeDTO.IdDTO dto) {
+    public ResponseData<List<BbcTradeListVO.stateCountVO>> tradeStateCount(@RequestBody BbcTradeDTO.IdDTO dto) {
 
         return ResponseData.data(bbcTradeRpc.tradeStateCount(dto));
     }
 
     @ApiOperation("使用优惠卷列表")
     @PostMapping("/useCard")
-    public ResponseData<List<BbbH5TradeListVO.UseCard>> useCard(@Valid @RequestBody BbbH5TradeDTO.UseCard dto) {
-
+    public ResponseData<List<BbcTradeListVO.UseCard>> useCard(@Valid @RequestBody BbcTradeDTO.UseCard dto) {
         return ResponseData.data(bbcTradeRpc.useCard(dto));
     }
-    @ApiOperation("删除订单")
-    @PostMapping("/deleteTrade")
-    public ResponseData<Void> deleteTrade(@Valid @RequestBody BbbH5TradeDTO.IdDTO dto) {
-        bbcTradeRpc.deleteTrade(dto);
-        return ResponseData.success(MsgConst.DELETE_SUCCESS);
-    }
+
+//    @ApiOperation("删除订单")
+//    @PostMapping("/deleteTrade")
+//    public ResponseData<Void> deleteTrade(@Valid @RequestBody BbbH5TradeDTO.IdDTO dto) {
+//        bbcTradeRpc.deleteTrade(dto);
+//        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+//    }
 
 }
