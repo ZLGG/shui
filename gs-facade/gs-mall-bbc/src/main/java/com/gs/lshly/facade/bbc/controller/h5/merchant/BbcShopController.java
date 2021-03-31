@@ -47,7 +47,7 @@ public class BbcShopController {
         return ResponseData.data(bbcShopRpc.detailShop(new BbcShopDTO.IdDTO(shopId)));
     }
 
-    @ApiOperation("店铺组合信息")
+    @ApiOperation("店铺组合信息-v1.1.0")
     @GetMapping(value = "/shopComplex/{shopId}")
     public ResponseData<BbcShopVO.ComplexVO> shopComplex(@PathVariable String shopId) {
         return ResponseData.data(bbcShopRpc.shopComplex(new BbcShopDTO.IdDTO(shopId)));
