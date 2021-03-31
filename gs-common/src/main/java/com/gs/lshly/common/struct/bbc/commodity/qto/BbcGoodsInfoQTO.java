@@ -80,7 +80,9 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("商品店铺类目id")
         private String shopNavigationId;
-
+        
+        @ApiModelProperty("是否全部显示积分商品 0 否；1 是")
+        private Integer isPointGood;
 
     }
 
