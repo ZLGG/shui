@@ -23,13 +23,14 @@ import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.SearchmoreQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.InMemberGoodsVO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -37,6 +38,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 
@@ -64,6 +66,9 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
     
     @Autowired
     private SiteTopicGoodsMapper siteTopicGoodsMapper;
+    
+    @DubboReference
+    private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
 
 	@Override
 	public List<CategoryListVO> list(QTO qto) {
@@ -179,6 +184,19 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
         wrapper.eq("onoff", TrueFalseEnum.是.getCode());
         
         List<SiteTopic> list10 = repository.list(wrapper);
+        
+        //IN会员专区
+        SiteTopic siteTopic = new SiteTopic();
+        siteTopic.setCategory(SiteTopicCategoryEnum.电信甄选.getRemark());
+        siteTopic.setId("inmembergift");//IN会员专区
+        siteTopic.setIdx(1);
+        siteTopic.setFlag(false);
+        siteTopic.setImageUrl(null);
+        siteTopic.setName("IN会员精口专区");
+        siteTopic.setRemark("最高抵扣200元");
+        list10.add(siteTopic);
+        
+        
         List<BbcSiteTopicVO.CategoryDetailVO> retList10 = new ArrayList<BbcSiteTopicVO.CategoryDetailVO>();
 		if(CollectionUtils.isNotEmpty(list10))
 			retList10 = BeanUtils.copyList(BbcSiteTopicVO.CategoryDetailVO.class, list10);
@@ -280,40 +298,12 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 	}
 
 	@Override
-	public InMemberGoodsVO inMemberGoods() {
-		InMemberGoodsVO categoryListVO = new InMemberGoodsVO();
-		SiteTopic siteTopic = repository.getById("1369498302813863937");
-		if(siteTopic==null)
-			throw new BusinessException("未查询到数据");
-		categoryListVO.setId(siteTopic.getId());
-		categoryListVO.setImageUrl(siteTopic.getImageUrl());
-		categoryListVO.setName(siteTopic.getName());
-		categoryListVO.setTelecomsIntegral(0);
-		QueryWrapper<SiteTopicGoods> goodsWrapper =  MybatisPlusUtil.query();
-		goodsWrapper.eq("topic_id","1369498302813863937");
-		List<SiteTopicGoods> goodslist =goodsRepository.list(goodsWrapper);
-		
-		if(CollectionUtils.isNotEmpty(goodslist)){
-			List<GoodsInfoVO.DetailVO> goodsInfoList =new ArrayList<GoodsInfoVO.DetailVO>();
-			for(SiteTopicGoods siteTopicGoods:goodslist){
-				
-				String goodsId = siteTopicGoods.getGoodsId();
-        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
-        		goodsInfoList.add(goodsInfoDetailVO);
-				
-			}
-			categoryListVO.setList(goodsInfoList);
-		}
-		return categoryListVO;
-	}
-
-	@Override
-	public PageData<DetailVO> pageMore(SearchmoreQTO qto) {
-		
+	public BbcSiteTopicVO.GoodsVO pageMore(SearchmoreQTO qto) {
+		BbcSiteTopicVO.GoodsVO goodvo = new BbcSiteTopicVO.GoodsVO();
 		if(qto.getId().equals("miaosha")){
 			BbcMarketActivityQTO.QTO qto1 = new BbcMarketActivityQTO.QTO();
 			BeanCopyUtils.copyProperties(qto, qto1);
-			return bbcMarketActivityRpc.pageFlashsale(qto1);
+			goodvo.setList(bbcMarketActivityRpc.pageFlashsale(qto1));
 		}else{
 			QueryWrapper<SiteTopicGoods> wrapper =  MybatisPlusUtil.query();
 	        wrapper.eq("topic_id",qto.getId());
@@ -321,21 +311,21 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 	        goodsRepository.page(page, wrapper);
 	        PageData<SiteTopicGoods> pageData = MybatisPlusUtil.toPageData(qto, SiteTopicGoods.class, page);
 	        List<SiteTopicGoods> goodsList = pageData.getContent();
-	        List<GoodsInfoVO.DetailVO> retList = new ArrayList<GoodsInfoVO.DetailVO>();
+	        List<BbcGoodsInfoVO.DetailVO> retList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
 	        if(CollectionUtils.isNotEmpty(goodsList)){
 	        	for(SiteTopicGoods goodsId:goodsList){
-	        		GoodsInfoVO.DetailVO detailVO = goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId.getGoodsId()));
+	        		BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId.getGoodsId()));
 	        		retList.add(detailVO);
 	        	}
 	        }
-	        PageData<DetailVO> retPage = new PageData<DetailVO>();
-	        retPage.setContent(retList);
-	        retPage.setPageNum(pageData.getPageNum());
-	        retPage.setPageSize(pageData.getPageSize());
-	        retPage.setTotal(pageData.getTotal());
-	        return retPage;
+	        goodvo.setList(new PageData<>(retList,qto.getPageNum(),qto.getPageSize(),page.getTotal()));
+	        SiteTopic topic = repository.getById(qto.getId());
+	        goodvo.setImageUrl(topic.getImageUrl());
+	        goodvo.setId(topic.getId());
+	        goodvo.setName(topic.getName());
+	        goodvo.setTelecomsIntegral(0);
 		}
-		
+		return goodvo;
 		
 	}
 

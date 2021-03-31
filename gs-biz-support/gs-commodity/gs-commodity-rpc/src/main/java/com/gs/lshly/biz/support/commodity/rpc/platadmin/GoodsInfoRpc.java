@@ -1,21 +1,22 @@
 package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsFupinService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
-import com.gs.lshly.common.struct.platadmin.commodityfupin.dto.GoodsFupinDTO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.qto.GoodsFupinQTO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.vo.GoodsFupinVO;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * @Author Starry
@@ -121,6 +122,11 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
 	@Override
 	public List<ListVO> listGoodsData() {
 		return goodsInfoService.listGoodsData();
+	}
+
+	@Override
+	public PageData<ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto) {
+		return goodsInfoService.pageInGoods(qto);
 	}
 
 }

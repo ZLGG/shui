@@ -41,11 +41,13 @@ import com.gs.lshly.common.enums.OrderByConditionEnum;
 import com.gs.lshly.common.enums.OrderByTypeEnum;
 import com.gs.lshly.common.enums.SingleStateEnum;
 import com.gs.lshly.common.enums.StockAddressTypeEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
@@ -55,6 +57,7 @@ import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.AesCbcUtil;
@@ -64,6 +67,7 @@ import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserFavoritesGoodsRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
@@ -134,6 +138,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @DubboReference
     private IBbcSiteTopicRpc bbcSiteTopicRpc;
 
+    @DubboReference
+    private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
+    
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
@@ -961,4 +968,32 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         return categoryList;
     }
+
+	@Override
+	public BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto) {
+		BbcGoodsInfoVO.InMemberGoodsVO ret = new BbcGoodsInfoVO.InMemberGoodsVO();
+		ret.setId("inmembergoods");
+		ret.setName("IN会员精口专区");
+		ret.setImageUrl("https://lingang-app-bete.oss-cn-shanghai.aliyuncs.com/admin/2021/03/30/1617118074782.png");
+		ret.setTelecomsIntegral(0l);
+		String userId = qto.getJwtUserId();
+		if(StringUtils.isNotEmpty(userId)){
+			BbcUserCtccPointVO.DetailVO detailvo= bbcUserCtccPointRpc.getCtccPointByUserId(userId);
+			if(detailvo!=null&&StringUtils.isNotEmpty(detailvo.getId())){
+				ret.setTelecomsIntegral(detailvo.getPointBalance());
+			}
+		}
+		
+		QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("is_in_member_gift",TrueFalseEnum.是.getCode());
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
+        if (ObjectUtils.isEmpty(goodsInfoIPage) || ObjectUtils.isEmpty(goodsInfoIPage.getRecords())){
+            return ret;
+        }
+        List<BbcGoodsInfoVO.DetailVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.DetailVO.class,goodsInfoIPage.getRecords());
+        ret.setList(new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal()));
+        
+        return ret;
+	}
 }

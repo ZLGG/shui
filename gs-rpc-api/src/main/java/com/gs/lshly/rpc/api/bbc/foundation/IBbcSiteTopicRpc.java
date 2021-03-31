@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.bbc.foundation;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -36,16 +37,11 @@ public interface IBbcSiteTopicRpc {
     BbcSiteTopicVO.CategoryListVO topicGoods(String topicId);
     
     /**
-     * IN会员专区
-     * @return
-     */
-    BbcSiteTopicVO.InMemberGoodsVO inMemberGoods();
-    
-    /**
      * 查询当前分类更多
      * @param qto
      * @return
      */
-    PageData<GoodsInfoVO.DetailVO> pageMore(BbcSiteTopicQTO.SearchmoreQTO qto);
+    BbcSiteTopicVO.GoodsVO pageMore(BbcSiteTopicQTO.SearchmoreQTO qto);
+    
     
 }

@@ -1,15 +1,12 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsInfoQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
+import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
-
-import java.util.List;
 
 /**
  * @Author Starry
@@ -151,5 +148,12 @@ public interface IGoodsInfoService {
      * @return
      */
     List<GoodsInfoVO.ListVO> listGoodsData();
+    
+    
+    /**
+     * 
+     * @return
+     */
+    PageData<GoodsInfoVO.ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto);
 
 }

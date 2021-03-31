@@ -78,6 +78,14 @@ public class BbcPointsController {
         return ResponseData.data(bbcSiteTopicRpc.listPointHome(qto));
     }
     
+    @ApiOperation("电信甄选-查看更多-v1.1.0")
+    @GetMapping("/floorGoodsSearchmore")
+    public ResponseData<BbcSiteTopicVO.GoodsVO> floorGoodsSearchmore(BbcSiteTopicQTO.SearchmoreQTO qto) {
+        qto.setSubject(SubjectEnum.积分商城.getCode());
+        qto.setTerminal(TerminalEnum.BBC.getCode());
+    	return ResponseData.data(bbcSiteTopicRpc.pageMore(qto));
+    }
+    
     @ApiOperation("猜你喜欢-v1.1.0")
     @GetMapping("/enjoyList")
     public ResponseData<PageData<GoodsInfoVO.DetailVO>> listEnjoy(BbcSiteTopicQTO.EnjoyQTO qto) {

@@ -1,26 +1,22 @@
 package com.gs.lshly.biz.support.trade.rpc.bbc;
 
-import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketActivityService;
-import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeCancelService;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
-import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
-import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
-import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeCancelQTO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeCancelVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
-import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
-import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeCancelRpc;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketActivityService;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 
 /**
 *
@@ -108,7 +104,7 @@ public class BbcMarketActivityRpc implements IBbcMarketActivityRpc {
 	}
 
 	@Override
-	public PageData<DetailVO> pageFlashsale(QTO qto) {
+	public PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(QTO qto) {
 		return iBbcMarketActivityService.pageFlashsale(qto);
 	}
 }

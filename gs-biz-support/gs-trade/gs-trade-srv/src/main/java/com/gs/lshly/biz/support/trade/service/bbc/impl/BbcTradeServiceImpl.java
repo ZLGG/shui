@@ -533,8 +533,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             bbcUserShoppingCarRpc.innerClearShopCarList(bbcTradeCommitGoodsCalculateDTO.getCartIdList());
         }
 
-        // 积分商城的校验用户积分余额
-
         return ResponseData.data(new BbcTradeDTO.IdDTO(trade.getId()));
     }
 
@@ -798,6 +796,20 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                     .compareTo(dto.getGoodsPointAmount()) != 0) {
                 throw new BusinessException("支付金额分配有误，请检查");
             }
+
+            // 积分商城的校验用户积分余额
+            BbcUserQTO.QTO qto = new BbcUserQTO.QTO();
+            qto.setJwtUserId(dto.getJwtUserId());
+            BbcUserVO.DetailVO userInfo = bbcUserRpc.getUserInfo(qto);
+            Integer telecomsIntegral = userInfo.getTelecomsIntegral();
+            if (telecomsIntegral == null) {
+                throw new BusinessException("无法获取用户积分");
+            }
+
+            if (telecomsIntegral < dto.getAllocatedPointAmount().intValue()) {
+                throw new BusinessException("积分不足，请重新分配金额");
+            }
+
             trade.setPointPriceActuallyPaid(dto.getAllocatedPointAmount());
             trade.setAmountActuallyPaid(dto.getAllocatedCashAmount());
         } else {

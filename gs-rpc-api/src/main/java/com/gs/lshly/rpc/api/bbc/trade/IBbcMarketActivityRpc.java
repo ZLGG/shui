@@ -1,16 +1,16 @@
 package com.gs.lshly.rpc.api.bbc.trade;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
-
-import java.util.List;
 
 public interface IBbcMarketActivityRpc {
     ResponseData<BbcMarketActivityVO.ListVO> activityList(BbcMarketActivityDTO.DTO dto);
@@ -48,5 +48,5 @@ public interface IBbcMarketActivityRpc {
      * @param qto
      * @return
      */
-    PageData<GoodsInfoVO.DetailVO> pageFlashsale(BbcMarketActivityQTO.QTO qto);
+    PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(BbcMarketActivityQTO.QTO qto);
 }

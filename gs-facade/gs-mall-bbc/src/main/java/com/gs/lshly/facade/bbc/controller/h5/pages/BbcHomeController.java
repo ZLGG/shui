@@ -25,7 +25,8 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNoticeVO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteVideoVO;
 import com.gs.lshly.common.struct.bbb.pc.pages.qto.PCBbbHomeQTO;
 import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbHomeVO;
-import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteNoticeQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -36,6 +37,7 @@ import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteNoticeRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteVideoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IPCBbbFloorRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 
 import io.swagger.annotations.Api;
@@ -74,6 +76,8 @@ public class BbcHomeController {
     @DubboReference
     private IBbcSiteTopicRpc bbcSiteTopicRpc; 
     
+    @DubboReference
+    private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
     
     @DubboReference
     private IBbbSiteNoticeRpc bbbSiteNoticeRpc;
@@ -93,15 +97,6 @@ public class BbcHomeController {
         qto.setSubject(SubjectEnum.默认.getCode());
         qto.setTerminal(TerminalEnum.BBC.getCode());
     	return ResponseData.data(bbcSiteTopicRpc.list(qto));
-    }
-    
-    
-    @ApiOperation("查看更多电信/秒杀专区-v1.1.0")
-    @GetMapping("/floorGoodsSearchmore")
-    public ResponseData<List<BbcSiteTopicVO.CategoryListVO>> floorGoodsSearchmore(BbcSiteTopicQTO.SearchmoreQTO qto) {
-        qto.setSubject(SubjectEnum.默认.getCode());
-        qto.setTerminal(TerminalEnum.BBC.getCode());
-    	return ResponseData.data(bbcSiteTopicRpc.pageMore(qto));
     }
     
     
@@ -179,7 +174,7 @@ public class BbcHomeController {
         return ResponseData.data(bbbSiteVideoRpc.list(qto));
     }
 
-    @ApiOperation("专区产品列表-v1.1.0")
+    @ApiOperation("电信甄选专区产品列表-v1.1.0")
     @GetMapping("/topicGoods")
     public ResponseData<BbcSiteTopicVO.CategoryListVO> topicGoods(String topicId) {
         return ResponseData.data(bbcSiteTopicRpc.topicGoods(topicId));
@@ -187,7 +182,7 @@ public class BbcHomeController {
     
     @ApiOperation("IN会员产品专区-v1.1.0")
     @GetMapping("/inMemberGoods")
-    public ResponseData<BbcSiteTopicVO.InMemberGoodsVO> inMemberGoods() {
-        return ResponseData.data(bbcSiteTopicRpc.inMemberGoods());
+    public ResponseData<BbcGoodsInfoVO> inMemberGoods(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.pageInMemberGoods(qto));
     }
 }

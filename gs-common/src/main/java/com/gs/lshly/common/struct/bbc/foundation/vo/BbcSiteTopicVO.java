@@ -1,17 +1,14 @@
 package com.gs.lshly.common.struct.bbc.foundation.vo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteTopicVO;
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
 /**
  * 
  *
@@ -61,7 +58,7 @@ public abstract class BbcSiteTopicVO implements Serializable {
         private Integer idx;
         
         @ApiModelProperty("商品列表")
-        private List<GoodsInfoVO.DetailVO> goodsList;
+        private List<BbcGoodsInfoVO.DetailVO> goodsList;
     }
 	
 	
@@ -119,9 +116,9 @@ public abstract class BbcSiteTopicVO implements Serializable {
      * @date 2021年3月17日 上午1:23:43
      */
 	@Data
-    @ApiModel("BbcSiteTopicVO.InMemberGoodsVO")
+    @ApiModel("BbcSiteTopicVO.GoodsVO")
     @Accessors(chain = true)
-    public static class InMemberGoodsVO implements Serializable{
+    public static class GoodsVO implements Serializable{
 		
 		@ApiModelProperty("id")
         private String id;
@@ -130,12 +127,39 @@ public abstract class BbcSiteTopicVO implements Serializable {
         private String name;
         
         @ApiModelProperty("内容")
-        private List list;
+        private PageData<BbcGoodsInfoVO.DetailVO> list;
         
         @ApiModelProperty("封面图")
         private String imageUrl;
         
         @ApiModelProperty("积分值")
         private Integer telecomsIntegral;
+    }
+	
+	/**
+	 * 专区产品
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年3月30日 下午7:11:33
+	 */
+	@Data
+    @ApiModel("BbcSiteTopicVO.GoodsInfoVO")
+    public static class GoodsInfoVO implements Serializable {
+    	
+    	@ApiModelProperty("id")
+        private String id;
+
+    	@ApiModelProperty("分区名称")
+        private String name;
+
+        @ApiModelProperty("备注")
+        private String remark;
+        
+        @ApiModelProperty("排序")
+        private Integer idx;
+        
+        @ApiModelProperty("商品列表")
+        private List<BbcGoodsInfoVO.DetailVO> goodsList;
     }
 }

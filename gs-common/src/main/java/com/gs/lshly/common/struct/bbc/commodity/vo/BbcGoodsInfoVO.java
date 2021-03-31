@@ -18,6 +18,27 @@ import lombok.experimental.Accessors;
 * @since 2020-10-23
 */
 public abstract class BbcGoodsInfoVO implements Serializable {
+	
+	@Data
+    @ApiModel("BbcGoodsInfoVO.InMemberGoodsVO")
+    @Accessors(chain = true)
+    public static class InMemberGoodsVO implements Serializable{
+		
+		@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("标题")
+        private String name;
+        
+        @ApiModelProperty("商品内容")
+        private PageData<DetailVO> list;
+        
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+        
+        @ApiModelProperty("积分值")
+        private Long telecomsIntegral;
+	}
 
     @Data
     @ApiModel("BbcGoodsInfoVO.ListVO")
