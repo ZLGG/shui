@@ -89,11 +89,6 @@ public class Merchant extends Model {
     private String address;
 
     /**
-     * 商户名称
-     */
-    private String name;
-
-    /**
      *商户类别（10=积分商户 20=普通商户）
      */
     private Integer type;
@@ -127,4 +122,8 @@ public class Merchant extends Model {
      *税率(%)
      */
     private Double taxRate;
+    
+    private String linkMan;
+    private String linkPhone;
+    private String email;
 }
