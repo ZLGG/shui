@@ -168,6 +168,9 @@ public abstract class BbcShopVO implements Serializable {
 
         @ApiModelProperty("店铺楼层")
         private List<BbcShopFloorVO.ListVO> floorList;
+        
+        @ApiModelProperty("是否是积分商户   10积分商户 20普通商户")
+        private Integer merchantType;
 
     }
 

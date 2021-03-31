@@ -164,6 +164,17 @@ ADD COLUMN `click_volume` int(11) NOT NULL DEFAULT 0 COMMENT '点击量（临时
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `video_url` varchar(512) NULL COMMENT '视频地址' AFTER `click_volume`;
 
+ALTER TABLE `gs_merchant`
+ADD COLUMN `address`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系地址' AFTER `flag`,
+ADD COLUMN `name`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '商户名称' AFTER `address`,
+ADD COLUMN `type`  int(11) NULL DEFAULT NULL COMMENT '商户类别（10=积分商户 20=普通商户）' AFTER `name`,
+ADD COLUMN `province`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '商户属地（省名称）' AFTER `type`,
+ADD COLUMN `city`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '商户属地（市名称）' AFTER `province`,
+ADD COLUMN `expiration_time`  datetime NULL DEFAULT NULL COMMENT '协议到期时间' AFTER `city`,
+ADD COLUMN `agreement_code`  varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '协议号' AFTER `expiration_time`,
+ADD COLUMN `tax_type`  int(11) NULL DEFAULT NULL COMMENT '供应商纳税性质(10=一般纳税人 20=小规模纳税人)' AFTER `agreement_code`,
+ADD COLUMN `tax_rate`  decimal(10,0) NULL DEFAULT NULL COMMENT '税率(%)' AFTER `tax_type`;
+
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `in_coupon_type` int(10) NULL COMMENT 'in会员优惠券类型（20,30,50,99,200）' AFTER `in_member_point_price`;
 

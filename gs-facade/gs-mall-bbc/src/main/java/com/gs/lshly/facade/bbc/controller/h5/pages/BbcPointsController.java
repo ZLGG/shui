@@ -83,7 +83,8 @@ public class BbcPointsController {
     public ResponseData<BbcSiteTopicVO.GoodsVO> floorGoodsSearchmore(BbcSiteTopicQTO.SearchmoreQTO qto) {
         qto.setSubject(SubjectEnum.积分商城.getCode());
         qto.setTerminal(TerminalEnum.BBC.getCode());
-    	return ResponseData.data(bbcSiteTopicRpc.pageMore(qto));
+        BbcSiteTopicVO.GoodsVO goodsVO= bbcSiteTopicRpc.pageMore(qto);
+    	return ResponseData.data(goodsVO);
     }
     
     @ApiOperation("猜你喜欢-v1.1.0")

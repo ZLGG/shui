@@ -236,6 +236,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         boost.eq("gs.goods_state", GoodsStateEnum.已上架.getCode());
         boost.ne("gs.use_platform", GoodsUsePlatformEnums.B商城.getCode());
+        if(qto.getIsPointGood()!=null&&qto.getIsPointGood().equals(TrueFalseEnum.是.getCode())){
+        	boost.eq("is_point_good", TrueFalseEnum.是.getCode());
+        }
         if (StringUtils.isNotEmpty(qto.getShopNavigationId())) {
             boost.eq("gsn.shop_navigation", qto.getShopNavigationId());
         }
@@ -245,6 +248,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (qto.getOrderByProperties() != null && qto.getOrderByProperties().intValue() == OrderByConditionEnum.价格.getCode().intValue() && qto.getOrderByType().intValue() == OrderByTypeEnum.降序.getCode().intValue()) {
             boost.orderByDesc("gs.sale_price");
         }
+        
+        
         //如果是积分查询
         else if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode()))) {
             boost.eq("is_point_good", true);

@@ -126,48 +126,4 @@ public class MerchantAccount extends Model {
     @TableLogic
     private Boolean flag;
 
-    /**
-     * 联系地址
-     */
-    private String address;
-
-    /**
-     * 商户名称
-     */
-    private String name;
-
-    /**
-     *商户类别（10=积分商户 20=普通商户）
-     */
-    private Integer type;
-
-    /**
-     *商户属地（省名称）
-     */
-    private String province;
-
-    /**
-     *商户属地（市名称）
-     */
-    private String city;
-
-    /**
-     *协议到期时间
-     */
-    private Date expirationTime;
-
-    /**
-     *协议号
-     */
-    private String agreementCode;
-
-    /**
-     *供应商纳税性质(10=一般纳税人 20=小规模纳税人
-     */
-    private Integer taxType;
-
-    /**
-     *税率(%)
-     */
-    private Double taxRate;
 }
