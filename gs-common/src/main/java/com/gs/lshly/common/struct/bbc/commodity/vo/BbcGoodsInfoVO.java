@@ -395,6 +395,38 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("BbcGoodsInfoVO.InVIPSpecialAreaVO")
+    public static class InVIPSpecialAreaVO implements Serializable{
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty("商品原价")
+        private BigDecimal oldPrice;
+
+        @ApiModelProperty("移动端商品描述")
+        private String goodsH5Desc;
+
+        @ApiModelProperty("可抵扣价格")
+        private Integer inCouponType;
+
+        @ApiModelProperty("in会员券后价格")
+        private BigDecimal inDiscountedPrice;
+
+    }
+
 
     //----------------内部服务VO-----------------------------
 

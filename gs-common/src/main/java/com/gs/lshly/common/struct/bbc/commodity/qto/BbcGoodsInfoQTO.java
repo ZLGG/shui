@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -203,5 +205,14 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
     @Accessors(chain = true)
     public static class InMemberGoodsQTO extends BaseQTO {
 
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.InSpecialAreaGoodsQTO")
+    @Accessors(chain = true)
+    public static class InSpecialAreaGoodsQTO extends BaseQTO {
+        @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
+        @NotNull(message = "inCouponType不能为空")
+        private Integer inCouponType;
     }
 }

@@ -23,4 +23,10 @@ public interface IBbcInUserCouponService {
      * @param qto
      */
     void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
+
+    /**
+     * in会员分享小程序获得优惠券
+     * @param qto
+     */
+    void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto);
 }

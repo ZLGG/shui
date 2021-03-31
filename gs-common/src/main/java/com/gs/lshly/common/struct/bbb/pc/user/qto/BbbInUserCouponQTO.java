@@ -37,4 +37,13 @@ public class BbbInUserCouponQTO implements Serializable {
         private Integer vipType;
     }
 
+    @Data
+    @ApiModel("BbbInUserCouponQTO.ShareCouponQTO")
+    @Accessors(chain = true)
+    public static class ShareCouponQTO implements Serializable {
+        @ApiModelProperty("in会员userId")
+        @NotBlank(message = "userId不能为空")
+        private String userId;
+    }
+
 }
