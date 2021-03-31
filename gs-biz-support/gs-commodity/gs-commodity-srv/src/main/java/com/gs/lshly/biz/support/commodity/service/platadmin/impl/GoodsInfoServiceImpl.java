@@ -16,6 +16,7 @@ import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO.QTO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.*;
@@ -714,5 +715,19 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 		if(CollectionUtil.isNotEmpty(goodsInfos))
 			retList = com.gs.lshly.common.utils.BeanUtils.copyList(ListVO.class, goodsInfos);
 		return retList;
+	}
+
+	@Override
+	public PageData<ListVO> pageInGoods(QTO qto) {
+		
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("is_in_member_gift",TrueFalseEnum.是.getCode());
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
+        if (ObjectUtils.isEmpty(goodsInfoIPage) || ObjectUtils.isEmpty(goodsInfoIPage.getRecords())){
+            return new PageData<>();
+        }
+        List<GoodsInfoVO.ListVO> categoryGoodsVOS = ListUtil.listCover(GoodsInfoVO.ListVO.class,goodsInfoIPage.getRecords());
+        return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());
 	}
 }

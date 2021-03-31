@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.service.bbc;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 
@@ -90,4 +91,10 @@ public interface IBbcGoodsInfoService {
     BbcGoodsInfoVO.InnerServiceVO innerSimpleServiceGoodsVO(String skuID);
     
     
+    /**
+     * 获取IN会员专区商品
+     * @param qto
+     * @return
+     */
+    BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto);
 }

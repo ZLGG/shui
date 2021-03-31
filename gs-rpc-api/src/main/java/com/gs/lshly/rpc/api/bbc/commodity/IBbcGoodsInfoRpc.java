@@ -1,11 +1,11 @@
 package com.gs.lshly.rpc.api.bbc.commodity;
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
-
-import java.util.List;
 
 /**
 *
@@ -102,5 +102,13 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     BbcGoodsInfoVO.InnerServiceVO innerSimpleServiceGoodsVO(String skuID);
+    
+    
+    /**
+     * 获取IN会员商口
+     * @param qto
+     * @return
+     */
+    BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
 
 }

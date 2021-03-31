@@ -188,4 +188,18 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
     	@ApiModelProperty(value="10 20",hidden=true)
         private Integer terminal;
     }
+    
+    /**
+     * IN会员查询专区
+     *
+     * 
+     * @author yingjun
+     * @date 2021年3月30日 下午6:44:11
+     */
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.InMemberGoodsQTO")
+    @Accessors(chain = true)
+    public static class InMemberGoodsQTO extends BaseQTO {
+
+    }
 }

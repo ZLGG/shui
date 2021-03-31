@@ -42,6 +42,11 @@ public class BbbH5TradeController {
     @DubboReference
     private IBbbH5TradeRpc bbcTradeRpc;
 
+    /**
+     * 1
+     * @param dto
+     * @return
+     */
     @ApiOperation("去结算")
     @PostMapping("/userCenter/settlement")
     public ResponseData<BbbH5TradeSettlementVO.ListVO> settlement(@Valid @RequestBody BbbH5TradeBuildDTO.cartIdsDTO dto) {
@@ -56,6 +61,11 @@ public class BbbH5TradeController {
         return bbcTradeRpc.deliveryAmount(dto);
     }
 
+    /**
+     * 2
+     * @param dto
+     * @return
+     */
     @ApiOperation("提交订单")
     @PostMapping("/userCenter/orderSubmit")
     public ResponseData<BbbH5TradeDTO.IdDTO> orderSubmit(@Valid @RequestBody BbbH5TradeBuildDTO.DTO dto) {
@@ -64,6 +74,11 @@ public class BbbH5TradeController {
     }
 
 
+    /**
+     * 3
+     * @param dto
+     * @return
+     */
     @ApiOperation("支付")
     @PostMapping("/userCenter/doPay")
     public ResponseData<Void> doPay(@Valid @RequestBody BbbH5TradePayBuildDTO.ETO dto) {

@@ -19,12 +19,10 @@ public interface IBbcSiteTopicService {
     
     CategoryListVO topicGoods(String topicId);
     
-    BbcSiteTopicVO.InMemberGoodsVO inMemberGoods();
-    
     /**
      * 查询当前分页下面的更多产品
      * @param qto
      * @return
      */
-    PageData<DetailVO> pageMore(SearchmoreQTO qto);
+    BbcSiteTopicVO.GoodsVO pageMore(SearchmoreQTO qto);
 }

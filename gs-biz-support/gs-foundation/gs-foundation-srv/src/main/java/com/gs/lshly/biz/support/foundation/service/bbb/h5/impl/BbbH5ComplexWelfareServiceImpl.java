@@ -49,7 +49,7 @@ public class BbbH5ComplexWelfareServiceImpl implements IBbbH5ComplexWelfareServi
     private ISiteFloorRepository siteFloorRepository;
     @Autowired
     private ISiteFloorGoodsRepository siteFloorGoodsRepository;
-
+    
     @DubboReference
     private IBbbH5GoodsInfoRpc bbbH5GoodsInfoRpc;
 
