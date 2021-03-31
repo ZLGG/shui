@@ -172,6 +172,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty("视频地址")
         private String videoUrl;
 
+        @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
+        private Integer inCouponType;
+
     }
 
     @Data

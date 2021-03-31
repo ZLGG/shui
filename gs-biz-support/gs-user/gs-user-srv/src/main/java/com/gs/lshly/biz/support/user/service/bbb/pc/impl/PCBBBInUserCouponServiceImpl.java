@@ -47,6 +47,11 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
 
     @Override
     public void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto) {
+        // 判断用户是否为in会员
+        User user = userMapper.selectById(qto.getUserId());
+        if (0 == user.getIsInUser()) {
+            throw new BusinessException("非in会员用户不能获取in会员优惠券");
+        }
         List<InUserCoupon> dtoList = new ArrayList<>();
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二十抵扣券.getCode())));
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.三十抵扣券.getCode())));
@@ -60,7 +65,12 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
         // 判断用户是否为in会员
         User user = userMapper.selectById(qto.getUserId());
         if (0 == user.getIsInUser()) {
-            throw new BusinessException("非in会员用户转发不能获取优惠券");
+            throw new BusinessException("非in会员用户转发不能获取in会员优惠券");
+        }
+        // 判断本月是否已转发获取过优惠券
+        Integer num = inUserCouponMapper.selectIsShare(qto.getUserId());
+        if (num != 0) {
+            throw new BusinessException("本月已分享获得过优惠券，不可重复获得");
         }
         List<InUserCoupon> userCouponList = new ArrayList<>();
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二十抵扣券.getCode())));
@@ -73,7 +83,7 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
 
     private InUserCoupon getCoupon(BbbInUserCouponQTO.ShareCouponQTO qto, BigDecimal money) {
         LocalDate startTime = LocalDate.now();
-        LocalDate endTime =  DateUtils.getNextYearDate(startTime);
+        LocalDate endTime =  DateUtils.getNextMonthDate(startTime);
         InUserCoupon dto = new InUserCoupon()
                 .setCouponPrice(money)
                 .setCouponDesc("仅限in会员精品专区使用")

@@ -164,6 +164,10 @@ ADD COLUMN `click_volume` int(11) NOT NULL DEFAULT 0 COMMENT '点击量（临时
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `video_url` varchar(512) NULL COMMENT '视频地址' AFTER `click_volume`;
 
+ALTER TABLE `fy_mall`.`gs_goods_info`
+ADD COLUMN `in_coupon_type` int(10) NULL COMMENT 'in会员优惠券类型（20,30,50,99,200）' AFTER `in_member_point_price`;
+
+
 
 
 
