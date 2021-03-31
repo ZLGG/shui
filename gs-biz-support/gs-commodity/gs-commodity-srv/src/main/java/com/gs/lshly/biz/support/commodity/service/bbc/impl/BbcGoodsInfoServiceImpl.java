@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -974,7 +975,22 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         return categoryList;
     }
 
-	@Override
+    @Override
+    public PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("in_coupon_type",qto.getInCouponType());
+        wrapper.eq("is_in_member_gift",1);
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> pageData = repository.page(page,wrapper);
+        List<BbcGoodsInfoVO.InVIPSpecialAreaVO> inVIPSpecialAreaVOS = ListUtil.listCover(BbcGoodsInfoVO.InVIPSpecialAreaVO.class,pageData.getRecords());
+        // 计算商品折后价格
+        inVIPSpecialAreaVOS.parallelStream().forEach(m->{
+            m.setInDiscountedPrice(m.getSalePrice().subtract(new BigDecimal(m.getInCouponType())));
+        });
+        return new PageData<>(inVIPSpecialAreaVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
+    }
+
+    @Override
 	public BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto) {
 		BbcGoodsInfoVO.InMemberGoodsVO ret = new BbcGoodsInfoVO.InMemberGoodsVO();
 		ret.setId("inmembergoods");

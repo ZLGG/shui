@@ -106,4 +106,9 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 		return bbcGoodsInfoService.pageInMemberGoods(qto);
 	}
 
+    @Override
+    public PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
+        return bbcGoodsInfoService.queryInVIPSpecialAreaList(qto);
+    }
+
 }

@@ -97,4 +97,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto);
+
+    /**
+     * 获取in会员专区商品列表
+     * @param qto
+     * @return
+     */
+    PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto);
 }
