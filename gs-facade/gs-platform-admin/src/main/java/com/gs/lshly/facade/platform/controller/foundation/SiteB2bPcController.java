@@ -290,7 +290,7 @@ public class SiteB2bPcController {
     @PutMapping(value = "/topicEditor")
     @Func(code="edit", name="改")
     public ResponseData<Void> editorTopic(@Valid @RequestBody SiteTopicDTO.ETO eto) {
-    	eto.setTerminal(TerminalEnum.BBC.getCode());
+    	eto.setTerminal(TerminalEnum.BBB.getCode());
     	eto.setPcShow(SitePCShowEnum.显示.getCode());
     	eto.setSubject(SubjectEnum.默认.getCode());
     	siteTopicRpc.editor(eto);

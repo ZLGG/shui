@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.foundation.service.platadmin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,7 +58,9 @@ public class SiteTopicServiceImpl implements ISiteTopicService {
 	public PageData<PCListVO> pageData(QTO qto) {
 		QueryWrapper<SiteTopic> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("terminal", qto.getTerminal());
+        if(StringUtils.isNotEmpty(qto.getName())&&!qto.getName().equals("null")){
         wrapper.like("name", qto.getName());
+        }
         wrapper.orderByDesc("id");
         IPage<SiteTopic> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
@@ -84,12 +87,14 @@ public class SiteTopicServiceImpl implements ISiteTopicService {
 		
 		repository.saveOrUpdate(siteTopic);
 		
-		List<String> goodsIds = eto.getGoodsIds();
+		
+		QueryWrapper<SiteTopicGoods> wrapper =  MybatisPlusUtil.query();
+	    wrapper.eq("topic_id", siteTopic.getId());
+	    topicGoodsRepository.remove(wrapper);
+	    
+	    List<String> goodsIds = eto.getGoodsIds();
+	    
 		if(CollectionUtil.isNotEmpty(goodsIds)){
-			
-			QueryWrapper<SiteTopicGoods> wrapper =  MybatisPlusUtil.query();
-		    wrapper.eq("topic_id", siteTopic.getId());
-		    topicGoodsRepository.remove(wrapper);
 			
 			List<SiteTopicGoods> topicGoodsBatchList = new ArrayList<>();
         	for(String goodsId:goodsIds){

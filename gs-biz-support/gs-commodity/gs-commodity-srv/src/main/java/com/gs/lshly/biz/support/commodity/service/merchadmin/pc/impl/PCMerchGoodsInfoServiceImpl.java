@@ -1678,9 +1678,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (StringUtils.isEmpty(eto.getTemplateId())){
             throw new BusinessException("请选择运费模板");
         }
-        if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.C商城.getCode())) && StringUtils.isBlank(eto.getShopNavigationId())){
-            throw new BusinessException("请选择店铺2b自定义类目");
-        }
+//        if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.C商城.getCode())) && StringUtils.isBlank(eto.getShopNavigationId())){
+//            throw new BusinessException("请选择店铺2b自定义类目");
+//        }
         if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城.getCode())) && StringUtils.isBlank(eto.getShop2cNavigationId())){
             throw new BusinessException("请选择店铺2c自定义类目");
         }
