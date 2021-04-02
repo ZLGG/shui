@@ -19,6 +19,7 @@
         <module>gs-stock</module>
         <module>gs-foundation</module>
         <module>gs-trade</module>
+		<module>gs-ctcc</module>
     </modules>
     <dependencies>
         <dependency>
