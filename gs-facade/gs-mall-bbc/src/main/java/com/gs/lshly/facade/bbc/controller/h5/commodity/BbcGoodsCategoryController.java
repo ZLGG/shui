@@ -30,11 +30,11 @@ public class BbcGoodsCategoryController {
     @DubboReference
     private IBbcGoodsCategoryRpc bbcGoodsCategoryRpc;
 
-//    @ApiOperation("2C商城商品分类列表")
-//    @GetMapping("")
-//    public ResponseData<List<BbcGoodsCategoryVO.CategoryTreeVO>> list() {
-//        return ResponseData.data(bbcGoodsCategoryRpc.listGoodsCategory());
-//    }
+    @ApiOperation("2C商城商品分类列表")
+    @GetMapping("")
+    public ResponseData<List<BbcGoodsCategoryVO.CategoryTreeVO>> list() {
+        return ResponseData.data(bbcGoodsCategoryRpc.listGoodsCategory());
+    }
 
     @ApiOperation("2C商城商品分类列表-v1.1.0")
     @GetMapping("list/label")

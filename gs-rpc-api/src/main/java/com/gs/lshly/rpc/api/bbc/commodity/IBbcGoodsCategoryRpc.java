@@ -19,6 +19,8 @@ public interface IBbcGoodsCategoryRpc {
      * 查询分类列表
      * @return
      */
+    List<BbcGoodsCategoryVO.CategoryTreeVO> listGoodsCategory();
+
     List<BbcGoodsCategoryVO.CategoryTreeVO> listGoodsCategory(BbcGoodsCategoryQTO.ListQTO listQTO);
     
     /**

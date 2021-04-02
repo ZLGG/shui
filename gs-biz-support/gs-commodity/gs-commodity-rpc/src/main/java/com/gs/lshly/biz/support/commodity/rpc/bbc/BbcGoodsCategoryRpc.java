@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbc;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CategoryTreeVO;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
@@ -25,6 +26,11 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
     @Autowired
     private IBbcGoodsCategoryService bbcGoodsCategoryService;
 
+    @Override
+    public List<CategoryTreeVO> listGoodsCategory() {
+        // TODO Auto-generated method stub
+        return bbcGoodsCategoryService.listGoodsCategory();
+    }
     @Override
     public List<BbcGoodsCategoryVO.CategoryTreeVO> listGoodsCategory(BbcGoodsCategoryQTO.ListQTO listQTO) {
         return bbcGoodsCategoryService.goodsCategoryTree(listQTO);

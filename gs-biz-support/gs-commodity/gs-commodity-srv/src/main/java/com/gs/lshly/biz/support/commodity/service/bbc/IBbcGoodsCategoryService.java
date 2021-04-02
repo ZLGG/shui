@@ -12,7 +12,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import java.util.List;
 
 public interface IBbcGoodsCategoryService {
-
+    List<BbcGoodsCategoryVO.CategoryTreeVO> listGoodsCategory();
     /**
      * 查询所有2C商城分类列表
      *

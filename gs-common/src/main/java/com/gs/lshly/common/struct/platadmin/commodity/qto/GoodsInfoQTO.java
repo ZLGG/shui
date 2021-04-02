@@ -113,6 +113,8 @@ public abstract class GoodsInfoQTO implements Serializable {
         @ApiModelProperty("类目id")
         private String categoryId;
 
+        @ApiModelProperty("类型 不传将无法查到数据")
+        private Integer useFiled = 0;
     }
 
 }
