@@ -82,8 +82,10 @@ public class GoodsQaServiceImpl implements IGoodsQaService {
                     GoodsQaVO.GoodsQaListVO goodsQaListVO = new GoodsQaVO.GoodsQaListVO();
                     BeanUtils.copyProperties(e,goodsQaListVO);
                     CommonShopVO.SimpleVO simpleVO = getSimpleVO(e.getShopId());
-                    goodsQaListVO.setShopName(simpleVO.getShopName());
-                    goodsQaListVO.setShopType(simpleVO.getShopType());
+                    if (ObjectUtils.isNotEmpty(simpleVO)){
+                        goodsQaListVO.setShopName(simpleVO.getShopName());
+                        goodsQaListVO.setShopType(simpleVO.getShopType());
+                    }
                     return goodsQaListVO;
                 }).collect(Collectors.toList());
         return new PageData<>(goodsQaListVOS,qto.getPageNum(),qto.getPageSize(),pageGoodsQas.getTotal());
@@ -103,13 +105,20 @@ public class GoodsQaServiceImpl implements IGoodsQaService {
         GoodsQaVO.GoodsQaDetailVO detailVO = new GoodsQaVO.GoodsQaDetailVO();
         BeanUtils.copyProperties(goodsQa,detailVO);
         CommonShopVO.SimpleVO simpleVO = getSimpleVO(goodsQa.getShopId());
-        //  店铺名称
-        detailVO.setShopName(simpleVO.getShopName());
-        //  店铺类型
-        detailVO.setShopType(simpleVO.getShopType());
+        if (null != simpleVO){
+            //  店铺名称
+            detailVO.setShopName(StringUtils.isBlank(simpleVO.getShopName())?"":simpleVO.getShopName());
+            //  店铺类型
+            if (ObjectUtils.isNotEmpty(simpleVO.getShopType())){
+                detailVO.setShopType(simpleVO.getShopType());
+            }
+        }
+
         //获取商家名称
         CommonShopVO.MerchantVO merchantVO = commonShopRpc.merchantByShopId(goodsQa.getShopId());
-        detailVO.setMerchantName(StringUtils.isEmpty(merchantVO.getMerchantName())?"":merchantVO.getMerchantName());
+        if (null != merchantVO){
+            detailVO.setMerchantName(StringUtils.isEmpty(merchantVO.getMerchantName())?"":merchantVO.getMerchantName());
+        }
 
         GoodsInfoVO.GoodsNameVO goodsNameVO = goodsInfoService.getGoodsName(new GoodsInfoDTO.IdDTO(goodsQa.getGoodId()));
         detailVO.setGoodsName(StringUtils.isEmpty(goodsNameVO.goodsName)?"":goodsNameVO.getGoodsName());
@@ -161,9 +170,6 @@ public class GoodsQaServiceImpl implements IGoodsQaService {
 
     private CommonShopVO.SimpleVO getSimpleVO(String shopId){
         CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(shopId);
-        if (ObjectUtils.isEmpty(simpleVO)){
-            throw new BusinessException("店铺信息异常！");
-        }
         return simpleVO;
     }
 

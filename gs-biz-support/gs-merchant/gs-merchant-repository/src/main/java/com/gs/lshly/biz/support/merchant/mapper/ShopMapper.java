@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -35,7 +36,7 @@ public interface ShopMapper extends BaseMapper<Shop> {
             "LEFT JOIN gs_merchant m ON shop.`merchant_id` = m.`id` " +
             "LEFT JOIN gs_merchant_account acc ON shop.`main_account_id` = acc.`id` " +
             "LEFT JOIN gs_legal_dict lg on m.legal_id = lg.id " +
-            "where shop.flag=0 and ${ew.sqlSegment}")
+            "where shop.flag=0 and ${ew.sqlSegment} ORDER BY shop.cdate desc")
     IPage<MerchantShopView> listShopComplex(IPage pager,@Param(value = "ew") QueryWrapper<MerchantShopView> ew);
 
     @Select("SELECT shop.*,lg.* " +
@@ -57,11 +58,29 @@ public interface ShopMapper extends BaseMapper<Shop> {
             "round(GLength(LineStringFromWKB(LineString(point(s.shop_longitude,s.shop_latitude), point(#{userLongitude},#{userLatitude})))) * 100000, -1) meters, d.shop_ranges" +
             " from gs_shop s" +
             " left join gs_shop_delivery_style d on s.id=d.shop_id" +
-            " where s.flag=0 and s.is_fixed_map=20 order by meters is null, meters) o where ${ew.sqlSegment}")
+            " where s.flag=0 and s.is_fixed_map=20 order by IFNULL(meters,0)) o where ${ew.sqlSegment}")
     IPage<Shop> selectPageContainDistance(IPage<Shop> page,
                                           @Param(value = "ew") QueryWrapper<Shop> wq,
                                           @Param(value = "userLongitude")BigDecimal userLongitude,
                                           @Param(value = "userLatitude")BigDecimal userLatitude);
+
+
+    /**
+     * ShopFixedMapEnum.启用
+     * @param wq
+     * @param userLongitude
+     * @param userLatitude
+     * @return
+     */
+    @Select("select * from (select s.*," +
+            "round(GLength(LineStringFromWKB(LineString(point(s.shop_longitude,s.shop_latitude), point(#{userLongitude},#{userLatitude})))) * 100000, -1) meters, d.shop_ranges" +
+            " from gs_shop s" +
+            " left join gs_shop_delivery_style d on s.id=d.shop_id" +
+            " where s.flag=0 and s.is_fixed_map=20 order by IFNULL(meters,0)) o where ${ew.sqlSegment}")
+    List<Shop> selectListContainDistance(
+                                         @Param(value = "ew") QueryWrapper<Shop> wq,
+                                         @Param(value = "userLongitude")BigDecimal userLongitude,
+                                         @Param(value = "userLatitude")BigDecimal userLatitude);
 
     @Select("SELECT shop.*" +
             "FROM gs_shop shop " +

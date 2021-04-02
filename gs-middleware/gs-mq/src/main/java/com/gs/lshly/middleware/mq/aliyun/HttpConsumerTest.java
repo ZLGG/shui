@@ -21,9 +21,9 @@ public class HttpConsumerTest {
         );
 
         // 所属的 Topic
-        final String topic = "pull-topic";
+        final String topic = "wait-pay-order";
         // 您在控制台创建的 Group ID
-        final String groupId = "GID_pull-binder-group";
+        final String groupId = "GID_order";
         // Topic所属实例ID，默认实例为空
         final String instanceId = "MQ_INST_1145295983493139_BXQQmeVp";
 

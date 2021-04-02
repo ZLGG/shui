@@ -9,10 +9,13 @@ import com.gs.lshly.biz.support.foundation.service.merchadmin.pc.IPCMerchFeedbac
 import com.gs.lshly.common.enums.OperatorTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.dto.RemindPlatDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.foundation.dto.PCMerchFeedbackDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.foundation.qto.PCMerchFeedbackQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.foundation.vo.PCMerchFeedbackVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.IRemindPlatRpc;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,6 +35,9 @@ public class PCMerchFeedbackServiceImpl implements IPCMerchFeedbackService {
     @Autowired
     private IDataFeedbackRepository repository;
 
+    @DubboReference
+    private IRemindPlatRpc iRemindPlatRpc;
+
     @Override
     public PageData<PCMerchFeedbackVO.ListVO> pageData(PCMerchFeedbackQTO.QTO qto) {
         if(StringUtils.isBlank(qto.getJwtShopId())){
@@ -40,6 +46,7 @@ public class PCMerchFeedbackServiceImpl implements IPCMerchFeedbackService {
         QueryWrapper<DataFeedback> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("fb_operator_id",qto.getJwtShopId());
         wrapper.eq("fb_operator_type",OperatorTypeEnum.商家.getCode());
+        wrapper.orderByDesc("cdate");
         IPage<DataFeedback> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchFeedbackVO.ListVO.class, page);
@@ -56,6 +63,8 @@ public class PCMerchFeedbackServiceImpl implements IPCMerchFeedbackService {
         dataFeedback.setFbOperatorTime(LocalDateTime.now());
         dataFeedback.setFbOperatorId(eto.getJwtShopId());
         repository.save(dataFeedback);
+        //触发消息
+        iRemindPlatRpc.addRemindForMerchantFackback(new RemindPlatDTO.JustDTO(eto.getJwtShopId(),dataFeedback.getId()));
     }
 
 }

@@ -42,5 +42,5 @@ public interface IPCMerchGoodsPosTemporaryRpc {
      * 修改发布状态
      * @param dto
      */
-    void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.IdDTO dto);
+    void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.PosSpuIdDTO dto);
 }

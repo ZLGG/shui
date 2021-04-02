@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.service.bbb.pc.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,6 +31,7 @@ import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.common.utils.QRCodeUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
 import com.gs.lshly.rpc.api.bbb.pc.stock.IBbbPcStockAddressRpc;
@@ -43,8 +45,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +89,8 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
     private IPCBbbUserPrivateUserRpc userPrivateUserRpc;
     @DubboReference
     private IBbbPcTradeRpc tradeRpc;
+    @Value("${wx.url}")
+    private String WXUrl;
 
     @Override
     public PCBbbGoodsInfoVO.GoodsRecommendVO getRecommendGoodsList(PCBbbGoodsInfoQTO.QTO qto) {
@@ -129,15 +135,6 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())) {
             wrapper.orderByAsc("sale_price", "id");
         }
-        if(qto.getIsPointGood()!=null){
-            wrapper.eq("is_point_good",qto.getIsPointGood());
-        }
-        if(qto.getIsInMemberGift()!=null){
-            wrapper.eq("is_in_member_gift",qto.getIsInMemberGift());
-        }
-        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() !=-1){
-            wrapper.eq("sale_type",qto.getSaleType());
-        }
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());
         wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
@@ -173,9 +170,13 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         PCBbbGoodsInfoVO.GoodsDetailVO goodsDetailVO = new PCBbbGoodsInfoVO.GoodsDetailVO();
         BeanUtils.copyProperties(goodsInfo, goodsDetailVO);
         goodsDetailVO.setGoodsId(goodsInfo.getId());
-
+        //TODO 填充商品评分
+        BbbTradeListVO.InnerGoodsScore innerGoodsScore = tradeRpc.innerShopScore(goodsInfo.getShopId(), goodsInfo.getId());
         //填充店铺信息
         BbbShopVO.ShopScoreDetailVO shopScoreDetailVO = bbbShopRpc.innerShopScoreDetailVO(goodsInfo.getShopId(), dto);
+        shopScoreDetailVO.setGoodsScore(innerGoodsScore.getGoodsGrade()).
+                setDeliveryScore(innerGoodsScore.getDeliveryGrade()).
+                setServiceScore(innerGoodsScore.getServiceGrade()).setGoodsScoreNum(innerGoodsScore.getCommentCount());
         goodsDetailVO.setShopInfo(shopScoreDetailVO);
         //商品收藏状态
         if (StringUtils.isNotBlank(dto.getJwtUserId())) {
@@ -185,7 +186,6 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
                 ;
             }
         }
-        //TODO 填充商品评分
 
         List<PCBbbSkuGoodInfoVO.SkuDetailListVO> skuDetailListVOS = getSkuList(goodsInfo, dto);
         goodsDetailVO.setSkuId(skuDetailListVOS.get(0).getId());
@@ -227,13 +227,21 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         }
 
         //填充商品图片
-        goodsDetailVO.setGoodsImage(getImage(goodsInfo.getGoodsImage()));
+        List<String> goodsImgList = getImageList(goodsInfo.getGoodsImage());
+        imagesList.addAll(goodsImgList);
         goodsDetailVO.setImagesList(imagesList);
 
         //填充单规格库存
         if (goodsInfo.getIsSingle().equals(SingleStateEnum.单品.getCode())) {
             goodsDetailVO.setSingleGoodsStock(getSkuStockNum(goodsInfo.getShopId(), skuDetailListVOS.get(0).getId()));
         }
+        String tmpFileName = StrUtil.uuid();
+        try {
+            QRCodeUtil.genAndSaveFile(WXUrl+"?id="+dto.getId(), 300, 300, tmpFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        goodsDetailVO.setCode(tmpFileName);
         return goodsDetailVO;
     }
 
@@ -248,15 +256,6 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         }
         if (StringUtils.isNotBlank(qto.getShopId())) {
             wrapper.eq("shop_id", qto.getShopId());
-        }
-        if(qto.getIsPointGood()!=null){
-            wrapper.eq("is_point_good",qto.getIsPointGood());
-        }
-        if(qto.getIsInMemberGift()!=null){
-            wrapper.eq("is_in_member_gift",qto.getIsInMemberGift());
-        }
-        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() !=-1){
-            wrapper.eq("sale_type",qto.getSaleType());
         }
         wrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());
@@ -275,7 +274,11 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
     public PageData<PCBbbGoodsInfoVO.GoodsDetailListVO> pageShopNavigationGoodsVO(PCBbbGoodsInfoQTO.ShopNavigationIdQTO qto) {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         if (StringUtils.isNotBlank(qto.getShopNavigationId())) {
-            wrapper.eq("gsn.shop_navigation", qto.getShopNavigationId());
+            List<String> navigationIds = listShopNavigationIds(qto.getShopNavigationId());
+            if (ObjectUtils.isEmpty(navigationIds)){
+                return new PageData<>();
+            }
+            wrapper.in("gsn.shop_navigation", navigationIds);
         }
         if (StringUtils.isNotBlank(qto.getShopId())) {
             wrapper.eq("gs.shop_id", qto.getShopId());
@@ -343,6 +346,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         BeanUtils.copyProperties(goodsInfo, serviceVO);
         serviceVO.setGoodsId(goodsInfo.getId());
         serviceVO.setSkuId(skuId);
+        serviceVO.setGoodsWeight(goodsInfo.getGoodsWeight());
 
         //判断是否是单品
         if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
@@ -421,6 +425,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         BeanUtils.copyProperties(goodsInfo, serviceVO);
         serviceVO.setGoodsId(goodsInfo.getId());
         serviceVO.setSkuId(skuId);
+        serviceVO.setPosSpuId(ObjectUtils.isNotEmpty(goodsInfo.getPosSpuId())?goodsInfo.getPosSpuId():"");
         serviceVO.setSQuantity(getSkuStockNum(goodsInfo.getShopId(),skuId));
         return serviceVO;
     }
@@ -610,6 +615,22 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         return null;
     }
 
+    private List<String> getImageList(String images) {
+        List<String> list = new ArrayList<>();
+        if (StringUtils.isNotBlank(images)) {
+            JSONArray arr = JSONArray.parseArray(images);
+            if (ObjectUtils.isEmpty(arr)) {
+                return list;
+            }
+            for (int i = 0; i<arr.size();i++){
+                JSONObject obj = arr.getJSONObject(i);
+                String imgUrl = obj.getString("imgSrc");
+                list.add(imgUrl);
+            }
+        }
+        return list;
+    }
+
     private List<String> getLevel3CategoryIdList(String level2CategoryId) {
         QueryWrapper<GoodsCategory> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id", level2CategoryId);
@@ -746,7 +767,15 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
 
         PCBbbGoodsInfoVO.WholesalePriceVO wholesalePriceVO = new PCBbbGoodsInfoVO.WholesalePriceVO();
 
-        if (ObjectUtils.isNotEmpty(dto.getJwtUserId()) && ObjectUtils.isNotEmpty(dto.getJwtUserType()) && dto.getJwtUserType().equals(UserTypeEnum._2B用户.getCode())) {
+        //获取用户类型
+        BbbUserVO.InnerUserInfoVO userInfoVO = userRpc.innerUserVo(dto);
+        if (null == userInfoVO){
+            wholesalePriceVO.setStepPriceVOS(new ArrayList<>());
+            return wholesalePriceVO;
+        }
+        Integer userType = userInfoVO.getType();
+
+        if (ObjectUtils.isNotEmpty(dto.getJwtUserId()) && ObjectUtils.isNotEmpty(userType) && userType.equals(UserTypeEnum._2B用户.getCode())) {
             PCBbbMerchantUserTypeVO.DetailsVO detailsVO = get2BUserPrivateUserInfo(dto.getJwtUserId(), dto.getShopId());
             if (ObjectUtils.isNotEmpty(detailsVO) && ObjectUtils.isNotEmpty(detailsVO.getRatioGoodsVOS())) {
                 for (PCBbbMerchantUserTypeVO.RatioGoodsVO ratioGoodsVO : detailsVO.getRatioGoodsVOS()) {
@@ -787,4 +816,8 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         return compareTos;
     }
 
+    private List<String> listShopNavigationIds(String navigationId){
+        List<String> shopNavigationIds = bbbShopRpc.innerGetNavigationList(navigationId);
+        return shopNavigationIds;
+    }
 }

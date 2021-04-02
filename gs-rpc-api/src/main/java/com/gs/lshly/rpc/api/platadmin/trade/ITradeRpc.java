@@ -8,17 +8,12 @@ import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
 
 /**
- * @author oy
- * @since 2020-11-16
- */
+*
+* @author oy
+* @since 2020-11-16
+*/
 public interface ITradeRpc {
 
-    /**
-     * 交易订单表列表
-     *
-     * @param qto
-     * @return
-     */
     PageData<TradeListVO.tradeVO> tradeListPageData(TradeQTO.TradeList qto);
 
 

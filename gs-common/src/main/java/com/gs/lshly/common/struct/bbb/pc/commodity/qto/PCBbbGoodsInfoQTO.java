@@ -36,15 +36,6 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("店铺id")
         private String shopId;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
     }
 
     @Data
@@ -85,15 +76,6 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
         private Integer orderByProperties;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
     }
 
 

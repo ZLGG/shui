@@ -32,6 +32,7 @@ public class PCMerchShopServiceServiceImpl implements IPCMerchShopServiceService
     public List<PCMerchShopServiceVO.ListVO> list(PCMerchShopServiceQTO.QTO qto) {
         QueryWrapper<ShopService> wrapper = MybatisPlusUtil.query();
         wrapper.eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         List<ShopService> shopServiceList=repository.list(wrapper);
         return ListUtil.listCover(PCMerchShopServiceVO.ListVO.class,shopServiceList);
     }

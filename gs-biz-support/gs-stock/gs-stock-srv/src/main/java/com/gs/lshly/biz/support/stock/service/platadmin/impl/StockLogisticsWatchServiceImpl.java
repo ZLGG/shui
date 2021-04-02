@@ -3,13 +3,10 @@ package com.gs.lshly.biz.support.stock.service.platadmin.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.stock.entity.StockLogisticsWatch;
-import com.gs.lshly.biz.support.stock.mapper.StockLogisticsWatchMapper;
 import com.gs.lshly.biz.support.stock.repository.IStockLogisticsWatchRepository;
 import com.gs.lshly.biz.support.stock.service.platadmin.IStockLogisticsWatchService;
-import com.gs.lshly.common.enums.StockLogisticesWatchEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.stock.dto.PCMerchStockLogisticsCorpDTO;
 import com.gs.lshly.common.struct.platadmin.stock.dto.StockLogisticsWatchDTO;
 import com.gs.lshly.common.struct.platadmin.stock.qto.StockLogisticsWatchQTO;
 import com.gs.lshly.common.struct.platadmin.stock.vo.StockLogisticsWatchVO;
@@ -17,7 +14,6 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 /**
 * <p>
@@ -32,12 +28,11 @@ public class StockLogisticsWatchServiceImpl implements IStockLogisticsWatchServi
     @Autowired
     private IStockLogisticsWatchRepository repository;
 
-    @Autowired
-    private StockLogisticsWatchMapper  mapper;
 
     @Override
     public PageData<StockLogisticsWatchVO.ListVO> pageData(StockLogisticsWatchQTO.QTO qto) {
         QueryWrapper<StockLogisticsWatch> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<StockLogisticsWatch> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, StockLogisticsWatchVO.ListVO.class, page);

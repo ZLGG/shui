@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.bbc.merchant;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopNavigationVO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockDeliveryDTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockDeliveryVO;
@@ -21,6 +22,8 @@ public interface IBbcShopRpc {
 
     PageData<BbcShopVO.ScopeListVO> nearShopListPageData(BbcShopQTO.ScopeQTO qto);
 
+    List<BbcShopVO.ScopeListVO> nearShopList(BbcShopQTO.ScopeQTO qto);
+
     BbcShopVO.DetailVO detailShop(BbcShopDTO.IdDTO dto);
 
     BbcStockDeliveryVO.SupportDeliveryTypeVO supportDeliveryStyle(BbcStockDeliveryDTO.SupportDeliveryTypeDTO dto);
@@ -37,6 +40,20 @@ public interface IBbcShopRpc {
     List<BbcShopVO.ShopNavVO> navigationTree(BbcShopDTO.IdDTO dto);
 
 
+    /**
+     * 2c店铺分类列表
+     * @param dto
+     * @return
+     */
+    List<BbcShopNavigationVO.NavigationListVO> listNavigationListVO(BbcShopDTO.IdDTO dto);
+
+
+    /**
+     * 根据店铺类目id获取店铺id+name
+     * @param dto
+     * @return
+     */
+    BbcShopVO.ShopIdName getShopIdName(BbcShopDTO.ShopNavigationIdDTO dto);
 
     //--------------------内部服务接口-----------------------------
 
@@ -69,4 +86,13 @@ public interface IBbcShopRpc {
     List<BbcShopVO.ShopNavigationIdName> innerListShopNavigation(ShopDTO.IdDTO dto);
 
     BbcShopVO.isCity isCity(BbcShopDTO.isCity dto);
+
+    /**
+     * 内部服务
+     * @param shopNavigationId
+     * @return
+     */
+    List<String> innerGetNavigationList(String shopNavigationId);
+
+    List<String> innerShopDelivery(String shopId);
 }

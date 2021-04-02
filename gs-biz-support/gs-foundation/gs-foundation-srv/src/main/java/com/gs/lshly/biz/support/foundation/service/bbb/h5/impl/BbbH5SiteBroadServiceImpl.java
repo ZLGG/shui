@@ -34,6 +34,7 @@ public class BbbH5SiteBroadServiceImpl implements IBbbH5SiteBroadService {
     public List<BbbH5SiteBroadVO.ListVO> list(BbbH5SiteBroadQTO.QTO qto) {
         QueryWrapper<SiteBroad> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBB.getCode());
+        wrapper.orderByDesc("cdate");
         List<SiteBroad> siteBroadList = repository.list( wrapper);
         return ListUtil.listCover(BbbH5SiteBroadVO.ListVO.class,siteBroadList);
     }

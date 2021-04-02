@@ -62,7 +62,7 @@ public interface MarketMerchantCardUsersMapper extends BaseMapper<MarketMerchant
             "WHERE td.`flag`=0 AND t.`flag`=0 AND ${ew.sqlSegment}")
     IPage<BbbH5MarketMerchantCardUsersVO.PageData> selectH5ListPage(IPage<BbbH5MarketMerchantCardUsersVO.PageData> page,@Param(Constants.WRAPPER)  QueryWrapper<BbbH5MarketMerchantCardUsersQTO.QTO> qw);
 
-    @Select("select mcp.`goods_id` spu_id,mcu.`to_price`,mcu.`cut_price`,mcu.`card_name` from gs_market_merchant_card mc \n" +
+    @Select("select mcu.id card_id, mcp.`goods_id` spu_id,mcu.`to_price`,mcu.`cut_price`,mcu.`card_name` from gs_market_merchant_card mc \n" +
             " inner join gs_market_merchant_card_goods mcp on mc.id=mcp.`card_id` \n" +
             " inner join gs_market_merchant_card_users mcu on mc.id=mcu.`card_id`\n" +
             "where mc.flag=0 and mcp.flag=0 and mcu.flag=0 and mc.terminal like '%${terminal}%'\n" +

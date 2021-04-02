@@ -45,7 +45,12 @@ public class CommonDeliveryCostCalculator implements ICommonDeliveryCostCalculat
                 //续件、续重
                 BigDecimal increase = quantity.subtract(param.getFirst());
                 //续次数
-                int increaseTimes = increase.divide(param.getIncrease(), 1, RoundingMode.UP).intValue();
+                int increaseTimes=0;
+                if (param.getIncrease().compareTo(BigDecimal.ZERO)==0){
+                    increaseTimes=0;
+                }else {
+                    increaseTimes = increase.divide(param.getIncrease(), 1, RoundingMode.UP).intValue();
+                }
                 //不能整除
                 if (new BigDecimal(increaseTimes + "").multiply(param.getIncrease()).compareTo(increase) < 0) {
                     increaseTimes++;

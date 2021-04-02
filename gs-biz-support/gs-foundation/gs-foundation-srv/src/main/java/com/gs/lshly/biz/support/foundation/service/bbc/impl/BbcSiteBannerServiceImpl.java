@@ -34,6 +34,7 @@ public class BbcSiteBannerServiceImpl implements IBbcSiteBannerService {
         wrapper.eq("pc_show", PcH5Enum.NO.getCode());
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("subject",qto.getSubject());
+        wrapper.orderByAsc("idx","id");
         List<SiteBanner> siteBannerList=repository.list( wrapper);
         return ListUtil.listCover(BbcSiteBannerVO.ListVO.class,siteBannerList);
     }

@@ -104,6 +104,9 @@ public abstract class BbbH5GoodsQaVO implements Serializable {
     @ApiModel("BbbH5GoodsQaVO.CountQuizVO")
     public static class CountQuizVO implements Serializable {
 
+        @ApiModelProperty("该商品全部咨询数量")
+        private Integer allNum;
+
         @ApiModelProperty(value = "商品咨询数量")
         private Integer goodsQuizNum;
 

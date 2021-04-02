@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gs.lshly.biz.support.foundation.entity.DataNotice;
 import com.gs.lshly.biz.support.foundation.mapper.view.DataNoticeView;
+import com.gs.lshly.common.struct.merchadmin.pc.foundation.vo.PCMerchDataNoticeVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.DataNoticeVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * <p>
@@ -34,5 +37,9 @@ public interface DataNoticeMapper extends BaseMapper<DataNotice> {
             "left join gs_data_notice_recv recv on nt.id=recv.notice_id " +
             "where nt.flag=0 and ${ew.sqlSegment}")
     DataNoticeView mapperOne(@Param(value = "ew") QueryWrapper<DataNoticeView> qw);
-
+    @Select("select nt.*,recv.id recv_id,recv.notice_id,IFNULL(recv.state,10) state,recv.shop_id " +
+            "from gs_data_notice nt " +
+            "left join gs_data_notice_recv recv on nt.id=recv.notice_id " +
+            "where nt.flag=0 and ${ew.sqlSegment}")
+    List<PCMerchDataNoticeVO.ListVO> innerList(@Param(value = "ew") QueryWrapper<DataNoticeView> wrapper);
 }

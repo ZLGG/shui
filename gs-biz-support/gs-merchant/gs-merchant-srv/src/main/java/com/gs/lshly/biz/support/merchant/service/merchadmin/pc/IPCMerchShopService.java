@@ -23,4 +23,9 @@ public interface IPCMerchShopService {
 
     PCMerchShopVO.ShopSimpleVO innerShopSimple(String shopId);
 
+    Integer innPV(String shopId);
+
+    Integer innUV(String shopId);
+
+    PCMerchShopVO.ShopIdVO innerLikeSimple(String shopId);
 }

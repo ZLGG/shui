@@ -3,7 +3,6 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.H5BbbTradeInvoiceDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.qto.H5BbbTradeInvoiceQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.H5BbbTradeInvoiceVO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.PCBbbTradeInvoiceDTO;
 
 /**
 *
@@ -22,6 +21,8 @@ public interface IH5BbbTradeInvoiceRpc {
     void editTradeInvoice(H5BbbTradeInvoiceDTO.EditETO eto);
 
     H5BbbTradeInvoiceVO.DetailVO detailTradeInvoice(H5BbbTradeInvoiceDTO.IdDTO dto);
+
+    H5BbbTradeInvoiceVO.DetailVO detailInvoice(H5BbbTradeInvoiceQTO.IdQTO idQTO);
 
     H5BbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(H5BbbTradeInvoiceQTO.QTO qto);
 

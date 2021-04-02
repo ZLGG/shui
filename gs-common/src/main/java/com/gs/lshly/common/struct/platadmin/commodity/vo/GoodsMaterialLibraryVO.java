@@ -73,7 +73,10 @@ public abstract class GoodsMaterialLibraryVO implements Serializable {
     @Data
     @ApiModel("GoodsMaterialLibraryVO.exportDataVO")
     public static class exportDataVO implements Serializable{
-        @ApiModelProperty("三级类目id")
+        @ApiModelProperty(value = "id",hidden = true)
+        private String id;
+
+        @ApiModelProperty(value = "三级类目id",hidden = true)
         private String categoryId;
 
         @ApiModelProperty(value = "一级类目名称",position = 1)

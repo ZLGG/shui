@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.platadmin.merchant.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.common.CommonShopDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -80,8 +81,8 @@ public abstract class MerchantShopCategoryApplyVO implements Serializable {
         @ApiModelProperty("店铺类型[10=品牌旗舰店 20=品牌专卖店 30=类目专营店 40=运营商自营 50=多品类通用型]")
         private Integer shopType;
 
-        @ApiModelProperty("店铺已有的商品分类名称数组")
-        private List<String> categoryNameList = new ArrayList<>();
+        @ApiModelProperty("店铺已有的商品分类数组")
+        private List<GoodsCategoryVO.CategoryTreeVO> categoryTreeVOS = new ArrayList<>();
 
     }
 }

@@ -18,6 +18,9 @@ public abstract class CommonRegionVO implements Serializable {
     @Data
     public static class ProvinceVO implements Serializable {
 
+        @ApiModelProperty(value = "id",position = 4)
+        private String deleteId;
+
         @ApiModelProperty(value = "省代码",position = 1)
         private String id;
 
@@ -32,6 +35,9 @@ public abstract class CommonRegionVO implements Serializable {
     @ApiModel("CommonRegionVO.CityVO")
     @Data
     public static class CityVO implements Serializable {
+
+        @ApiModelProperty(value = "id",position = 4)
+        private String deleteId;
 
         @ApiModelProperty(value = "市代码",position = 1)
         private String id;
@@ -48,6 +54,9 @@ public abstract class CommonRegionVO implements Serializable {
     @Data
     public static class CountyVO implements Serializable {
 
+        @ApiModelProperty(value = "id",position = 3)
+        private String deleteId;
+
         @ApiModelProperty(value = "区县代码",position = 1)
         private String id;
 
@@ -60,6 +69,9 @@ public abstract class CommonRegionVO implements Serializable {
     @ApiModel("CommonRegionVO.ProvinceShortVO")
     @Data
     public static class ProvinceShortVO implements Serializable {
+
+        @ApiModelProperty(value = "id",position = 4)
+        private String deleteId;
 
         @ApiModelProperty(value = "省代码",position = 1)
         private String id;
@@ -75,6 +87,9 @@ public abstract class CommonRegionVO implements Serializable {
     @ApiModel("CommonRegionVO.CityShortVO")
     @Data
     public static class CityShortVO implements Serializable {
+
+        @ApiModelProperty(value = "id",position = 3)
+        private String deleteId;
 
         @ApiModelProperty(value = "市代码",position = 1)
         private String id;

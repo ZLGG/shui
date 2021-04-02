@@ -81,12 +81,16 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
         if (ObjectUtils.isNotEmpty(qto.getId())){
             queryWrapper.and(i->i.like("t.`id`",qto.getId()));
         }
-        if (ObjectUtils.isNotEmpty(qto.getTradeId())){
-            queryWrapper.and(i->i.like("t.`trade_id`",qto.getTradeId()));
+        if (StringUtils.isNotEmpty(qto.getTradeCode())){
+            queryWrapper.and(i->i.like("tg.`trade_code`",qto.getTradeCode()));
         }
-        if (ObjectUtils.isNotEmpty(qto.getEndTime()) || ObjectUtils.isNotEmpty(qto.getStartTime())){
-            queryWrapper.and(i->i.ge("t.`cdate`",qto.getStartTime()).le("t.`cdate`",qto.getEndTime()));
+        if (ObjectUtils.isNotEmpty(qto.getStartTime())){
+            queryWrapper.and(i->i.ge("t.`cdate`",qto.getStartTime()));
         }
+        if (ObjectUtils.isNotEmpty(qto.getEndTime())){
+            queryWrapper.and(i->i.le("t.`cdate`",qto.getEndTime()));
+        }
+        queryWrapper.orderByDesc("t.`cdate`");
         IPage<PCMerchTradeRightsVO.ListVO> pager = MybatisPlusUtil.pager(qto);
         repository.selectMerchRightList(pager,queryWrapper);
         //获取售后表
@@ -99,6 +103,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 List<TradeRightsGoods> list = iTradeRightsGoodsRepository.list(query);
                 List<String> speedProgress = new ArrayList<>();
                 PCMerchTradeRightsVO.RightList rightList = new PCMerchTradeRightsVO.RightList();
+                rightList.setTradeCode(record.getOrderCode());
                 if (record.getState().equals(TradeRightsStateEnum.驳回.getCode())){
                     QueryWrapper<TradeComplaint> queryComplaint = MybatisPlusUtil.query();
                     query.eq("trade_id",record.getTradeId());
@@ -216,16 +221,14 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             throw new BusinessException("没有退货凭证数据");
         }
         PCMerchShopVO.ShopSimpleVO shopSimpleVO = ipcMerchShopRpc.innerShopSimple(trade.getShopId());
-        if (StringUtils.isBlank(shopSimpleVO.getShopName())){
-            throw new BusinessException("没有商家信息数据");
+        if (ObjectUtils.isNotEmpty(shopSimpleVO)){
+            detailVo.setMerchantName(shopSimpleVO.getShopName());//商家名称
         }
         PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(trade.getUserId());
-        if (StringUtils.isBlank(userSimpleVO.getUserName())){
-            throw new BusinessException("没有用户信息数据");
+        if (ObjectUtils.isNotEmpty(userSimpleVO)){
+            detailVo.setUserName(userSimpleVO.getUserName());//会员名称
         }
         detailVo.setGoodsName(one.getGoodsName());//商品名称
-        detailVo.setMerchantName(shopSimpleVO.getShopName());//商家名称
-        detailVo.setUserName(userSimpleVO.getUserName());//会员名称
         detailVo.setTradeDate(trade.getCdate());//下单时间
         detailVo.setTradeState(trade.getTradeState());//订单完成状态
         detailVo.setReceivingInformation(trade.getRecvPersonName()+" "+trade.getRecvPhone()+" "+trade.getRecvFullAddres());//收货信息(收货人名+电话+地址)
@@ -369,22 +372,13 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 tradeRights.setRefundRemarks(qto.getRefundNotes());
             }
             if (ObjectUtils.isNotEmpty(qto.getRefundAmount())){
-                QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
-                query.and(i->i.eq("rights_id",tradeRights.getId()));
-                query.and(i->i.eq("trade_id",tradeRights.getTradeId()));
-                List<TradeRightsGoods> list = iTradeRightsGoodsRepository.list(query);
-                BigDecimal total=BigDecimal.ZERO;
-                if (ObjectUtils.isNotEmpty(list)){
-                    for (TradeRightsGoods tradeRightsGoods:list){
-                        if (ObjectUtils.isNotEmpty(tradeRightsGoods.getSalePrice())) {
-                            total.add(tradeRightsGoods.getSalePrice());
-                        }
+                Trade trade = iTradeRepository.getById(tradeRights.getTradeId());
+                if (ObjectUtils.isNotEmpty(trade)) {
+                    if (qto.getRefundAmount().compareTo(trade.getTradeAmount()) == 1) {
+                        throw new BusinessException("退款金额大于商品的价格");
                     }
+                    tradeRights.setRefundAmount(qto.getRefundAmount());
                 }
-                if (tradeRights.getRefundAmount().compareTo(total)==-1){
-                    throw new BusinessException("退款金额大于商品的价格");
-                }
-                tradeRights.setRefundAmount(qto.getRefundAmount());
             }else {
                 throw new BusinessException("退款备注不能为空");
             }

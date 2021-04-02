@@ -54,6 +54,7 @@ public class PCMerchShopNavigationMenuServiceImpl implements IPCMerchShopNavigat
         queryWrapper.eq("terminal",qto.getTerminal());
         queryWrapper.eq("pc_show", PcH5Enum.NO.getCode());
         queryWrapper.eq("shop_id",qto.getJwtShopId());
+        queryWrapper.orderByDesc("cdate");
         List<ShopNavigationMenu> shopNavigationMenuList = repository.list(queryWrapper);
         return ListUtil.listCover(PCMerchShopNavigationMenuVO.H5ListVO.class,shopNavigationMenuList);
     }

@@ -9,6 +9,7 @@ import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketMerchantCardUsersQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketMerchantCardUsersVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 
 import java.util.List;
 
@@ -45,13 +46,9 @@ public interface IPCBbbMarketActivityRpc {
     PCBbbMarketActivityVO.merchantCardSuccess userReciveCard(BbbMarketMerchantActivityDTO.CardIdDTO dto);
 
     PCBbbMarketActivityVO.jurisdiction jurisdiction();
-    
-    /**
-     * 查询秒杀列表
-     * @param dto
-     * @return
-     */
-    PCBbbMarketActivityVO.FlashsaleVO listFlashsale(BaseDTO dto);
 
 
+    PageData<PCBbbMarketActivityVO.activityListPageVO> activityListPage(PCBbbMarketActivityQTO.QTO qto);
+
+    List<PCBbbMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto);
 }

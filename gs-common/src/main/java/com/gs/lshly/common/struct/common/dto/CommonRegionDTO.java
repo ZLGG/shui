@@ -53,7 +53,7 @@ public abstract class CommonRegionDTO implements Serializable {
     @ApiModel("CommonRegionDTO.IdDTO")
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
-        private String id;
+        private String deleteId;
     }
 
 

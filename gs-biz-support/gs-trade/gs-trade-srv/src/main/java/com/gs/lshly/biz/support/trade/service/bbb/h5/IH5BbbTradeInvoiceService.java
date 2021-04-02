@@ -17,6 +17,8 @@ public interface IH5BbbTradeInvoiceService {
 
     H5BbbTradeInvoiceVO.DetailVO detailTradeInvoice(H5BbbTradeInvoiceDTO.IdDTO dto);
 
+    H5BbbTradeInvoiceVO.DetailVO detailInvoice(H5BbbTradeInvoiceQTO.IdQTO dto);
+
     H5BbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(H5BbbTradeInvoiceQTO.QTO qto);
 
     void updateByIsDefaultList(H5BbbTradeInvoiceDTO.UpdateByIsDefaultIsDefaultDTO eto);

@@ -1,8 +1,10 @@
 package com.gs.lshly.facade.bbb.controller.h5.stock;
 
 import com.gs.lshly.common.constants.MsgConst;
+import com.gs.lshly.common.enums.StockAddressTypeEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.h5.stock.dto.BbbH5StockAddressDTO;
 import com.gs.lshly.common.struct.bbb.h5.stock.qto.BbbH5StockAddressQTO;
 import com.gs.lshly.common.struct.bbb.h5.stock.vo.BbbH5StockAddressVO;
@@ -56,6 +58,12 @@ public class BbbH5StockAddressController {
     @PostMapping("detail")
     public ResponseData<BbbH5StockAddressVO.DetailVO> detailAddress(@RequestBody BbbH5StockAddressDTO.IdAndTypeDTO dto) {
         return ResponseData.data(stockAddressRpc.detailStockAddress(dto));
+    }
+
+    @ApiOperation("获取默认地址")
+    @PostMapping("getDefaultAddress")
+    public ResponseData<BbbH5StockAddressVO.DetailVO> getDefaultAddress(BaseDTO dto) {
+        return ResponseData.data(stockAddressRpc.innerGetDefault(dto, StockAddressTypeEnum.收货.getCode()));
     }
 
     @ApiOperation("个人地址列表")

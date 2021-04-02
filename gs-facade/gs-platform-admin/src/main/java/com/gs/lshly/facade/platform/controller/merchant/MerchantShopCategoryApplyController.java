@@ -54,7 +54,7 @@ public class MerchantShopCategoryApplyController {
     public ResponseData<Void> apply(@PathVariable String id, @Valid @RequestBody MerchantShopCategoryApplyDTO.ApplyDTO dto) {
         dto.setId(id);
         merchantShopCategoryApplyRpc.apply(dto);
-        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+        return ResponseData.success(MsgConst.APPLY_SUCCESS);
     }
 
 }

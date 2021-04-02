@@ -11,20 +11,14 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
 import com.gs.lshly.biz.support.commodity.service.bbb.pc.IPCBbbGoodsCategoryService;
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
-import com.gs.lshly.common.enums.SubjectEnum;
-import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsBrandVO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
-import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
-import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO.TopLinkVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteNavigationRpc;
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -121,29 +115,8 @@ public class PCBbbGoodsCategoryServiceImpl implements IPCBbbGoodsCategoryService
         //填充商品分类数据
         PCBbbGoodsCategoryVO.CategoryMenuVO categoryMenuVO = new PCBbbGoodsCategoryVO.CategoryMenuVO();
         categoryMenuVO.setCategoryTreeVOS(categoryTreeVOS);
-        BbbSiteNavigationVO.HomeVO homeVO = bbbSiteNavigationRpc.homeDetail(qto);
-        
-        if(qto.getTerminal().equals(TerminalEnum.BBC.getCode())&&qto.getSubject().equals(SubjectEnum.默认.getCode())){
-        	//获取父分类
-        	QueryWrapper<GoodsCategory> parentQueryWrapper = new QueryWrapper<>();
-        	parentQueryWrapper.eq("gs_category_level", 1);
-        	parentQueryWrapper.orderByAsc("idx");
-        	List<GoodsCategory> parents = repository.list(parentQueryWrapper);
-        	List<TopLinkVO> topLinkList = new ArrayList<>();
-        	TopLinkVO topLinkVO = null;
-        	if(CollectionUtils.isNotEmpty(parents)){
-        		for(GoodsCategory goodsCategory:parents){
-        			topLinkVO = new TopLinkVO();
-        			topLinkVO.setId(goodsCategory.getId());
-        			topLinkVO.setIdx(goodsCategory.getIdx());
-        			topLinkVO.setName(goodsCategory.getGsCategoryName());
-        			topLinkList.add(topLinkVO);
-        		}
-        		homeVO.setTopLinkList(topLinkList);
-        	}
-        }
-        
-        categoryMenuVO.setHomeSettins(homeVO);
+
+        categoryMenuVO.setHomeSettins(bbbSiteNavigationRpc.homeDetail());
         return categoryMenuVO;
     }
 
@@ -173,6 +146,18 @@ public class PCBbbGoodsCategoryServiceImpl implements IPCBbbGoodsCategoryService
         categoryNavigationVO.setCategoryLevel3List(voList);
         categoryNavigationVO.setAllBrandVOs(getBrandVOs(qto.getCategoryLevel2Id(),qto.getCategoryLevel3Id()));
         return categoryNavigationVO;
+    }
+
+    @Override
+    public  List<PCBbbGoodsCategoryVO.ListVO> getCategoryForBrandId(PCBbbGoodsCategoryQTO.CategoryForBrandQTO qto) {
+        if(ObjectUtils.isEmpty(qto.getBrandIdList())){
+            return new ArrayList<>();
+        }
+        QueryWrapper<GoodsCategory> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.in("b.brand_id",qto.getBrandIdList());
+        List<GoodsCategory> categoryList =  repository.getMapper().listCategoryForBrandId(queryWrapper);
+        List<PCBbbGoodsCategoryVO.ListVO> categoryLevel3List = ListUtil.listCover(PCBbbGoodsCategoryVO.ListVO.class,categoryList);
+        return categoryLevel3List;
     }
 
     @Override

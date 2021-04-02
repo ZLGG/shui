@@ -70,17 +70,17 @@ public interface TradeGoodsMapper extends BaseMapper<TradeGoods> {
     @Select("select MONTH(cdate) cdate,IFNULL(sum(goods_amount), 0) tradeAmount from gs_trade  where flag = 0 and trade_state = 40 AND ${ew.sqlSegment} " )
     List<TradeVO.PackPerformanceVO> performanceList(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
-    @Select("select count(1) count from gs_trade  where flag = 0 and trade_state = 40 AND ${ew.sqlSegment} " )
+    @Select("select SUM(goods_amount) count from gs_trade  where flag = 0 and trade_state = 40 AND ${ew.sqlSegment} " )
     Integer count(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select MONTH(gs.cdate) cdate ,gu.user_name userName,IFNULL(sum(gs.goods_amount), 0) tradeAmount \n" +
             "from gs_trade gs LEFT JOIN gs_user gu ON gs.user_id = gu.id\n" +
-            "where gs.flag = 0 and gu.flag = 0 AND ${ew.sqlSegment} " )
+            "where gs.flag = 0 and trade_state = 40 and gu.flag = 0 AND ${ew.sqlSegment} " )
     List<TradeVO.PackClientListVO> clientList(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select gu.user_name userName,IFNULL(sum(gs.goods_amount), 0) tradeAmount \n" +
             "from gs_trade gs LEFT JOIN gs_user gu ON gs.user_id = gu.id\n" +
-            "where gs.flag = 0 and gu.flag = 0 AND ${ew.sqlSegment} " )
+            "where gs.trade_state = 40 and gs.flag = 0 and gu.flag = 0 AND ${ew.sqlSegment} " )
     List<TradeVO.PackClientVO> clientDate(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select MONTH(cdate) cdate ,sku_img ,goods_name ,IFNULL(sum(pay_amount), 0) tradeAmount  from gs_trade_goods where flag = 0 AND ${ew.sqlSegment} " )

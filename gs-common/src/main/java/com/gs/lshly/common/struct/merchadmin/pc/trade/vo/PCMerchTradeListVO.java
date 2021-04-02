@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.merchadmin.pc.trade.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeListVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,124 +24,232 @@ public abstract class PCMerchTradeListVO implements Serializable {
     @Accessors(chain = true)
     public static class tradeVO implements Serializable{
 
-        @ApiModelProperty("交易订单号(ID)")
+        @ApiModelProperty(value = "交易订单号(ID)",position = 1)
         private String id;
 
 
-        @ApiModelProperty("会员ID")
+        @ApiModelProperty(value = "会员ID",position = 2)
         private String userId;
 
-        @ApiModelProperty("会员名称")
+        @ApiModelProperty(value = "会员名称",position = 3)
         private String userName;
 
 
-        @ApiModelProperty("店铺ID")
+        @ApiModelProperty(value = "店铺ID",position = 4)
         private String shopId;
 
-        @ApiModelProperty("店铺名称")
+        @ApiModelProperty(value = "店铺名称",position = 5)
         private String shopName;
 
 
-        @ApiModelProperty("商家ID")
+        @ApiModelProperty(value = "商家ID",position = 6)
         private String merchantId;
 
 
-        @ApiModelProperty("交易编号")
+        @ApiModelProperty(value = "交易编号",position = 7)
         private String tradeCode;
 
 
-        @ApiModelProperty("交易状态")
+        @ApiModelProperty(value = "交易状态",position = 8)
         private Integer tradeState;
 
 
-        @ApiModelProperty("商品总金额")
+        @ApiModelProperty(value = "商品总金额",position = 9)
         private BigDecimal goodsAmount;
 
 
-        @ApiModelProperty("优惠金额")
+        @ApiModelProperty(value = "优惠金额",position = 10)
         private BigDecimal discountAmount;
 
 
-        @ApiModelProperty("运费金额")
+        @ApiModelProperty(value = "运费金额",position = 11)
         private BigDecimal deliveryAmount;
 
 
-        @ApiModelProperty("交易总金额")
+        @ApiModelProperty(value = "交易总金额",position = 12)
         private BigDecimal tradeAmount;
 
 
-        @ApiModelProperty("创建时间")
+        @ApiModelProperty(value = "创建时间",position = 13)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime createTime;
 
 
-        @ApiModelProperty("支付时间")
+        @ApiModelProperty(value = "支付时间",position = 14)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payTime;
 
-        @ApiModelProperty("支付截止时间")
+        @ApiModelProperty(value = "支付截止时间",position = 15)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payDeadline;
 
 
-        @ApiModelProperty("收货时间")
+        @ApiModelProperty(value = "收货时间",position = 16)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime recvTime;
 
 
-        @ApiModelProperty("支付类型")
+        @ApiModelProperty(value = "支付类型",position = 17)
         private Integer payType;
 
 
-        @ApiModelProperty("配送类型")
+        @ApiModelProperty(value = "配送类型",position = 18)
         private Integer deliveryType;
 
-        @ApiModelProperty("物流单号")
+        @ApiModelProperty(value = "物流单号",position = 19)
         private String logisticsNumber;
 
-        @ApiModelProperty("物流公司代码")
+        @ApiModelProperty(value = "物流公司代码",position = 20)
         private String logisticsCompanyCode;
 
-        @ApiModelProperty("物流公司名称")
+        @ApiModelProperty(value = "物流公司名称",position = 21)
         private String logisticsCompanyName;
 
 
-        @ApiModelProperty("自提码")
+        @ApiModelProperty(value = "自提码",position = 22)
         private String takeGoodsCode;
 
 
-        @ApiModelProperty("自提码图片")
+        @ApiModelProperty(value = "自提码图片",position = 23)
         private String takeGoodsQrcode;
 
 
-        @ApiModelProperty("收货地址ID")
+        @ApiModelProperty(value = "收货地址ID",position = 24)
         private String recvAddresId;
 
 
-        @ApiModelProperty("收货人")
+        @ApiModelProperty(value = "收货人",position = 25)
         private String recvPersonName;
 
 
-        @ApiModelProperty("收货人电话")
+        @ApiModelProperty(value = "收货人电话",position = 26)
         private String recvPhone;
 
 
-        @ApiModelProperty("收货地址全文本")
+        @ApiModelProperty(value = "收货地址全文本",position = 27)
         private String recvFullAddres;
 
 
-        @ApiModelProperty("是否超时取消")
+        @ApiModelProperty(value = "是否超时取消",position = 28)
         private Integer timeoutCancel;
 
 
-        @ApiModelProperty("买家留言")
+        @ApiModelProperty(value = "买家留言",position = 29)
         private String buyerRemark;
 
 
-        @ApiModelProperty("发货备注")
+        @ApiModelProperty(value = "发货备注",position = 30)
         private String deliveryRemark;
 
-        @ApiModelProperty("交易商品集合")
+        @ApiModelProperty(value = "交易商品集合",position = 31)
+        List<TradeGoodsVO> tradeGoodsVOS;
+
+        @ApiModelProperty("售后信息")
+        private PCMerchTradeListVO.tradeVO.Right rightsInfo;
+
+        @Data
+        @ApiModel("PCMerchTradeListVO.tradeVO.Right")
+        @Accessors(chain = true)
+        public static class Right implements Serializable{
+            @ApiModelProperty("退款状态[提交申请:10,商家驳回:20,商家确认:30,退款:40,完成:50]")
+            private Integer rightsState;
+
+            @ApiModelProperty("退款原因")
+            private String remark;
+
+        }
+
+    }
+    @Data
+    @ApiModel("PCMerchTradeListVO.tradeVOExport")
+    @Accessors(chain = true)
+    public static class tradeVOExport implements Serializable{
+
+        @ApiModelProperty(value = "交易订单号(ID)",position = 1)
+        private String id;
+
+
+        @ApiModelProperty(value = "会员名称",position = 2)
+        private String userName;
+
+
+        @ApiModelProperty(value = "店铺名称",position = 3)
+        private String shopName;
+
+
+        @ApiModelProperty(value = "交易编号",position = 4)
+        private String tradeCode;
+
+
+        @ApiModelProperty(value = "交易状态",position = 5)
+        private String  tradeState;
+
+
+        @ApiModelProperty(value = "商品总金额",position = 6)
+        private BigDecimal goodsAmount;
+
+
+        @ApiModelProperty(value = "优惠金额",position = 7)
+        private BigDecimal discountAmount;
+
+
+        @ApiModelProperty(value = "运费金额",position = 8)
+        private BigDecimal deliveryAmount;
+
+
+        @ApiModelProperty(value = "交易总金额",position = 9)
+        private BigDecimal tradeAmount;
+
+
+        @ApiModelProperty(value = "创建时间",position = 10)
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime createTime;
+
+
+
+        @ApiModelProperty(value = "支付类型",position = 11)
+        private String payType;
+
+
+        @ApiModelProperty(value = "配送类型",position = 12)
+        private String  deliveryType;
+
+        @ApiModelProperty(value = "自提码",position = 16)
+        private String takeGoodsCode;
+
+
+        @ApiModelProperty(value = "自提码图片",position = 17)
+        private String takeGoodsQrcode;
+
+
+        @ApiModelProperty(value = "收货地址ID",position = 18)
+        private String recvAddresId;
+
+
+        @ApiModelProperty(value = "收货人",position = 19)
+        private String recvPersonName;
+
+
+        @ApiModelProperty(value = "收货人电话",position = 20)
+        private String recvPhone;
+
+
+        @ApiModelProperty(value = "收货地址全文本",position = 21)
+        private String recvFullAddres;
+
+
+        @ApiModelProperty(value = "是否超时取消",position = 22)
+        private Integer timeoutCancel;
+
+
+        @ApiModelProperty(value = "买家留言",position = 23)
+        private String buyerRemark;
+
+
+        @ApiModelProperty(value = "发货备注",position = 24)
+        private String deliveryRemark;
+
+        @ApiModelProperty(value = "交易商品集合",position = 25)
         List<TradeGoodsVO> tradeGoodsVOS;
 
     }

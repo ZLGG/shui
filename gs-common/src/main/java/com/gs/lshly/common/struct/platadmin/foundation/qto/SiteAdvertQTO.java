@@ -30,7 +30,7 @@ public abstract class SiteAdvertQTO implements Serializable {
     @Accessors(chain = true)
     public static class H5SubjectQTO extends BaseDTO {
 
-        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏  50=积分商城]")
+        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏]")
         private Integer subject;
 
         @ApiModelProperty(value = "终端[10=2b 20=2c]",hidden = true)

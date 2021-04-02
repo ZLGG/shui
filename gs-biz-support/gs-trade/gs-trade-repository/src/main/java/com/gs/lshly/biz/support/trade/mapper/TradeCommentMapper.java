@@ -56,7 +56,7 @@ public interface TradeCommentMapper extends BaseMapper<TradeComment> {
      */
     @Select("SELECT \n" +
             "\tDISTINCT \n" +
-            "\t\ttc.id,\n" +
+            "\t\ttc.id,tc.cdate,\n" +
             "\t\t(CASE tc.describe_grade WHEN 5 THEN '好评' WHEN 4 THEN '中评' WHEN 3 THEN '中评' ELSE '差评' END) AS commentLevel,\n" +
             "\t\ttc.user_name userName,\n" +
             "\t\t(CASE tc.appeal_count WHEN 1 THEN '一次申诉' WHEN 2 THEN '再次申诉' END) AS progress,\n" +

@@ -31,6 +31,7 @@ public class BbcShopFloorServiceImpl implements IBbcShopFloorService {
     @Override
     public PageData<BbcShopFloorVO.ListVO> pageData(BbcShopFloorQTO.QTO qto) {
         QueryWrapper<ShopFloor> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<ShopFloor> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbcShopFloorVO.ListVO.class, page);

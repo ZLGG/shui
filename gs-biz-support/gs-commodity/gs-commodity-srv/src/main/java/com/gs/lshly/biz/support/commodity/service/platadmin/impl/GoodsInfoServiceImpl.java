@@ -8,9 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
-import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.biz.support.commodity.service.platadmin.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
@@ -18,22 +16,19 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
+import com.gs.lshly.common.struct.common.stock.CommonStockTemplateVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.*;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsAuditRecordQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.*;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
-import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteTopicVO.PCGoodsDetailVO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
-import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.common.ICommonStockTemplateRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
-
-import cn.hutool.core.collection.CollectionUtil;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -72,7 +67,11 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @Autowired
     private IGoodsAuditRecordService auditRecordService;
     @Autowired
+    private IGoodsAuditRecordRepository auditRecordRepository;
+    @Autowired
     private IGoodsShopNavigationRepository navigationRepository;
+    @Autowired
+    private IGoodsTempalteRepository goodsTempalteRepository;
     @DubboReference
     private ICommonStockRpc commonStockRpc;
 
@@ -81,6 +80,9 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     @DubboReference
     private IShopRpc shopRpc;
+
+    @DubboReference
+    private ICommonStockTemplateRpc commonStockTemplateRpc;
 
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto) {
@@ -257,6 +259,11 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (ObjectUtils.isNotEmpty(auditRecords)){
             detailVO.setListAuditRecord(auditRecords);
         }
+
+        //填充运费模板
+        String templateName = getTemplateName(goodsInfo.getId());
+        detailVO.setTemplateName(StringUtils.isBlank(templateName)?"":templateName);
+
         return detailVO;
     }
 
@@ -321,6 +328,52 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
+        if (null == dto || ObjectUtils.isEmpty(dto.getIdList())){
+            throw new BusinessException("请选择要审核的商品！");
+        }
+        if (ObjectUtils.isEmpty(dto.getState())){
+            throw new BusinessException("审核状态不能为空！");
+        }
+        if (dto.getState().equals(GoodsStateEnum.审核失败.getCode()) && StringUtils.isBlank(dto.getRefuseRemark())){
+            throw new BusinessException("请填写拒绝原因！");
+        }
+        UpdateWrapper<SkuGoodInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("good_id",dto.getIdList());
+        SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
+        skuGoodInfo.setState(dto.getState());
+        skuGoodInfoRepository.update(skuGoodInfo,updateWrapper);
+
+        GoodsInfo goodsInfo = new GoodsInfo();
+        goodsInfo.setGoodsState(dto.getState());
+        QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
+        goodsInfoQueryWrapper.in("id",dto.getIdList());
+        repository.update(goodsInfo,goodsInfoQueryWrapper);
+
+        //审核后添加审核记录
+        List<GoodsAuditRecord> auditRecords = new ArrayList<>();
+        for (String goodsId : dto.getIdList()){
+            GoodsAuditRecord auditRecord = new GoodsAuditRecord();
+            BeanUtils.copyProperties(dto,auditRecord);
+            //获取审核状态
+            Integer state = null;
+            if (dto.getState().equals( GoodsStateEnum.已上架.getCode())){
+                state = GoodAuditRecordEnum.审核通过.getCode();
+            }
+            if (dto.getState().equals(GoodsStateEnum.审核失败.getCode())){
+                state = GoodAuditRecordEnum.审核拒绝.getCode();
+            }
+            auditRecord.setState(state);
+            auditRecord.setGoodsId(goodsId);
+            auditRecord.setId("");
+            auditRecords.add(auditRecord);
+        }
+        auditRecordRepository.saveBatch(auditRecords);
+
+    }
+
+    @Override
     public GoodsInfoVO.GoodsNameVO getGoodsName(GoodsInfoDTO.IdDTO dto) {
         if (dto == null){
             throw new BusinessException("参数不能为空！");
@@ -336,10 +389,6 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     @Override
     public PageData<GoodsInfoVO.ShopFloorCommodityVO> getShopFloorCommodityVO(GoodsInfoQTO.ShopFloorQTO qto) {
-        List<ShopVO.InnerSimpleVO> idNameVOS = shopRpc.innerlistShopIdName(qto, ShopTypeEnum.运营商自营.getCode(),qto.getUsePlatform());
-        if (ObjectUtils.isEmpty(idNameVOS)){
-            return new PageData<>();
-        }
         if (qto.getUsePlatform().intValue() == TerminalEnum.BBC.getCode()){
             qto.setUsePlatform(GoodsUsePlatformEnums.C商城.getCode()) ;
         }
@@ -355,12 +404,6 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (StringUtils.isNotEmpty(qto.getGoodsNo())){
             boost.like("goods_no",qto.getGoodsNo());
         }
-        //过滤出所需店铺的商品列表
-        List<String> shopIds = ListUtil.getIdList(ShopVO.InnerSimpleVO.class,idNameVOS);
-        if (ObjectUtils.isEmpty(shopIds)){
-            return new PageData<>();
-        }
-        boost.in("shop_id",shopIds);
         IPage page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page,boost);
 
@@ -411,7 +454,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         }
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("category_id",qto.getCategoryId());
-        wrapper.select("id, goods_name,goods_no,sale_price,point_price,remarks,is_point_good,is_in_member_gift,in_member_point_price,sale_type");
+        wrapper.select("id, goods_name,goods_no,sale_price");
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
         if (ObjectUtils.isEmpty(goodsInfoIPage) || ObjectUtils.isEmpty(goodsInfoIPage.getRecords())){
@@ -608,6 +651,20 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         return null;
     }
 
+    private String getTemplateName(String goodsId){
+        QueryWrapper<GoodsTempalte> tempalteBoost = MybatisPlusUtil.query();
+        tempalteBoost.eq("goods_id",goodsId);
+        GoodsTempalte tempalte = goodsTempalteRepository.getOne(tempalteBoost);
+        if (tempalte == null){
+            throw new BusinessException("查询异常");
+        }
+        CommonStockTemplateVO.IdNameVO idNameVO = commonStockTemplateRpc.innerIdNameVO(tempalte.getTemplateId());
+        if (null != idNameVO){
+            return idNameVO.getTemplateName();
+        }
+        return null;
+    }
+
     private List<GoodsInfoVO.InnerServiceGoodsVO> getInnerServiceGoodsVO(Integer state,GoodsInfoDTO.IdsInnerServiceDTO dto){
         List<GoodsInfo> goodsInfos = null;
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
@@ -705,14 +762,4 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         }
         return list;
     }
-
-	@Override
-	public List<ListVO> listGoodsData() {
-		List<GoodsInfo> goodsInfos = repository.list();
-		List<ListVO> retList = new ArrayList<ListVO>();
-		
-		if(CollectionUtil.isNotEmpty(goodsInfos))
-			retList = com.gs.lshly.common.utils.BeanUtils.copyList(ListVO.class, goodsInfos);
-		return retList;
-	}
 }

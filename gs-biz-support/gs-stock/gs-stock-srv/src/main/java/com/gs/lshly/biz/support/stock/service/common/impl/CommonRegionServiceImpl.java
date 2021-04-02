@@ -39,6 +39,7 @@ public class CommonRegionServiceImpl implements ICommonRegionService {
         Map<String,CommonRegionVO.ProvinceVO> provinceMap = new HashMap<>();
         for(StockRegion region:regionList){
             CommonRegionVO.ProvinceVO provinceVO = new CommonRegionVO.ProvinceVO();
+            provinceVO.setDeleteId(region.getId());
             provinceVO.setId(region.getCode());
             provinceVO.setName(region.getName());
             voList.add(provinceVO);
@@ -52,6 +53,7 @@ public class CommonRegionServiceImpl implements ICommonRegionService {
         Map<String,CommonRegionVO.CityVO> cityMap = new HashMap<>();
         for(StockRegion region:regionCityList) {
             CommonRegionVO.CityVO cityVO = new CommonRegionVO.CityVO();
+            cityVO.setDeleteId(region.getId());
             cityVO.setId(region.getCode());
             cityVO.setName(region.getName());
             CommonRegionVO.ProvinceVO provinceVO = provinceMap.get(region.getParentCode());
@@ -65,6 +67,7 @@ public class CommonRegionServiceImpl implements ICommonRegionService {
         List<StockRegion> regionCountyList =  repository.list(queryCountyWrapper);
         for(StockRegion region:regionCountyList) {
             CommonRegionVO.CountyVO countyVO = new CommonRegionVO.CountyVO();
+            countyVO.setDeleteId(region.getId());
             countyVO.setId(region.getCode());
             countyVO.setName(region.getName());
             CommonRegionVO.CityVO cityVO = cityMap.get(region.getParentCode());
@@ -85,6 +88,7 @@ public class CommonRegionServiceImpl implements ICommonRegionService {
         Map<String,CommonRegionVO.ProvinceShortVO> provinceMap = new HashMap<>();
         for(StockRegion region:regionList){
             CommonRegionVO.ProvinceShortVO provinceVO = new CommonRegionVO.ProvinceShortVO();
+            provinceVO.setDeleteId(region.getId());
             provinceVO.setId(region.getCode());
             provinceVO.setName(region.getName());
             voList.add(provinceVO);
@@ -99,6 +103,7 @@ public class CommonRegionServiceImpl implements ICommonRegionService {
         Map<String,CommonRegionVO.CityShortVO> cityMap = new HashMap<>();
         for(StockRegion region:regionCityList) {
             CommonRegionVO.CityShortVO cityVO = new CommonRegionVO.CityShortVO();
+            cityVO.setDeleteId(region.getId());
             cityVO.setId(region.getCode());
             cityVO.setName(region.getName());
             CommonRegionVO.ProvinceShortVO provinceVO = provinceMap.get(region.getParentCode());
@@ -246,6 +251,9 @@ public class CommonRegionServiceImpl implements ICommonRegionService {
 
     @Override
     public void deteleRegion(CommonRegionDTO.IdDTO dto) {
-        repository.removeById(dto.getId());
+        if(ObjectUtils.isEmpty(dto.getDeleteId())){
+            throw new BusinessException("id为空");
+        }
+        repository.removeById(dto.getDeleteId());
     }
 }

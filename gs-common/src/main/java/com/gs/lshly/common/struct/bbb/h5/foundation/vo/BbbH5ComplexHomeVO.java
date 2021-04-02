@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.bbb.h5.foundation.vo;
 
+import com.gs.lshly.common.struct.common.vo.CommonSiteActiveVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,5 +31,8 @@ public abstract class BbbH5ComplexHomeVO implements Serializable {
 
         @ApiModelProperty("楼层列表")
         private List<BbbH5SiteFloorVO.ListVO> floorList;
+
+        @ApiModelProperty("活动图片配置")
+        private CommonSiteActiveVO.ListVO siteActiveVO;
     }
 }

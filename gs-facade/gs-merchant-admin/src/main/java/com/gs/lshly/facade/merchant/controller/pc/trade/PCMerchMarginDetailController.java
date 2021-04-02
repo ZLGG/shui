@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/merchadmin/marginDetail")
 @Api(tags = "商家保证金详情")
-@Module(code = "merchantDepositDetails",parent = "settlement",name = "商家保证金详情" ,index = 3)
 public class PCMerchMarginDetailController {
 
 
@@ -38,21 +37,18 @@ public class PCMerchMarginDetailController {
 
     @ApiOperation("商家保证金列表")
     @GetMapping("/list")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<PageData<TradeMarginDetailVO.ListVO>> list(TradeMarginDetailQTO.typeQTO qto) {
         return ResponseData.data(ipcMarketMarginDetailRpc.PageData(qto));
     }
 
     @ApiOperation("商家保证金详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<TradeMarginDetailVO.ListVO> get(@PathVariable String id) {
         return ResponseData.data(ipcMarketMarginDetailRpc.detailTradeMargin(new TradeMarginDetailDTO.IdDTO(id)));
     }
 
     @ApiOperation("商家自己保证金数据")
     @GetMapping(value = "view")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<TradeMarginVO.ListVO> view(TradeMarginDetailQTO.viewQTO qto) {
         return ResponseData.data(ipcMarketMarginDetailRpc.view(qto));
     }

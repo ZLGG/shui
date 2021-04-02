@@ -7,6 +7,7 @@ import org.apache.poi.ss.formula.functions.T;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
 * @author xxfc
@@ -33,6 +34,21 @@ public abstract class PCMerchShopVO implements Serializable {
 
         @ApiModelProperty("邀请码")
         private String shareCode;
+
+    }
+    @Data
+    @ApiModel("PCMerchShopVO.ListUV")
+    @Accessors(chain = true)
+    public static class ListUV implements Serializable{
+
+        @ApiModelProperty("id")
+        private String id;
+
+        @ApiModelProperty("店铺Id")
+        private String shopId;
+
+        @ApiModelProperty("用户ID")
+        private String userId;
 
     }
 
@@ -82,6 +98,9 @@ public abstract class PCMerchShopVO implements Serializable {
         @ApiModelProperty("邀请码")
         private String shareCode;
 
+        @ApiModelProperty("拉卡拉商户号")
+        private String lakalaNo;
+
     }
 
 
@@ -109,6 +128,15 @@ public abstract class PCMerchShopVO implements Serializable {
 
         @ApiModelProperty("pos门店ID")
         private String posShopId;
+
+
+    }
+    @Data
+    @ApiModel("PCMerchShopVO.ShopSimpleVO")
+    public static class ShopIdVO implements Serializable {
+
+        @ApiModelProperty(value = "店铺Id")
+        private List<String> id;
 
 
     }

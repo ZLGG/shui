@@ -74,6 +74,7 @@ public class DataFeedbackServiceImpl implements IDataFeedbackService {
             queryWrapper.eq("fb_hander_state",qoDTO.getState());
         }
         queryWrapper.eq("fb_operator_type", qoDTO.getOperatorType());
+        queryWrapper.orderByDesc("cdate");
         IPage<DataFeedback> page = MybatisPlusUtil.pager(qoDTO);
         repository.page(page, queryWrapper);
         return MybatisPlusUtil.toPageData(qoDTO, DataFeedbackVO.ListVO.class, page);

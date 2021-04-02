@@ -26,7 +26,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/merchant/stockTemplate")
 @Api(tags = "运费模版主表管理")
-@Module(code = "expressTemplate",parent = "transaction",name = "快递模板管理" ,index = 6)
 public class PCMerchStockTemplateController {
 
     @DubboReference
@@ -34,14 +33,12 @@ public class PCMerchStockTemplateController {
 
     @ApiOperation("运费模板列表")
     @GetMapping("")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<List<CommonStockTemplateVO.ListDetailVO>> list(PCMerchStockTemplateQTO.QTO qto) {
         return ResponseData.data(pcMerchStockTemplateRpc.detailList(qto));
     }
 
     @ApiOperation("保存编辑运费模版")
     @PutMapping(value = "/editor")
-    @Func(code = "add" ,name = "新增")
     public ResponseData<Void> update(@Valid @RequestBody CommonStockTemplateDTO.ETO eto) {
         pcMerchStockTemplateRpc.editStockTemplate(eto);
         return ResponseData.success(MsgConst.SAVE_SUCCESS);
@@ -49,14 +46,12 @@ public class PCMerchStockTemplateController {
 
     @ApiOperation("运费模版查询详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<CommonStockTemplateVO.ListDetailVO> get(@PathVariable String id) {
         return ResponseData.data(pcMerchStockTemplateRpc.detailStockTemplate(new CommonStockTemplateDTO.IdDTO(id)));
     }
 
     @ApiOperation("运费模版删除")
     @DeleteMapping(value = "/{id}")
-    @Func(code = "delete" ,name = "删除")
     public ResponseData<CommonStockTemplateVO.ListDetailVO> delete(@PathVariable String id) {
         pcMerchStockTemplateRpc.delete(new CommonStockTemplateDTO.IdDTO(id));
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -64,7 +59,6 @@ public class PCMerchStockTemplateController {
 
     @ApiOperation("启用的运费模板（id—name）")
     @GetMapping("/idNames")
-    @Func(code = "enable" ,name = "启用")
     public  ResponseData<List<CommonStockTemplateVO.IdNameVO>> idNames(){
         return  ResponseData.data(pcMerchStockTemplateRpc.idNames(new BaseDTO()));
     }

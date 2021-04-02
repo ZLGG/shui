@@ -61,6 +61,7 @@ public class BbbPcStockAddressServiceImpl implements IBbbPcStockAddressService {
         queryWrapper.eq("ad.owner_type", StockAddressOwnerTypeEnum.会员.getCode());
         queryWrapper.eq("child.address_type",addressType );
         queryWrapper.eq("ad.owner_id",dto.getJwtUserId());
+        queryWrapper.orderByDesc("ad.cdate");
         List<StockAddressView> viewList = stockAddressMapper.mapperList(queryWrapper);
         if(ObjectUtils.isNotEmpty(viewList)){
             BbbStockAddressVO.DetailVO detailVO = null;

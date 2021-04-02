@@ -21,4 +21,6 @@ public interface IPCMerchTradeDeliveryService {
     List<CommonLogisticsCompanyVO.DetailVO> listShopLogisticsCompany(PCMerchTradeDeliveryDTO.IdDTO dto);
 
     void addTakeGoodsCodeCheck(PCMerchTradeDeliveryDTO.takeGoodsCodeCheckDTO eto);
+
+    List<PCMerchTradeDeliveryVO.ListVOExport> export(PCMerchTradeDeliveryQTO.IdListQTO qo);
 }

@@ -1,22 +1,23 @@
 package com.gs.lshly.facade.bbb.controller.h5.merchant;
+import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.dto.BbbH5ShopDTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.qto.BbbH5ShopQTO;
+import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopNavigationVO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopVO;
-import com.gs.lshly.common.struct.bbb.pc.merchant.dto.BbbShopDTO;
-import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbShopHomeVO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.dto.CommonMerchantArticleDTO;
+import com.gs.lshly.common.struct.common.qto.CommonMerchantArticleQTO;
 import com.gs.lshly.rpc.api.bbb.h5.merchant.IBbbH5ShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonMerchantArticleRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
 * <p>
@@ -36,6 +37,9 @@ public class BbbH5ShopController {
 
     @DubboReference
     private ICommonShopRpc commonShopRpc;
+
+    @DubboReference
+    private ICommonMerchantArticleRpc commonMerchantArticleRpc;
 
     @ApiOperation("店铺组合信息")
     @GetMapping(value = "/shopComplex/{shopId}")
@@ -68,5 +72,30 @@ public class BbbH5ShopController {
         return ResponseData.data(commonShopRpc.getShopService(id));
     }
 
+    @ApiOperation("2B店铺分类列表")
+    @PostMapping(value = "/listNavigationListVO/{shopId}")
+    public ResponseData<BbbH5ShopNavigationVO.NavigationListVO> listNavigationListVO(@PathVariable String shopId) {
+        return ResponseData.data(bbbH5ShopRpc.listNavigationListVO(new BbbH5ShopDTO.IdDTO(shopId)));
+    }
+
+    @ApiOperation("获取店铺Id")
+    @PostMapping(value = "/getShopId/{shopNavigationId}")
+    public ResponseData<BbbH5ShopVO.ShopIdName> getShopId(@PathVariable String shopNavigationId) {
+        return ResponseData.data(bbbH5ShopRpc.getShopIdName(new BbbH5ShopDTO.ShopNavigationIdDTO(shopNavigationId)));
+    }
+
+    @ApiOperation("商家文章列表")
+    @GetMapping(value = "/getMerchantArticle/{shopId}")
+    public ResponseData<BbcShopVO.ShopIdName> getMerchantArticle(@PathVariable String shopId, CommonMerchantArticleQTO.QTO qto) {
+        qto.setShopId(shopId);
+        qto.setPcShow(PcH5Enum.YES.getCode());
+        return ResponseData.data(commonMerchantArticleRpc.pageMerchantArticleVO(qto));
+    }
+
+    @ApiOperation("商家文章详情")
+    @GetMapping(value = "/getMerchantArticleDetail/{articleId}")
+    public ResponseData<BbcShopVO.ShopIdName> getMerchantArticleDetail(@PathVariable String articleId) {
+        return ResponseData.data(commonMerchantArticleRpc.detailMerchantArticle(new CommonMerchantArticleDTO.IdDTO(articleId)));
+    }
 
 }

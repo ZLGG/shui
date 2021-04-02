@@ -45,6 +45,11 @@ public class H5BbbTradeInvoiceRpc implements IH5BbbTradeInvoiceRpc{
     }
 
     @Override
+    public H5BbbTradeInvoiceVO.DetailVO detailInvoice(H5BbbTradeInvoiceQTO.IdQTO dto){
+        return  h5BbbTradeInvoiceService.detailInvoice(dto);
+    }
+
+    @Override
     public H5BbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(H5BbbTradeInvoiceQTO.QTO qto){
         return h5BbbTradeInvoiceService.applyInvoiceList(qto);
     }

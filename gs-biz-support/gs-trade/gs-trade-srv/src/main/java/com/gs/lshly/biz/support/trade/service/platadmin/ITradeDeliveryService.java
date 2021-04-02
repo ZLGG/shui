@@ -4,6 +4,8 @@ import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDeliveryDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeDeliveryQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeDeliveryVO;
 
+import java.util.List;
+
 public interface ITradeDeliveryService {
 
     PageData<TradeDeliveryVO.ListVO> pageData(TradeDeliveryQTO.QTO qto);
@@ -17,4 +19,5 @@ public interface ITradeDeliveryService {
 
     TradeDeliveryVO.DetailVO detailTradeDelivery(TradeDeliveryDTO.IdDTO dto);
 
+    List<TradeDeliveryVO.ListExportVO> deliveryExport(TradeDeliveryQTO.IdListQTO qo);
 }

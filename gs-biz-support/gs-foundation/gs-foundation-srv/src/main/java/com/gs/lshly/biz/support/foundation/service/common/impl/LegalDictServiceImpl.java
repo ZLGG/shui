@@ -15,19 +15,26 @@ import com.gs.lshly.biz.support.foundation.mapper.view.LegalCortpTypeView;
 import com.gs.lshly.biz.support.foundation.repository.ILegalCertRepository;
 import com.gs.lshly.biz.support.foundation.repository.ILegalDictRepository;
 import com.gs.lshly.biz.support.foundation.service.common.ILegalDictService;
+import com.gs.lshly.common.enums.ApplyStateEnum;
 import com.gs.lshly.common.enums.BusinessTypeEnum;
 import com.gs.lshly.common.enums.LegalTypeEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
+import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.LegalDictDTO;
 import com.gs.lshly.common.struct.common.LegalDictQTO;
 import com.gs.lshly.common.struct.common.LegalDictVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.ICommonMerchantApplyRpc;
+import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -62,11 +69,17 @@ public class LegalDictServiceImpl implements ILegalDictService {
     @Autowired
     private ILegalCertRepository legalCertRepository;
 
+    @DubboReference
+    private ICommonMerchantApplyRpc commonMerchantApplyRpc;
+
+    @DubboReference
+    private ICommonShopRpc commonShopRpc;
+
     @Override
     public PageData<LegalDictVO.ListVO> pageData(LegalDictQTO.QTO qto) {
         QueryWrapper<LegalCortpTypeView> queryWrapper = MybatisPlusUtil.query();
         if(null != qto.getBusinessType() && !BusinessTypeEnum.全部.getCode().equals(qto.getBusinessType())){
-            queryWrapper.eq("lg.business_type",qto.getBusinessType());
+            queryWrapper.in("lg.business_type",qto.getBusinessType(),BusinessTypeEnum.全部.getCode());
         }
         if(StringUtils.isNotBlank(qto.getQueryValue())){
             if(LegalDictCorpQueryTypeEnum.公司名称.getCode().equals(qto.getQueryType())){
@@ -78,6 +91,7 @@ public class LegalDictServiceImpl implements ILegalDictService {
             }
         }
         queryWrapper.eq("lg.legal_type",LegalTypeEnum.企业.getCode());
+        queryWrapper.orderByDesc("lg.cdate");
         IPage<LegalCortpTypeView> page = MybatisPlusUtil.pager(qto);
         IPage<LegalCortpTypeView> legalCortpTypeViewIPage = legalDictMapper.pageLegalCortpType(page, queryWrapper);
         List<LegalDictVO.ListVO> voList = new ArrayList<>();
@@ -230,7 +244,7 @@ public class LegalDictServiceImpl implements ILegalDictService {
     public PageData<LegalDictVO.NalListVO> nalList(LegalDictQTO.NalQTO qto) {
         QueryWrapper<LegalDict> queryWrapper = MybatisPlusUtil.query();
         if(null != qto.getBusinessType() && !BusinessTypeEnum.全部.getCode().equals(qto.getBusinessType())){
-            queryWrapper.eq("business_type",qto.getBusinessType());
+            queryWrapper.in("business_type",qto.getBusinessType(),BusinessTypeEnum.全部.getCode());
         }
         if(StringUtils.isNotBlank(qto.getQueryValue())){
             if(LegalDictNalQueryTypeEnum.姓名.getCode().equals(qto.getQueryType())){
@@ -316,6 +330,101 @@ public class LegalDictServiceImpl implements ILegalDictService {
         List<LegalDict> legalDictList =  repository.listByIds(dto.getIdList());
         List<LegalDictVO.ListVO> listVo = ListUtil.listCover(LegalDictVO.ListVO.class,legalDictList);
         return ExcelUtil.treatmentBean(listVo, LegalDictVO.ListVO.class);
+    }
+
+    @Override
+    public LegalDictVO.SettledInfoVO getSettledInfo(BaseDTO dto) {
+
+        String legalId = commonMerchantApplyRpc.innerGetLegalId(dto.getJwtMerchantId());
+        if (StringUtils.isBlank(legalId)){
+            throw new BusinessException("该商家还未进行入驻，信息错误！");
+        }
+        LegalDict legalDict = repository.getById(legalId);
+        if(null == legalDict){
+            return null;
+        }
+        LegalDictVO.SettledInfoVO detailVO = new LegalDictVO.SettledInfoVO();
+        detailVO.setEditSettledApplyId(StringUtils.isBlank(legalDict.getEditSettledApplyId())?"":legalDict.getEditSettledApplyId());
+        if (ObjectUtils.isNotEmpty(legalDict.getEditSettledState())){
+            detailVO.setEditSettledState(legalDict.getEditSettledState());
+        }
+        detailVO.setCertListVO(new ArrayList<>());
+        detailVO.setNeedCertListVO(new ArrayList<>());
+        detailVO.setId(legalDict.getId());
+        //企业信息
+        LegalDictVO.CompanyVO companyVO = new LegalDictVO.CompanyVO();
+        BeanUtils.copyProperties(legalDict,companyVO);
+        detailVO.setCompanyVO(companyVO);
+        //银行信息
+        LegalDictVO.BankVO bankVO = new LegalDictVO.BankVO();
+        BeanUtils.copyProperties(legalDict,bankVO);
+        detailVO.setBankVO(bankVO);
+        CommonShopVO.ListVO innerShopVO = commonShopRpc.innerShopInfo(dto.getJwtShopId());
+        CommonShopVO.ShopCategoryInfoVO infoVO = commonShopRpc.innerShopCategoryInfoVO(dto.getJwtShopId());
+        //店铺信息
+        LegalDictVO.ShopVO shopVO = new LegalDictVO.ShopVO();
+        BeanUtils.copyProperties(innerShopVO,shopVO);
+        if (ObjectUtils.isNotEmpty(infoVO)){
+            shopVO.setCategoryName(infoVO.getCategoryName());
+            shopVO.setSharePrice(infoVO.getSharePrice());
+        }
+        detailVO.setShopVO(shopVO);
+        //店主信息
+        LegalDictVO.ShopManVO shopManVO = new LegalDictVO.ShopManVO();
+        BeanUtils.copyProperties(innerShopVO,shopManVO);
+        detailVO.setShopManVO(shopManVO);
+        if(StringUtils.isNotBlank(legalDict.getCorpTypeId())){
+            QueryWrapper<CorpTypeCertView> corpTypeCertViewWrapper =  MybatisPlusUtil.query();
+            corpTypeCertViewWrapper.eq("d.id",legalDict.getCorpTypeId());
+            //需要证照信息
+            List<CorpTypeCertView> needViewList =  corpTypeCertMapper.mapperListCorpTypeCert(corpTypeCertViewWrapper);
+            if(ObjectUtils.isNotEmpty(needViewList)){
+                for(CorpTypeCertView viewItem:needViewList){
+                    LegalDictVO.NeedCertVO cert = new  LegalDictVO.NeedCertVO();
+                    cert.setId(viewItem.getCertId());
+                    cert.setCertName(viewItem.getCertName());
+                    detailVO.getNeedCertListVO().add(cert);
+                }
+            }
+            //已有证照信息
+            QueryWrapper<LegalCertView> queryWrapperLegalCert = MybatisPlusUtil.query();
+            queryWrapperLegalCert.eq("lc.legal_id",legalId);
+            List<LegalCertView> viewList =  legalCertMapper.listrLegalCert(queryWrapperLegalCert);
+            if(ObjectUtils.isNotEmpty(viewList)){
+                for(LegalCertView viewItem:viewList){
+                    LegalDictVO.CertVO cert = new  LegalDictVO.CertVO();
+                    cert.setId(viewItem.getCertId());
+                    cert.setCertName(viewItem.getCertName());
+                    cert.setCertUrl(viewItem.getCertUrl());
+                    detailVO.getCertListVO().add(cert);
+                }
+            }
+        }
+        return detailVO;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public LegalDictVO.MerchantApplyIdVO editSettledInfo(LegalDictDTO.SettledInfoETO eto) {
+        if (null == eto){
+            throw new BusinessException("参数为空,异常！");
+        }
+        LegalDict dict = repository.getById(eto.getId());
+        if (null == dict){
+            throw new BusinessException("企业字典id不存在！");
+        }
+        //将入驻修改后资料存入临时申请表中
+        String merchantApplyId = commonMerchantApplyRpc.innerSaveSettledApply(eto);
+        LegalDictVO.MerchantApplyIdVO merchantApplyIdVO = new LegalDictVO.MerchantApplyIdVO();
+        merchantApplyIdVO.setMerchantApplyId(merchantApplyId);
+
+        LegalDict legalDict = new LegalDict();
+        legalDict.setEditSettledState(ApplyStateEnum.待审.getCode());
+        legalDict.setEditSettledApplyId(merchantApplyId);
+        legalDict.setId(eto.getId());
+
+        repository.updateById(legalDict);
+        return merchantApplyIdVO;
     }
 
     @Override
@@ -411,6 +520,47 @@ public class LegalDictServiceImpl implements ILegalDictService {
         LegalDictVO.ListVO listVO = new LegalDictVO.ListVO();
         BeanUtils.copyProperties(byId,listVO);
         return listVO;
+    }
+
+    @Override
+    public int innerCountNeedCert(String corpTypeId) {
+        QueryWrapper<CorpTypeCertView> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.eq("d.id",corpTypeId);
+        queryWrapper.eq("cd.is_need",TrueFalseEnum.是.getCode());
+        List<CorpTypeCertView> certViewList =  corpTypeCertMapper.mapperListCorpTypeCert(queryWrapper);
+        if (ObjectUtils.isNotEmpty(certViewList)){
+            int count = certViewList.size();
+            return count;
+        }
+        return 0;
+    }
+
+    @Override
+    public LegalDictVO.SettledCertInfoVO innerCertInfoVO(String corpTypeId) {
+        LegalDictVO.SettledCertInfoVO detailVO = new LegalDictVO.SettledCertInfoVO();
+        detailVO.setCertListVO(new ArrayList<>());
+        detailVO.setNeedCertListVO(new ArrayList<>());
+        QueryWrapper<CorpTypeCertView> corpTypeCertViewWrapper =  MybatisPlusUtil.query();
+        corpTypeCertViewWrapper.eq("d.id",corpTypeId);
+        //需要证照信息
+        List<CorpTypeCertView> needViewList =  corpTypeCertMapper.mapperListCorpTypeCert(corpTypeCertViewWrapper);
+        if(ObjectUtils.isNotEmpty(needViewList)){
+            for(CorpTypeCertView viewItem:needViewList){
+                LegalDictVO.NeedCertVO cert = new  LegalDictVO.NeedCertVO();
+                cert.setId(viewItem.getCertId());
+                cert.setCertName(viewItem.getCertName());
+                detailVO.getNeedCertListVO().add(cert);
+            }
+        }
+        return detailVO;
+    }
+
+    @Override
+    public void innereditSettleState(String legalId, Integer state) {
+        LegalDict legalDict = new LegalDict();
+        legalDict.setEditSettledState(state);
+        legalDict.setId(legalId);
+        repository.updateById(legalDict);
     }
 
 }

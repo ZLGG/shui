@@ -40,6 +40,7 @@ public class BbcSiteVideoServiceImpl implements IBbcSiteVideoService {
         wrapper.eq("pc_show", PcH5Enum.NO.getCode());
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("subject",qto.getSubject());
+        wrapper.orderByDesc("cdate");
         List<SiteVideo> siteVideoList = repository.list( wrapper);
         return ListUtil.listCover(BbcSiteVideoVO.ListVO.class,siteVideoList);
     }

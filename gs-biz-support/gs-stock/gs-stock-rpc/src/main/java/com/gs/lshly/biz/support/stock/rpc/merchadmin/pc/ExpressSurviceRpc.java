@@ -23,7 +23,7 @@ public class ExpressSurviceRpc implements IExpressSurviceRpc {
     }
 
     @Override
-    public LogisticsInformationVO.ListVO queryUPS(StockKdniaoDTO.TradeTailDTO dto) {
-        return iPCExpressSurviceService.queryUPS(dto);
+    public LogisticsInformationVO.ListVO onLineMonitoring(StockKdniaoDTO.TradeTailDTO dto) {
+        return iPCExpressSurviceService.onLineMonitoring(dto);
     }
 }

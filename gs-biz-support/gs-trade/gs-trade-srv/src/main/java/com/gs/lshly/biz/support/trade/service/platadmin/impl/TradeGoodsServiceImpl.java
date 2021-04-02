@@ -32,6 +32,7 @@ public class TradeGoodsServiceImpl implements ITradeGoodsService {
     @Override
     public PageData<TradeGoodsVO.ListVO> pageData(TradeGoodsQTO.QTO qto) {
         QueryWrapper<TradeGoods> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, TradeGoodsVO.ListVO.class, page);

@@ -36,4 +36,9 @@ public class PCMerchDataNoticeRpc implements IPCMerchDataNoticeRpc{
         return  pCMerchDataNoticeService.detailDataNotice(dto);
     }
 
+    @Override
+    public List<PCMerchDataNoticeVO.ListVO> innerList(PCMerchDataNoticeDTO.innerDTO qto) {
+        return pCMerchDataNoticeService.innerList(qto);
+    }
+
 }

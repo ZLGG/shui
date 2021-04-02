@@ -5,7 +5,7 @@ import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeCancelService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
+import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
@@ -100,8 +100,13 @@ public class BbcMarketActivityRpc implements IBbcMarketActivityRpc {
         return iBbcMarketActivityService.jurisdiction();
     }
 
-	@Override
-	public TopicVO listFlashsale(BaseDTO dto) {
-		return iBbcMarketActivityService.listFlashsale(dto);
-	}
+    @Override
+    public List<BbcMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto) {
+        return iBbcMarketActivityService.activityCardGoodsInfo(dto);
+    }
+
+    @Override
+    public PageData<BbcMarketActivityVO.activityListPageVO> activityListPage(BbcMarketActivityQTO.QTO qto) {
+        return iBbcMarketActivityService.activityListPage(qto);
+    }
 }

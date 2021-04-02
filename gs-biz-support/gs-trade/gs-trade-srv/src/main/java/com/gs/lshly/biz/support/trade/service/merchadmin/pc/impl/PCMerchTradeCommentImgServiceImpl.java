@@ -42,6 +42,7 @@ public class PCMerchTradeCommentImgServiceImpl implements IPCMerchTradeCommentIm
     @Override
     public PageData<PCMerchTradeCommentImgVO.ListVO> pageData(PCMerchTradeCommentImgQTO.QTO qto) {
         QueryWrapper<TradeCommentImg> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeCommentImg> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchTradeCommentImgVO.ListVO.class, page);

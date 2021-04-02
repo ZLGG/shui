@@ -39,6 +39,7 @@ public class TradeCommentImgServiceImpl implements ITradeCommentImgService {
         QueryWrapper<TradeCommentImg> boost = MybatisPlusUtil.query();
         boost.eq("comment_id",qto.getCommentId());
         boost.eq("comment_img_belong",qto.getCommentImgBelong());
+        boost.orderByDesc("cdate");
         List<TradeCommentImg> imgs = repository.list(boost);
         if (ObjectUtils.isEmpty(imgs)){
             return new ArrayList<>();

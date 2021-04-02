@@ -1,22 +1,21 @@
 package com.gs.lshly.biz.support.merchant.service.bbc.impl;
 
+import cn.hutool.core.lang.Console;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.merchant.complex.ShopFloorComplexQuery;
 import com.gs.lshly.biz.support.merchant.entity.*;
 import com.gs.lshly.biz.support.merchant.enums.MerchShopNavigationEnum;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.enums.merchant.ShopStateEnum;
 import com.gs.lshly.biz.support.merchant.mapper.ShopMapper;
 import com.gs.lshly.biz.support.merchant.repository.*;
 import com.gs.lshly.biz.support.merchant.service.bbc.IBbcShopService;
-import com.gs.lshly.common.enums.ShopNavigationMenuTypeEnum;
-import com.gs.lshly.common.enums.StockDeliveryTypeEnum;
-import com.gs.lshly.common.enums.TerminalEnum;
-import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.enums.stock.StockDeliveryCostCalcWayEnum;
 import com.gs.lshly.common.enums.stock.StockShopBillTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -26,12 +25,10 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
-import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopBannerVO;
-import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopFloorVO;
-import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopNavigationMenuVO;
-import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.*;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockDeliveryDTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockDeliveryVO;
+import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.stock.CommonDeliveryCostCalcParam;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -43,23 +40,14 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserFavoritesShopRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
-import javax.net.ssl.*;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URL;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 * <p>
@@ -108,6 +96,7 @@ public class BbcShopServiceImpl implements IBbcShopService {
             queryWrapper.like("shop_name", qto.getShopName());
         }
         queryWrapper.eq("shop_state", ShopStateEnum.开启状态.getCode());
+        queryWrapper.orderByDesc("cdate");
         repository.page(page, queryWrapper);
         return MybatisPlusUtil.toPageData(qto, BbcShopVO.ListVO.class, page);
     }
@@ -121,7 +110,7 @@ public class BbcShopServiceImpl implements IBbcShopService {
                 || !NumberUtil.isNumber(qto.getUserLongitude()) || !NumberUtil.isNumber(qto.getUserLongitude())) {
             qto.setUserLongitude("121.244473").setUserLatitude("31.016902");
         }
-        wq.apply("ifnull(o.shop_ranges, 5)*1000>=o.meters");
+        //wq.apply("ifnull(o.shop_ranges, 5)*1000>=o.meters");
         if(StringUtils.isNotBlank(qto.getShopName())) {
             wq.like("o.shop_name", qto.getShopName());
         }
@@ -133,6 +122,33 @@ public class BbcShopServiceImpl implements IBbcShopService {
                 vo.setDistance(MeterUtil.treat(source.getMeters()));
             }
         });
+    }
+
+    @Override
+    public List<BbcShopVO.ScopeListVO> nearShopList(BbcShopQTO.ScopeQTO qto) {
+        QueryWrapper<Shop> wq = MybatisPlusUtil.query();
+        //位置如果不是数字，或者为空，则设置默认位置为上海
+        if (StringUtils.isBlank(qto.getUserLongitude()) || StringUtils.isBlank(qto.getUserLatitude())
+                || !NumberUtil.isNumber(qto.getUserLongitude()) || !NumberUtil.isNumber(qto.getUserLongitude())) {
+            qto.setUserLongitude("121.244473").setUserLatitude("31.016902");
+        }
+        wq.apply("ifnull(o.shop_ranges, 10)*1000>=o.meters");
+        if(StringUtils.isNotBlank(qto.getShopName())) {
+            wq.like("o.shop_name", qto.getShopName());
+        }
+        wq.eq("shop_state", ShopStateEnum.开启状态.getCode());
+        List<Shop> shopList =  ((ShopMapper) repository.getBaseMapper()).selectListContainDistance(wq,
+                new BigDecimal(qto.getUserLongitude()), new BigDecimal(qto.getUserLatitude()));
+        if (ObjectUtils.isEmpty(shopList)){
+            return new ArrayList<>();
+        }
+        List<BbcShopVO.ScopeListVO> scopeListVOS = shopList.parallelStream().map(e ->{
+            BbcShopVO.ScopeListVO scopeListVO = new BbcShopVO.ScopeListVO();
+            BeanUtils.copyProperties(e,scopeListVO);
+            scopeListVO.setDistance(ObjectUtils.isEmpty(e.getMeters())?"":MeterUtil.treat(e.getMeters()));
+            return scopeListVO;
+        }).collect(Collectors.toList());
+        return scopeListVOS;
     }
 
 
@@ -199,7 +215,8 @@ public class BbcShopServiceImpl implements IBbcShopService {
         //店铺楼层
         QueryWrapper<ShopFloor> floorQueryWrapper = MybatisPlusUtil.query();
         floorQueryWrapper.eq("shop_id",dto.getId());
-        menuQueryWrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        floorQueryWrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        floorQueryWrapper.eq("pc_show", SitePCShowEnum.不显示.getCode());
         List<ShopFloor> shopFloorList = shopFloorRepository.list(floorQueryWrapper);
         if(ObjectUtils.isNotEmpty(shopFloorList)){
             List<String> floorIdList = new ArrayList<>();
@@ -370,6 +387,104 @@ public class BbcShopServiceImpl implements IBbcShopService {
             }
         }
         return isCity;
+    }
+
+    @Override
+    public BbcShopVO.ShopIdName getShopIdName(BbcShopDTO.ShopNavigationIdDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getId())){
+            throw new BusinessException("参数id为空异常！");
+        }
+        BbcShopVO.ShopIdName shopIdName = new BbcShopVO.ShopIdName();
+        ShopNavigation shopNavigation = shopNavigationRepository.getById(dto.getId());
+        if (null != null){
+            shopIdName.setId(StringUtils.isBlank(shopNavigation.getShopId())?"":shopNavigation.getShopId());
+        }
+        return shopIdName;
+    }
+
+    @Override
+    public List<BbcShopNavigationVO.NavigationListVO> listNavigationListVO(BbcShopDTO.IdDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getId())){
+            throw new BusinessException("店铺id不能为空！");
+        }
+        QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("terminal",TerminalEnum.BBC.getCode());
+        wrapper.eq("shop_id",dto.getId());
+        wrapper.orderByAsc("idx","id");
+        List<ShopNavigation> dataList =  shopNavigationRepository.list(wrapper);
+        Map<String, BbcShopNavigationVO.NavigationListVO> utilMap = new HashMap<>();
+        for(ShopNavigation item:dataList){
+            if(MerchShopNavigationEnum.一级分类.getCode().equals(item.getLeve())){
+                BbcShopNavigationVO.NavigationListVO parentItem =  utilMap.get(item.getId());
+                if(ObjectUtils.isNull(parentItem)){
+                    parentItem = new BbcShopNavigationVO.NavigationListVO();
+                    parentItem.setChildList(new ArrayList<>());
+                    utilMap.put(item.getId(),parentItem);
+                }
+                BeanUtils.copyProperties(item,parentItem);
+            }
+        }
+
+        for(ShopNavigation item:dataList){
+            if(MerchShopNavigationEnum.二级分类.getCode().equals(item.getLeve())){
+                BbcShopNavigationVO.NavigationListVO parentItem =  utilMap.get(item.getParentId());
+                if(ObjectUtils.isNull(parentItem)){
+                    Console.log("二级分类:{},{},{}",item.getId(),item.getNavName(),item.getParentId());
+                    throw new BusinessException("二级分类的父ID无效");
+                }
+                BbcShopNavigationVO.NavigationChildVO childItem = new BbcShopNavigationVO.NavigationChildVO();
+                BeanUtils.copyProperties(item,childItem);
+                parentItem.getChildList().add(childItem);
+            }
+        }
+        List<BbcShopNavigationVO.NavigationListVO> voList = new ArrayList<>(utilMap.values());
+        voList.sort((a, b) -> a.getIdx() - b.getIdx());
+        for(BbcShopNavigationVO.NavigationListVO listItem:voList){
+            listItem.getChildList().sort((a,b)-> a.getIdx() - b.getIdx());
+        }
+        return voList;
+    }
+
+    @Override
+    public List<String> innerGetNavigationList(String shopNavigationId) {
+        QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("id",shopNavigationId);
+        ShopNavigation shopNavigation = shopNavigationRepository.getOne(wrapper);
+        if (ObjectUtils.isEmpty(shopNavigation)){
+            throw new BusinessException("店铺类目不存在！");
+        }
+        List<String> navigationIdList = new ArrayList<>();
+        if (shopNavigation.getLeve().equals(MerchShopNavigationEnum.一级分类.getCode())){
+            QueryWrapper<ShopNavigation> navigationQueryWrapper = MybatisPlusUtil.query();
+            navigationQueryWrapper.eq("parent_id",shopNavigationId);
+            List<ShopNavigation> shopNavigations = shopNavigationRepository.list(navigationQueryWrapper);
+            if (ObjectUtils.isNotEmpty(shopNavigations)){
+                List<String> list = ListUtil.getIdList(ShopNavigation.class,shopNavigations);
+                navigationIdList.addAll(list);
+            }
+        }
+        if (shopNavigation.getLeve().equals(MerchShopNavigationEnum.二级分类.getCode())){
+            navigationIdList.add(shopNavigationId);
+        }
+        return navigationIdList;
+    }
+
+    @Override
+    public List<String> innerShopDelivery(String shopId) {
+        if (ObjectUtils.isNotEmpty(shopId)){
+            QueryWrapper<ShopDeliveryStyle> query = MybatisPlusUtil.query();
+            query.and(i->i.eq("shop_id",shopId));
+            query.last("limit 0,1");
+            ShopDeliveryStyle one = shopDeliveryStyleRepository.getOne(query);
+            if (ObjectUtils.isNotEmpty(one)){
+                String[] split = one.getDeliveryTypes().split(",");
+                if (ObjectUtils.isNotEmpty(split)){
+                    List<String> strings = Arrays.asList(split);
+                    return strings;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

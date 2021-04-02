@@ -1,17 +1,16 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.CommonShopVO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.common.CommonShopVO;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
 * @author Starry
@@ -347,6 +346,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品售价")
         private BigDecimal salePrice;
 
+        @ApiModelProperty("划线价")
+        private BigDecimal oldPrice;
+
         @ApiModelProperty("单规格的库存")
         private Integer singleSkuStock;
 
@@ -369,6 +371,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品id")
         private String goodsId;
 
+        @ApiModelProperty("POS商品ID")
+        private String posSpuId;
+
         @ApiModelProperty("商品默认图片")
         private String goodsImage;
 
@@ -383,12 +388,6 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("商品售价")
         private BigDecimal salePrice;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("积分价格")
-        private BigDecimal pointPrice;
 
         @ApiModelProperty("sku商品id")
         private String skuId;
@@ -415,5 +414,5 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
 
     }
-    
+
 }

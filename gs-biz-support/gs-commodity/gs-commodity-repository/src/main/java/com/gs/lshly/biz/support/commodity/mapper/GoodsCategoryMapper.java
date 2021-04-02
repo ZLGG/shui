@@ -70,4 +70,9 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
             "WHERE\n" +
             "\ta.flag = 0 AND ${ew.sqlSegment}")
     List<GoodsCategory> getLevel3CategoryList(@Param(Constants.WRAPPER) QueryWrapper<GoodsCategory> qw);
+
+    @Select("select * from gs_goods_category c " +
+            "left join gs_category_brand b on c.id = b.category_id  " +
+            "where c.flag = 0 and b.flag = 0 AND ${ew.sqlSegment}")
+    List<GoodsCategory> listCategoryForBrandId(@Param(Constants.WRAPPER) QueryWrapper<GoodsCategory> qw);
 }

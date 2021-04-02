@@ -64,4 +64,19 @@ public class PCMerchShopRpc implements IPCMerchShopRpc {
         return pcMerchShopService.innerShopSimple(shopId);
     }
 
+    @Override
+    public PCMerchShopVO.ShopIdVO innerLikeSimple(String shopId) {
+        return pcMerchShopService.innerLikeSimple(shopId);
+    }
+
+    @Override
+    public Integer innPV(String shopId) {
+        return pcMerchShopService.innPV(shopId);
+    }
+
+    @Override
+    public Integer innUV(String shopId) {
+        return pcMerchShopService.innUV(shopId);
+    }
+
 }

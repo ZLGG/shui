@@ -28,4 +28,10 @@ public class PCBbbGoodsCategoryController {
     public ResponseData<PCBbbGoodsCategoryVO.CategoryNavigationVO> getCategoryNavigationVO(@RequestBody PCBbbGoodsCategoryQTO.CategoryNavigationQTO qto) {
         return ResponseData.data(categoryRpc.getCategoryNavigationVO(qto));
     }
+
+    @ApiOperation("品牌ID搜索关联分类")
+    @PostMapping("/getCategoryForBrandId")
+    public ResponseData<PCBbbGoodsCategoryVO.CategoryForBrandVO> getCategoryForBrandId(@RequestBody PCBbbGoodsCategoryQTO.CategoryForBrandQTO qto) {
+        return ResponseData.data(categoryRpc.getCategoryForBrandId(qto));
+    }
 }

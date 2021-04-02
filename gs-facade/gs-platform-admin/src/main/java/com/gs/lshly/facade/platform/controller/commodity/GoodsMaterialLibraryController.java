@@ -79,8 +79,8 @@ public class GoodsMaterialLibraryController {
     @ApiOperation("导出类目数据到Excel表格")
     @GetMapping(value = "/exportData")
     @Func(code="export", name = "导出")
-    public void export(@ApiIgnore HttpServletResponse response) throws Exception {
-        ExportDataDTO exportData = GoodsMaterialLibraryRpc.export();
+    public void export(@ApiIgnore HttpServletResponse response,GoodsMaterialLibraryDTO.IdListDTO dto) throws Exception {
+        ExportDataDTO exportData = GoodsMaterialLibraryRpc.export(dto);
         ExcelUtil.export(exportData, response);
     }
 

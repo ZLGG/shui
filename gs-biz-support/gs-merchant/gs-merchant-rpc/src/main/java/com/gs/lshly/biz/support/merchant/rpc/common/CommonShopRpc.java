@@ -117,6 +117,11 @@ public class CommonShopRpc implements ICommonShopRpc {
     }
 
     @Override
+    public CommonShopVO.ShopCategoryInfoVO innerShopCategoryInfoVO(String shopId) {
+        return commonShopService.innerShopCategoryInfoVO(shopId);
+    }
+
+    @Override
     public int checkShopNavigation(String shopId, String shopNavigationName, Integer usefiled) {
         return commonShopService.checkShopNavigation(shopId, shopNavigationName, usefiled);
     }
@@ -129,6 +134,16 @@ public class CommonShopRpc implements ICommonShopRpc {
     @Override
     public List<String> shopNavigationIdList(String level1navigationId) {
         return commonShopService.shopNavigationIdList(level1navigationId);
+    }
+
+    @Override
+    public CommonShopVO.ListVO innerShopInfo(String shopId) {
+        return commonShopService.innerShopInfo(shopId);
+    }
+
+    @Override
+    public void visits(CommonShopDTO.VisitsDTO shopId) {
+        commonShopService.visits(shopId);
     }
 
 

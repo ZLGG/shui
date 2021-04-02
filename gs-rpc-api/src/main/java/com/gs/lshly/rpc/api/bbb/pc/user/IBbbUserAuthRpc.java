@@ -16,7 +16,7 @@ public interface IBbbUserAuthRpc {
 
     BbbUserVO.LoginVO login(BbbUserDTO.LoginETO dto);
 
-    BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey);
+    BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid);
 
     String loadSessionKeyByWxOpenid(String openid);
 
@@ -31,4 +31,6 @@ public interface IBbbUserAuthRpc {
     void forgetPasswordByPhone(BbbUserDTO.ForgetByPhoneETO dto);
 
     String  test();
+
+    void forgetByEmail(BbbUserDTO.ForgetByEmailETO dto);
 }

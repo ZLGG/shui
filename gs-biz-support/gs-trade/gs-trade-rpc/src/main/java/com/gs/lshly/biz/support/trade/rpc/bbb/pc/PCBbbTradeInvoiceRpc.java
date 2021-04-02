@@ -29,6 +29,11 @@ public class PCBbbTradeInvoiceRpc implements IPCBbbTradeInvoiceRpc{
     }
 
     @Override
+    public PCBbbTradeInvoiceVO.ChooseVO choose(PCBbbTradeInvoiceDTO.ETO eto){
+        return pCBbbTradeInvoiceService.choose(eto);
+    }
+
+    @Override
     public void deleteTradeInvoice(PCBbbTradeInvoiceDTO.IdDTO dto){
         pCBbbTradeInvoiceService.deleteTradeInvoice(dto);
     }
@@ -49,12 +54,22 @@ public class PCBbbTradeInvoiceRpc implements IPCBbbTradeInvoiceRpc{
     }
 
     @Override
-    public PCBbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(PCBbbTradeInvoiceQTO.QTO qto){
+    public PCBbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(PCBbbTradeInvoiceDTO.ETO qto){
         return pCBbbTradeInvoiceService.applyInvoiceList(qto);
     }
 
     @Override
     public void updateByIsDefaultList(PCBbbTradeInvoiceDTO.UpdateByIsDefaultIsDefaultDTO dto){
         pCBbbTradeInvoiceService.updateByIsDefaultList(dto);
+    }
+
+    @Override
+    public void updateByAddressIsDefault(PCBbbTradeInvoiceDTO.IsDefaultDTO eto) {
+        pCBbbTradeInvoiceService.updateByAddressIsDefault(eto);
+    }
+
+    @Override
+    public PCBbbTradeInvoiceVO.clickBillingVO clickBilling(PCBbbTradeInvoiceDTO.clickBilingDTO dto) {
+        return pCBbbTradeInvoiceService.clickBilling(dto);
     }
 }

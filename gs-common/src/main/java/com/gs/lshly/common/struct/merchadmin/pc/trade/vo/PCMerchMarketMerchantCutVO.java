@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -273,6 +274,27 @@ public abstract class PCMerchMarketMerchantCutVO implements Serializable {
 
         @ApiModelProperty("商品信息")
         private List<PCMerchMarketMerchantCutVO.GoodsInfo> goodsInfos;
+
+        @ApiModelProperty("所属商家")
+        private List<PCMerchMarketMerchantCardVO.PlatformView.CheckVO> checkInfo;
+
+
+        @Data
+        @ApiModel("PCMerchMarketMerchantCutVO.PlatformCutView.CheckVO")
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class  CheckVO  implements Serializable{
+            @ApiModelProperty("审核时间")
+            @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+            private LocalDateTime checkDate;
+
+            @ApiModelProperty("审核状态")
+            private Integer checkState;
+
+            @ApiModelProperty("原因")
+            private String remark;
+        }
     }
     @Data
     @Accessors(chain = true)

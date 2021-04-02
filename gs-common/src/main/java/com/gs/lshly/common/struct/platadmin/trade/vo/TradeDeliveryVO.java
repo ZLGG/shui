@@ -54,6 +54,8 @@ public abstract class TradeDeliveryVO implements Serializable {
         @ApiModelProperty("物流编号")
         private String logisticsNumber;
 
+        @ApiModelProperty("物流公司名字")
+        private String logisticsName;
 
         @ApiModelProperty("操作员id")
         private String operatorId;
@@ -73,6 +75,42 @@ public abstract class TradeDeliveryVO implements Serializable {
 
 
 
+
+    }
+    @Data
+    @ApiModel("发货单")
+    @Accessors(chain = true)
+    public static class ListExportVO implements Serializable {
+
+        @ApiModelProperty(value = "发货表(ID)",position = 1)
+        private String id;
+
+        @ApiModelProperty(value = "交易编号",position = 2)
+        private String tradeCode;
+
+        @ApiModelProperty(value = "订单状态:10:待支付,20:待发货,30:待收货,40:已完成,50:已取消",position = 3)
+        private String tradeState;
+
+        @ApiModelProperty(value = "会员名字",position = 4)
+        private String userName;
+
+        @ApiModelProperty(value = "店铺名字",position = 5)
+        private String shopName;
+
+        @ApiModelProperty(value = "物流编号",position = 6)
+        private String logisticsNumber;
+
+        @ApiModelProperty(value = "物流公司名字",position = 7)
+        private String logisticsName;
+
+        @ApiModelProperty(value = "操作员姓名",position = 8)
+        private String operatorName;
+
+        @ApiModelProperty(value = "发货时间",position = 9)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime deliveryTime;
+        @ApiModelProperty(value = "发货备注",position = 10)
+        private String deliveryRemark;
 
     }
 

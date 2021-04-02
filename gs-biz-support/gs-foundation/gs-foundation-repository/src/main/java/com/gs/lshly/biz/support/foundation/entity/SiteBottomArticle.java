@@ -32,10 +32,6 @@ public class SiteBottomArticle extends Model {
      * id
      */
     private String id;
-    
-    private String pid;
-    
-    private String imageUrl;
 
     /**
      * 底部文章名

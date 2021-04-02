@@ -19,6 +19,13 @@ public interface IMerchantApplyRpc {
 
     void apply(MerchantApplyDTO.ApplyDTO dto);
 
+
+    /**
+     * 审核入驻信息资料
+     * @param dto
+     */
+    void checkEditApply(MerchantApplyDTO.CheckApplyDTO dto);
+
     void openShop(MerchantApplyDTO.IdDTO eto);
 
     MerchantApplyVO.BrandVO handBrandQuery(MerchantApplyDTO.IdDTO dto);

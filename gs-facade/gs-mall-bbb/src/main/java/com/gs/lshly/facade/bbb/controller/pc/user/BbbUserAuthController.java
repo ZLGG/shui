@@ -4,9 +4,8 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.constants.MsgConst;
-import com.gs.lshly.common.enums.TerminalEnum;
-import com.gs.lshly.common.enums.UserTypeEnum;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
@@ -14,8 +13,12 @@ import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JsonUtils;
+import com.gs.lshly.common.utils.JwtUtil;
+import com.gs.lshly.middleware.log.Log;
+import com.gs.lshly.middleware.log.aop.LogAspect;
 import com.gs.lshly.middleware.wx.WxMaConfiguration;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserAuthRpc;
+import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +44,8 @@ public class BbbUserAuthController {
 
     @DubboReference
     private IBbbUserAuthRpc bbbUserAuthRpc;
+    @DubboReference
+    private IBbbUserRpc bbbUserRpc;
 
 
     @ApiOperation("用户获取手机验证码")
@@ -64,8 +69,10 @@ public class BbbUserAuthController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
+    @Log(module = "登陆", func = "PC-手机验证码")
     public ResponseData<BbbUserVO.LoginVO> login(@Valid @RequestBody BbbUserDTO.LoginETO dto) {
         BbbUserVO.LoginVO vo = bbbUserAuthRpc.login(dto);
+        setLogAspect(vo);
         return ResponseData.data(vo);
     }
 
@@ -81,7 +88,7 @@ public class BbbUserAuthController {
             WxMaService wxService = WxMaConfiguration.getMaService(appid);
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
             //通过微信openid查找，针对已登录过的用户
-            BbbUserVO.LoginVO loginVO = bbbUserAuthRpc.loadUserByWxOpenid(appid, session.getOpenid(), session.getSessionKey());
+            BbbUserVO.LoginVO loginVO = bbbUserAuthRpc.loadUserByWxOpenid(appid, session.getOpenid(), session.getSessionKey(), session.getUnionid());
             if (loginVO != null) {
                 log.info("微信小程序通过code获取openid或直接登录："+JsonUtils.toJson(loginVO));
                 return ResponseData.data(loginVO);
@@ -95,6 +102,7 @@ public class BbbUserAuthController {
 
     @GetMapping("/wxminiapp/{appid}/login")
     @ApiOperation(value = "2,通过openid登陆")
+    @Log(module = "登陆", func = "PC-手机验证码")
     public ResponseData<BbbUserVO.LoginVO> login(@PathVariable String appid, String openid, String encryptedData, String ivStr) {
         if (StringUtils.isBlank(openid)) {
             return ResponseData.fail("openid为空");
@@ -113,6 +121,7 @@ public class BbbUserAuthController {
             dto.setAppId(appid);
             BbbUserVO.LoginVO loginVO = bbbUserAuthRpc.addWxThirdLogin(dto);
             if (loginVO != null) {
+                setLogAspect(loginVO);
                 log.info("通过openid登陆："+JsonUtils.toJson(loginVO));
                 return ResponseData.data(loginVO);
             }
@@ -124,6 +133,7 @@ public class BbbUserAuthController {
     }
     @GetMapping("/wxminiapp/{appid}/bindInnerPhone")
     @ApiOperation(value = "3,微信自身手机号绑定")
+    @Log(module = "登陆", func = "PC-手机验证码")
     public ResponseData<BbbUserVO.LoginVO> bindInnerPhone(@PathVariable String appid, String openid, String encryptedData, String iv){
         final WxMaService wxService = WxMaConfiguration.getMaService(appid);
         String sessionKey = bbbUserAuthRpc.loadSessionKeyByWxOpenid(openid);
@@ -140,6 +150,7 @@ public class BbbUserAuthController {
             }
             BbbUserVO.LoginVO vo = bbbUserAuthRpc.updateUserPhoneByWxInnerPhone(dto);
             log.info("微信自身手机号绑定："+JsonUtils.toJson(vo));
+            setLogAspect(vo);
             return ResponseData.data(vo);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -149,9 +160,11 @@ public class BbbUserAuthController {
 
     @GetMapping("/wxminiapp/{appid}/bindOutPhone")
     @ApiOperation(value = "4,微信默认登陆后外部手机号绑定")
+    @Log(module = "登陆", func = "PC-手机验证码")
     public ResponseData<BbbUserVO.LoginVO> phone(@PathVariable String appid, String openid, String validCode, String phone){
         BbbUserVO.LoginVO vo = bbbUserAuthRpc.bindPhone(appid, openid, validCode, phone);
         log.info("微信默认登陆后外部手机号绑定："+JsonUtils.toJson(vo));
+        setLogAspect(vo);
         return ResponseData.data(vo);
     }
 
@@ -164,8 +177,25 @@ public class BbbUserAuthController {
 
     @ApiOperation("忘记密码(手机验证码找回)")
     @PostMapping("/forgetByPhone")
-    public void forgetPasswordByPhone(@Valid @RequestBody BbbUserDTO.ForgetByPhoneETO dto) {
+    public ResponseData<Void> forgetPasswordByPhone(@Valid @RequestBody BbbUserDTO.ForgetByPhoneETO dto) {
         bbbUserAuthRpc.forgetPasswordByPhone(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
-
+    @ApiOperation("忘记密码(邮箱验证码找回)")
+    @PostMapping("/forgetByEmail")
+    public ResponseData<Void> forgetByEmail(@Valid @RequestBody BbbUserDTO.ForgetByEmailETO dto) {
+        bbbUserAuthRpc.forgetByEmail(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+    @ApiOperation("获取邮箱验证码")
+    @GetMapping("/getEmailCode")
+    public ResponseData<Void> getEmailNum(BbbUserDTO.BandEmailDTO qto) {
+        bbbUserRpc.getEmailNum(qto);
+        return ResponseData.success(MsgConst.SEND_EMAIL_SUCCESS);
+    }
+    private void setLogAspect(BbbUserVO.LoginVO vo){
+        if (vo!=null && StrUtil.isNotBlank(vo.getAuthToken())) {
+            LogAspect.set(LogAspect.toDTO(JwtUtil.getJwtUser(vo.getAuthToken())));
+        }
+    }
 }

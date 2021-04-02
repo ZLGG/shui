@@ -25,7 +25,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/merchant/merchantRoleDict")
 @Api(tags = "商家帐号角色字典管理",description = " ")
-@Module(code = "roleManagement", parent = "accountNumber", name = "角色管理", index = 2)
 public class PCMerchantRoleDictController {
 
     @DubboReference
@@ -33,14 +32,12 @@ public class PCMerchantRoleDictController {
 
     @ApiOperation("商家帐号角色字典列表")
     @GetMapping("")
-    @Func(code="view", name="查")
     public ResponseData<PageData<MerchantRoleDictVO.ListVO>> list(MerchantRoleDictQTO.QTO qto) {
         return ResponseData.data(pCMerchMerchantRoleDictRpc.pageData(qto));
     }
 
     @ApiOperation("商家帐号角色字典详情")
     @GetMapping(value = "/{id}")
-    @Func(code="view", name="查")
     public ResponseData<MerchantRoleDictVO.DetailVO> detail(@PathVariable String id) {
 
         return ResponseData.data(pCMerchMerchantRoleDictRpc.detail(new MerchantRoleDictDTO.IdDTO(id)));
@@ -48,7 +45,6 @@ public class PCMerchantRoleDictController {
 
     @ApiOperation("新增商家帐号角色字典")
     @PostMapping("")
-    @Func(code="add", name="增")
     public ResponseData<Void> add(@Valid @RequestBody MerchantRoleDictDTO.ETO dto) {
         pCMerchMerchantRoleDictRpc.addMerchantRoleDict(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -56,7 +52,6 @@ public class PCMerchantRoleDictController {
 
     @ApiOperation("删除商家帐号角色字典")
     @DeleteMapping(value = "/{id}")
-    @Func(code="delete", name="删")
     public ResponseData<Void> delete(@PathVariable String id) {
         MerchantRoleDictDTO.IdDTO dto = new MerchantRoleDictDTO.IdDTO(id);
         pCMerchMerchantRoleDictRpc.deleteMerchantRoleDict(dto);
@@ -66,7 +61,6 @@ public class PCMerchantRoleDictController {
 
     @ApiOperation("修改商家帐号角色字典")
     @PutMapping(value = "/{id}")
-    @Func(code="edit", name="改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody MerchantRoleDictDTO.ETO eto) {
         eto.setId(id);
         pCMerchMerchantRoleDictRpc.editMerchantRoleDict(eto);

@@ -44,6 +44,18 @@ public class PictureGroup extends Model {
     private String groupValue;
 
     /**
+     * 父id
+     */
+    private String parentId;
+
+    /**
+     * 级别
+     */
+    private Integer level;
+
+
+
+    /**
      * 操作人
      */
     private String operator;

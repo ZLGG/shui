@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.bbb.controller.pc.pages;
 
+import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.response.PageData;
@@ -15,12 +16,15 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbArticleCategoryVO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteVideoVO;
 import com.gs.lshly.common.struct.bbb.pc.pages.qto.PCBbbHomeQTO;
 import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbHomeVO;
+import com.gs.lshly.common.struct.common.dto.CommonSiteActiveDTO;
+import com.gs.lshly.common.struct.common.vo.CommonSiteActiveVO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbArticleCategoryRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteVideoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IPCBbbFloorRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonSiteActiveRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -58,13 +62,14 @@ public class PCBbbHomeController {
     @DubboReference
     private IBbbSiteVideoRpc  bbbSiteVideoRpc;
 
+    @DubboReference
+    private ICommonSiteActiveRpc siteActiveRpc;
+
 
     @ApiOperation("2Bpc端首页分类菜单信息")
     @GetMapping("")
     public ResponseData<PCBbbGoodsCategoryVO.CategoryMenuVO> getCategoryMenuVO(PCBbbGoodsCategoryQTO.QTO qto) {
-    	 qto.setSubject(SubjectEnum.默认.getCode());
-    	 qto.setTerminal(TerminalEnum.BBB.getCode());
-    	return ResponseData.data(categoryRpc.getCategoryMenuVO(qto));
+        return ResponseData.data(categoryRpc.getCategoryMenuVO(qto));
     }
 
 
@@ -117,6 +122,14 @@ public class PCBbbHomeController {
     public ResponseData<BbbSiteVideoVO.ListVO> video(BbbSiteVideoQTO.QTO qto) {
         qto.setSubject(SubjectEnum.默认.getCode());
         return ResponseData.data(bbbSiteVideoRpc.list(qto));
+    }
+
+    @ApiOperation("活动图片配置")
+    @GetMapping("/getSiteActiveVO")
+    public ResponseData<CommonSiteActiveVO.ListVO> getSiteActiveVO(CommonSiteActiveDTO.QueryDTO dto) {
+        dto.setPcShow(PcH5Enum.NO.getCode());
+        dto.setTerminal(TerminalEnum.BBC.getCode());
+        return ResponseData.data(siteActiveRpc.getCommonSiteActiveVO(dto));
     }
 
 }

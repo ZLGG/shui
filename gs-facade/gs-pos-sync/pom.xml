@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>gs-facade</artifactId>
+        <groupId>wholesale.grainoil.gs</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>wholesale.grainoil.gs</groupId>
+    <artifactId>gs-pos-sync</artifactId>
+    <dependencies>
+
+        <!--Pos 接口 -->
+        <dependency>
+            <groupId>com.qianmi.open</groupId>
+            <artifactId>qianmi-cloudshop-api-sdk</artifactId>
+            <version>20201125</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/qianmi-cloudshop-api-sdk-java-20201125.jar</systemPath>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>wholesale.grainoil.gs</groupId>-->
+            <!--<artifactId>gs-auth</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!--Pos 消息-->
+        <dependency>
+            <groupId>com.qianmi.open</groupId>
+            <artifactId>qianmi-elife-api-sdk</artifactId>
+            <version>20160108</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/qianmi-elife-api-sdk-java-20160108.jar</systemPath>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <finalName>facade-pos-sync</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

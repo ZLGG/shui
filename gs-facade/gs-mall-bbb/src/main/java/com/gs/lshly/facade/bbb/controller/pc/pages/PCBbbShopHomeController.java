@@ -1,9 +1,14 @@
 package com.gs.lshly.facade.bbb.controller.pc.pages;
 
+import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbb.pc.merchant.dto.BbbShopDTO;
 import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbShopHomeVO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
+import com.gs.lshly.common.struct.common.dto.CommonMerchantArticleDTO;
+import com.gs.lshly.common.struct.common.qto.CommonMerchantArticleQTO;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonMerchantArticleRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -24,6 +29,8 @@ public class PCBbbShopHomeController {
 
     @DubboReference
     private IBbbShopRpc bbbShopRpc;
+    @DubboReference
+    private ICommonMerchantArticleRpc commonMerchantArticleRpc;
 
     @ApiOperation("2Bpc端店铺首页店铺信息 + 店铺自定分类 + 通栏广告图 + 广告图 + 顶部菜单")
     @GetMapping("/{id}")
@@ -55,5 +62,19 @@ public class PCBbbShopHomeController {
         return ResponseData.data(bbbShopRpc.shopService(new BbbShopDTO.IdDTO(id)));
     }
 
+
+    @ApiOperation("商家文章列表")
+    @GetMapping(value = "/getMerchantArticle/{shopId}")
+    public ResponseData<BbcShopVO.ShopIdName> getMerchantArticle(@PathVariable String shopId, CommonMerchantArticleQTO.QTO qto) {
+        qto.setShopId(shopId);
+        qto.setPcShow(PcH5Enum.NO.getCode());
+        return ResponseData.data(commonMerchantArticleRpc.pageMerchantArticleVO(qto));
+    }
+
+    @ApiOperation("商家文章详情")
+    @GetMapping(value = "/getMerchantArticleDetail/{articleId}")
+    public ResponseData<BbcShopVO.ShopIdName> getMerchantArticleDetail(@PathVariable String articleId) {
+        return ResponseData.data(commonMerchantArticleRpc.detailMerchantArticle(new CommonMerchantArticleDTO.IdDTO(articleId)));
+    }
 
 }

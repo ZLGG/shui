@@ -89,4 +89,9 @@ public class ShopRpc implements IShopRpc{
         return shopService.innerlistShopIdName(dto,shopType,terminal);
     }
 
+    @Override
+    public ShopVO.DetailVO innerByIdGetPosShopId(String shopId) {
+        return shopService.innerByIdGetPosShopId(shopId);
+    }
+
 }

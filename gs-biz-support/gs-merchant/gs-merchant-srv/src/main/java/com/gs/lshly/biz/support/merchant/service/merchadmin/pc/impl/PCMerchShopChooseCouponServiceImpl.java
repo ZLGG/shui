@@ -34,6 +34,7 @@ public class PCMerchShopChooseCouponServiceImpl implements IPCMerchShopChooseCou
     public PageData<PCMerchShopChooseCouponVO.ListVO> pageData(PCMerchShopChooseCouponQTO.QTO qto) {
         QueryWrapper<ShopChooseCoupon> wrapper = new QueryWrapper<>();
         wrapper.eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         IPage<ShopChooseCoupon> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchShopChooseCouponVO.ListVO.class, page);

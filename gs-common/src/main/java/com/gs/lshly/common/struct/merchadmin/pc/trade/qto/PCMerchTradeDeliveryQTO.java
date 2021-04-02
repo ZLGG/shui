@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author oy
 * @since 2020-11-16
@@ -18,46 +20,38 @@ public abstract class PCMerchTradeDeliveryQTO implements Serializable {
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
 
-        @ApiModelProperty("订单ID")
-        private String tradeId;
-
-        @ApiModelProperty("会员ID")
-        private String userId;
-
         @ApiModelProperty("交易编号")
         private String tradeCode;
-
-        @ApiModelProperty("订单状态:10:待支付,20:待发货,30:待收货,40:已完成,50:已取消")
-        private Integer tradeState;
-
-        @ApiModelProperty("店铺ID")
-        private String shopId;
-
-        @ApiModelProperty("商家ID")
-        private String merchantId;
-
-        @ApiModelProperty("物流公司id")
-        private String logisticsId;
-
-        @ApiModelProperty("物流公司名称")
-        private String logisticsName;
-
-        @ApiModelProperty("物流公司编号")
-        private String logisticsCode;
 
         @ApiModelProperty("物流编号")
         private String logisticsNumber;
 
-        @ApiModelProperty("操作员id")
-        private String operatorId;
+        @ApiModelProperty("用户名")
+        private String userName;
 
-        @ApiModelProperty("操作员姓名")
-        private String operatorName;
+        @ApiModelProperty("用户手机号")
+        private String userPhone;
 
-        @ApiModelProperty("发货时间")
-        private LocalDateTime deliveryTime;
+        @ApiModelProperty("收货地址")
+        private String address;
 
-        @ApiModelProperty("发货备注")
-        private String deliveryRemark;
+        @ApiModelProperty("收货人姓名")
+        private String name;
+
+        @ApiModelProperty("收货人手机号")
+        private String phone;
+
+        @ApiModelProperty("订单状态:10:待支付,20:待发货,30:待收货,40:已完成,50:已取消")
+        private Integer tradeState;
+
+
+    }
+    @Data
+    @ApiModel("PCMerchTradeDeliveryQTO.IdListQTO")
+    public static class IdListQTO implements Serializable{
+
+        @ApiModelProperty("发货单ID列表")
+        private List<String> idList;
+
     }
 }

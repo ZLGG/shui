@@ -89,13 +89,13 @@ package com.gs.lshly.middleware.mybatisplus.generator;//package com.gs.lshly.com
 //        /** 更新配置 **/
 //        GeneratorConifg.updateDefaultConfig();
 //
-//        /** dto qto vo service rpc 扩展代码包配置,（全路径包名）**/
+//        /** dto qto vo producerService rpc 扩展代码包配置,（全路径包名）**/
 //        if(GeneratorConifg.isLogicTable == false){
 //            GeneratorConifg.generatorDTO("com.gs.lshly.common.struct.{client}.{centerName}.dto");
 //            GeneratorConifg.generatorQTO("com.gs.lshly.common.struct.{client}.{centerName}.qto");
 //            GeneratorConifg.generatorVO("com.gs.lshly.common.struct.{client}.{centerName}.vo");
-//            GeneratorConifg.generatorSrv("com.gs.lshly.biz.support.{centerName}.service.{client}");
-//            GeneratorConifg.generatorSrvImpl("com.gs.lshly.biz.support.{centerName}.service.{client}.impl");
+//            GeneratorConifg.generatorSrv("com.gs.lshly.biz.support.{centerName}.producerService.{client}");
+//            GeneratorConifg.generatorSrvImpl("com.gs.lshly.biz.support.{centerName}.producerService.{client}.impl");
 //            GeneratorConifg.generatorRpc("com.gs.lshly.rpc.api.{client}.{centerName}");
 //            GeneratorConifg.generatorRpcImpl("com.gs.lshly.biz.support.{centerName}.rpc.{client}");
 //            GeneratorConifg.generatorController();

@@ -46,6 +46,7 @@ public class PCMarketSettlementServiceImpl implements IPCMarketSettlementService
         if(ObjectUtils.isNotEmpty(qto.getBillStartTime()) && ObjectUtils.isNotEmpty(qto.getBillEndTime())){
             wrapper.between("cdate",qto.getBillStartTime(),qto.getBillEndTime());
         }
+        wrapper.orderByDesc("cdate");
         IPage<TradeSettlement> page = MybatisPlusUtil.pager(qto);
         tradeSettlementRepositoryImpl.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, TradeSettlementVO.ListVO.class, page);

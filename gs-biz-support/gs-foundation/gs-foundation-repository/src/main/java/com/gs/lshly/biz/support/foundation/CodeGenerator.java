@@ -40,10 +40,10 @@ public class CodeGenerator {
         globalConfig.setServiceImplName("%sRepositoryImpl");
 
         // 数据源配置
-        dataSourceConfig.setUrl("jdbc:mysql://rm-bp15j440rs952i1cm6o.mysql.rds.aliyuncs.com:3306/fy_mall?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8");
+        dataSourceConfig.setUrl("jdbc:mysql://114.116.35.42:3306/gs-lshly?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8");
         dataSourceConfig.setDriverName("com.mysql.jdbc.Driver");
-        dataSourceConfig.setUsername("root");
-        dataSourceConfig.setPassword("bWzdYytdf6");
+        dataSourceConfig.setUsername("dev_gs_lshly");
+        dataSourceConfig.setPassword("Dev_gs_lshly@2020");
 
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
@@ -55,18 +55,18 @@ public class CodeGenerator {
         // 包配置
         packageConfig.setModuleName("");
         packageConfig.setParent("com.gs.lshly");
-        packageConfig.setEntity("biz.support.foundation.entity");
-        packageConfig.setMapper("biz.support.foundation.mapper");
-        packageConfig.setService("biz.support.foundation.repository");
-        packageConfig.setServiceImpl("biz.support.foundation.repository.impl");
-        //packageConfig.setController("facade.foundation.controller.foundation");
+        packageConfig.setEntity("biz.support.platadmin.entity");
+        packageConfig.setMapper("biz.support.platadmin.mapper");
+        packageConfig.setService("biz.support.platadmin.repository");
+        packageConfig.setServiceImpl("biz.support.platadmin.repository.impl");
+        packageConfig.setController("facade.platadmin.controller.platadmin");
 
         //路径G
-        globalConfig.setOutputDir("C:/works/program/citydo/gs-mall/gs-biz-support/gs-foundation/gs-foundation-repository/src/main/java");
+        globalConfig.setOutputDir("D:/GenCode/lshly/" + "/src/main/java");
         //表名
-        strategy.setInclude("gs_site_topic","gs_site_topic_goods");
+        strategy.setInclude("gs_site");
         // 作者
-        globalConfig.setAuthor("yingjun");
+        globalConfig.setAuthor("tangjiemin");
 
         autoGenerator.setGlobalConfig(globalConfig);
         autoGenerator.setDataSource(dataSourceConfig);

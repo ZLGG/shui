@@ -33,6 +33,7 @@ public class ShopTypeDictServiceImpl implements IShopTypeDictService {
     @Override
     public PageData<ShopTypeDictVO.ListVO> pageData(ShopTypeDictQTO.QTO qto) {
         QueryWrapper<ShopTypeDict> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<ShopTypeDict> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, ShopTypeDictVO.ListVO.class, page);

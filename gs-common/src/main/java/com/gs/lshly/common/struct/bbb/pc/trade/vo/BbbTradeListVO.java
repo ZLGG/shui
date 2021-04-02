@@ -21,7 +21,7 @@ public abstract class BbbTradeListVO implements Serializable {
 
 
     @Data
-    @ApiModel("BbbTradeVO.tradeVO")
+    @ApiModel("BbbTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable{
 
@@ -157,6 +157,11 @@ public abstract class BbbTradeListVO implements Serializable {
         @ApiModelProperty("买家留言")
         private String buyerRemark;
 
+        @ApiModelProperty("线下支付状态[10=待确认 20=驳回 30=已确认]")
+        private Integer offlineState;
+
+        @ApiModelProperty("线下支付驳回拒绝原因")
+        private String verifyRemark;
 
         @ApiModelProperty("发货备注")
         private String deliveryRemark;
@@ -181,10 +186,93 @@ public abstract class BbbTradeListVO implements Serializable {
 
         @ApiModelProperty("支付状态[10=待支付,40=已支付]")
         private Integer payState;
+
+        @ApiModelProperty("取消信息")
+        private BbbTradeListVO.tradeVO.Cancel cancelInfo;
+
+        @ApiModelProperty("售后信息")
+        private BbbTradeListVO.tradeVO.Right rightsInfo;
+
+        @ApiModelProperty("发票ID")
+        private String invoiceId;
+
+        @ApiModelProperty("发票信息")
+        private BbbTradeListVO.tradeVO.Invoice invoiceInfo;
+
+        @Data
+        @ApiModel("BbbTradeListVO.tradeVO.Right")
+        @Accessors(chain = true)
+        public static class Invoice implements Serializable{
+            @ApiModelProperty("发票ID")
+            private String invoiceId;
+            @ApiModelProperty("发票类型[10增值税普通发票 20增值税专用发票]")
+            private Integer invoiceType;
+            @ApiModelProperty("公司名称")
+            private String firmName;
+            @ApiModelProperty("税务识别码")
+            private String taxNumber;
+        }
+        @Data
+        @ApiModel("BbbTradeListVO.tradeVO.Right")
+        @Accessors(chain = true)
+        public static class Right implements Serializable{
+            @ApiModelProperty("退款状态[提交申请:10,商家驳回:20,商家确认:30,退款:40,完成:50]")
+            private Integer rightsState;
+
+            @ApiModelProperty("退款原因")
+            private String remark;
+
+        }
+
+        @Data
+        @ApiModel("BbbTradeListVO.tradeVO.Cancel")
+        @Accessors(chain = true)
+        public static class Cancel implements Serializable{
+
+            @ApiModelProperty("退款金额")
+            private BigDecimal tradeAmount;
+
+
+            @ApiModelProperty("提交申请:10,商家驳回:20,商家确认:30,退款:40,完成:50")
+            private Integer cancelState;
+
+
+            @ApiModelProperty("申请类型:用户取消订单:10,商家取消订单:20")
+            private Integer applyType;
+
+
+            @ApiModelProperty("申请时间")
+            @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+            private LocalDateTime applyTime;
+
+
+            @ApiModelProperty("拒绝理由")
+            private String rejectReason;
+
+
+            @ApiModelProperty("拒绝时间")
+            @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+            private LocalDateTime rejectTime;
+
+
+            @ApiModelProperty("通过时间")
+            @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+            private LocalDateTime passTime;
+
+
+            @ApiModelProperty("退款状态:无需退款:10,等待审核:20,等待退款:30,退款成功:40")
+            private Integer refundState;
+
+
+            @ApiModelProperty("退款时间")
+            @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+            private LocalDateTime refundTime;
+
+        }
     }
 
     @Data
-    @ApiModel("BbbTradeVO.TradeGoodsVO")
+    @ApiModel("BbbTradeListVO.TradeGoodsVO")
     @Accessors(chain = true)
     public static class TradeGoodsVO implements Serializable{
 
@@ -267,7 +355,7 @@ public abstract class BbbTradeListVO implements Serializable {
 
     }
     @Data
-    @ApiModel("BbbTradeVO.stateCount")
+    @ApiModel("BbbTradeListVO.stateCount")
     public static class stateCountVO implements Serializable{
 
         @ApiModelProperty("交易状态")
@@ -298,6 +386,19 @@ public abstract class BbbTradeListVO implements Serializable {
 
         @ApiModelProperty("转账金额")
         private BigDecimal tradeAmount;
+
+        @ApiModelProperty(value = "付款用户名")
+        private String payName;
+        @ApiModelProperty(value = "付款卡号")
+        private String payCardNum;
+        @ApiModelProperty(value = "付款银行")
+        private String payBlank;
+        @ApiModelProperty(value = "转账金额")
+        private BigDecimal transferAmount;
+        @ApiModelProperty(value = "转账备注")
+        private String transferRemarks;
+        @ApiModelProperty(value = "凭证图片")
+        private List<String> transImage;
 
 
     }
@@ -344,6 +445,28 @@ public abstract class BbbTradeListVO implements Serializable {
 
         @ApiModelProperty("序号")
         private Integer idx;
+    }
+
+    @Data
+    @ApiModel("BbbTradeListVO.InnerGoodsScore")
+    @Accessors(chain = true)
+    public static class InnerGoodsScore implements Serializable{
+        @ApiModelProperty("商品描述分")
+        private BigDecimal describeGrade;
+
+        @ApiModelProperty("物流服务分")
+        private BigDecimal deliveryGrade;
+
+        @ApiModelProperty("服务态度分")
+        private BigDecimal serviceGrade;
+
+        @ApiModelProperty("商品评分")
+        private BigDecimal goodsGrade;
+
+        @ApiModelProperty("评论人数")
+        private Integer commentCount;
+
+
     }
 
 

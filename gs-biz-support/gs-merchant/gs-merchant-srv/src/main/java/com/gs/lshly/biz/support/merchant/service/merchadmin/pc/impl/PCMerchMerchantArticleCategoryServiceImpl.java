@@ -35,6 +35,7 @@ public class PCMerchMerchantArticleCategoryServiceImpl implements IPCMerchMercha
     @Override
     public PageData<PCMerchMerchantArticleCategoryVO.ListVO> pageData(PCMerchMerchantArticleCategoryQTO.QTO qto) {
         QueryWrapper<MerchantArticleCategory> wrapper = MybatisPlusUtil.queryContainShopId(qto);
+        wrapper.orderByDesc("cdate");
         IPage<MerchantArticleCategory> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMerchantArticleCategoryVO.ListVO.class, page);

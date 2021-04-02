@@ -18,7 +18,7 @@ public interface IH5MerchShopRpc {
 
     void editShop(H5MerchShopDTO.ETO eto);
 
-    H5MerchShopVO.DetailVO detailShop(BaseDTO dto);
+    H5MerchShopVO.DetailVO detailShop(H5MerchShopDTO.IdDTO dto);
 
     H5MerchShopVO.ShopSimpleVO innerShopSimple(String shopId);
 }

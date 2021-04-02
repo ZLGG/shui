@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.merchant.rpc.merchadmin.pc;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchPictureGroupDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchPictureGroupQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchPictureGroupVO;
@@ -22,17 +23,17 @@ public class PCMerchPictureGroupRpc implements IPCMerchPictureGroupRpc{
 
 
     @Override
-    public List<PCMerchPictureGroupVO.ListVO> listGroup(PCMerchPictureGroupQTO.BelongIdQTO qto) {
-        return pCMerchPictureGroupService.listGroup(qto);
+    public List<PCMerchPictureGroupVO.ListVO> listGroup(PCMerchPictureGroupDTO.ParentIdDTO dto) {
+        return pCMerchPictureGroupService.listGroup(dto);
     }
 
     @Override
-    public void addPictureGroup(PCMerchPictureGroupDTO.ETO eto){
-        pCMerchPictureGroupService.addPictureGroup(eto);
+    public void addPictureGroup(PCMerchPictureGroupDTO.SaveETO eto,BaseDTO baseDTO){
+        pCMerchPictureGroupService.addPictureGroup(eto,baseDTO);
     }
 
     @Override
-    public void deletePictureGroup(PCMerchPictureGroupDTO.IdDTO dto){
+    public void deletePictureGroup(PCMerchPictureGroupDTO.IdListDTO dto){
         pCMerchPictureGroupService.deletePictureGroup(dto);
     }
 

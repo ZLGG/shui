@@ -1,12 +1,17 @@
 package com.gs.lshly.facade.merchant.controller.pc.merchant;
 
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
+import com.gs.lshly.common.struct.common.vo.CommonSiteCustomerServiceVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantAccountDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantSiteNavigationVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchantAgreementVO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.PCMerchSiteVO;
+import com.gs.lshly.rpc.api.common.ICommonSiteCustomerServiceRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantSiteNavigationRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchantAgreementRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IPCMerchSiteRpc;
 import io.swagger.annotations.Api;
@@ -38,6 +43,12 @@ public class PCMerchFrontController {
     @DubboReference
     private IPCMerchantAgreementRpc agreementRpc;
 
+    @DubboReference
+    private IPCMerchMerchantSiteNavigationRpc pcMerchMerchantSiteNavigationRpc;
+
+    @DubboReference
+    private ICommonSiteCustomerServiceRpc commonSiteCustomerServiceRpc;
+
 
     @ApiOperation("检查用户名是否存在")
     @GetMapping("/checkUserName")
@@ -60,6 +71,12 @@ public class PCMerchFrontController {
         return ResponseData.data(pcMerchSiteRpc.getLoginImageVO(dto));
     }
 
+    @ApiOperation("客服配置")
+    @GetMapping("/getServiceVO")
+    public ResponseData<CommonSiteCustomerServiceVO.ServiceVO> getServiceVO() {
+        return ResponseData.data(commonSiteCustomerServiceRpc.getService(new BaseDTO()));
+    }
+
 
     @ApiOperation("获取入驻协议或注册协议")
     @GetMapping("/getMerchantAgreement")
@@ -67,5 +84,11 @@ public class PCMerchFrontController {
         return ResponseData.data(agreementRpc.detailMerchantAgreement(dto));
     }
 
+
+    @ApiOperation("商家入驻底部链接管理列表")
+    @GetMapping("/siteNavigationList")
+    public ResponseData<PageData<PCMerchMerchantSiteNavigationVO.ListVO>> list() {
+        return ResponseData.data(pcMerchMerchantSiteNavigationRpc.listData());
+    }
 
 }

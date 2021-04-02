@@ -175,24 +175,6 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品批发价")
         private BigDecimal wholesalePrice;
 
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
     }
 
     @Data
@@ -250,6 +232,8 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
         private BbbShopVO.ShopScoreDetailVO shopInfo;
 
         //TODO 商品评分
+        @ApiModelProperty("二维码图片")
+        private String code;
 
         @ApiModelProperty("商品详情")
         private String goodsPcDesc;
@@ -401,6 +385,9 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
         @ApiModelProperty("sku商品id")
         private String skuId;
 
+        @ApiModelProperty("POS商品ID")
+        private String posSpuId;
+
         @ApiModelProperty("商品条码")
         private String barcode;
 
@@ -439,6 +426,9 @@ public abstract class PCBbbGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("店铺ID")
         private String shopId;
+
+        @ApiModelProperty("商品重量")
+        private BigDecimal goodsWeight;
 
         @ApiModelProperty("店铺名称")
         private String shopName;

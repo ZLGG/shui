@@ -14,6 +14,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeRightsBuildDTO;
@@ -34,9 +35,11 @@ import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.pos.IPosTradeRpc;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -54,6 +57,7 @@ import java.util.List;
 * @since 2020-12-06
 */
 @Component
+@Slf4j
 public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
 
     private final ITradeRightsRepository repository;
@@ -61,6 +65,9 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
     private final ITradeGoodsRepository tradeGoodsRepository;
     private final ITradeRightsGoodsRepository tradeRightsGoodsRepository;
     private final ITradeRightsImgRepository tradeRightsImgRepository;
+
+    @Autowired
+    private IPosErrorInfoRepository iPosErrorInfoRepository;
 
     @DubboReference
     private IBbcUserRpc bbcUserRpc;
@@ -89,14 +96,17 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
     @Override
     public PageData<BbcTradeRightsVO.ListVO> pageData(BbcTradeRightsQTO.QTO qto) {
         QueryWrapper<TradeRights> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeRights> page = MybatisPlusUtil.pager(qto);
-
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbcTradeRightsVO.ListVO.class, page);
     }
 
     @Override
     public void addTradeRights(BbcTradeRightsBuildDTO.ETO dto) {
+        if (StringUtils.isEmpty(dto.getRightsRemark())){
+            throw new BusinessException("请填写售后原因");
+        }
         //根据订单id查询订单数据
         Trade trade = tradeRepository.getById(dto.getTradeId());
         if(ObjectUtils.isEmpty(trade)){
@@ -188,17 +198,27 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             tradeRightsImgRepository.saveBatch(tradeRightsImgs);
         }
         //推送到POS
-        PosTradeOOnlineOrderRequestDTO.DTO POSDTO = getPOSDTO(tradeRights,trade,dto,tradeRightsGoodsS);
-        if (ObjectUtils.isNotEmpty(POSDTO)){
-            iPosTradeRpc.addOrderRight(POSDTO);
+        try {
+            PosTradeOOnlineOrderRequestDTO.DTO POSDTO = getPOSDTO(tradeRights, trade, dto, tradeRightsGoodsS);
+            if (ObjectUtils.isNotEmpty(POSDTO)) {
+                iPosTradeRpc.addOrderRight(POSDTO);
+            }
+        }catch (Exception e){
+            log.info("订单推送POS发生异常："+e.getMessage(),e);
+            PosErrorInfo posErrorInfo = new PosErrorInfo();
+            posErrorInfo.setMessage("失败").setTarget("BbcTradeRightsServiceImpl.addTradeRights：申请退换货推送失败");
+            iPosErrorInfoRepository.save(posErrorInfo);
         }
     }
 
     private PosTradeOOnlineOrderRequestDTO.DTO getPOSDTO(TradeRights tradeRights, Trade trade, BaseDTO dto,List<TradeRightsGoods> tradeRightsGoodsS) {
         PosTradeOOnlineOrderRequestDTO.DTO dto1 = new PosTradeOOnlineOrderRequestDTO.DTO();
-        dto1.setShop("dpos1021").
-                setPlatformId("dpos1021").
-                setNumber(tradeRights.getId()).
+        BbcShopVO.DetailVO detailVO = iBbcShopRpc.detailShop(new BbcShopDTO.IdDTO(trade.getShopId()));
+        if (ObjectUtils.isNotEmpty(detailVO)){
+            dto1.setShop(ObjectUtils.isNotEmpty(detailVO)?detailVO.getPosShopId():"").
+                    setPlatformId(ObjectUtils.isNotEmpty(detailVO)?detailVO.getPosShopId():"");
+        }
+        dto1.setNumber(tradeRights.getId()).
                 setOrderNumber(trade.getId()).
                 setState("SUBMITTED").
                 setApplyTime(Date.from(tradeRights.getCdate().atZone( ZoneId.systemDefault()).toInstant())).
@@ -247,8 +267,8 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                         rsThinSku2.setBarcode(innerServiceVO.getBarcode()).
                                 setName(innerServiceVO.getGoodsName()).
                                 setSpec(innerServiceVO.getSkuSpecValue());
+                        rsThinSku2.setId(ObjectUtils.isNotEmpty(innerServiceVO.getPosSpuId())?innerServiceVO.getPosSpuId():"");
                     }
-                    rsThinSku2.setId(byId.getGoodsId());
                 }
                 oOnlineOrderRLine.setOrderRId(tradeRights.getId()).
                         setQty(rightsGoodsS.getQuantity()).
@@ -336,6 +356,12 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
 
     @Override
     public void returnGoods(BbcTradeRightsBuildDTO.RightsReturnGoodsLogistics dto) {
+        if (ObjectUtils.isEmpty(dto.getReturnGoodsLogisticsName())){
+            throw new BusinessException("请填写物流公司名字");
+        }
+        if (ObjectUtils.isEmpty(dto.getReturnGoodsLogisticsNum())){
+            throw new BusinessException("请填写物流单号");
+        }
         TradeRights tradeRights = repository.getById(dto.getRightsId());
         if(ObjectUtils.isNull(tradeRights)){
             throw new BusinessException("无售后单数据");
@@ -343,7 +369,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if(tradeRights.getState().equals(TradeRightsStateEnum.通过.getCode())){
             tradeRights.setReturnGoodsLogisticsName(dto.getReturnGoodsLogisticsName());
             tradeRights.setReturnGoodsLogisticsNum(dto.getReturnGoodsLogisticsNum());
-            tradeRights.setReturnGoodsLogisticsDate(dto.getReturnGoodsLogisticsDate());
+            tradeRights.setReturnGoodsLogisticsDate(LocalDateTime.now());
             tradeRights.setState(TradeRightsStateEnum.已退货.getCode());
             repository.saveOrUpdate(tradeRights);
         }else{
@@ -367,9 +393,21 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             }
             repository.updateById(tradeRights);
             //推送到POS
-            PosFinishAndCancelRequestDTO.DTO dto1 = new PosFinishAndCancelRequestDTO.DTO();
-            dto1.setNumber(tradeRights.getId()).setShop("dpos1021").setPlatformId("dpos1021");
-            iPosTradeRpc.FinishOrderRight(dto1);
+            try {
+                PosFinishAndCancelRequestDTO.DTO dto1 = new PosFinishAndCancelRequestDTO.DTO();
+                BbcShopVO.DetailVO detailVO = iBbcShopRpc.detailShop(new BbcShopDTO.IdDTO(tradeRights.getShopId()));
+                if (ObjectUtils.isNotEmpty(detailVO)){
+                    dto1.setShop(ObjectUtils.isNotEmpty(detailVO.getPosShopId())?detailVO.getPosShopId():"").
+                            setPlatformId(ObjectUtils.isNotEmpty(detailVO.getPosShopId())?detailVO.getPosShopId():"");
+                }
+                dto1.setNumber(tradeRights.getId());
+                iPosTradeRpc.FinishOrderRight(dto1);
+            }catch (Exception e){
+                log.info("订单推送POS发生异常："+e.getMessage(),e);
+                PosErrorInfo posErrorInfo = new PosErrorInfo();
+                posErrorInfo.setMessage("失败").setTarget("BbcTradeRightsServiceImpl.confirmReceipt 390：2c退换货完成推送失败");
+                iPosErrorInfoRepository.save(posErrorInfo);
+            }
         }else {
             throw new BusinessException("请传售后表ID");
         }

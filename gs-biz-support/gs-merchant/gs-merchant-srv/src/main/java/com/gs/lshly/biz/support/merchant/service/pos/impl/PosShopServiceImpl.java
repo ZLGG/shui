@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,42 +80,34 @@ public class PosShopServiceImpl implements IPosShopService {
         //校验数据
         checkData(dto);
 
-        //为该店铺注册商家登录账号
-        String merchantAccountId = saveMerchantAccount(dto);
+        //判断该手机号是否已被注册
+        QueryWrapper<MerchantApply> applyWrapper = MybatisPlusUtil.query();
+        applyWrapper.eq("pos_shop_id",dto.getPosCode());
+        MerchantApply apply = merchantApplyRepository.getOne(applyWrapper);
 
-        //如果该商家已经入驻了，看是否入驻审核通过，若审核通过则更新审核通过后入驻信息 若未通过则更新入驻申请信息
-        QueryWrapper<MerchantApply> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("pos_shop_id",dto.getPosCode());
-        MerchantApply apply = merchantApplyRepository.getOne(wrapper);
-        if (null != apply &&(ObjectUtils.isEmpty(apply.getIsOpen()) || apply.getIsOpen().equals(TrueFalseEnum.否.getCode())) ){
-            MerchantApply merchantApply = new MerchantApply();
-            merchantApply.setId(apply.getId());
-            merchantApply.setCorpLicenseNum(dto.getUnifiedSocialCreditCode());
-            merchantApply.setPersonName(dto.getPosLegalPerson());
-            merchantApply.setPersonIdcardType(dto.getPosLegalPersonType());
-            merchantApply.setPersonIdcardNo(dto.getPosLegalPersonIdcard());
-            merchantApply.setShopName(dto.getPosName());
-            merchantApply.setPosShopId(dto.getPosCode());
-            merchantApply.setAccountId(merchantAccountId);
-            merchantApply.setShopManName(dto.getAdminName());
-            merchantApply.setShopManPhone(dto.getAdminPhone());
-            merchantApply.setShopAddress(dto.getPosAddress());
-            merchantApply.setShopManEmail(StringUtils.isBlank(dto.getAdminEmail())?"":dto.getAdminEmail());
-            merchantApply.setProgress(apply.getProgress());
-            if (apply.getState().equals(MerchantApplyStateEnum.通过.getCode())){
-                merchantApply.setState(MerchantApplyStateEnum.待审.getCode());
-            }
-            // 将base64码解析并上传到oss
-            Map<String,String> imgs = getImageBase64(dto.getPosLegalPersonIdcardImgs());
-            if (ObjectUtils.isNotEmpty(imgs)){
-                merchantApply.setPersonIdcardBack(StringUtils.isBlank(imgs.get("back"))?"":imgs.get("back"));
-                merchantApply.setPersonIdcardFront(StringUtils.isBlank(imgs.get("front"))?"":imgs.get("front"));
-            }
-            merchantApplyRepository.saveOrUpdate(merchantApply);
-        }else if(null !=apply && ObjectUtils.isNotEmpty(apply.getIsOpen()) && apply.getIsOpen().equals(1)){
+        QueryWrapper<MerchantAccount> merchantAccountQueryWrapper = MybatisPlusUtil.query();
+        merchantAccountQueryWrapper.eq("user_name",dto.getAdminPhone());
+        MerchantAccount account =  merchantAccountRepository.getOne(merchantAccountQueryWrapper);
 
-        }else if (null == apply){
-            //商家入驻申请
+
+        if(ObjectUtils.isEmpty(apply) && ObjectUtils.isNotEmpty(account)){
+            throw new BusinessException("该手机号已被注册！");
+        }
+        if (ObjectUtils.isNotEmpty(apply) && ObjectUtils.isNotEmpty(account) && (!apply.getAccountId().equals(account.getId()))){
+            throw new BusinessException("该手机号已被注册！");
+        }
+        if (ObjectUtils.isEmpty(apply) && ObjectUtils.isEmpty(account)){
+            //注册成功生成主帐号(所有的入驻信息是关联在这个主帐号下),平台审核的时候为帐号分配商家,审核开通店铺的时候创建详细的商品分类数据,和企业字点
+            MerchantAccount merchantAccount = new MerchantAccount();
+            merchantAccount.setUserName(dto.getAdminPhone());
+            merchantAccount.setPhone(dto.getAdminPhone());
+            merchantAccount.setAccountType(MerchantAccountTypeEnum.主帐号.getCode());
+            merchantAccount.setTerminal(TerminalEnum.BBB.getCode());
+            merchantAccount.setAccountState(MerchantAccountStateEnum.启用.getCode());
+            merchantAccount.setUserPwd(PwdUtil.encode(pwd));
+            merchantAccountRepository.save(merchantAccount);
+
+            //同步入驻信息
             MerchantApply merchantApply = new MerchantApply();
             merchantApply.setLegalType(LegalTypeEnum.企业.getCode());
             merchantApply.setCorpLicenseNum(dto.getUnifiedSocialCreditCode());
@@ -123,14 +116,15 @@ public class PosShopServiceImpl implements IPosShopService {
             merchantApply.setPersonIdcardNo(dto.getPosLegalPersonIdcard());
             merchantApply.setShopName(dto.getPosName());
             merchantApply.setPosShopId(dto.getPosCode());
-            merchantApply.setAccountId(merchantAccountId);
+            merchantApply.setAccountId(merchantAccount.getId());
             merchantApply.setShopManName(dto.getAdminName());
             merchantApply.setShopManPhone(dto.getAdminPhone());
             merchantApply.setShopAddress(dto.getPosAddress());
+            merchantApply.setShopLatitude(StringUtils.isBlank(dto.getLat())?BigDecimal.ZERO:new BigDecimal(dto.getLat()));
+            merchantApply.setShopLongitude(StringUtils.isBlank(dto.getLont())?BigDecimal.ZERO:new BigDecimal(dto.getLont()));
             merchantApply.setState(MerchantApplyStateEnum.待审.getCode());
             merchantApply.setShopManEmail(StringUtils.isBlank(dto.getAdminEmail())?"":dto.getAdminEmail());
             merchantApply.setProgress(MerchantApplyProgressEnum.进度信息.getCode());
-
             // 将base64码解析并上传到oss
             Map<String,String> imgs = getImageBase64(dto.getPosLegalPersonIdcardImgs());
             if (ObjectUtils.isNotEmpty(imgs)){
@@ -138,6 +132,40 @@ public class PosShopServiceImpl implements IPosShopService {
                 merchantApply.setPersonIdcardFront(StringUtils.isBlank(imgs.get("front"))?"":imgs.get("front"));
             }
             merchantApplyRepository.save(merchantApply);
+        }
+        if (ObjectUtils.isNotEmpty(apply) && ObjectUtils.isNotEmpty(account) && apply.getAccountId().equals(account.getId())){
+            //更新
+            if ((ObjectUtils.isEmpty(apply.getIsOpen()) || apply.getIsOpen().equals(TrueFalseEnum.否.getCode())) ){
+                MerchantApply merchantApply = new MerchantApply();
+                merchantApply.setId(apply.getId());
+                merchantApply.setCorpLicenseNum(dto.getUnifiedSocialCreditCode());
+                merchantApply.setPersonName(dto.getPosLegalPerson());
+                merchantApply.setPersonIdcardType(dto.getPosLegalPersonType());
+                merchantApply.setPersonIdcardNo(dto.getPosLegalPersonIdcard());
+                merchantApply.setShopName(dto.getPosName());
+                merchantApply.setPosShopId(dto.getPosCode());
+                merchantApply.setAccountId(account.getId());
+                merchantApply.setShopManName(dto.getAdminName());
+                merchantApply.setShopManPhone(dto.getAdminPhone());
+                merchantApply.setShopAddress(dto.getPosAddress());
+                merchantApply.setShopLatitude(StringUtils.isBlank(dto.getLat())?BigDecimal.ZERO:new BigDecimal(dto.getLat()));
+                merchantApply.setShopLongitude(StringUtils.isBlank(dto.getLont())?BigDecimal.ZERO:new BigDecimal(dto.getLont()));
+                merchantApply.setShopManEmail(StringUtils.isBlank(dto.getAdminEmail())?"":dto.getAdminEmail());
+                merchantApply.setProgress(apply.getProgress());
+                if (apply.getState().equals(MerchantApplyStateEnum.通过.getCode())){
+                    merchantApply.setState(MerchantApplyStateEnum.待审.getCode());
+                }
+                // 将base64码解析并上传到oss
+                Map<String,String> imgs = getImageBase64(dto.getPosLegalPersonIdcardImgs());
+                if (ObjectUtils.isNotEmpty(imgs)){
+                    merchantApply.setPersonIdcardBack(StringUtils.isBlank(imgs.get("back"))?"":imgs.get("back"));
+                    merchantApply.setPersonIdcardFront(StringUtils.isBlank(imgs.get("front"))?"":imgs.get("front"));
+                }
+                merchantApplyRepository.saveOrUpdate(merchantApply);
+            }else if(ObjectUtils.isNotEmpty(apply.getIsOpen()) && apply.getIsOpen().equals(TrueFalseEnum.是.getCode())){
+
+            }
+
         }
 
     }
@@ -188,26 +216,6 @@ public class PosShopServiceImpl implements IPosShopService {
     }
 
 
-    private String saveMerchantAccount(PosShopRequestDTO.DTO dto){
-        QueryWrapper<MerchantAccount> merchantAccountQueryWrapper = MybatisPlusUtil.query();
-        merchantAccountQueryWrapper.eq("user_name",dto.getAdminPhone());
-        merchantAccountQueryWrapper.or();
-        merchantAccountQueryWrapper.eq("phone",dto.getAdminPhone());
-        MerchantAccount account =  merchantAccountRepository.getOne(merchantAccountQueryWrapper);
-        if(ObjectUtils.isNotEmpty(account)){
-           throw new BusinessException("该手机号已被注册！");
-        }
-        //注册成功生成主帐号(所有的入驻信息是关联在这个主帐号下),平台审核的时候为帐号分配商家,审核开通店铺的时候创建详细的商品分类数据,和企业字点
-        MerchantAccount merchantAccount = new MerchantAccount();
-        merchantAccount.setUserName(dto.getAdminPhone());
-        merchantAccount.setPhone(dto.getAdminPhone());
-        merchantAccount.setAccountType(MerchantAccountTypeEnum.主帐号.getCode());
-        merchantAccount.setTerminal(TerminalEnum.BBB.getCode());
-        merchantAccount.setAccountState(MerchantAccountStateEnum.启用.getCode());
-        merchantAccount.setUserPwd(PwdUtil.encode(pwd));
-        merchantAccountRepository.save(merchantAccount);
-        return merchantAccount.getId();
-    }
 
     private void checkData(PosShopRequestDTO.DTO dto){
         if (null == dto){

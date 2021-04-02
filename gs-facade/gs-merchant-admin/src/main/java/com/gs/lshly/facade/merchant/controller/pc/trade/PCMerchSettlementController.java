@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/merchadmin/pc/settlement")
 @Api(tags = "结算管理")
-@Module(code = "merchantSettlementSummary",parent = "settlement",name = "商家结算汇总" ,index = 1)
 public class PCMerchSettlementController {
 
     @DubboReference
@@ -42,7 +41,6 @@ public class PCMerchSettlementController {
 
     @ApiOperation("汇总商家订单数据")
     @GetMapping("/orderDataSettlement")
-    @Func(code = "add" ,name = "新增")
     public ResponseData orderDataSettlement() {
 
         //此处将订单表数据根据商家汇总到结算表
@@ -52,14 +50,12 @@ public class PCMerchSettlementController {
 
     @ApiOperation("商家结算列表")
     @PostMapping("/list")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<PageData<TradeSettlementVO.ListVO>> list(@RequestBody TradeSettlementQTO.PcQTO qto) {
         return ResponseData.data(ipcMarketSettlementRpc.settlementPageData(qto));
     }
 
     @ApiOperation("商家结算详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<TradeSettlementVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(ipcMarketSettlementRpc.detailTradeSettlement(new TradeSettlementDTO.IdOfDTO(id)));
     }
@@ -68,7 +64,6 @@ public class PCMerchSettlementController {
     @ApiOperation("导出结算汇总表")
     @Log(module = "结算汇总表管理", func = "导出结算汇总表")
     @GetMapping(value = "/export")
-    @Func(code = "export" ,name = "导出")
     public void export(TradeSettlementQTO.PcQTO qo, @ApiIgnore HttpServletResponse response) throws Exception {
         ExportDataDTO exportData = ipcMarketSettlementRpc.export(qo);
         ExcelUtil.export(exportData, response);
@@ -78,7 +73,6 @@ public class PCMerchSettlementController {
     @ApiOperation("账单下载")
     @Log(module = "账单下载", func = "账单下载")
     @GetMapping(value = "/DownloadExport")
-    @Func(code = "export" ,name = "导出")
     public void DownloadExport(TradeSettlementQTO.DownloadExportQTO qo, @ApiIgnore HttpServletResponse response) throws Exception {
         ExportDataDTO exportData = ipcMarketSettlementRpc.DownloadExport(qo);
         ExcelUtil.export(exportData, response);

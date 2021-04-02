@@ -74,6 +74,13 @@ public abstract class GoodsCategoryDTO implements Serializable {
     }
 
     @Data
+    @AllArgsConstructor
+    public static class ApplyIdDTO extends BaseDTO {
+        @ApiModelProperty(value = "申请id")
+        private String applyId;
+    }
+
+    @Data
     public static class IdListDTO extends BaseDTO {
         @ApiModelProperty(value = "商品类别id")
         private List<String> idList;

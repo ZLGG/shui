@@ -84,4 +84,11 @@ public class BbbH5TradeInvoiceController {
     public ResponseData<H5BbbTradeInvoiceVO.DetailVO> detailByTradeId(H5BbbTradeInvoiceQTO.TradeIdQTO qto) {
         return ResponseData.data(h5BbbTradeInvoiceRpc.detailByTradeId(qto));
     }
+
+    @ApiOperation("默认发票")
+    @GetMapping(value = "/detailInvoice")
+    public ResponseData<H5BbbTradeInvoiceVO.DetailVO> detailInvoice(H5BbbTradeInvoiceQTO.IdQTO idQTO) {
+        return ResponseData.data(h5BbbTradeInvoiceRpc.detailInvoice(idQTO));
+    }
+
 }

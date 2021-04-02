@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradeComment;
 import com.gs.lshly.biz.support.trade.entity.TradeCommentImg;
 import com.gs.lshly.biz.support.trade.entity.TradeCommentRecord;
@@ -247,6 +248,10 @@ public class TradeCommentServiceImpl implements ITradeCommentService {
             TradeCommentVO.CommentListVO commentListVO = new TradeCommentVO.CommentListVO();
             BeanUtils.copyProperties(i,commentListVO);
             commentListVO.setReplyTime(commentListVO.getUdate());
+            Trade trade = tradeMapper.selectById(i.getTradeId());
+            if (ObjectUtils.isNotEmpty(trade)){
+                commentListVO.setTradeCode(trade.getTradeCode());
+            }
             UserVO.MiniVO mini=null;
             if (StringUtils.isNotBlank(i.getUserId())){
                 mini = iUserRpc.mini(new UserDTO.IdDTO(i.getUserId()));

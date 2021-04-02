@@ -1,6 +1,9 @@
 package com.gs.lshly.middleware.log.aop;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.log.AccessLogDTO;
 import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.common.utils.JsonUtils;
@@ -33,6 +36,26 @@ import java.lang.reflect.Method;
 public class LogAspect implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
+
+    static ThreadLocal<BaseDTO> userInfo = new ThreadLocal<>();
+
+    public static void set(BaseDTO baseDTO) {
+        log.info("api:{}", JsonUtils.toJson(baseDTO));
+        userInfo.set(baseDTO);
+    }
+
+    public static BaseDTO get() {
+        return userInfo.get();
+    }
+
+    public static BaseDTO toDTO(JwtUser jwtUser) {
+        return new BaseDTO().setJwtUserId(jwtUser.getId())
+                .setJwtUserName(jwtUser.getUsername())
+                .setJwtUserType(jwtUser.getType())
+                .setJwtShopId(jwtUser.getShopId())
+                .setJwtMerchantId(jwtUser.getMerchantId())
+                .setJwtWxOpenid(jwtUser.getWxOpenid());
+    }
 
     @Pointcut("@annotation(com.gs.lshly.middleware.log.Log)")
     public void executeLogService() {}
@@ -84,7 +107,14 @@ public class LogAspect implements ApplicationContextAware {
             if(applicationContext.containsBean("AccessLogService")) {
                 IAccessLogService accessLogService = applicationContext.getBean(IAccessLogService.class);
                 if (accessLogService != null) {
-                    accessLogService.save(accessLogDTO);
+                    if (!"登陆".equals(accessLogDTO.getModule()) ){
+                        accessLogService.save(accessLogDTO);
+                    } else  {
+                        BaseDTO dto = get();
+                        if (dto!=null && StrUtil.isNotBlank(dto.getJwtUserId())) {
+                            accessLogService.save(accessLogDTO);
+                        }
+                    }
                 }
             }
 

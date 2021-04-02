@@ -2,6 +2,7 @@ package com.gs.lshly.facade.platform.controller.foundation;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.gs.lshly.common.constants.MsgConst;
+import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.enums.SiteNavigationEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.response.ResponseData;
@@ -42,6 +43,12 @@ public class SiteB2bH5Controller {
 
     @DubboReference
     private ISiteAdvertRpc siteAdvertRpc;
+
+    @DubboReference
+    private ISiteFloorActivityRpc iSiteFloorActivityRpc;
+
+    @DubboReference
+    private ISiteActiveRpc siteActiveRpc;
 
 
     @ApiOperation("轮播图列表")
@@ -194,6 +201,41 @@ public class SiteB2bH5Controller {
         }
         siteAdvertRpc.h5SubjectEditor(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+
+    @ApiOperation("活动图列表")
+    @GetMapping("/advertActivityList")
+    @Func(code="view", name="查")
+    public ResponseData<SiteFloorActivityVO.ListVO> advertActivityList() {
+
+        return ResponseData.data(iSiteFloorActivityRpc.getAdvertActivityList());
+    }
+
+    @ApiOperation("活动图编辑")
+    @PutMapping(value = "/advertActivityEditor")
+    @Func(code="edit", name="改")
+    public ResponseData<Void>  advertActivityEditor(@Valid @RequestBody SiteFloorActivityDTO.ETO eto) {
+        iSiteFloorActivityRpc.advertActivityEditor(eto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+
+    @ApiOperation("活动图片配置")
+    @GetMapping("/getSiteActiveVO")
+    @Func(code="view", name="查")
+    public ResponseData<SiteActiveVO.ListVO> getSiteActiveVO(SiteActiveDTO.QueryDTO dto) {
+        dto.setPcShow(PcH5Enum.NO.getCode());
+        dto.setTerminal(TerminalEnum.BBB.getCode());
+        return ResponseData.data(siteActiveRpc.getListVO(dto));
+    }
+
+    @ApiOperation("保存活动图片配置")
+    @PostMapping(value = "/saveSiteActiveVO")
+    @Func(code="edit", name="改")
+    public ResponseData<Void>  saveSiteActiveVO(@Valid @RequestBody SiteActiveDTO.ETO eto) {
+        eto.setPcShow(PcH5Enum.NO.getCode());
+        eto.setTerminal(TerminalEnum.BBB.getCode());
+        siteActiveRpc.saveSiteActive(eto);
+        return ResponseData.success(MsgConst.SAVE_SUCCESS);
     }
 
 }

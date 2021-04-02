@@ -48,6 +48,14 @@ public abstract class TradePayQTO implements Serializable {
 
     }
     @Data
+    @ApiModel("TradePayQTO.IdList")
+    @Accessors(chain = true)
+    public static class IdListQTO extends BaseQTO {
+        @ApiModelProperty("订单支付表Id集合")
+        private List<String > ids;
+
+    }
+    @Data
     @ApiModel("TradePayQTO.RelationQTO")
     @Accessors(chain = true)
     @AllArgsConstructor

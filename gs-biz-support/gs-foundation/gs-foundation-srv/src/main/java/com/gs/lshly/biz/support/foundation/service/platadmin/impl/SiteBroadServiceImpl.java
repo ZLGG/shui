@@ -40,6 +40,7 @@ public class SiteBroadServiceImpl implements ISiteBroadService {
     public List<SiteBroadVO.ListVO> list(SiteBroadQTO.QTO qto) {
         QueryWrapper<SiteBroad> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("terminal",qto.getTerminal());
+        wrapper.orderByDesc("cdate");
         List<SiteBroad> siteBroadList = repository.list(wrapper);
         return ListUtil.listCover(SiteBroadVO.ListVO.class,siteBroadList);
     }

@@ -77,10 +77,10 @@ public class JwtUtil {
      * @return
      */
     public static JwtUser getJwtUser(String token){
-        Claims claims = checkJWT(token.replace(SecurityConstants.TOKEN_PREFIX, ""));
-        String jwtStr = claims.get(SecurityConstants.ROLE_CLAIMS).toString();
-        ObjectMapper mapper = new ObjectMapper();
         try {
+            Claims claims = checkJWT(token.replace(SecurityConstants.TOKEN_PREFIX, ""));
+            String jwtStr = claims.get(SecurityConstants.ROLE_CLAIMS).toString();
+            ObjectMapper mapper = new ObjectMapper();
             JwtUser jwtUser = mapper.readValue(jwtStr, JwtUser.class);
             jwtUser.setExpire(claims.getExpiration());
             return jwtUser;

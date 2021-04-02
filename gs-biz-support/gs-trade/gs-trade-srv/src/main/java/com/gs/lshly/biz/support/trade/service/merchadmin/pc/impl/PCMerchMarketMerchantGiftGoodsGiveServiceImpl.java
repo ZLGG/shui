@@ -75,6 +75,7 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
     @Override
     public PageData<PCMerchMarketMerchantGiftGoodsGiveVO.ListVO> pageData(PCMerchMarketMerchantGiftGoodsGiveQTO.QTO qto) {
         QueryWrapper<MarketMerchantGiftGoodsGive> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<MarketMerchantGiftGoodsGive> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMarketMerchantGiftGoodsGiveVO.ListVO.class, page);
@@ -185,6 +186,9 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
 
     @Override
     public BbcTradeSettlementVO.ListVO.goodsInfoVO fillBbcGoodsInfoSettlementVO(CommonMarketDTO.SkuId giveSkuId) {
+        if (giveSkuId == null) {
+            return null;
+        }
         BbcGoodsInfoVO.InnerServiceVO innerServiceVO = giftGoodsInfoVO(giveSkuId);
         if (innerServiceVO == null) {
                 return null;
@@ -194,6 +198,9 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
 
     @Override
     public BbcTradeGoodsDTO.ETO fillBbcGoodsInfoOrderVO(CommonMarketDTO.SkuId giveSkuId, BbcTradeBuildDTO.DTO dto) {
+        if (giveSkuId == null) {
+            return null;
+        }
         BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO = giftGoodsInfoVO(giveSkuId);
         if (innerServiceGoodsVO == null) {
             return null;
@@ -272,6 +279,9 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
 
     @Override
     public BbbTradeSettlementVO.ListVO.goodsInfoVO fillBbcGoodsInfoSettlementVOBBB(CommonMarketDTO.SkuId giveSkuId, BaseDTO dto) {
+        if (giveSkuId == null) {
+            return null;
+        }
         PCBbbGoodsInfoVO.InnerServiceVO innerServiceGoodsVO = giftGoodsInfoVOBBB(giveSkuId, dto);
         if (innerServiceGoodsVO == null) {
             return null;
@@ -281,6 +291,9 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
 
     @Override
     public BbbTradeGoodsDTO.ETO fillBbcGoodsInfoOrderVOBBB(CommonMarketDTO.SkuId giveSkuId, BbbTradeBuildDTO.DTO dto) {
+        if (giveSkuId == null) {
+            return null;
+        }
         PCBbbGoodsInfoVO.InnerServiceVO innerServiceGoodsVO = giftGoodsInfoVOBBB(giveSkuId, dto);
         if (innerServiceGoodsVO == null) {
             return null;
@@ -364,6 +377,9 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
 
     @Override
     public BbbH5TradeSettlementVO.ListVO.goodsInfoVO fillBbcGoodsInfoSettlementVOBBBH5(CommonMarketDTO.SkuId giveSkuId, BaseDTO dto) {
+        if (giveSkuId == null) {
+            return null;
+        }
         BbbH5GoodsInfoVO.InnerServiceVO innerServiceGoodsVO = giftGoodsInfoVOBBBH5(giveSkuId, dto);
         if (innerServiceGoodsVO == null) {
             return null;
@@ -373,6 +389,9 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
 
     @Override
     public BbbH5TradeGoodsDTO.ETO fillBbcGoodsInfoOrderVOBBBH5(CommonMarketDTO.SkuId giveSkuId, BbbH5TradeBuildDTO.DTO dto) {
+        if (giveSkuId == null) {
+            return null;
+        }
         BbbH5GoodsInfoVO.InnerServiceVO innerServiceGoodsVO = giftGoodsInfoVOBBBH5(giveSkuId, dto);
         if (innerServiceGoodsVO == null) {
             return null;

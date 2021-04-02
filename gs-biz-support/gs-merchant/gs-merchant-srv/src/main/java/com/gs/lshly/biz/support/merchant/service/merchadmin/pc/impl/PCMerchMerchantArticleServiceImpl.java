@@ -10,14 +10,18 @@ import com.gs.lshly.biz.support.merchant.mapper.views.MerchantArticleView;
 import com.gs.lshly.biz.support.merchant.repository.IMerchantArticleCategoryRepository;
 import com.gs.lshly.biz.support.merchant.repository.IMerchantArticleRepository;
 import com.gs.lshly.biz.support.merchant.service.merchadmin.pc.IPCMerchMerchantArticleService;
+import com.gs.lshly.common.enums.MerchantArticleEnum;
+import com.gs.lshly.common.enums.SitePCShowEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.dto.RemindPlatDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantArticleDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMerchantArticleQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantArticleCategoryVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantArticleVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.IRemindPlatRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.IMerchantArticleCategoryRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.ibatis.annotations.Param;
@@ -51,10 +55,23 @@ public class PCMerchMerchantArticleServiceImpl implements IPCMerchMerchantArticl
     @DubboReference
     private IMerchantArticleCategoryRpc merchantArticleCategory;
 
+    @DubboReference
+    private IRemindPlatRpc iRemindPlatRpc;
+
     @Override
     public PageData<PCMerchMerchantArticleVO.ListVO> pageData(PCMerchMerchantArticleQTO.QTO qto) {
         QueryWrapper<MerchantArticleView> wrapper = MybatisPlusUtil.query();
-        /*wrapper.eq("art.shop_id",qto.getJwtShopId());*/
+        wrapper.eq("art.shop_id",qto.getJwtShopId());
+        if (ObjectUtils.isNotEmpty(qto.getPcShow()) && !qto.getPcShow().equals(30)){
+            wrapper.in("art.pc_show",qto.getPcShow(),30);
+        }
+        if (ObjectUtils.isNotEmpty(qto.getState())){
+            wrapper.eq("art.state",qto.getState());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getTitle())){
+            wrapper.like("art.title",qto.getTitle());
+        }
+        wrapper.orderByDesc("art.cdate");
         IPage<MerchantArticleView> page = MybatisPlusUtil.pager(qto);
         merchantArticleMapper.mapperPageList(page,wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMerchantArticleVO.ListVO.class, page);
@@ -66,7 +83,10 @@ public class PCMerchMerchantArticleServiceImpl implements IPCMerchMerchantArticl
         BeanCopyUtils.copyProperties(eto, merchantArticle);
         merchantArticle.setShopId(eto.getJwtShopId());
         merchantArticle.setMerchantId(eto.getJwtMerchantId());
+        merchantArticle.setState(MerchantArticleEnum.待审.getCode());
         repository.save(merchantArticle);
+        //触发消息
+        iRemindPlatRpc.addRemindPlatForMerchantArticleApply(new RemindPlatDTO.JustDTO(eto.getJwtShopId(),merchantArticle.getId()));
     }
 
 

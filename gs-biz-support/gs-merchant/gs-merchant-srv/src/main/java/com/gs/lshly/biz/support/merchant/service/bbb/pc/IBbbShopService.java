@@ -62,4 +62,13 @@ public interface IBbbShopService {
      */
     List<BbbShopVO.ShopNavigationIdName> innerListShopNavigation(ShopDTO.IdDTO dto);
 
+
+    /**
+     * 内部服务
+     * @param shopNavigationId
+     * @return
+     */
+    List<String> innerGetNavigationList(String shopNavigationId);
+
+    BbbShopVO.ComplexDetailVO innerSimple(String shopId);
 }

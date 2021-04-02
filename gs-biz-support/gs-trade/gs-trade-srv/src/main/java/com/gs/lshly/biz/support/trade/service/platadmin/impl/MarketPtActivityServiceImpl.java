@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.trade.entity.MarketPtActivity;
 import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsCategory;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityJurisdiction;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityGoodsCategoryRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityJurisdictionRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtActivityService;
 import com.gs.lshly.common.exception.BusinessException;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +42,15 @@ public class MarketPtActivityServiceImpl implements IMarketPtActivityService {
     private IMarketPtActivityRepository repository;
     @Autowired
     private IMarketPtActivityGoodsCategoryRepository categoryRepository;
+    @Autowired
+    private IMarketPtActivityJurisdictionRepository iMarketPtActivityJurisdictionRepository;
     @DubboReference
     private IGoodsCategoryRpc iGoodsCategoryRpc;
 
     @Override
     public PageData<MarketPtActivityVO.ListVO> pageData(MarketPtActivityQTO.QTO qto) {
         QueryWrapper<MarketPtActivity> wrapper = MybatisPlusUtil.query();
+        wrapper.orderByDesc("cdate");
         IPage<MarketPtActivity> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto,MarketPtActivityVO.ListVO.class, page);
@@ -56,8 +62,15 @@ public class MarketPtActivityServiceImpl implements IMarketPtActivityService {
         if (null == eto) {
             throw new BusinessException("参数不能微空");
         }
+        checkTime(eto);
         MarketPtActivity marketPtActivity = new MarketPtActivity();
         BeanUtils.copyProperties(eto, marketPtActivity);
+        if (ObjectUtils.isNotEmpty(eto.getBuyMax())){
+            marketPtActivity.setBuyMax(999);
+        }
+        if (ObjectUtils.isNotEmpty(eto.getGoodsMax())){
+            marketPtActivity.setGoodsMax(999);
+        }
         repository.save(marketPtActivity);
         //获取活动id
         String activityId = marketPtActivity.getId();
@@ -72,6 +85,40 @@ public class MarketPtActivityServiceImpl implements IMarketPtActivityService {
             categoryRepository.save(marketPtActivityGoodsCategory);
         }
 
+    }
+
+    private void checkTime(MarketPtActivityDTO.ETO eto) {
+        if (ObjectUtils.isEmpty(eto.getActivityEndTime())){
+            throw new BusinessException("时间为空");
+        }
+
+        if (ObjectUtils.isEmpty(eto.getActivityStartTime())){
+            throw new BusinessException("时间为空");
+        }
+        if (ObjectUtils.isEmpty(eto.getOnlineStartTime())){
+            throw new BusinessException("时间为空");
+        }
+        if (ObjectUtils.isEmpty(eto.getSignEndTime())){
+            throw new BusinessException("时间为空");
+        }
+        if (ObjectUtils.isEmpty(eto.getSignStartTime())){
+            throw new BusinessException("时间为空");
+        }
+        if (LocalDateTime.now().isAfter(eto.getActivityEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getActivityStartTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getOnlineStartTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getSignEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getSignStartTime())){
+            throw new BusinessException("请检查时间");
+        }
     }
 
     @Override
@@ -132,5 +179,24 @@ public class MarketPtActivityServiceImpl implements IMarketPtActivityService {
             ListVO.add(VO);
         }
         return ListVO;
+    }
+
+    @Override
+    public void updateActivity(MarketPtActivityDTO.updateDTO eto) {
+        MarketPtActivityJurisdiction one = iMarketPtActivityJurisdictionRepository.getOne(null);
+        if (ObjectUtils.isNotEmpty(one)){
+            eto.setId(one.getId());
+            MarketPtActivityJurisdiction marketPtActivityJurisdiction = new MarketPtActivityJurisdiction();
+            BeanUtils.copyProperties(eto,marketPtActivityJurisdiction);
+            iMarketPtActivityJurisdictionRepository.updateById(marketPtActivityJurisdiction);
+        }
+    }
+
+    @Override
+    public MarketPtActivityVO.updateDTO getActivity() {
+        MarketPtActivityJurisdiction one = iMarketPtActivityJurisdictionRepository.getOne(null);
+        MarketPtActivityVO.updateDTO updateDTO = new MarketPtActivityVO.updateDTO();
+        BeanUtils.copyProperties(one,updateDTO);
+        return updateDTO;
     }
 }

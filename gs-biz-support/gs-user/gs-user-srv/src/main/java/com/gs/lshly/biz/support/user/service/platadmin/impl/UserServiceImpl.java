@@ -104,6 +104,7 @@ public class UserServiceImpl implements IUserService {
         if(ObjectUtils.isNotEmpty(qto.getSex())){
             wrapper.eq("us.sex",qto.getSex());
         }
+        wrapper.orderByDesc("us.cdate");
         IPage<UserView> page = MybatisPlusUtil.pager(qto);
         userMapper.pageList(page,wrapper);
         List< UserVO.ListVO> resultList = new ArrayList<>();

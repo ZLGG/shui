@@ -5,6 +5,8 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.middleware.auth.rbac.IMenuSet;
 import com.gs.lshly.middleware.auth.rbac.MenuMessage;
+import com.gs.lshly.middleware.log.Log;
+import com.gs.lshly.middleware.log.aop.LogAspect;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountAuthRpc;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +36,13 @@ public class JwtMerchantService implements UserDetailsService, IMenuSet {
 
 
     @Override
+    @Log(module = "登陆", func = "商家登陆")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AuthDTO dto = pcMerchMerchantAccountAuthRpc.loadUserByUsername(username);
         if (dto != null) {
-            return new JwtUser(dto);
+            JwtUser jwtUser = new JwtUser(dto);
+            LogAspect.set(LogAspect.toDTO(jwtUser));
+            return jwtUser;
         } else {
             throw new UsernameNotFoundException(CommonConst.USERNAME_OR_PASSWORD_INCORRECT);
         }

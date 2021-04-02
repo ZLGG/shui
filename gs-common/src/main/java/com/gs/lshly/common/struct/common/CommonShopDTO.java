@@ -196,4 +196,13 @@ public abstract class CommonShopDTO implements Serializable {
         private String shopId;
 
     }
+    @Data
+    @ApiModel("CommonShopDTO.VisitsDTO")
+    @Accessors(chain = true)
+    public static class VisitsDTO extends BaseDTO {
+
+        @ApiModelProperty("店铺ID")
+        private String shopId;
+
+    }
 }

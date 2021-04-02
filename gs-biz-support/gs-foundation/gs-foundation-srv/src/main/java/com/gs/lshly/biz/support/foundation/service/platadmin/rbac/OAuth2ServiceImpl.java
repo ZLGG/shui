@@ -132,25 +132,17 @@ public class OAuth2ServiceImpl implements IOAuth2Service {
     }
 
     @Override
-    public OAuth2VO.SysUserVO userInfo(OAuth2DTO.UserInfoDTO dto) {
-        JwtUser jwtUser = check(dto);
-        if (StringUtils.isNotBlank(jwtUser.getMerchantId())) {
-            throw new BusinessException("非平台账号授权token");
-        }
-        OAuth2VO.SysUserVO userInfo = new OAuth2VO.SysUserVO();
-        userInfo.setUserId(jwtUser.getId()).setHeadImg(jwtUser.getHeadImg()).setUserName(jwtUser.getUsername());
-        return userInfo;
-    }
-
-    @Override
     public OAuth2VO.MerchantVO merchantInfo(OAuth2DTO.UserInfoDTO dto) {
         JwtUser jwtUser = check(dto);
-        if (StringUtils.isBlank(jwtUser.getMerchantId())) {
-            throw new BusinessException("非商家账号授权token");
-        }
+
         OAuth2VO.MerchantVO merchantInfo = new OAuth2VO.MerchantVO();
-        merchantInfo.setUserId(jwtUser.getId()).setHeadImg(jwtUser.getHeadImg()).setUserName(jwtUser.getUsername());
-        merchantInfo.setMerchantId(jwtUser.getMerchantId()).setShopId(jwtUser.getShopId()).setPhone(jwtUser.getPhone());
+
+        if (StringUtils.isBlank(jwtUser.getMerchantId())) {
+            merchantInfo.setSysHeadImg(jwtUser.getHeadImg()).setSysUserName(jwtUser.getUsername()).setSysUserId(jwtUser.getId());
+        } else {
+            merchantInfo.setUserId(jwtUser.getId()).setHeadImg(jwtUser.getHeadImg()).setUserName(jwtUser.getUsername());
+            merchantInfo.setMerchantId(jwtUser.getMerchantId()).setShopId(jwtUser.getShopId()).setPhone(jwtUser.getPhone());
+        }
         return merchantInfo;
     }
 

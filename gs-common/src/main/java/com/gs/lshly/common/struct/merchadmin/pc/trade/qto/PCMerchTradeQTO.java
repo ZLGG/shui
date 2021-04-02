@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author oy
 * @since 2020-11-16
@@ -126,6 +128,14 @@ public abstract class PCMerchTradeQTO implements Serializable {
 
         @ApiModelProperty("配送类型")
         private Integer deliveryType;
+
+    }
+    @Data
+    @ApiModel("PCMerchTradeDTO.IdListQTO")
+    public static class IdListQTO implements Serializable{
+
+        @ApiModelProperty("发货单ID列表")
+        private List<String> idList;
 
     }
 }

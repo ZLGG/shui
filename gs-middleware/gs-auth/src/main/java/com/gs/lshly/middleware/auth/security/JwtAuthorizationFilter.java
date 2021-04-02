@@ -108,7 +108,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 throw e;
             }
         }
-        if (!JwtUtil.isExpiration(jwtUser)) {
+        if (jwtUser == null || !JwtUtil.isExpiration(jwtUser)) {
             if (allowExpireOrEmpty) {
                 return;
             } else {

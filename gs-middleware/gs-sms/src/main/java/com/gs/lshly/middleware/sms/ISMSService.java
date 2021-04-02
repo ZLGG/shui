@@ -13,6 +13,8 @@ public interface ISMSService {
 
     String sendPickUpSMSCode(String phone,String pickUpNum,String name);
 
+    String sendPickUpSMSCode(String phone,String pickUpNum,String name,String shoName);
+
     String sendSettlementSMSCode(String phone,String username,String pwd);
 
     String sendSettlementFaildSMSCode(String phone,String shopName,String siteName,String reason);

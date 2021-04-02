@@ -6,7 +6,6 @@ import com.gs.lshly.common.struct.bbb.pc.commodity.dto.PCBbbGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 
 import java.util.List;
 
@@ -102,5 +101,4 @@ public interface IPCBbbGoodsInfoRpc {
      * @return
      */
     PCBbbGoodsInfoVO.GetGoodsStepPriceVO innerGetStepPrice(String skuId);
-    
 }

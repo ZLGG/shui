@@ -69,7 +69,17 @@ public class StockTemplateRegion extends Model {
     private String city;
 
     /**
-    * 最小地区层级[10=省 20=市]
+     * 区id
+     */
+    private String countyId;
+
+    /**
+    * 区
+    */
+    private String county;
+
+    /**
+    * 最小地区层级[10=省 20=市 30=区]
     */
     private Integer regionLeve;
 

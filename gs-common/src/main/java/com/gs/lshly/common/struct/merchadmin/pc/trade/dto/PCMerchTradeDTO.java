@@ -111,6 +111,7 @@ public abstract class PCMerchTradeDTO implements Serializable {
         @ApiModelProperty(value = "交易订单表售后(ID)")
         private String id;
     }
+
     @Data
     @ApiModel("PCMerchTradeDTO.GoodsIdsDTO")
     @AllArgsConstructor
@@ -140,6 +141,8 @@ public abstract class PCMerchTradeDTO implements Serializable {
         private BigDecimal freight;
         @ApiModelProperty(value = "支付金额")
         private BigDecimal orderAmount;
+        @ApiModelProperty(value = "改价原因")
+        private String  changePriceCause;
     }
 
 

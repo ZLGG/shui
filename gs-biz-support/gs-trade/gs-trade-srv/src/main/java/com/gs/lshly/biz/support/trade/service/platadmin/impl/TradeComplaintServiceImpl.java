@@ -59,6 +59,7 @@ public class TradeComplaintServiceImpl implements ITradeComplaintService {
         if (ObjectUtils.isNotEmpty(qto.getQueryType()) && !qto.getQueryType().equals(TradeComplaintStateEnum.全部.getCode())){
             wrapper.eq("tc.handle_state",qto.getQueryType());
         }
+        wrapper.orderByDesc("tc.cdate");
         IPage<TradeComplaintView> page = MybatisPlusUtil.pager(qto);
         IPage<TradeComplaintView> viewIPage = complaintMapper.pageVo(page,wrapper);
         if (ObjectUtils.isEmpty(viewIPage) || ObjectUtils.isEmpty(viewIPage.getRecords())){

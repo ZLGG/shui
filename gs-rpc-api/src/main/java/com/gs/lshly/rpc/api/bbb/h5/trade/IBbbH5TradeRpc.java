@@ -56,4 +56,8 @@ public interface IBbbH5TradeRpc {
     //我的优惠卷数量
 
     Integer myMerchantCard(BaseDTO dto);
+
+    void offlinePay(BbbH5TradeDTO.OfflinePayDTO dto);
+
+    ResponseData<BbbH5TradeListVO.OfflinePayVO> offlineDetail(BbbH5TradeDTO.IdDTO dto);
 }

@@ -25,7 +25,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/merchant/settings")
 @Api(tags = "店铺配置管理")
-@Module(code = "storeConfiguration", parent = "shop", name = "店铺配置", index = 1)
 public class PCMerchSettingsController {
 
     @DubboReference
@@ -33,14 +32,12 @@ public class PCMerchSettingsController {
 
     @ApiOperation("获取-配送方式设置")
     @GetMapping("/delivery")
-    @Func(code="view", name="查")
     public ResponseData<PCMerchSettingsVO.DeliveryStyleVO> deliveryStyle(){
         return ResponseData.data(shopRpc.getDeliveryStyle(new BaseDTO()));
     }
 
     @ApiOperation("配送方式-设置")
     @PostMapping("/delivery")
-    @Func(code="edit", name="改")
     public ResponseData<Void> deliveryStyle(@Valid @RequestBody PCMerchSettingsDTO.DeliveryStyleDTO dto){
         shopRpc.setDeliveryStyle(dto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);

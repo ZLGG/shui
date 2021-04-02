@@ -17,4 +17,6 @@ public interface ITradeCancelRpc {
     TradeCancelVO.DetailVO detailTradeCancel(TradeCancelDTO.IdDTO dto);
 
     ExportDataDTO export(TradeCancelQTO.IdListQTO qo)  throws Exception;
+
+    void delete(TradeCancelQTO.IdListQTO ids);
 }

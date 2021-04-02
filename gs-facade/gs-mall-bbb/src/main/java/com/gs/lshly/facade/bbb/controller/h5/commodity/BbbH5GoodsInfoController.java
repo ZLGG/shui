@@ -38,6 +38,12 @@ public class BbbH5GoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsListVO(qto));
     }
 
+    @ApiOperation("2B商家商品信息管理列表")
+    @PostMapping("/merchantGoodsInfo")
+    public ResponseData<PageData<BbbH5GoodsInfoVO.GoodsListVO>> pageDataMerchantGoodsInfo(@RequestBody  BbbH5GoodsInfoQTO.MerchantShopGoodsQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.pageMerchantGoodsListVO(qto));
+    }
+
 
     @ApiOperation("2B商城商品信息管理详情")
     @GetMapping(value = "detail/{id}")

@@ -54,6 +54,7 @@ public class PCMerchMarketMerchantGiftServiceImpl implements IPCMerchMarketMerch
         QueryWrapper<MarketMerchantGift> wrapper = new QueryWrapper<>();
         wrapper.eq("merchant_id",qto.getJwtMerchantId()).
                 eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         List<MarketMerchantGift> list = repository.list(wrapper);
         List<PCMerchMarketMerchantGiftVO.ViewVO> vos=new ArrayList<>();
         Long now = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
@@ -106,6 +107,10 @@ public class PCMerchMarketMerchantGiftServiceImpl implements IPCMerchMarketMerch
     @Override
     @Transactional
     public void addMarketMerchantGift(PCMerchMarketMerchantGiftDTO.AddDTO eto) {
+        if (ObjectUtils.isEmpty(eto)){
+            throw new BusinessException("请填写活动信息");
+        }
+        checkETO(eto);
         MarketMerchantGift marketMerchantGift = new MarketMerchantGift();
         BeanUtils.copyProperties(eto, marketMerchantGift);
         marketMerchantGift.setShopId(eto.getJwtShopId());
@@ -164,6 +169,36 @@ public class PCMerchMarketMerchantGiftServiceImpl implements IPCMerchMarketMerch
                     setShopId(eto.getJwtShopId());
             iMarketMerchantGiftGoodsGiveRepository.save(marketMerchantGiftGoodsGive);
         }
+    }
+    private void checkETO(PCMerchMarketMerchantGiftDTO.AddDTO eto) {
+        if (ObjectUtils.isEmpty(eto.getGiftName())){
+            throw new BusinessException("请填写名字");
+        }
+        if (ObjectUtils.isEmpty(eto.getScountRule())){
+            throw new BusinessException("请填写规则");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidEndTime())){
+            throw new BusinessException("请填写结束时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidStartTime())){
+            throw new BusinessException("请填写优惠卷有效开始时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getOnUserLeve())){
+            throw new BusinessException("请填写优惠卷适用会员等级(1,2,3,4,5,6)");
+        }
+        if (ObjectUtils.isEmpty(eto.getTerminal())){
+            throw new BusinessException("请填写适用平台[10=pc端 20=wap端 30=app端]");
+        }
+        if (ObjectUtils.isEmpty(eto.getReturnGift())){
+            throw new BusinessException("请填写退回赠品[10=退回 20=不退回]");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidStartTime())){
+            throw new BusinessException("请检查时间");
+        }
+
     }
 
 

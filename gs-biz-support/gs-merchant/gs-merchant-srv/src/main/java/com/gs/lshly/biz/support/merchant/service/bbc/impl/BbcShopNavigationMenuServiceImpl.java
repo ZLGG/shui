@@ -28,6 +28,7 @@ public class BbcShopNavigationMenuServiceImpl implements IBbcShopNavigationMenuS
     @Override
     public PageData<BbcShopNavigationMenuVO.MenuListVO> pageData(BbcShopNavigationMenuQTO.QTO qto) {
         QueryWrapper<ShopNavigationMenu> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<ShopNavigationMenu> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbcShopNavigationMenuVO.MenuListVO.class, page);

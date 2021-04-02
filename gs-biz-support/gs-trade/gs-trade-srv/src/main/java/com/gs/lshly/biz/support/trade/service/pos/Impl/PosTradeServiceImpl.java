@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
@@ -44,15 +45,23 @@ import java.util.TreeMap;
 @Slf4j
 public class PosTradeServiceImpl implements IPosTradeService {
 
-    private String pubKey = "";
+    @Value("${pos.2c.url}")
+    private String url;
 
-    private String privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBALZrfh8iVLkjzM40rdSngIRqdxLxYBCeB32SL1r0/Ee6rNvWyBnltY/P3LxL0plfzKBt9EmdQPjR0lanOG6SC+BlBNVcL6wmRWMIsMd9G1RsL+pKurXbN0IF9899Ucvnme+SptuS1iBIbT6Z5wogu8gupLSPO9jefsyMDZrZBSpXAgMBAAECf002t8+pFJns/gEru8S4F49RL1MdAUToqWG674OvTakjZTrHPlIeT5LDF0VpTZx/THo1Q6JgFpsnAeuC3H7SNAsPzEiZnas7oyMR6G6/pE29cStZ8gE4KNqiHH5ZdzYUhDKcogJdaO4Q4vyZ+wFXvCcD4lwkwnzUnVSuMxY2XCECQQDqkbk33/JLeEtwZodBVmMOZyQrrcH6ICR+NCuSMWhoh7XK5t7X9CXIAc7sA7Ych4hrXrChf6r0IXVHBpo+8YJxAkEAxxYP9LtjLW0+7+E1U7DhP/S90iPs4ApfmkYIs1+beUnkJNrGfhL9KE59RJkhQzAOLHWzuiOVOhHtTMB9B65NRwJAILBQHH5D+Mp50N8o6C0OvtoWy1N6nc3O6BuDGutxvmdzKSSFV5j5jubZnEBkJ5OnqjbW7JqrCzyCaHR+GFl1sQJBAIdgBTGRSntVUfqj1TM3j7OBpKIEM8qUwzWQcdInLP1otW4qJdcM6oBB/wRqbCfXwYuR7cig8ZQvJIGQUnSqnXkCQQCY8V1cP/pjtn0e0NbpiUhBTrqX0u841D1DHYkgn3Git50DqF0cBp6/DPUaf1U2oyuOdfEjaENr9zrdTOi26jAx";
+    @Value("${pos.2c.accessKeyId}")
+    private  String accessKeyId;
 
-    private String url="https://openapi-int.gshldj.com";
+    @Value("${pos.2c.accessKeySecret}")
+    private  String accessKeySecret;
 
-    private  String accessKeyId="longliangdj";
+    @Value("${pos.2b.url}")
+    private String url2b;
 
-    private  String accessKeySecret="123456";
+    @Value("${pos.2b.accessKeyId}")
+    private  String accessKeyId2b;
+
+    @Value("${pos.2b.accessKeySecret}")
+    private  String accessKeySecret2b;
 
     @Autowired
     private ITradePosLogRepository iTradePosLogRepository;
@@ -78,11 +87,11 @@ public class PosTradeServiceImpl implements IPosTradeService {
         dto.setShop(param);
         String body = JSONObject.toJSONString(dto);
         System.out.println(body);
-        String sign = requestUri + body + timestamp + accessKeySecret;
+        String sign = requestUri + body + timestamp + accessKeySecret2b;
         String response = null;
         try {
             String signature = MD5(sign, "UTF-8").toLowerCase();
-            String ur = url + requestUri + "?accessKeyId=" + accessKeyId + "&timestamp=" + timestamp + "&signature=" + signature + "&signMethod=MD5";
+            String ur = url2b + requestUri + "?accessKeyId=" + accessKeyId2b + "&timestamp=" + timestamp + "&signature=" + signature + "&signMethod=MD5";
             System.out.println("url=~~~~~~~~~_____" + ur);
             response = HttpsUtil.doPost(ur, body);
             System.out.println("response："+response);
@@ -186,7 +195,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
         JSONObject jsonObject = JSONObject.parseObject(response);
         if (null != jsonObject) {
             if (jsonObject.getObject("retCode", Integer.class) != 0) {
-                throw new BusinessException("接口调用失败");
+                throw new BusinessException("接口调用失败：message："+jsonObject.getObject("retMsg",String.class));
             }
         }
     }
@@ -218,7 +227,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
         JSONObject jsonObject = JSONObject.parseObject(response);
         if (null != jsonObject) {
             if (jsonObject.getObject("retCode", Integer.class) != 0) {
-                throw new BusinessException("接口调用失败");
+                throw new BusinessException("接口调用失败：message："+jsonObject.getObject("retMsg",String.class));
             }
         }
     }
@@ -250,7 +259,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
         JSONObject jsonObject = JSONObject.parseObject(response);
         if (null != jsonObject) {
             if (jsonObject.getObject("retCode", Integer.class) != 0) {
-                throw new BusinessException("接口调用失败");
+                throw new BusinessException("接口调用失败：message："+jsonObject.getObject("retMsg",String.class));
             }
         }
     }
@@ -282,7 +291,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
         JSONObject jsonObject = JSONObject.parseObject(response);
         if (null != jsonObject) {
             if (jsonObject.getObject("retCode", Integer.class) != 0) {
-                throw new BusinessException("接口调用失败");
+                throw new BusinessException("接口调用失败：message："+jsonObject.getObject("retMsg",String.class));
             }
         }
     }
@@ -314,7 +323,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
         JSONObject jsonObject = JSONObject.parseObject(response);
         if (null != jsonObject) {
             if (jsonObject.getObject("retCode", Integer.class) != 0) {
-                throw new BusinessException("接口调用失败");
+                throw new BusinessException("接口调用失败：message："+jsonObject.getObject("retMsg",String.class));
             }
         }
     }
@@ -346,7 +355,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
         JSONObject jsonObject = JSONObject.parseObject(response);
         if (null != jsonObject) {
             if (jsonObject.getObject("retCode", Integer.class) != 0) {
-                throw new BusinessException("接口调用失败");
+                throw new BusinessException("接口调用失败：message："+jsonObject.getObject("retMsg",String.class));
             }
         }
     }
@@ -398,7 +407,7 @@ public class PosTradeServiceImpl implements IPosTradeService {
 
     public static void main(String[] args) {
         PosTradeServiceImpl service = new PosTradeServiceImpl();
-        service.pullTrade(new PosRSPurchaseSyncRequestDTO(), "dpos1021");
+        service.pullTrade(new PosRSPurchaseSyncRequestDTO(), "dpos-int1021");
     }
 
     /**

@@ -32,4 +32,12 @@ public interface IPCMerchMerchantAccountRpc {
     PCMerchMerchantAccountVO.CheckShopVO checkShop(BaseDTO dto);
 
     PCMerchMerchantAccountVO.ListVO innnerDetailMerchantAccount(String phoneNum);
+
+    void getPhoneValidCode(String phone);
+
+    String forgetPasswordByPhone(PCMerchMerchantAccountDTO.ForgetByPhoneETO dto);
+
+    String forgetByEmail(PCMerchMerchantAccountDTO.ForgetByEmailETO dto);
+
+    void getEmailNum(String email);
 }

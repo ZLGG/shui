@@ -43,6 +43,7 @@ public class SiteBottomArticleServiceImpl implements ISiteBottomArticleService {
         wq.eq("terminal",qto.getTerminal());
         wq.eq("pc_show",qto.getPcShow());
         wq.eq("subject",qto.getSubject());
+        wq.orderByDesc("cdate");
         List<SiteBottomArticle> bottomList = repository.list(wq);
         return ListUtil.listCover(SiteBottomArticleVO.PCListVO.class,bottomList);
     }

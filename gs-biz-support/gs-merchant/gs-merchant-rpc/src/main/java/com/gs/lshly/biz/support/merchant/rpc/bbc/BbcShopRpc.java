@@ -4,6 +4,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopNavigationVO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockDeliveryDTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockDeliveryVO;
@@ -38,6 +39,11 @@ public class BbcShopRpc implements IBbcShopRpc{
     }
 
     @Override
+    public List<BbcShopVO.ScopeListVO> nearShopList(BbcShopQTO.ScopeQTO qto) {
+        return bbcShopService.nearShopList(qto);
+    }
+
+    @Override
     public BbcStockDeliveryVO.SupportDeliveryTypeVO supportDeliveryStyle(BbcStockDeliveryDTO.SupportDeliveryTypeDTO dto) {
         if (StringUtils.isBlank(dto.getShopId())) {
             throw new BusinessException("店铺参数不能为空");
@@ -69,6 +75,16 @@ public class BbcShopRpc implements IBbcShopRpc{
     }
 
     @Override
+    public List<BbcShopNavigationVO.NavigationListVO> listNavigationListVO(BbcShopDTO.IdDTO dto) {
+        return bbcShopService.listNavigationListVO(dto);
+    }
+
+    @Override
+    public BbcShopVO.ShopIdName getShopIdName(BbcShopDTO.ShopNavigationIdDTO dto) {
+        return bbcShopService.getShopIdName(dto);
+    }
+
+    @Override
     public BbcShopVO.InnerDetailVO innerDetailShop(BbcShopQTO.InnerShopQTO qto) {
         return bbcShopService.innerDetailShop(qto);
     }
@@ -91,6 +107,16 @@ public class BbcShopRpc implements IBbcShopRpc{
     @Override
     public BbcShopVO.isCity isCity(BbcShopDTO.isCity dto) {
         return bbcShopService.isCity(dto);
+    }
+
+    @Override
+    public List<String> innerGetNavigationList(String shopNavigationId) {
+        return bbcShopService.innerGetNavigationList(shopNavigationId);
+    }
+
+    @Override
+    public List<String> innerShopDelivery(String shopId) {
+        return bbcShopService.innerShopDelivery(shopId);
     }
 
 

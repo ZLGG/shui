@@ -254,5 +254,7 @@ public abstract class PCMerchUserVO implements Serializable {
         @ApiModelProperty("会员用户名")
         private String userName;
 
+        @ApiModelProperty("手机号")
+        private String phone;
     }
 }

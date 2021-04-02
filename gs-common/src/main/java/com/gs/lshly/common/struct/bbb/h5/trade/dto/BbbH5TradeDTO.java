@@ -118,6 +118,27 @@ public abstract class BbbH5TradeDTO implements Serializable {
         private String id;
     }
     @Data
+    @ApiModel("BbbH5TradeDTO.OfflinePayDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OfflinePayDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "订单号(ID)")
+        private String id;
+        @ApiModelProperty(value = "付款用户名")
+        private String payName;
+        @ApiModelProperty(value = "付款卡号")
+        private String payCardNum;
+        @ApiModelProperty(value = "付款银行")
+        private String payBlank;
+        @ApiModelProperty(value = "转账金额")
+        private BigDecimal transferAmount;
+        @ApiModelProperty(value = "转账备注")
+        private String transferRemarks;
+        @ApiModelProperty(value = "凭证图片")
+        private List<String> transImage;
+    }
+    @Data
     @ApiModel("BbbH5TradeDTO.UseCard")
     @AllArgsConstructor
     @NoArgsConstructor

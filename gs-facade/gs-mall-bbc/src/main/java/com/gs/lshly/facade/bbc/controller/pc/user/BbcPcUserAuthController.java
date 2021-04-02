@@ -72,7 +72,7 @@ public class BbcPcUserAuthController {
             WxMaService wxService = WxMaConfiguration.getMaService(appid);
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
             //通过微信openid查找，针对已登录过的用户
-            BbbUserVO.LoginVO loginVO = bbbUserAuthRpc.loadUserByWxOpenid(appid, session.getOpenid(), session.getSessionKey());
+            BbbUserVO.LoginVO loginVO = bbbUserAuthRpc.loadUserByWxOpenid(appid, session.getOpenid(), session.getSessionKey(), session.getUnionid());
             if (loginVO != null) {
                 log.info("微信小程序通过code获取openid或直接登录："+JsonUtils.toJson(loginVO));
                 return ResponseData.data(loginVO);

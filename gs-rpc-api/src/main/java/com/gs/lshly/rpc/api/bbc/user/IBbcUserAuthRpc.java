@@ -1,10 +1,10 @@
 package com.gs.lshly.rpc.api.bbc.user;
 
 import com.gs.lshly.common.struct.AuthDTO;
+import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
-import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 
 /**
@@ -18,7 +18,7 @@ public interface IBbcUserAuthRpc {
 
     BbcUserVO.LoginVO login(BbcUserDTO.LoginETO dto);
 
-    BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey);
+    BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid);
 
     String loadSessionKeyByWxOpenid(String openid);
 
@@ -29,4 +29,10 @@ public interface IBbcUserAuthRpc {
     BbcUserVO.LoginVO bindPhone(String appid, String openid, String validCode, String phone);
 
     void logout(String phone, String openid);
+
+    /**
+     *
+     * 通过userId查询微信名字
+     */
+    BbcUserVO.ThirdVO innerGetWXNickName(String userId);
 }

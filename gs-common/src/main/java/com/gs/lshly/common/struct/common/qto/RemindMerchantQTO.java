@@ -18,8 +18,11 @@ public abstract class RemindMerchantQTO implements Serializable {
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
 
-        @ApiModelProperty("消息提醒业务类型(具体枚举查看外部文档)")
+        @ApiModelProperty("消息提醒业务类型,不传就是查全部(具体枚举查看外部文档)")
         private Integer cType;
 
+        @ApiModelProperty("10=待读 20=已读,不传或0值查全部")
+        private Integer state;
     }
+
 }

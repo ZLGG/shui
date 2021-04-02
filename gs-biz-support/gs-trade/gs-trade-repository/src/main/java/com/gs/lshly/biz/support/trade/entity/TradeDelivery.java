@@ -53,7 +53,7 @@ public class TradeDelivery extends Model {
     private String logisticsId;
 
     /**
-    * 物流编号
+    * 物流单号
     */
     private String logisticsNumber;
 

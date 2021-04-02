@@ -21,6 +21,7 @@ import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsInfoRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
@@ -55,6 +56,7 @@ public class BbbUserFavoritesGoodsServiceImpl implements IBbbUserFavoritesGoodsS
         }
         QueryWrapper queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("user_id",qto.getJwtUserId());
+        queryWrapper.orderByDesc("cdate");
         IPage<UserFavoritesGoods> pager = MybatisPlusUtil.pager(qto);
         repository.page(pager,queryWrapper);
         if(ObjectUtils.isEmpty(pager.getRecords())){
@@ -72,13 +74,16 @@ public class BbbUserFavoritesGoodsServiceImpl implements IBbbUserFavoritesGoodsS
         }
         List<PCBbbGoodsInfoVO.HomeInnerServiceVO> innerGoodsList =  bbbGoodsInfoRpc.getHomeGoodsInnerServiceVO(goodsIdList,
                 new BaseDTO().setJwtUserId(qto.getJwtUserId()).setJwtUserType(qto.getJwtUserType()));
-        if(ObjectUtils.isEmpty(innerGoodsList)){
+        if(ObjectUtils.isEmpty(innerGoodsList) && ObjectUtils.isEmpty(voList)){
             return new PageData<>(new ArrayList<>(),qto.getPageNum(),qto.getPageSize(),pager.getTotal());
         }
-        for(PCBbbGoodsInfoVO.HomeInnerServiceVO innerGoodsVo:innerGoodsList){
-            for(BbbUserFavoritesGoodsVO.ListVO goodsVO:voList){
-                if(goodsVO.getGoodsId().equals(innerGoodsVo.getId())){
-                    BeanCopyUtils.copyProperties(innerGoodsVo,goodsVO);
+        for (int i = 0; i < innerGoodsList.size(); i++) {
+            for (int i1 = 0; i1 < voList.size(); i1++) {
+                if (ObjectUtils.isNotEmpty(innerGoodsList.get(i).getId()) && ObjectUtils.isNotEmpty(voList.get(i1).getGoodsId())){
+                    if (innerGoodsList.get(i).getId().equals(voList.get(i1).getGoodsId())){
+                        BeanUtils.copyProperties(innerGoodsList.get(i),voList.get(i1));
+                    }
+
                 }
             }
         }

@@ -66,7 +66,7 @@ public class Shop2cController {
     @Func(code="edit", name="改")
     public ResponseData<Void> update(@PathVariable String id) {
         shopRpc.openShop(new ShopDTO.IdDTO(id));
-        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+        return ResponseData.success(MsgConst.OPEN_SUCCESS);
     }
 
     @ApiOperation("自营店添加")

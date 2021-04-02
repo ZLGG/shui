@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.foundation.rpc.common;
 
 import com.gs.lshly.biz.support.foundation.service.common.ILegalDictService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.common.LegalDictDTO;
 import com.gs.lshly.common.struct.common.LegalDictQTO;
@@ -84,6 +85,11 @@ public class LegalDictRpc implements ILegalDictRpc {
     }
 
     @Override
+    public LegalDictVO.SettledInfoVO getSettledInfo(BaseDTO dto) {
+        return legalDictService.getSettledInfo(dto);
+    }
+
+    @Override
     public List<LegalDictVO.DetailVO> innerListLegalDict(List<String> legalIdList) {
         return legalDictService.innerListLegalDict(legalIdList);
     }
@@ -106,6 +112,26 @@ public class LegalDictRpc implements ILegalDictRpc {
     @Override
     public void innerUpdateLegalDict(String legalId, Integer bussinessType) {
         legalDictService.innerUpdateLegalDict(legalId, bussinessType);
+    }
+
+    @Override
+    public int innerCountNeedCert(String corpTypeId) {
+        return legalDictService.innerCountNeedCert(corpTypeId);
+    }
+
+    @Override
+    public LegalDictVO.MerchantApplyIdVO editSettledInfo(LegalDictDTO.SettledInfoETO eto) {
+       return legalDictService.editSettledInfo(eto);
+    }
+
+    @Override
+    public LegalDictVO.SettledCertInfoVO innerCertInfoVO(String corpTypeId) {
+        return legalDictService.innerCertInfoVO(corpTypeId);
+    }
+
+    @Override
+    public void innereditSettleState(String legalId, Integer state) {
+        legalDictService.innereditSettleState(legalId, state);
     }
 
 }

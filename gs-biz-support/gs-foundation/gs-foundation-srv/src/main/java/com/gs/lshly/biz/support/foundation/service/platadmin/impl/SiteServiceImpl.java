@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.foundation.entity.Site;
 import com.gs.lshly.biz.support.foundation.repository.ISiteRepository;
 import com.gs.lshly.biz.support.foundation.service.platadmin.ISiteService;
+import com.gs.lshly.common.enums.PcH5Enum;
+import com.gs.lshly.common.enums.SitePCShowEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteDTO;
@@ -31,6 +33,7 @@ public class SiteServiceImpl implements ISiteService {
     @Override
     public PageData<SiteVO.ListVO> pageData(SiteQTO.QTO qto) {
         QueryWrapper<Site> wrapper =  MybatisPlusUtil.query();
+        wrapper.orderByDesc("cdate");
         IPage<Site> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, SiteVO.ListVO.class, page);
@@ -48,6 +51,7 @@ public class SiteServiceImpl implements ISiteService {
         }
         Site site = new Site();
         BeanUtils.copyProperties(eto, site);
+        site.setPcShow(SitePCShowEnum.显示.getCode());
         repository.saveOrUpdate(site);
     }
 

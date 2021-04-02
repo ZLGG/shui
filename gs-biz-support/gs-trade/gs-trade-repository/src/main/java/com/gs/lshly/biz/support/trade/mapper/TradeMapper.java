@@ -40,11 +40,8 @@ import java.util.List;
 @Repository
 public interface TradeMapper extends BaseMapper<Trade> {
 
-    @Select("SELECT t.*,tg.`id` trade_goods_id,tg.`pay_amount` " +
-            "FROM `gs_trade` t " +
-            "LEFT JOIN  `gs_trade_goods` tg ON t.`id`=tg.`trade_id`" +
-            "WHERE t.`flag`=0 AND tg.`flag`=0 AND ${ew.sqlSegment}")
-    IPage<BbcTradeListVO.tradeVO> selectTradeListPage(IPage<BbcTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO.TradeList> qw);
+    @Select("SELECT t.*,count(tg.id) as bc,count(tc.id) as cc FROM gs_trade AS t LEFT JOIN gs_trade_comment AS tc ON t.id = tc.trade_id LEFT JOIN gs_trade_goods AS tg ON tg.trade_id = t.id where t.`flag`=0 AND ${ew.sqlSegment}")
+    List<BbcTradeListVO.tradeVO> selectTradeListPage( @Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO.TradeList> qw);
 
 
     @Select(" SELECT t.`trade_state`,COUNT(t.`id`) " +
@@ -88,11 +85,8 @@ public interface TradeMapper extends BaseMapper<Trade> {
             "\tLEFT JOIN gs_trade_goods gtg ON gt.id = gtg.trade_id\n" +
             "WHERE gt.id = #{tradeId}")
     TradeInfoView getTradeInfo(@Param("tradeId") String tradeId);
-    @Select("SELECT t.*,tg.`id` trade_goods_id,tg.`pay_amount` " +
-            "FROM `gs_trade` t " +
-            "LEFT JOIN  `gs_trade_goods` tg ON t.`id`=tg.`trade_id`" +
-            "WHERE t.`flag`=0 AND tg.`flag`=0 AND ${ew.sqlSegment}")
-    IPage<BbbH5TradeListVO.tradeVO> BbbH5selectTradeListPage(IPage<BbbH5TradeListVO.tradeVO> page,@Param(Constants.WRAPPER)  QueryWrapper<BbbH5TradeQTO.TradeList> qw);
+    @Select("SELECT t.*,count(tg.id) as bc,count(tc.id) as cc FROM gs_trade AS t LEFT JOIN gs_trade_comment AS tc ON t.id = tc.trade_id LEFT JOIN gs_trade_goods AS tg ON tg.trade_id = t.id where t.`flag`=0 AND ${ew.sqlSegment}")
+    List<BbbH5TradeListVO.tradeVO>  BbbH5selectTradeListPage(@Param(Constants.WRAPPER)  QueryWrapper<BbbH5TradeQTO.TradeList> qw);
     @Select(" SELECT t.`trade_state`,COUNT(t.`id`) " +
             " trade_count FROM gs_trade t  " +
             " WHERE t.`flag`=0  AND ${ew.sqlSegment}")
@@ -105,15 +99,27 @@ public interface TradeMapper extends BaseMapper<Trade> {
             " where flag= 0 AND DATE(cdate) =DATE(CURDATE()-1) AND ${ew.sqlSegment} " )
     List<TradeVO.PackDatelistVO> payDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount ,count(1) count \n" +
+            " from gs_trade where flag= 0 AND ${ew.sqlSegment} " )
+    List<TradeVO.PackDatelistVO> ayDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
             " from gs_trade  \n" +
             " where flag= 0 AND DATE(cdate) =DATE(CURDATE()-1) AND trade_state = 50 AND ${ew.sqlSegment} " )
     List<TradeVO.PackCancelDatelistVO> packCancelDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
+            " from gs_trade where flag= 0 AND trade_state = 50 AND ${ew.sqlSegment} " )
+    List<TradeVO.PackCancelDatelistVO> ackCancelDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
             " from gs_trade  \n" +
             " where flag= 0 AND DATE(cdate) =DATE(CURDATE()-1) AND trade_state = 40 AND ${ew.sqlSegment} " )
     List<TradeVO.PackDatelistVO> yesterDayFinishlist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
+            " from gs_trade where flag= 0 AND trade_state = 40 AND ${ew.sqlSegment} " )
+    List<TradeVO.PackDatelistVO> esterDayFinishlist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
             " from gs_trade  \n" +
@@ -145,10 +151,19 @@ public interface TradeMapper extends BaseMapper<Trade> {
             " where flag= 0 AND DATE_SUB(CURDATE(),INTERVAL 7 DAY) <=DATE(cdate) AND ${ew.sqlSegment} " )
     List<TradeVO.PackDatelistVO> weekPayDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount ,count(1) count \n" +
+            " from gs_trade where flag= 0 AND ${ew.sqlSegment} " )
+    List<TradeVO.PackDatelistVO> ayDate(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
             " from gs_trade  \n" +
             " where flag= 0 AND DATE_SUB(CURDATE(),INTERVAL 7 DAY) <=DATE(cdate) AND trade_state = 50 AND ${ew.sqlSegment} " )
     List<TradeVO.PackCancelDatelistVO> weekPackCancelDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount, count(1) count\n" +
+            " from gs_trade  \n" +
+            " where flag= 0 AND trade_state = 50 AND ${ew.sqlSegment} " )
+    List<TradeVO.PackCancelDatelistVO> eekPackCancelDatelist(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select DATE_FORMAT(cdate,'%Y-%m-%d') cdate,IFNULL(sum(trade_amount), 0) tradeAmount ,count(1) count \n" +
             " from gs_trade  \n" +
@@ -163,20 +178,38 @@ public interface TradeMapper extends BaseMapper<Trade> {
     @Select("SELECT IFNULL(sum(trade_amount), 0) tradeAmount FROM gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND ${ew.sqlSegment}")
     BigDecimal yesterdayAddTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("SELECT IFNULL(sum(trade_amount), 0) tradeAmount FROM gs_trade WHERE flag=0 AND ${ew.sqlSegment}")
+    BigDecimal esterdayAddTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("SELECT count(1) count FROM gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND ${ew.sqlSegment}")
     Integer yesterdayAddTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("SELECT count(1) count FROM gs_trade WHERE flag=0 AND ${ew.sqlSegment}")
+    Integer esterdayAddTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND trade_state = 40 AND ${ew.sqlSegment}")
     BigDecimal yesterdayPayTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE flag=0 AND trade_state = 40 AND ${ew.sqlSegment}")
+    BigDecimal esterdayPayTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("select count(1) count from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND trade_state = 40 AND ${ew.sqlSegment}")
     Integer yesterdayPayTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select count(1) count from gs_trade WHERE flag=0 AND trade_state = 40 AND ${ew.sqlSegment}")
+    Integer esterdayPayTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND trade_state = 50 AND ${ew.sqlSegment}")
     BigDecimal yesterdayCancelTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE flag=0 AND trade_state = 50 AND ${ew.sqlSegment}")
+    BigDecimal esterdayCancelTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("select count(1) count from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND trade_state = 50 AND ${ew.sqlSegment}")
     Integer yesterdayCancelTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select count(1) count from gs_trade WHERE flag=0 AND trade_state = 50 AND ${ew.sqlSegment}")
+    Integer esterdayCancelTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("SELECT IFNULL(sum(trade_amount), 0) tradeAmount FROM gs_trade WHERE DATE(cdate) =DATE(CURDATE()-2) AND flag=0 AND ${ew.sqlSegment}")
     BigDecimal anteayerAddTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
@@ -236,6 +269,9 @@ public interface TradeMapper extends BaseMapper<Trade> {
     @Select("select count(1) count from gs_trade_rights WHERE flag=0 AND DATE(cdate) =DATE(CURDATE()-1)  AND state = 99 AND ${ew.sqlSegment}")
     Integer yesterDayAftermarketCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("select count(1) count from gs_trade_rights WHERE flag=0 AND state = 99 AND ${ew.sqlSegment}")
+    Integer esterDayAftermarketCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("select count(1) count from gs_trade_rights WHERE flag=0 AND DATE(cdate) =DATE(CURDATE()-2)  AND state = 99 AND ${ew.sqlSegment}")
     Integer anteayerAftermarketCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
@@ -251,6 +287,9 @@ public interface TradeMapper extends BaseMapper<Trade> {
     @Select("select count(1) count from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND trade_state != 40 AND ${ew.sqlSegment}")
     Integer yesterDayNotPayTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
+    @Select("select count(1) count from gs_trade WHERE  flag=0 AND trade_state != 40 AND ${ew.sqlSegment}")
+    Integer esterDayNotPayTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
     @Select("select count(1) count from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-2) AND flag=0 AND trade_state != 40 AND ${ew.sqlSegment}")
     Integer anteayerNotPayTradeCount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
@@ -262,6 +301,9 @@ public interface TradeMapper extends BaseMapper<Trade> {
 
     @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-1) AND flag=0 AND trade_state != 40 AND ${ew.sqlSegment}")
     BigDecimal yesterDayNotPayTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE flag=0 AND trade_state != 40 AND ${ew.sqlSegment}")
+    BigDecimal esterDayNotPayTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("select IFNULL(sum(trade_amount), 0) tradeAmount from gs_trade WHERE DATE(cdate) =DATE(CURDATE()-2) AND flag=0 AND trade_state = !40 AND ${ew.sqlSegment}")
     BigDecimal anteayerNotPayTradeAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
@@ -291,4 +333,11 @@ public interface TradeMapper extends BaseMapper<Trade> {
      * 获取当月的销售数量
      */
     int getCurrentMonthSaleNum(@Param("goodsId") String goodsId);
+
+
+    @Select("select ifnull(avg(describe_grade),0) describe_grade,ifnull(avg(delivery_grade),0) delivery_grade,ifnull(avg(service_grade),0) service_grade from gs_trade_comment where flag=0  AND ${ew.sqlSegment}")
+    BbbTradeListVO.InnerGoodsScore selectShopScore(@Param(Constants.WRAPPER)QueryWrapper<Object> queryWrapper);
+
+    @Select("select ifnull(avg(describe_grade),0) goodsGrade ,COUNT(1) commentCount from gs_trade_comment where flag=0 AND ${ew.sqlSegment}")
+    BbbTradeListVO.InnerGoodsScore selectGoodScore(@Param(Constants.WRAPPER) QueryWrapper<Object> queryWrapper);
 }

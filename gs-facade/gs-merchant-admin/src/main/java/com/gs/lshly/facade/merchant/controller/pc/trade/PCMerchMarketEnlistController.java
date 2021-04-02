@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/merchadmin/pc/Enlist")
 @Api(tags = "活动报名")
-@Module(code = "eventRegistration",parent = "marketing",name = "活动报名",index = 6)
 public class PCMerchMarketEnlistController {
 
     @DubboReference
@@ -43,25 +42,21 @@ public class PCMerchMarketEnlistController {
 
     @ApiOperation("活动列表")
     @GetMapping("/list")
-    @Func(code = "view",name = "查")
     public ResponseData<PageData<MarketPtActivityVO.MerchantActivity>> list(MarketPtActivityQTO.QTO qto) {
         return ResponseData.data(ipcMarketActivityEnlistRpc.activityPageData(qto));
     }
     @ApiOperation("我的报名")
     @GetMapping("/myList")
-    @Func(code = "view",name = "查")
     public ResponseData<PageData<PCMerchMarketPtActivityMerchantVO.MyMerchantActivity>> myList(PCMerchMarketPtActivityMerchantQTO.QTO qto) {
         return ResponseData.data(ipcMerchMarketPtActivityMerchantRpc.queryMyList(qto));
     }
     @ApiOperation("历史报名")
     @GetMapping("/historyList")
-    @Func(code = "view",name = "查")
     public ResponseData<PageData<PCMerchMarketPtActivityMerchantVO.MyMerchantActivity>> myhistoryList(PCMerchMarketPtActivityMerchantQTO.QTO qto) {
         return ResponseData.data(ipcMerchMarketPtActivityMerchantRpc.queryMyList(qto));
     }
     @ApiOperation("报名")
     @PostMapping("/activitySign")
-    @Func(code = "add",name = "增")
     public  ResponseData<Void> activitySign(@RequestBody PCMerchMarketPtActivityGoodsSpuDTO.Sign dto) {
         //先保存活动记录表，保存商品spu，sku
         ipcMerchMarketPtActivityMerchantRpc.merchantActivitySign(dto);
@@ -69,7 +64,6 @@ public class PCMerchMarketEnlistController {
     }
     @ApiOperation("查看详情（我的报名/历史报名）")
     @GetMapping("/viewMyOrHistoryDetail")
-    @Func(code = "view",name = "查")
     public  ResponseData<MarketPtActivityVO.MerchantViewDetails> viewMyOrHistoryDetails(PCMerchMarketPtActivityMerchantDTO.IdDTO dto) {
         //先保存活动记录表，保存商品spu，sku
 
@@ -77,7 +71,6 @@ public class PCMerchMarketEnlistController {
     }
     @ApiOperation("查看详情（活动列表）")
     @GetMapping("/viewActivityListDetails")
-    @Func(code = "view",name = "查")
     public  ResponseData<MarketPtActivityVO.MerchantViewDetails> viewActivityListDetails(MarketPtActivityDTO.IdDTO dto) {
         //先保存活动记录表，保存商品spu，sku
 

@@ -57,6 +57,7 @@ public class PCMerchTradeGoodsServiceImpl implements IPCMerchTradeGoodsService {
         @Override
         public PageData<PCMerchTradeGoodsVO.ListVO> pageData(PCMerchTradeGoodsQTO.QTO qto) {
             QueryWrapper<TradeGoods> wrapper = new QueryWrapper<>();
+            wrapper.orderByDesc("cdate");
             IPage<TradeGoods> page = MybatisPlusUtil.pager(qto);
             repository.page(page, wrapper);
             return MybatisPlusUtil.toPageData(qto, PCMerchTradeGoodsVO.ListVO.class, page);
@@ -151,19 +152,66 @@ public class PCMerchTradeGoodsServiceImpl implements IPCMerchTradeGoodsService {
             return 	DateUtils.parseDate(last);
         }
 
-        //    public static void main(String[] args) {
-        //        Calendar cal = new GregorianCalendar();
-        //        cal.setTime(getDayBegin());
-        //        cal.add(Calendar.DAY_OF_MONTH, -2);
-        //        System.out.println(LocalDateTime.ofInstant(cal.getTime().toInstant(), ZoneOffset.systemDefault()));
-        //
-        //        Calendar cal2 = new GregorianCalendar();
-        //        cal2.setTime(getDayEnd());
-        //        cal2.add(Calendar.DAY_OF_MONTH, -2);
-        //        System.out.println(LocalDateTime.ofInstant(cal2.getTime().toInstant(), ZoneOffset.systemDefault()));
-        //
-        //        System.out.println(LocalDateTime.now().minus(Period.ofDays(1)));
-        //    }
+
+        @Override
+        public List<TradeGoodsVO.GoodsSaleVO> exportGoodsSaleList(TradeDTO.PayDateList dto) {
+
+            QueryWrapper<TradeGoods> wrapper = MybatisPlusUtil.query();
+            if(ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())){
+                wrapper.ge("cdate",dto.getStartTime())
+                        .le("cdate",dto.getEndTime());
+            }
+            if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+                switch (dto.getQueryTimes()){
+                    case 10:
+                        Calendar calYesterDayStat = new GregorianCalendar();
+                        calYesterDayStat.setTime(getDayBegin());
+                        calYesterDayStat.add(Calendar.DAY_OF_MONTH, -1);
+                        Calendar calYesterDayEnd = new GregorianCalendar();
+                        calYesterDayEnd.setTime(getDayEnd());
+                        calYesterDayEnd.add(Calendar.DAY_OF_MONTH, -1);
+                        wrapper.ge("cdate", LocalDateTime.ofInstant(calYesterDayStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calYesterDayEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+                        break;
+                    case 20:
+                        Calendar calAnteayerStat = new GregorianCalendar();
+                        calAnteayerStat.setTime(getDayBegin());
+                        calAnteayerStat.add(Calendar.DAY_OF_MONTH, -2);
+                        Calendar calAnteayerEnd = new GregorianCalendar();
+                        calAnteayerEnd.setTime(getDayEnd());
+                        calAnteayerEnd.add(Calendar.DAY_OF_MONTH, -2);
+                        wrapper.ge("cdate",LocalDateTime.ofInstant(calAnteayerStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calAnteayerEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+                        break;
+                    case 30:
+                        wrapper.ge("cdate",LocalDateTime.now().minus(Period.ofDays(7)))
+                                .le("cdate",LocalDateTime.now());
+                        break;
+                    case 40:
+                        wrapper.ge("cdate",LocalDateTime.now().minus(Period.ofDays(30)))
+                                .le("cdate",LocalDateTime.now());
+                        break;
+                    default:
+                        throw new BootstrapMethodError("时间选择错误");
+                }
+            }
+            wrapper.eq("shop_id",dto.getJwtShopId());
+            wrapper.groupBy("goods_id","goods_name");
+            if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                if(dto.getQueryStates().equals(GoodsSaleEnum.销售数量.getCode())){
+                    wrapper.orderByDesc("quantity");
+                }else if(dto.getQueryStates().equals(GoodsSaleEnum.销售金额.getCode())){
+                    wrapper.orderByDesc("salePrice");
+                }
+            }
+            wrapper.last("limit 0,10");
+
+            List<TradeGoodsVO.GoodsSaleVO> goodsSale= tradeGoodsMapper.goodsSale(wrapper);
+            if (ObjectUtils.isEmpty(goodsSale)){
+                throw new BusinessException("没有可以导出的数据");
+            }
+            return goodsSale;
+        }
 
         @Override
         public List<TradeGoodsVO.GoodsSaleVO> goodsSaleList(TradeGoodsDTO.GoodsSale dto) {
@@ -220,11 +268,71 @@ public class PCMerchTradeGoodsServiceImpl implements IPCMerchTradeGoodsService {
 
             List<TradeGoodsVO.GoodsSaleVO> goodsSale= tradeGoodsMapper.goodsSale(wrapper);
             if (ObjectUtils.isEmpty(goodsSale)){
-                return null;
+                return new ArrayList<>();
             }
             return goodsSale;
         }
 
+
+        @Override
+        public List<TradeGoodsVO.GoodsSaleVO> exportGoodsSaleListDetail(TradeDTO.PayDateList dto) {
+
+            QueryWrapper<TradeGoods> wrapper = MybatisPlusUtil.query();
+            if(ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())){
+                wrapper.ge("cdate",dto.getStartTime())
+                        .le("cdate",dto.getEndTime());
+            }
+            if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+                switch (dto.getQueryTimes()){
+                    case 10:
+                        Calendar calYesterDayStat = new GregorianCalendar();
+                        calYesterDayStat.setTime(getDayBegin());
+                        calYesterDayStat.add(Calendar.DAY_OF_MONTH, -1);
+                        Calendar calYesterDayEnd = new GregorianCalendar();
+                        calYesterDayEnd.setTime(getDayEnd());
+                        calYesterDayEnd.add(Calendar.DAY_OF_MONTH, -1);
+                        wrapper.ge("cdate", LocalDateTime.ofInstant(calYesterDayStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calYesterDayEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+                        break;
+                    case 20:
+                        Calendar calAnteayerStat = new GregorianCalendar();
+                        calAnteayerStat.setTime(getDayBegin());
+                        calAnteayerStat.add(Calendar.DAY_OF_MONTH, -2);
+                        Calendar calAnteayerEnd = new GregorianCalendar();
+                        calAnteayerEnd.setTime(getDayEnd());
+                        calAnteayerEnd.add(Calendar.DAY_OF_MONTH, -2);
+                        wrapper.ge("cdate",LocalDateTime.ofInstant(calAnteayerStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calAnteayerEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+                        break;
+                    case 30:
+                        wrapper.ge("cdate",LocalDateTime.now().minus(Period.ofDays(7)))
+                                .le("cdate",LocalDateTime.now());
+                        break;
+                    case 40:
+                        wrapper.ge("cdate",LocalDateTime.now().minus(Period.ofDays(30)))
+                                .le("cdate",LocalDateTime.now());
+                        break;
+                    default:
+                        throw new BootstrapMethodError("时间选择错误");
+                }
+            }
+            wrapper.eq("shop_id",dto.getJwtShopId());
+            wrapper.groupBy("MONTH(cdate)","goods_id","goods_name");
+            if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                if(dto.getQueryStates().equals(GoodsSaleEnum.销售数量.getCode())){
+                    wrapper.orderByDesc("quantity");
+                }else if(dto.getQueryStates().equals(GoodsSaleEnum.销售金额.getCode())){
+                    wrapper.orderByDesc("payAmount");
+                }
+            }
+            wrapper.last("limit 0,10");
+
+            List<TradeGoodsVO.GoodsSaleVO> goodsSale= tradeGoodsMapper.goodsSaleDetail(wrapper);
+            if (ObjectUtils.isEmpty(goodsSale)){
+                throw new BusinessException("没有可以导出的数据");
+            }
+            return goodsSale;
+        }
 
         @Override
         public List<TradeGoodsVO.GoodsSaleVO> goodsSaleListDetail(TradeGoodsDTO.GoodsSale dto) {
@@ -295,12 +403,14 @@ public class PCMerchTradeGoodsServiceImpl implements IPCMerchTradeGoodsService {
             }
             QueryWrapper<Trade> wrapper = new QueryWrapper<>();
             wrapper.eq("shop_id",dto.getJwtShopId());
-
+//            wrapper.and(i -> i.eq("user_id",dto.getJwtUserId()));
             detailVo.setWeekDate(tradeGoodsMapper.getWeekDate(wrapper)==null?0:tradeGoodsMapper.getWeekDate(wrapper));
             detailVo.setMonthDate(tradeGoodsMapper.getMonthDate(wrapper)==null?0:tradeGoodsMapper.getMonthDate(wrapper));
             detailVo.setNinetyDate(tradeGoodsMapper.getNinetyDate(wrapper)==null?0:tradeGoodsMapper.getNinetyDate(wrapper));
             detailVo.setUserCount(tradeGoodsMapper.getUserCountDate(wrapper)==null?0:tradeGoodsMapper.getUserCountDate(wrapper));
-            detailVo.setPackTradeStatesDate(tradeGoodsMapper.packTradeStatesDate(wrapper));
+            QueryWrapper<Trade> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("user_id",dto.getJwtUserId());
+            detailVo.setPackTradeStatesDate(tradeGoodsMapper.packTradeStatesDate(queryWrapper));
 
             return detailVo;
         }

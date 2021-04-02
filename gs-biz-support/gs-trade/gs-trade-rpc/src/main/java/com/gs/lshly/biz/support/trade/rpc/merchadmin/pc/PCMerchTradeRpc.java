@@ -2,11 +2,14 @@ package com.gs.lshly.biz.support.trade.rpc.merchadmin.pc;
 
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
+import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
+import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
-*
-* @author oy
-* @since 2020-11-16
-*/
+ *
+ * @author oy
+ * @since 2020-11-16
+ */
 @DubboService
 public class PCMerchTradeRpc implements IPCMerchTradeRpc{
     @Autowired
@@ -59,4 +62,10 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc{
     public TradeVO.OperationlistVO operationList(TradeDTO.OperationList dto){
         return  pCMerchTradeService.operationList(dto);
     }
+
+    @Override
+    public ExportDataDTO export(PCMerchTradeQTO.IdListQTO qo) throws Exception {
+        return  ExcelUtil.treatmentBean(pCMerchTradeService.export(qo),PCMerchTradeListVO.tradeVOExport.class);
+    }
+
 }

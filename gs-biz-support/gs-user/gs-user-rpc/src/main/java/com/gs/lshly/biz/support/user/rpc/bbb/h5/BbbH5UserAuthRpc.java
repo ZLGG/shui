@@ -49,11 +49,11 @@ public class BbbH5UserAuthRpc implements IBbbH5UserAuthRpc {
     }
 
     @Override
-    public BbbH5UserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey) {
+    public BbbH5UserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid) {
         if (StringUtils.isBlank(openid)) {
             return null;
         }
-        return userAuthService.loadUserByWxOpenid(appid, openid, sessionKey);
+        return userAuthService.loadUserByWxOpenid(appid, openid, sessionKey, unionid);
     }
 
     @Override
@@ -103,5 +103,10 @@ public class BbbH5UserAuthRpc implements IBbbH5UserAuthRpc {
     @Override
     public void logout(String phone, String openid) {
         userAuthService.logout(phone, openid);
+    }
+
+    @Override
+    public BbbH5UserVO.ThirdVO innerGetWXNickName(String userId) {
+        return userAuthService.innerGetWXNickName(userId);
     }
 }

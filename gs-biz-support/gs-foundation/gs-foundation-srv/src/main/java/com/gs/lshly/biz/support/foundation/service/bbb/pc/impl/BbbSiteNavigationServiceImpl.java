@@ -10,7 +10,6 @@ import com.gs.lshly.biz.support.foundation.service.bbb.pc.IBbbSiteNavigationServ
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.dto.BbbSiteNavigationDTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteNavigationQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
@@ -42,10 +41,10 @@ public class BbbSiteNavigationServiceImpl implements IBbbSiteNavigationService {
     private ISiteBannerRepository siteBannerRepository;
 
     @Override
-    public BbbSiteNavigationVO.HomeVO homeDetail(PCBbbGoodsCategoryQTO.QTO qto) {
+    public BbbSiteNavigationVO.HomeVO homeDetail() {
         QueryWrapper<SiteNavigation> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("subject", qto.getSubject());
-        wrapper.eq("terminal", qto.getTerminal());
+        wrapper.eq("subject", SubjectEnum.默认.getCode());
+        wrapper.eq("terminal", TerminalEnum.BBB.getCode());
         wrapper.eq("pc_show", PcH5Enum.YES.getCode());
         List<SiteNavigation> siteNavigationList = repository.list(wrapper);
         BbbSiteNavigationVO.HomeVO detailVO = new BbbSiteNavigationVO.HomeVO();
@@ -65,8 +64,8 @@ public class BbbSiteNavigationServiceImpl implements IBbbSiteNavigationService {
             detailVO.getMenuList().sort(Comparator.comparing(BbbSiteNavigationVO.MenuVO::getIdx));
         }
         QueryWrapper<SiteBanner> siteBannerQueryWrapper = MybatisPlusUtil.query();
-        siteBannerQueryWrapper.eq("subject", qto.getSubject());
-        siteBannerQueryWrapper.eq("terminal",qto.getTerminal());
+        siteBannerQueryWrapper.eq("subject", SubjectEnum.默认.getCode());
+        siteBannerQueryWrapper.eq("terminal", TerminalEnum.BBB.getCode());
         siteBannerQueryWrapper.eq("pc_show", PcH5Enum.YES.getCode());
         siteBannerQueryWrapper.eq("is_classify", TrueFalseEnum.否.getCode());
         siteBannerQueryWrapper.orderByAsc("idx");

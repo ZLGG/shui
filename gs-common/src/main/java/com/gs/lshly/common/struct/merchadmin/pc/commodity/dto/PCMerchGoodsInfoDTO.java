@@ -107,24 +107,6 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty("使用平台")
         private Integer usePlatform;
 
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
     }
 
     @Data
@@ -163,8 +145,8 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty(value = "扶贫信息")
         private PCMerchGoodsFupinDTO.ETO fuPinEto;
 
-        @ApiModelProperty("信天游产品号")
-        private Integer thirdProductId;
+        @ApiModelProperty(value = "pos店铺spuid")
+        private String posSpuId;
 
     }
 
@@ -278,27 +260,6 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "同一商品标识",position =19)
         private String goodsNo;
-
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
-        @ApiModelProperty("信天游产品号")
-        private Integer thirdProductId;
     }
 
 

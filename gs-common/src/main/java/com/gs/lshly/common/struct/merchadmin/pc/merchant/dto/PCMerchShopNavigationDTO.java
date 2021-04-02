@@ -85,6 +85,9 @@ public abstract class PCMerchShopNavigationDTO implements Serializable {
         @ApiModelProperty(value = "父层级ID",position = 5)
         private String parentId;
 
+        @ApiModelProperty(value = "图片地址")
+        private String imgUrl;
+
         @ApiModelProperty(value = "子分类节点数组",position = 6)
         List<ChildItemDTO> childList;
     }
@@ -108,6 +111,9 @@ public abstract class PCMerchShopNavigationDTO implements Serializable {
 
         @ApiModelProperty(value = "父层级ID",position = 5)
         private String parentId;
+
+        @ApiModelProperty(value = "图片地址")
+        private String imgUrl;
     }
 
     @Data

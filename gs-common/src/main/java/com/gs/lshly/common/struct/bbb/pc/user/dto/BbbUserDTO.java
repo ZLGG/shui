@@ -32,6 +32,32 @@ public abstract class BbbUserDTO implements Serializable {
         @ApiModelProperty("手机验证码")
         private String validCode;
     }
+    @Data
+    @ApiModel("BbbUserDTO.BandEmailDTO")
+    public static class BandEmailDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "邮箱")
+        private String emailNum;
+
+
+    }
+    @Data
+    @ApiModel("BbbUserDTO.ForgetByEmailETO")
+    public static class ForgetByEmailETO extends BaseDTO {
+
+        @ApiModelProperty(value = "邮箱号")
+        private String emailNum;
+
+        @ApiModelProperty(value = "手机验证码")
+        private String validCode;
+
+        @ApiModelProperty(value = "密码")
+        private String password;
+
+        @ApiModelProperty(value = "密码")
+        private String passwordCfm;
+
+    }
 
     @Data
     @ApiModel("BbbUserDTO.RegisterFromShopETO")
@@ -169,6 +195,9 @@ public abstract class BbbUserDTO implements Serializable {
 
         @ApiModelProperty(value = "邮箱号")
         private String email;
+
+        @ApiModelProperty(value = "验证码")
+        private String code;
     }
 
     @Data

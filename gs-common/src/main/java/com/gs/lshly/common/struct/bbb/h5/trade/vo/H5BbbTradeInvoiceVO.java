@@ -35,8 +35,12 @@ public abstract class H5BbbTradeInvoiceVO implements Serializable {
         private String userName;
 
 
-        @ApiModelProperty("发票抬头")
+        @ApiModelProperty("发票类型")
         private Integer invoiceRise;
+
+
+        @ApiModelProperty("发票抬头")
+        private String invoiceName;
 
 
         @ApiModelProperty("发票号")
@@ -83,8 +87,20 @@ public abstract class H5BbbTradeInvoiceVO implements Serializable {
         private Integer isDefault;
 
 
+        @ApiModelProperty("发票内容")
+        private String invoiceContent;
+
+
         @ApiModelProperty("快递单号")
         private String expressNumber;
+
+
+        @ApiModelProperty("联系人")
+        private String contactsUser;
+
+
+        @ApiModelProperty("联系人邮箱")
+        private String contactsEmail;
     }
 
     @Data

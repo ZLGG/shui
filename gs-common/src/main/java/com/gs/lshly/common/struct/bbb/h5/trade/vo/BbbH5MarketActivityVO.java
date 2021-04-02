@@ -176,7 +176,33 @@ public abstract class BbbH5MarketActivityVO implements Serializable {
             @ApiModelProperty("赠品商品ID")
             private String giftGoodsId;
         }
+    }
+    @Data
+    @ApiModel("BbbH5MarketActivityVO.activityListPageVO")
+    @Accessors(chain = true)
+    public static class activityListPageVO implements Serializable{
+        @ApiModelProperty("活动id")
+        private String id;
 
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("标签")
+        private String label;
+
+        @ApiModelProperty("宣传图")
+        private String coverImage;
+
+        @ApiModelProperty("优惠折扣范围")
+        private String discountRange;
+
+        @ApiModelProperty("活动开始时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime activityStartTime;
+
+        @ApiModelProperty("活动结束时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime activityEndTime;
 
     }
     @Data
@@ -194,6 +220,8 @@ public abstract class BbbH5MarketActivityVO implements Serializable {
         private List<GiftActivity> giftActivity;
         @ApiModelProperty("商家团购活动")
         private List<GroupbuyActivity> groupbuyActivity;
+        @ApiModelProperty("商家优惠卷活动")
+        private List<merchantCard> cardActivity;
     }
     @Data
     @ApiModel("BbbH5MarketActivityVO.merchantCard")
@@ -207,6 +235,8 @@ public abstract class BbbH5MarketActivityVO implements Serializable {
 
         @ApiModelProperty("规则")
         private String rule;
+        @ApiModelProperty("优惠卷名字")
+        private String name;
 
         @ApiModelProperty("是否可领取[10=可以 20=不可以]")
         private Integer isReceive;

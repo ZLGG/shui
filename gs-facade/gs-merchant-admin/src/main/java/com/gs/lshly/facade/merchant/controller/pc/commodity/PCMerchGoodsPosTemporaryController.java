@@ -64,7 +64,7 @@ public class PCMerchGoodsPosTemporaryController {
     @ApiOperation("修改发布状态")
     @PostMapping(value = "/updateState/{id}")
     public ResponseData<Void> updateState(@PathVariable String id) {
-        pcMerchGoodsPosTemporaryRpc.modifyReleaseState(new PCMerchGoodsPosTemporaryDTO.IdDTO(id));
+        pcMerchGoodsPosTemporaryRpc.modifyReleaseState(new PCMerchGoodsPosTemporaryDTO.PosSpuIdDTO(id));
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 

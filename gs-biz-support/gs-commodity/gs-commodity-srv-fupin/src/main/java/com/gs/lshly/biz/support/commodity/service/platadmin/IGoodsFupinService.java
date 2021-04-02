@@ -21,5 +21,5 @@ public interface IGoodsFupinService {
      * @return
      */
     List<String> listFuPinGoodsId(BaseQTO qto);
-    
+
 }

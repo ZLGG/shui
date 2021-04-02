@@ -198,33 +198,5 @@ public class GoodsInfo extends Model {
     @TableLogic
     private Boolean flag;
 
-    /**
-     * 积分价格
-     */
-    private Double pointPrice;
-    /**
-     * 办理备注
-     */
-    private String remarks;
-    /**
-     * 是否是积分商品
-     */
-    private Boolean isPointGood;
-    /**
-     * 是否是in会员礼品
-     */
-    private Boolean isInMemberGift;
-    /**
-     * in会员积分价格
-     */
-    private Double inMemberPointPrice;
-    /**
-     * 出售类型（0普通，1活动）
-     */
-    private Integer saleType;
 
-    /**
-     * 信天游产品号
-     */
-    private Integer thirdProductId;
 }

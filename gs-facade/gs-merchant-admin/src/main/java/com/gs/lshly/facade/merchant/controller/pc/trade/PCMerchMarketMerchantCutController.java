@@ -26,7 +26,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/merchadmin/marketMerchantCut")
 @Api(tags = "商家满减促销管理")
-@Module(code = "fullReduction",parent = "marketing",name = "满减",index = 3)
 public class PCMerchMarketMerchantCutController {
 
     @DubboReference
@@ -34,21 +33,18 @@ public class PCMerchMarketMerchantCutController {
 
     @ApiOperation("商家满减促销列表")
     @GetMapping("")
-    @Func(code = "view",name = "查")
     public ResponseData<PageData<PCMerchMarketMerchantCutVO.ViewVO>> list(PCMerchMarketMerchantCutQTO.QTO qto) {
         return ResponseData.data(pcMerchMarketMerchantCutRpc.pageData(qto));
     }
 
     @ApiOperation("查看")
     @GetMapping(value = "/{id}")
-    @Func(code = "view",name = "查")
     public ResponseData<PCMerchMarketMerchantCutVO.View> get(PCMerchMarketMerchantCutDTO.IdDTO dto) {
         return ResponseData.data(pcMerchMarketMerchantCutRpc.detailMarketMerchantCut(dto));
     }
 
     @ApiOperation("新增商家满减促销")
     @PostMapping("")
-    @Func(code = "add",name = "增")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchMarketMerchantCutDTO.AddDTO dto) {
             pcMerchMarketMerchantCutRpc.addMarketMerchantCut(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -56,7 +52,6 @@ public class PCMerchMarketMerchantCutController {
 
     @ApiOperation("删除商家满减促销")
     @DeleteMapping(value = "/{id}")
-    @Func(code = "delete",name = "删除")
     public ResponseData<Void> delete(@PathVariable String id) {
         PCMerchMarketMerchantCutDTO.IdDTO dto = new PCMerchMarketMerchantCutDTO.IdDTO(id);
         pcMerchMarketMerchantCutRpc.deleteMarketMerchantCut(dto);
@@ -66,7 +61,6 @@ public class PCMerchMarketMerchantCutController {
 
     @ApiOperation("编辑")
     @PutMapping(value = "/{id}")
-    @Func(code = "edit",name = "改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody PCMerchMarketMerchantCutDTO.AddDTO eto) {
         eto.setCutId(id);
         pcMerchMarketMerchantCutRpc.editMarketMerchantCut(eto);
@@ -74,14 +68,12 @@ public class PCMerchMarketMerchantCutController {
     }
     @ApiOperation("提交审核按钮")
     @GetMapping(value = "/commit")
-    @Func(code = "edit",name = "改")
     public ResponseData<Void> commit(PCMerchMarketMerchantCutDTO.IdDTO eto) {
         pcMerchMarketMerchantCutRpc.commitMarketMerchantCut(eto);
         return ResponseData.success(MsgConst.APPEAL_COMMENT);
     }
     @ApiOperation("取消按钮")
     @GetMapping(value = "/cancel")
-    @Func(code = "edit",name = "改")
     public ResponseData<Void> cancel(PCMerchMarketMerchantCutDTO.IdDTO eto) {
         pcMerchMarketMerchantCutRpc.cancelMarketMerchantCut(eto);
         return ResponseData.success(MsgConst.CANCEL_SUCCESS);

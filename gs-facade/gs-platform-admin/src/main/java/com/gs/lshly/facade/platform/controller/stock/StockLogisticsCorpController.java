@@ -88,7 +88,7 @@ public class StockLogisticsCorpController {
     @ApiOperation("初始化物流公司接口")
     @PostMapping("/initCompany")
     @Func(code = "edit" ,name = "修改")
-    public ResponseData<Void> initializeLogisticsCompany(StockLogisticsCorpDTO.ETO dto){
+    public ResponseData<Void> initializeLogisticsCompany(StockLogisticsCorpDTO.QTO dto){
         StockLogisticsCorpRpc.initializeLogisticsCompany(dto);
         return ResponseData.success("初始化物流公司成功");
     }

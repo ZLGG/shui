@@ -51,6 +51,7 @@ public class PCBbbUserFrequentGoodsServiceImpl implements IPCBbbUserFrequentGood
     public PageData<PCBbbUserFrequentGoodsVO.ListVO> pageData(PCBbbUserFrequentGoodsQTO.QTO qto) {
         QueryWrapper<UserFrequentGoods> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id",qto.getJwtUserId());
+        wrapper.orderByDesc("cdate");
         IPage<UserFrequentGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         if(ObjectUtils.isEmpty(page.getRecords())){

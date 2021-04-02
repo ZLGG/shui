@@ -44,6 +44,26 @@ public abstract class GoodsCategoryVO implements Serializable {
 
     @Data
     @Accessors(chain = true)
+    @ApiModel("GoodsCategoryVO.InnerListVO")
+    public static class InnerListVO implements Serializable{
+        @ApiModelProperty(value = "商品类别id")
+        private String id;
+
+        @ApiModelProperty(value = "商品类别父id")
+        private String parentId;
+
+        @ApiModelProperty(value = "商品类别级别")
+        private Integer gsCategoryLevel;
+
+        @ApiModelProperty(value = "商品类别名称")
+        private String gsCategoryName;
+
+        @ApiModelProperty(value = "商品类别服务费率(只有三级有)")
+        private BigDecimal gsCategoryFee;
+    }
+
+    @Data
+    @Accessors(chain = true)
     public static class ParentCategoryVO implements Serializable{
         @ApiModelProperty(value = "当前类目id")
         private String lev;

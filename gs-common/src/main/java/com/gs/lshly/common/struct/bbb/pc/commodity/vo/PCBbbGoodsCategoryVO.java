@@ -92,5 +92,17 @@ public abstract class PCBbbGoodsCategoryVO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("PCBbbGoodsCategoryVO.CategoryForBrandVO")
+    @Accessors(chain = true)
+    public static class CategoryForBrandVO implements Serializable {
+
+        @ApiModelProperty("品牌ID")
+        private String brandId;
+
+        @ApiModelProperty("三级类目列表")
+        List<ListVO> categoryLevel3List = new ArrayList<>();
+
+    }
 
 }

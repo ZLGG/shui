@@ -1,4 +1,5 @@
 package com.gs.lshly.facade.platform.controller.trade;
+import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.ExportDataDTO;
@@ -52,6 +53,22 @@ public class  TradePayController {
     @Func(code = "view",name = "查")
     public ResponseData<TradePayVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(TradePayRpc.detailTradePay(new TradePayDTO.IdDTO(id)));
+    }
+
+    @ApiOperation("导出支付单")
+    @Log(module = "支付单", func = "导出支付单")
+    @GetMapping(value = "/export")
+    public void payExport(TradePayQTO.IdListQTO qo, @ApiIgnore HttpServletResponse response) throws Exception {
+        ExportDataDTO exportData = TradePayRpc.payExport(qo);
+        ExcelUtil.export(exportData, response);
+    }
+
+    @ApiOperation("删除")
+    @PostMapping(value = "delete")
+    @Func(code = "view",name = "删除")
+    public ResponseData<Void> delete(@RequestBody TradePayQTO.IdListQTO ids) {
+        TradePayRpc.delete(ids);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
 
 

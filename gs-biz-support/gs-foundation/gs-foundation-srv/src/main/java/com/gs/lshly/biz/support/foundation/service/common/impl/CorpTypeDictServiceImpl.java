@@ -66,6 +66,7 @@ public class CorpTypeDictServiceImpl implements ICorpTypeDictService {
         if(!BusinessTypeEnum.全部.getCode().equals(qto.getBusinessType())){
             queryWrapper.eq("type_group",qto.getBusinessType());
         }
+        queryWrapper.orderByDesc("cdate");
         List<CorpTypeDict> corpTypeDictList = repository.list(queryWrapper);
         return ListUtil.listCover(CorpTypeDictVO.SimpleList.class,corpTypeDictList);
     }

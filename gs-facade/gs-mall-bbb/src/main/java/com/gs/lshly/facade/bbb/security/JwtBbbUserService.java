@@ -5,6 +5,8 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.middleware.auth.rbac.IMenuSet;
 import com.gs.lshly.middleware.auth.rbac.MenuMessage;
+import com.gs.lshly.middleware.log.Log;
+import com.gs.lshly.middleware.log.aop.LogAspect;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserAuthRpc;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +35,13 @@ public class JwtBbbUserService implements UserDetailsService, IMenuSet {
     private String terminal;
 
     @Override
+    @Log(module = "登陆", func = "PC-账号密码")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AuthDTO dto = bbbUserAuthRpc.loadUserByUsername(username);
         if (dto != null) {
-            return new JwtUser(dto);
+            JwtUser jwtUser = new JwtUser(dto);
+            LogAspect.set(LogAspect.toDTO(jwtUser));
+            return jwtUser;
         } else {
             throw new UsernameNotFoundException(CommonConst.USERNAME_OR_PASSWORD_INCORRECT);
         }

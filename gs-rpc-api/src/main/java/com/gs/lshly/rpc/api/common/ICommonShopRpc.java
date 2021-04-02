@@ -108,6 +108,14 @@ public interface ICommonShopRpc {
      */
     CommonShopVO.ShopGoodsCategoryVO innerGetGoodsCategoryVO(String shopId, String categoryName);
 
+    /**
+     * 获取店铺申请类目信息
+     * @param shopId
+     * @return
+     */
+    CommonShopVO.ShopCategoryInfoVO innerShopCategoryInfoVO(String shopId);
+
+
     int checkShopNavigation(String shopId,String shopNavigationName,Integer usefiled);
 
     /**
@@ -123,4 +131,13 @@ public interface ICommonShopRpc {
      * @return
      */
     List<String> shopNavigationIdList(String level1navigationId);
+
+    /**
+     * 获取店铺信息
+     * @param shopId
+     * @return
+     */
+    CommonShopVO.ListVO innerShopInfo(String shopId);
+
+    void visits(CommonShopDTO.VisitsDTO shopId);
 }

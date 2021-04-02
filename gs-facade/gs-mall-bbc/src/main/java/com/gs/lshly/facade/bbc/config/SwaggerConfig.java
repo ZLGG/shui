@@ -15,7 +15,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @since 2020/9/14
  */
 @Configuration
-@Profile(value = {"dev", "test", "hlytest", "fytest", "hztest"})
+@Profile(value = {"dev", "test", "hlytest", "fytest"})
 public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean

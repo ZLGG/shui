@@ -1,8 +1,6 @@
 package com.gs.lshly.rpc.api.bbb.pc.commodity;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 
 import java.util.List;
 
@@ -27,6 +25,8 @@ public interface IPCBbbGoodsCategoryRpc {
     PCBbbGoodsCategoryVO.CategoryNavigationVO getCategoryNavigationVO(PCBbbGoodsCategoryQTO.CategoryNavigationQTO qto);
 
 
+    List<PCBbbGoodsCategoryVO.ListVO> getCategoryForBrandId(PCBbbGoodsCategoryQTO.CategoryForBrandQTO qto);
+
     //----------内部服务----------
 
     /**
@@ -35,5 +35,4 @@ public interface IPCBbbGoodsCategoryRpc {
      * @return
      */
     List<String> innerServiceLevel1IdList(List<String> level3List);
-    
 }

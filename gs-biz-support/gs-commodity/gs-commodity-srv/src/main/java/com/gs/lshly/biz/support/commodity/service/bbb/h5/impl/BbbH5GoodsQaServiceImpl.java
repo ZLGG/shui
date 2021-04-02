@@ -18,9 +18,11 @@ import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsQaVO;
 import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.dto.RemindMerchantDTO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.IRemindMerchantRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -52,6 +54,9 @@ public class BbbH5GoodsQaServiceImpl implements IBbbH5GoodsQaService {
     @DubboReference
     private IBbbH5UserRpc userRpc;
 
+    @DubboReference
+    private IRemindMerchantRpc remindMerchantRpc;
+
     @Override
     public PageData<BbbH5GoodsQaVO.ShowListVO> pageData(BbbH5GoodsQaQTO.QTO qto) {
         QueryWrapper<GoodsQa> qaQueryWrapper = MybatisPlusUtil.query();
@@ -60,6 +65,7 @@ public class BbbH5GoodsQaServiceImpl implements IBbbH5GoodsQaService {
             qaQueryWrapper.eq("quiz_type",qto.getQuizType());
         }
         qaQueryWrapper.eq("is_show_quiz_content", ShowQuizStateEnum.显示.getCode());
+        qaQueryWrapper.orderByDesc("cdate","id");
         IPage<GoodsQa> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsQa> goodsQas = repository.page(page,qaQueryWrapper);
         if (ObjectUtils.isEmpty(goodsQas)){
@@ -74,10 +80,12 @@ public class BbbH5GoodsQaServiceImpl implements IBbbH5GoodsQaService {
                     showListVO.setMerchantName(StringUtils.isEmpty(merchantVO.getMerchantName())?"":merchantVO.getMerchantName());
                     QueryWrapper<GoodsQa> wrapper = MybatisPlusUtil.query();
                     wrapper.eq("good_id",e.getGoodId());
+                    wrapper.eq("is_show_quiz_content", ShowQuizStateEnum.显示.getCode());
                     GoodsQaCountView countView = goodsQaMapper.countView(wrapper);
                     if (ObjectUtils.isNotEmpty(countView)){
                         BbbH5GoodsQaVO.CountQuizVO countQuizVO = new BbbH5GoodsQaVO.CountQuizVO();
                         BeanUtils.copyProperties(countView,countQuizVO);
+                        countQuizVO.setAllNum(countView.getGoodsQuizNum()+countView.getInventoryDistributionNum()+countView.getInvoiceWarrantyNum()+countView.getPaymentWayNum());
                         showListVO.setCountQuizVO(countQuizVO);
                     }
                     return showListVO;
@@ -99,8 +107,11 @@ public class BbbH5GoodsQaServiceImpl implements IBbbH5GoodsQaService {
             }
         }
         goodsQa.setIsReply(GoodsQaReplyStateEnum.未回复.getCode());
-        goodsQa.setIsShowQuizContent(ShowQuizStateEnum.不显示.getCode());
+        goodsQa.setIsShowQuizContent(ShowQuizStateEnum.显示.getCode());
         repository.save(goodsQa);
+
+        //触发商家商品咨询提醒
+        remindMerchantRpc.addRemindMerchantForAskTalk(new RemindMerchantDTO.JustDTO(goodsQa.getShopId(),eto.getJwtUserId(),goodsQa.getId()));
     }
 
 }

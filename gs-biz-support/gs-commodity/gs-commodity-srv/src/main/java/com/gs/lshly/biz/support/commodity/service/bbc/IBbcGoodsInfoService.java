@@ -88,6 +88,4 @@ public interface IBbcGoodsInfoService {
     List<BbcGoodsInfoVO.HomeAndShopInnerServiceVO> getInnerSimpleServiceVO(List<String> goodsIds);
 
     BbcGoodsInfoVO.InnerServiceVO innerSimpleServiceGoodsVO(String skuID);
-    
-    
 }

@@ -110,4 +110,15 @@ public class BbbH5TradeRpc implements IBbbH5TradeRpc {
         return bbcTradeService.myMerchantCard(dto);
     }
 
+    @Override
+    public void offlinePay(BbbH5TradeDTO.OfflinePayDTO dto) {
+
+        bbcTradeService.offlinePay(dto);
+    }
+
+    @Override
+    public ResponseData<BbbH5TradeListVO.OfflinePayVO> offlineDetail(BbbH5TradeDTO.IdDTO dto) {
+        return bbcTradeService.offlineDetail(dto);
+    }
+
 }

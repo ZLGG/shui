@@ -1,8 +1,10 @@
 package com.gs.lshly.common.struct.bbb.pc.stock.vo;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -67,7 +69,9 @@ public abstract class BbbStockAddressVO implements Serializable {
         private String fullAddres;
 
         public String getFullAddres(){
-            return province + city + county + street ;
+            String streetO=StringUtils.isEmpty(street)?"":street;
+            String realsO=StringUtils.isEmpty(reals)?"":reals;
+            return province + city + county + streetO + realsO ;
         }
 
     }

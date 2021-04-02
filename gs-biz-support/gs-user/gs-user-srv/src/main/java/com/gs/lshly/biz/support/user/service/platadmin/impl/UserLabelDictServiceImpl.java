@@ -50,6 +50,7 @@ public class UserLabelDictServiceImpl implements IUserLabelDictService {
     @Override
     public PageData<UserLabelDictVO.ListVO> pageData(UserLabelDictQTO.QTO qto) {
         QueryWrapper<UserLabelDict> wq = new QueryWrapper<>();
+        wq.orderByDesc("cdate");
         IPage<UserLabelDict> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wq);
         return MybatisPlusUtil.toPageData(qto, UserLabelDictVO.ListVO.class, page);

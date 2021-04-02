@@ -54,6 +54,7 @@ public class PCMerchShopNavigationServiceImpl implements IPCMerchShopNavigationS
         QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal",qto.getTerminal());
         wrapper.eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         List<ShopNavigation> dataList =  repository.list(wrapper);
         Map<String,PCMerchShopNavigationVO.ListVO> utilMap = new HashMap<>();
         for(ShopNavigation item:dataList){

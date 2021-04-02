@@ -21,6 +21,14 @@ public interface IBbbH5GoodsInfoService {
      */
     PageData<BbbH5GoodsInfoVO.GoodsListVO> pageGoodsListVO(BbbH5GoodsInfoQTO.GoodsListByCategoryQTO qto);
 
+    /**
+     * 查询2B商城商家商品列表
+     * @param qto
+     * @return
+     */
+    PageData<BbbH5GoodsInfoVO.GoodsListVO> pageMerchantGoodsListVO(BbbH5GoodsInfoQTO.MerchantShopGoodsQTO qto);
+
+
 
     /**
      * 查询2B商城商品详情

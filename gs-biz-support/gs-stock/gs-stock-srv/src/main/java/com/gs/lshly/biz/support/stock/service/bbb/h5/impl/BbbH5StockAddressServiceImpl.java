@@ -215,6 +215,21 @@ public class BbbH5StockAddressServiceImpl implements IBbbH5StockAddressService {
         return null;
     }
 
+    @Override
+    public BbbH5StockAddressVO.DetailVO innerdetailStockAddress(BbbH5StockAddressDTO.IdAndTypeDTO dto) {
+        QueryWrapper<StockAddressView> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.eq("ad.id",dto.getId());
+        queryWrapper.eq("ad.owner_type",StockAddressOwnerTypeEnum.会员.getCode());
+        queryWrapper.eq("ad.owner_id",dto.getJwtUserId());
+        StockAddressView view =  stockAddressMapper.mapperOne(queryWrapper);
+        if(null == view){
+            throw  new BusinessException("查询数据异常！！");
+        }
+        BbbH5StockAddressVO.DetailVO detailVO = new BbbH5StockAddressVO.DetailVO();
+        BeanUtils.copyProperties(view,detailVO);
+        return detailVO;
+    }
+
     private StockDefaultAddressView hasDefaultAddress(String ownerId,Integer addressType){
         QueryWrapper<StockDefaultAddressView> wrapper = MybatisPlusUtil.query();
         wrapper.eq("sa.owner_id",ownerId);

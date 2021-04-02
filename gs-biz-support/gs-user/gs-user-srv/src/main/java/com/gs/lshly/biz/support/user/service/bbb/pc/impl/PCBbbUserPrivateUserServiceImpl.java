@@ -61,6 +61,7 @@ public class PCBbbUserPrivateUserServiceImpl implements IPCBbbUserPrivateUserSer
         queryWrapper.eq("user_id", qto.getJwtUserId());
         queryWrapper.eq("state",PrivateUserApplyStateEnum.通过.getCode());
         queryWrapper.eq("bind_state", PrivateUserBindStateEnum.关联.getCode());
+        queryWrapper.orderByDesc("cdate");
         List<PCBbbUserPrivateUserVO.ListVO> voList = new ArrayList<>();
         repository.page(pager,queryWrapper);
         if(ObjectUtils.isEmpty(pager.getRecords())){

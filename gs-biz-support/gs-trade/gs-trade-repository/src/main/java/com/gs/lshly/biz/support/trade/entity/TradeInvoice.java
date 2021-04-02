@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -54,9 +55,14 @@ public class TradeInvoice extends Model {
     private String userName;
 
     /**
-     * 发票抬头
+     * 发票类型
      */
     private Integer invoiceRise;
+
+    /**
+     * 发票抬头
+     */
+    private String invoiceName;
 
     /**
      * 发票号
@@ -74,22 +80,22 @@ public class TradeInvoice extends Model {
     private String firmName;
 
     /**
-     * 注册地址
+     * 企业地址
      */
     private String registerAddress;
 
     /**
-     * 账户
+     * 银行账号
      */
     private String accountNumber;
 
     /**
-     * 电话
+     * 企业电话
      */
     private String phone;
 
     /**
-     * 开户行
+     * 开户银行
      */
     private String openingBank;
 
@@ -113,10 +119,32 @@ public class TradeInvoice extends Model {
      */
     private String expressNumber;
 
-    /*
-    * 是否为默认发票
-    */
-    private Integer isDefault;
+
+    /**
+     * 发票内容
+     */
+    private String invoiceContent;
+
+
+    /**
+     * 发票地址ID
+     */
+    private String invoiceAddressId;
+
+    /**
+     * 联系人
+     */
+    private String contactsUser;
+
+    /**
+     * 联系人邮箱
+     */
+    private String contactsEmail;
+
+    /**
+     * 金额
+     */
+    private BigDecimal invoiceAmount;
 
     /**
      * 创建时间

@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author oy
 * @since 2020-11-16
@@ -32,5 +34,13 @@ public abstract class TradeDeliveryQTO implements Serializable {
 
         @ApiModelProperty("操作员姓名")
         private String operatorName;
+    }
+    @Data
+    @ApiModel("TradeDeliveryQTO.QTO")
+    @Accessors(chain = true)
+    public static class IdListQTO extends BaseQTO {
+
+        @ApiModelProperty("发货单id")
+        private List<String> ids;
     }
 }

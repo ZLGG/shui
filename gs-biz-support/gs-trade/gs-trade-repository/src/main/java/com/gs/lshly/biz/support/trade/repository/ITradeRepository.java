@@ -32,9 +32,9 @@ import java.util.List;
  */
 public interface ITradeRepository extends IService<Trade> {
 
-    IPage<BbcTradeListVO.tradeVO> selectTradeListPage(IPage<BbcTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO.TradeList> qw);
+    List<BbcTradeListVO.tradeVO> selectTradeListPage(@Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO.TradeList> qw);
 
-    IPage<BbbH5TradeListVO.tradeVO> BbbH5selectTradeListPage(IPage<BbbH5TradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<BbbH5TradeQTO.TradeList> qw);
+    List<BbbH5TradeListVO.tradeVO>  BbbH5selectTradeListPage( @Param(Constants.WRAPPER) QueryWrapper<BbbH5TradeQTO.TradeList> qw);
 
     List<BbcTradeListVO.stateCountVO> selectTradeStateCount(@Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO> qw);
 
@@ -49,4 +49,8 @@ public interface ITradeRepository extends IService<Trade> {
     IPage<BbbTradeListVO.tradeVO> selectBbbTradeListPage(IPage<BbbTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<BbbOrderQTO.TradeList> qw);
 
     List<Trade> yesterdayTrade(@Param(Constants.WRAPPER) QueryWrapper<MerchantHomeDashboardDTO.ETO> queryWrapper);
+
+    BbbTradeListVO.InnerGoodsScore selectShopScore( QueryWrapper<Object> queryWrapper);
+
+    BbbTradeListVO.InnerGoodsScore selectGoodScore( QueryWrapper<Object> queryWrapper);
 }

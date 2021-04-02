@@ -29,6 +29,13 @@ public class EntOrderRefundRequest extends BaseRequest<EntOrderRefundResponse> {
      */
     private String orderId;
 
+
+    /**
+     * 退款总金额
+     *
+     * */
+    private String refundTolAmount;
+
     /**
      * 商户子订单号
      * 需要退款的子订单号，部分退款时必填
@@ -39,7 +46,7 @@ public class EntOrderRefundRequest extends BaseRequest<EntOrderRefundResponse> {
      * 退款金额
      * 以分为单位
      */
-    private String refundAmount;
+    private String detailRefundAmount;
 
     /**
      * 原分账方商户编号

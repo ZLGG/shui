@@ -69,6 +69,40 @@ public abstract class PCMerchMerchantAccountDTO implements Serializable {
         private String roleId;
 
     }
+    @Data
+    @ApiModel("PCMerchMerchantAccountDTO.ForgetByPhoneETO")
+    public static class ForgetByPhoneETO extends BaseDTO {
+
+        @ApiModelProperty(value = "手机号码")
+        private String phone;
+
+        @ApiModelProperty(value = "手机验证码")
+        private String validCode;
+
+        @ApiModelProperty(value = "密码")
+        private String password;
+
+        @ApiModelProperty(value = "密码")
+        private String passwordCfm;
+
+    }
+    @Data
+    @ApiModel("PCMerchMerchantAccountDTO.ForgetByEmailETO")
+    public static class ForgetByEmailETO extends BaseDTO {
+
+        @ApiModelProperty(value = "邮箱")
+        private String email;
+
+        @ApiModelProperty(value = "邮箱验证")
+        private String validCode;
+
+        @ApiModelProperty(value = "密码")
+        private String password;
+
+        @ApiModelProperty(value = "密码")
+        private String passwordCfm;
+
+    }
 
     @Data
     @ApiModel("PCMerchMerchantAccountDTO.ETO")
@@ -93,8 +127,6 @@ public abstract class PCMerchMerchantAccountDTO implements Serializable {
         @ApiModelProperty("角色ID")
         private String roleId;
 
-        @ApiModelProperty("联系地址")
-        private String address;
     }
 
     @Data

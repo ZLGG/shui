@@ -22,5 +22,5 @@ public interface ITradePayOfflineService {
      * @param qto
      * @return
      */
-    List<TradePayOfflineVO.ListVO> exportPayOfficeData(TradePayOfflineQTO.IdListQTO qto);
+    List<TradePayOfflineVO.ListVOExport> exportPayOfficeData(TradePayOfflineQTO.IdListQTO qto);
 }

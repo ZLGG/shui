@@ -9,18 +9,24 @@ import com.gs.lshly.biz.support.merchant.mapper.views.ShopGoodsCategoryView;
 import com.gs.lshly.biz.support.merchant.repository.IShopGoodsCategoryRepository;
 import com.gs.lshly.biz.support.merchant.service.platadmin.IShopGoodsCategoryService;
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.enums.ShopTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopGoodsCategoryDTO;
 import com.gs.lshly.common.struct.platadmin.merchant.qto.ShopGoodsCategoryQTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopGoodsCategoryVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +46,9 @@ public class ShopGoodsCategoryServiceImpl implements IShopGoodsCategoryService {
     @Autowired
     private ShopGoodsCategoryMapper shopGoodsCategoryMapper;
 
+    @DubboReference
+    private IGoodsCategoryRpc categoryRpc;
+
     @Override
     public PageData<ShopGoodsCategoryVO.ListVO> pageData(ShopGoodsCategoryQTO.ShopIdQTO qto) {
         if(StringUtils.isBlank(qto.getShopId())){
@@ -47,6 +56,7 @@ public class ShopGoodsCategoryServiceImpl implements IShopGoodsCategoryService {
         }
         QueryWrapper<ShopGoodsCategory> wrapper = MybatisPlusUtil.query();
         wrapper.eq("shop_id",qto.getShopId());
+        wrapper.orderByDesc("cdate");
         IPage<ShopGoodsCategoryView> page = MybatisPlusUtil.pager(qto);
         shopGoodsCategoryMapper.pagelist(page,wrapper);
         return MybatisPlusUtil.toPageData(qto, ShopGoodsCategoryVO.ListVO.class, page);
@@ -54,12 +64,36 @@ public class ShopGoodsCategoryServiceImpl implements IShopGoodsCategoryService {
 
     @Override
     public List<ShopGoodsCategoryVO.GoodsCategoryOneVO> list(ShopGoodsCategoryQTO.ShopIdQTO qto) {
+        if (null == qto){
+            throw new BusinessException("参数为空,异常！");
+        }
+        if (ObjectUtils.isEmpty(qto.getShopType())){
+            throw new BusinessException("店铺类型不能为空，参数异常！");
+        }
         if(StringUtils.isBlank(qto.getShopId())){
             throw new BusinessException("店铺ID不能为空");
         }
-        QueryWrapper<ShopGoodsCategory> goodsCategoryQueryWrapper = MybatisPlusUtil.query();
-        goodsCategoryQueryWrapper.eq("shop_id",qto.getShopId());
-        List<ShopGoodsCategory> goodsCategoryList = repository.list(goodsCategoryQueryWrapper);
+        List<ShopGoodsCategory> goodsCategoryList = new ArrayList<>();
+
+        if (qto.getShopType().equals(ShopTypeEnum.运营商自营.getCode())){
+            List<GoodsCategoryVO.InnerListVO> innerListVOS = categoryRpc.innerCategoryList(new BaseDTO());
+            if (ObjectUtils.isEmpty(innerListVOS)){
+                return new ArrayList<>();
+            }
+            for (GoodsCategoryVO.InnerListVO innerListVO : innerListVOS){
+                ShopGoodsCategory goodsCategory = new ShopGoodsCategory();
+                goodsCategory.setCategoryId(innerListVO.getId());
+                goodsCategory.setCategoryLeve(innerListVO.getGsCategoryLevel());
+                goodsCategory.setCategoryPid(StringUtils.isBlank(innerListVO.getParentId())?"":innerListVO.getParentId());
+                goodsCategory.setFee(ObjectUtils.isEmpty(innerListVO.getGsCategoryFee())? BigDecimal.ZERO:innerListVO.getGsCategoryFee());
+                goodsCategory.setCategoryName(StringUtils.isBlank(innerListVO.getGsCategoryName())?"":innerListVO.getGsCategoryName());
+                goodsCategoryList.add(goodsCategory);
+            }
+        }else {
+            QueryWrapper<ShopGoodsCategory> goodsCategoryQueryWrapper = MybatisPlusUtil.query();
+            goodsCategoryQueryWrapper.eq("shop_id",qto.getShopId());
+            goodsCategoryList = repository.list(goodsCategoryQueryWrapper);
+        }
         if(ObjectUtils.isEmpty(goodsCategoryList)){
             return new ArrayList<>();
         }

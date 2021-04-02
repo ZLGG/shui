@@ -7,7 +7,6 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.dto.GoodsFupinDTO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.qto.GoodsFupinQTO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.vo.GoodsFupinVO;
@@ -64,6 +63,11 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     }
 
     @Override
+    public void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
+        goodsInfoService.checkGoodsBatches(dto);
+    }
+
+    @Override
     public PageData<GoodsInfoVO.ShopFloorCommodityVO> getShopFloorCommodityVO(GoodsInfoQTO.ShopFloorQTO qto) {
         return goodsInfoService.getShopFloorCommodityVO(qto);
     }
@@ -110,17 +114,12 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
 
     @Override
     public List<GoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceAllGoodsInfo(GoodsInfoDTO.IdsInnerServiceDTO dto) {
-        return goodsInfoService.innerServiceGoodsInfo(dto);
+        return goodsInfoService.innerServiceAllGoodsInfo(dto);
     }
 
     @Override
     public void innerServiceUnderShelfGoods(List<String> shopId) {
         goodsInfoService.innerServiceUnderShelfGoods(shopId);
     }
-
-	@Override
-	public List<ListVO> listGoodsData() {
-		return goodsInfoService.listGoodsData();
-	}
 
 }

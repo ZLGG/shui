@@ -62,6 +62,7 @@ public class BbbH5UserCardServiceImpl implements IBbbH5UserCardService {
     @Override
     public PageData<BbbH5UserCardVO.ListVO> pageData(BbbH5UserCardQTO.QTO qto) {
         QueryWrapper<UserCard> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<UserCard> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         //todo 会员优惠卷

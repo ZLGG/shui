@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author zst
 * @since 2020-11-30
@@ -71,11 +73,11 @@ public abstract class TradeSettlementQTO implements Serializable {
 
 
         @ApiModelProperty("账单开始时间")
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd",timezone = "GMT+8")
         private LocalDateTime billStartTime;
 
         @ApiModelProperty("账单结算时间")
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd",timezone = "GMT+8")
         private LocalDateTime billEndTime;
 
         @ApiModelProperty("商家id")
@@ -143,5 +145,14 @@ public abstract class TradeSettlementQTO implements Serializable {
 
     }
 
+
+    @Data
+    @ApiModel("TradeSettlementQTO.IdListQTO")
+    public static class IdListQTO extends BaseQTO{
+
+        @ApiModelProperty("销售数据分析ID列表")
+        private List<String> idList;
+
+    }
 
 }

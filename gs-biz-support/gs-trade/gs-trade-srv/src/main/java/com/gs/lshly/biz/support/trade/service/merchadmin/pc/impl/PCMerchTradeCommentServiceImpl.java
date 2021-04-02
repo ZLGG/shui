@@ -99,7 +99,7 @@ public class PCMerchTradeCommentServiceImpl implements IPCMerchTradeCommentServi
             boost.like("tg.goods_name",qto.getGoodsName());
         }
         boost.eq("tc.shop_id",qto.getJwtShopId());
-
+        boost.orderByDesc("tc.cdate");
         IPage<TradeAppealCommentView> page = MybatisPlusUtil.pager(qto);
         IPage<TradeAppealCommentView> commentViewIPage = commentMapper.pageCommentAppeal(page,boost);
         if (ObjectUtils.isEmpty(commentViewIPage.getRecords())){
@@ -291,16 +291,31 @@ public class PCMerchTradeCommentServiceImpl implements IPCMerchTradeCommentServi
         if (org.apache.commons.lang3.StringUtils.isNotBlank(qto.getJwtShopId())){
             query.and(i->i.eq("tc.`shop_id`",qto.getJwtShopId()));
         }
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(qto.getGoodsName())){
+            query.and(i->i.like("tg.goods_name`",qto.getGoodsName()));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getComment()) && qto.getComment() .equals(20)){
+            query.and(i->i.between("tc.describe_grade`",1,2));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getComment()) && qto.getComment() .equals(30)){
+            query.and(i->i.between("tc.describe_grade`",3,4));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getComment()) && qto.getComment() .equals(40)){
+            query.and(i->i.eq("tc.describe_grade`",5));
+        }
         if (ObjectUtils.isNotEmpty(qto.getState())){
            // 10=有晒图 20=有回复 30=有内容
             switch (qto.getState()){
-                case 20:query.ne("tc.`shop_reply`",null);break;
-                case 30:query.ne("tc.`user_comment`",null);break;
+                case 20:query.isNotNull("tc.`shop_reply`");break;
+                case 30:query.isNotNull("tc.`user_comment`");break;
 
             }
         }
-        if (ObjectUtils.isNotEmpty(qto.getEndTime())||ObjectUtils.isNotEmpty(qto.getStartTime())){
-            query.and(i->i.ge("tc.`cdate`",qto.getStartTime()).le("tc.`cdate`",qto.getEndTime()));
+        if (ObjectUtils.isNotEmpty(qto.getStartTime())){
+            query.and(i->i.ge("tc.`cdate`",qto.getStartTime()));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getEndTime())){
+            query.and(i->i.ge("tc.`cdate`",qto.getEndTime()));
         }
         IPage<PCMerchTradeCommentVO.CommentListListVO> commentListListVOIPage = repository.selectListPage(pager, query);
         List<PCMerchTradeCommentVO.CommentListListVO> listVOS=new ArrayList<>();

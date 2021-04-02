@@ -43,9 +43,15 @@ public class MerchantArticleServiceImpl implements IMerchantArticleService {
         if(StringUtils.isNotBlank(qto.getTitle())){
             wrapper.like("art.title", qto.getTitle());
         }
-        if(StringUtils.isNotBlank(qto.getTitle())){
+
+        if(ObjectUtils.isNotEmpty(qto.getState())){
+            wrapper.eq("art.state", qto.getState());
+        }
+
+        if(StringUtils.isNotBlank(qto.getMerchantId())){
             wrapper.eq("art.merchant_id",qto.getMerchantId());
         }
+        wrapper.orderByDesc("art.cdate");
         merchantArticleMapper.mapperPageList(page,wrapper);
         return MybatisPlusUtil.toPageData(qto, MerchantArticleVO.ListVO.class, page);
     }

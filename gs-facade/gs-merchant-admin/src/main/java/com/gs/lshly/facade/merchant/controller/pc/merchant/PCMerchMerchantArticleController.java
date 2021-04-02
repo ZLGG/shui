@@ -25,7 +25,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/merchadmin/merchantArticle")
 @Api(tags = "商家文章管理",description = " ")
-@Module(code = "articleManagement", parent = "shop", name = "文章管理", index = 9)
 public class PCMerchMerchantArticleController {
 
     @DubboReference
@@ -33,21 +32,18 @@ public class PCMerchMerchantArticleController {
 
     @ApiOperation("商家文章列表")
     @GetMapping("")
-    @Func(code="view", name="查")
     public ResponseData<PageData<PCMerchMerchantArticleVO.ListVO>> list(PCMerchMerchantArticleQTO.QTO qto) {
         return ResponseData.data(pcMerchMerchantArticleRpc.pageData(qto));
     }
 
     @ApiOperation("商家文章详情")
     @GetMapping(value = "/{id}")
-    @Func(code="view", name="查")
     public ResponseData<PCMerchMerchantArticleVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(pcMerchMerchantArticleRpc.detailMerchantArticle(new PCMerchMerchantArticleDTO.IdDTO(id)));
     }
 
     @ApiOperation("新增商家文章")
     @PostMapping("")
-    @Func(code="add", name="增")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchMerchantArticleDTO.ETO dto) {
         pcMerchMerchantArticleRpc.addMerchantArticle(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -55,7 +51,6 @@ public class PCMerchMerchantArticleController {
 
     @ApiOperation("删除商家文章")
     @DeleteMapping(value = "/{id}")
-    @Func(code="delete", name="删")
     public ResponseData<Void> delete(@PathVariable String id) {
         pcMerchMerchantArticleRpc.deleteMerchantArticle(new PCMerchMerchantArticleDTO.IdDTO(id));
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -64,7 +59,6 @@ public class PCMerchMerchantArticleController {
 
     @ApiOperation("修改商家文章")
     @PutMapping(value = "/{id}")
-    @Func(code="edit", name="改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody PCMerchMerchantArticleDTO.ETO eto) {
         eto.setId(id);
         pcMerchMerchantArticleRpc.editMerchantArticle(eto);
@@ -73,7 +67,6 @@ public class PCMerchMerchantArticleController {
 
     @ApiOperation("商家文章链接地址")
     @GetMapping(value = "/linkUrl/{id}")
-    @Func(code="view", name="查")
     public ResponseData<PCMerchMerchantArticleVO.LinkListVO> listLinkUrl(@PathVariable String id) {
         PCMerchMerchantArticleVO.LinkListVO linkListVO =  pcMerchMerchantArticleRpc.listLinkUrl(new PCMerchMerchantArticleDTO.IdDTO(id));
         linkListVO.setLinkPc("/merchadmin/merchantArticle/"+  id);

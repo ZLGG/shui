@@ -32,6 +32,7 @@ public class SiteCustomerServiceServiceImpl implements ISiteCustomerServiceServi
     @Override
     public List<SiteCustomerServiceVO.ListVO> list(SiteCustomerServiceQTO.QTO qto) {
         QueryWrapper<SiteCustomerService> wrapper =  MybatisPlusUtil.query();
+        wrapper.orderByDesc("cdate");
         List<SiteCustomerService> siteCustomerServiceList=repository.list(wrapper);
         return ListUtil.listCover(SiteCustomerServiceVO.ListVO.class,siteCustomerServiceList);
     }

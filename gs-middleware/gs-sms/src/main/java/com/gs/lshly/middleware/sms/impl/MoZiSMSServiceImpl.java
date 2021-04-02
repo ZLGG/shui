@@ -43,15 +43,15 @@ public class MoZiSMSServiceImpl implements IMoZiSMSService {
         public static class Merchant {
             //卫盈智信-营销
             //商户号
-            private static String merchantId = "1002fc";
+            private static String merchantId2 = "1002fc";
             //对应 apikey
-            private static String merchantApiKey = "RiK4Di";
+            private static String merchantApiKey2 = "RiK4Di";
 
             //卫盈智信-通知
             //商户号
-            private static String merchantId2= "1002fb";
+            private static String merchantId= "1002fb";
             //对应 apikey
-            private static String merchantApiKey2 = "zNs8i6";
+            private static String merchantApiKey = "zNs8i6";
         }
 
 
@@ -206,8 +206,10 @@ public class MoZiSMSServiceImpl implements IMoZiSMSService {
 
 
         public static void main(String[] args) {
-            String content = sendDate("13027710907", "摩字", "验证码是#code#，您在测试短信服务，如非本人操作，请忽略。", "a123456");
-//            System.out.println(content);
+            String content = sendDate("18628300710", "就享买", "" +
+                    "您的验证码" +
+                    "：<2315646> 请在页面中输入完成验证，不要把此验证码泄露给任何人，如非本人操作，请忽略此短信，短信有效期为<5>分钟", "a123456");
+            System.out.println(content);
 
             String balanceQuery = balanceQuery( "562715089242107961");
             System.out.println(balanceQuery);

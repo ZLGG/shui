@@ -10,6 +10,7 @@ import com.gs.lshly.biz.support.user.repository.IUserShoppingCarRepository;
 import com.gs.lshly.biz.support.user.service.bbb.h5.IBbbH5UserShoppingCarService;
 import com.gs.lshly.common.enums.QuantityLocationEnum;
 import com.gs.lshly.common.enums.StockCheckStateEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.ResponseData;
@@ -104,7 +105,8 @@ public class BbbH5UserShoppingCarServiceImpl implements IBbbH5UserShoppingCarSer
         }
         QueryWrapper<UserShoppingCar> userShoppingCar = new QueryWrapper<>();
         userShoppingCar.eq("user_id",dto.getJwtUserId());
-        int count = repository.count(userShoppingCar);
+        userShoppingCar.eq("terminal", TerminalEnum.BBB.getCode());
+        int count = userShoppingCarMapper.countShoppingCarGoods(userShoppingCar);
         BbbH5UserShoppingCarVO.CountVO countVO  = new BbbH5UserShoppingCarVO.CountVO();
         countVO.setCount(count);
         return countVO;
@@ -126,6 +128,7 @@ public class BbbH5UserShoppingCarServiceImpl implements IBbbH5UserShoppingCarSer
         if(null == userShoppingCar){
             userShoppingCar = new UserShoppingCar();
             BeanCopyUtils.copyProperties(eto, userShoppingCar);
+            userShoppingCar.setTerminal(TerminalEnum.BBB.getCode());
             userShoppingCar.setIsSelect(TrueFalseEnum.是.getCode());
             userShoppingCar.setUserId(eto.getJwtUserId());
         }else{

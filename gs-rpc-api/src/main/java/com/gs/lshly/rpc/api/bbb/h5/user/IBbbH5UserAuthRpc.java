@@ -16,7 +16,7 @@ public interface IBbbH5UserAuthRpc {
 
     BbbH5UserVO.LoginVO login(BbbH5UserDTO.LoginETO dto);
 
-    BbbH5UserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey);
+    BbbH5UserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid);
 
     String loadSessionKeyByWxOpenid(String openid);
 
@@ -27,4 +27,11 @@ public interface IBbbH5UserAuthRpc {
     BbbH5UserVO.LoginVO bindPhone(String appid, String openid, String validCode, String phone);
 
     void logout(String phone, String openid);
+
+    /**
+     *
+     * 通过userId查询微信名字
+     */
+    BbbH5UserVO.ThirdVO innerGetWXNickName(String userId);
+
 }

@@ -28,6 +28,7 @@ public class CommonUserAgreementServiceImpl implements ICommonUserAgreementServi
     public void editUserAgreement(CommonUserAgreementDTO.ETO dto) {
         QueryWrapper<UserAgreement> userAgreementQueryWrapper = MybatisPlusUtil.query();
         userAgreementQueryWrapper.eq("user_type",dto.getUserType());
+        userAgreementQueryWrapper.orderByDesc("cdate");
         UserAgreement userAgreement = repository.getOne(userAgreementQueryWrapper);
         if(null == userAgreement){
             userAgreement = new UserAgreement();
@@ -42,7 +43,6 @@ public class CommonUserAgreementServiceImpl implements ICommonUserAgreementServi
     @Override
     public CommonUserAgreementVO.DetailVO detailUserAgreement(CommonUserAgreementQTO.QTO dto) {
         QueryWrapper<UserAgreement> userAgreementQueryWrapper = MybatisPlusUtil.query();
-        userAgreementQueryWrapper.eq("user_type",dto.getUserType());
         UserAgreement userAgreement = repository.getOne(userAgreementQueryWrapper);
         if(null == userAgreement){
            return null;

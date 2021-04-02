@@ -81,4 +81,19 @@ public interface ICommonShopService {
      */
     List<String> shopNavigationIdList(String navigationId);
 
+    /**
+     * 获取店铺信息
+     * @param shopId
+     * @return
+     */
+    CommonShopVO.ListVO innerShopInfo(String shopId);
+
+    /**
+     * 获取店铺申请类目信息
+     * @param shopId
+     * @return
+     */
+    CommonShopVO.ShopCategoryInfoVO innerShopCategoryInfoVO(String shopId);
+
+    void visits(CommonShopDTO.VisitsDTO shopId);
 }

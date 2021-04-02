@@ -1,11 +1,11 @@
 package com.gs.lshly.biz.support.trade.service.bbb.h5.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.gs.lshly.biz.support.trade.entity.TradeInvoice;
-import com.gs.lshly.biz.support.trade.entity.TradeInvoiceAddress;
-import com.gs.lshly.biz.support.trade.repository.ITradeInvoiceAddressRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeInvoiceRepository;
+import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.bbb.h5.IH5BbbTradeInvoiceService;
 import com.gs.lshly.common.enums.TradeInvoiceAddressEnum;
 import com.gs.lshly.common.enums.TradeInvoiceEnum;
@@ -14,11 +14,20 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.H5BbbTradeInvoiceDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.qto.H5BbbTradeInvoiceQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.H5BbbTradeInvoiceVO;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbTradeInvoiceVO;
+import com.gs.lshly.common.struct.common.CommonUserVO;
+import com.gs.lshly.rpc.api.common.ICommonUserRpc;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -34,15 +43,24 @@ public class H5BbbTradeInvoiceServiceImpl implements IH5BbbTradeInvoiceService {
     @Autowired
     private ITradeInvoiceRepository repository;
     @Autowired
+    private ITradeRepository iTradeRepository;
+    @Autowired
+    private ITradeGoodsRepository iTradeGoodsRepository;
+    @Autowired
     private ITradeInvoiceAddressRepository iTradeInvoiceAddressRepository;
+    @Autowired
+    private ITradeInvoiceTemplateRepository iTradeInvoiceTemplateRepository;
+    @DubboReference
+    private ICommonUserRpc iCommonUserRpc;
 
     @Override
     public PageData<H5BbbTradeInvoiceVO.ListVO> pageData(H5BbbTradeInvoiceQTO.IdQTO qto) {
-        QueryWrapper<TradeInvoice> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id",qto.getJwtUserId());
-        IPage<TradeInvoice> page = MybatisPlusUtil.pager(qto);
-        IPage<TradeInvoice> invoiceIPage = repository.page(page, wrapper);
-        if(ObjectUtils.isEmpty(invoiceIPage) && ObjectUtils.isEmpty(invoiceIPage.getRecords())){
+        QueryWrapper<TradeInvoiceTemplate> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id" , qto.getJwtUserId());
+        wrapper.orderByDesc("cdate");
+        IPage<TradeInvoiceTemplate> page = MybatisPlusUtil.pager(qto);
+        iTradeInvoiceTemplateRepository.page(page, wrapper);
+        if(ObjectUtils.isEmpty(page) || ObjectUtils.isEmpty(page.getRecords())){
             return new PageData<>();
         }
         return MybatisPlusUtil.toPageData(qto, H5BbbTradeInvoiceVO.ListVO.class, page);
@@ -50,24 +68,67 @@ public class H5BbbTradeInvoiceServiceImpl implements IH5BbbTradeInvoiceService {
 
     @Override
     public void addTradeInvoice(H5BbbTradeInvoiceDTO.AddETO eto) {
-        QueryWrapper<TradeInvoice> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id",eto.getJwtUserId());
-        if(ObjectUtils.isNotEmpty(eto.getTaxNumber())){
-            wrapper.eq("tax_number",eto.getTaxNumber());
+        if (StringUtils.isBlank(eto.getJwtUserId())){
+            throw new BusinessException("未登录！！！");
         }
-        TradeInvoice repositoryOne = repository.getOne(wrapper);
-        if(ObjectUtils.isNotEmpty(repositoryOne)){
-            throw new BusinessException("税务人识别号已存在,请输入正确税号");
+        if (null == eto){
+            throw new BusinessException("参数不能为空！！");
         }
-        TradeInvoice tradeInvoice = new TradeInvoice();
-        tradeInvoice.setUserId(eto.getJwtUserId());
-        tradeInvoice.setUserName(eto.getJwtUserName());
-        tradeInvoice.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
-        tradeInvoice.setInvoiceStatus(TradeInvoiceEnum.待开具.getCode());
-        BeanUtils.copyProperties(eto, tradeInvoice);
-        repository.save(tradeInvoice);
+        if (ObjectUtils.isEmpty(eto.getInvoiceRise())){
+            throw new BusinessException("发票类型不能为空！！");
+        }
+        //保存发票
+        TradeInvoiceTemplate tradeInvoiceTemplate = new TradeInvoiceTemplate();
+        BeanUtils.copyProperties(eto,tradeInvoiceTemplate);
+        tradeInvoiceTemplate.setUserId(eto.getJwtUserId());
+       //如果将新增的发票设为默认先判断该用户是否有设置默认发票，若有则先将原先的默认发票取消掉
+        if (ObjectUtils.isNotEmpty(eto.getIsDefault()) && eto.getIsDefault().equals(TradeInvoiceEnum.默认发票.getCode())){
+           QueryWrapper<TradeInvoiceTemplate> wrapper = MybatisPlusUtil.query();
+           wrapper.eq("user_id",eto.getJwtUserId());
+           wrapper.eq("is_default",TradeInvoiceEnum.默认发票.getCode());
+           int count = iTradeInvoiceTemplateRepository.count(wrapper);
+           if (count > 0){
+               //取消掉前面的默认发票
+               TradeInvoiceTemplate invoice = new TradeInvoiceTemplate();
+               invoice.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
+
+               UpdateWrapper<TradeInvoiceTemplate> wrapper1 = MybatisPlusUtil.update();
+               wrapper1.eq("user_id",eto.getJwtUserId());
+               iTradeInvoiceTemplateRepository.update(invoice,wrapper1);
+           }
+            tradeInvoiceTemplate.setIsDefault(TradeInvoiceEnum.默认发票.getCode());
+        }else {
+            //查询用户是否有新增了发票,若没有则将第一个新增发票设为默认发票
+            QueryWrapper<TradeInvoiceTemplate> wrapper = MybatisPlusUtil.query();
+            wrapper.eq("user_id",eto.getJwtUserId());
+            List<TradeInvoiceTemplate> invoiceList = iTradeInvoiceTemplateRepository.list(wrapper);
+            if (ObjectUtils.isNotEmpty(invoiceList)){
+                tradeInvoiceTemplate.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
+            }else {
+                tradeInvoiceTemplate.setIsDefault(TradeInvoiceEnum.默认发票.getCode());
+            }
+        }
+        iTradeInvoiceTemplateRepository.saveOrUpdate(tradeInvoiceTemplate);
+
+
+
+
     }
 
+    private void packIsdefault(Integer isDefault ,String userId){
+        if(TradeInvoiceEnum.默认发票.getCode().equals(isDefault)){
+            //将当前的发票设置为默认发票
+            //清除此用户原来的默认发票
+            QueryWrapper<TradeInvoiceTemplate> wrapper = MybatisPlusUtil.query();
+            wrapper.eq("user_id",userId)
+                    .eq("is_default",isDefault);
+            TradeInvoiceTemplate one = iTradeInvoiceTemplateRepository.getOne(wrapper);
+            if(one != null){
+                one.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
+                iTradeInvoiceTemplateRepository.updateById(one);
+            }
+        }
+    }
 
     @Override
     public void deleteTradeInvoice(H5BbbTradeInvoiceDTO.IdDTO dto) { repository.removeById(dto.getId()); }
@@ -75,21 +136,50 @@ public class H5BbbTradeInvoiceServiceImpl implements IH5BbbTradeInvoiceService {
 
     @Override
     public void editTradeInvoice(H5BbbTradeInvoiceDTO.EditETO eto) {
-        TradeInvoice tradeInvoice = new TradeInvoice();
-        tradeInvoice.setUserId(eto.getJwtUserId());
-        tradeInvoice.setUserName(eto.getJwtUserName());
-        BeanUtils.copyProperties(eto, tradeInvoice);
-        repository.updateById(tradeInvoice);
+        if(ObjectUtils.isEmpty(eto)){
+            throw new BusinessException("参数异常");
+        }
+        TradeInvoiceTemplate tradeInvoiceTemplate = new TradeInvoiceTemplate();
+        if(eto.getIsDefault().equals(TradeInvoiceEnum.默认发票.getCode())){
+            QueryWrapper<TradeInvoiceTemplate> wrapper1 = new QueryWrapper<>();
+            wrapper1.eq("user_id", eto.getJwtUserId());
+            wrapper1.eq("is_default", TradeInvoiceEnum.默认发票.getCode());
+            TradeInvoiceTemplate tradeInvoice1 = iTradeInvoiceTemplateRepository.getOne(wrapper1);
+            BeanUtils.copyProperties(eto, tradeInvoice1);
+            //封装默认发票
+            packIsdefault(TradeInvoiceEnum.默认发票.getCode(),eto.getJwtUserId());
+            tradeInvoiceTemplate.setIsDefault(TradeInvoiceEnum.默认发票.getCode());
+        }else {
+            tradeInvoiceTemplate.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
+        }
+        tradeInvoiceTemplate.setUserId(eto.getJwtUserId());
+        tradeInvoiceTemplate.setUserName(eto.getJwtUserName());
+        BeanUtils.copyProperties(eto, tradeInvoiceTemplate);
+        iTradeInvoiceTemplateRepository.updateById(tradeInvoiceTemplate);
     }
 
     @Override
     public H5BbbTradeInvoiceVO.DetailVO detailTradeInvoice(H5BbbTradeInvoiceDTO.IdDTO dto) {
-        TradeInvoice tradeInvoice = repository.getById(dto.getId());
+        TradeInvoiceTemplate tradeInvoiceTemplate = iTradeInvoiceTemplateRepository.getById(dto.getId());
         H5BbbTradeInvoiceVO.DetailVO detailVo = new H5BbbTradeInvoiceVO.DetailVO();
-        if(ObjectUtils.isEmpty(tradeInvoice)){
-            throw new BusinessException("没有数据");
+        if(ObjectUtils.isEmpty(tradeInvoiceTemplate)){
+            return detailVo;
         }
-        BeanUtils.copyProperties(tradeInvoice, detailVo);
+        BeanUtils.copyProperties(tradeInvoiceTemplate, detailVo);
+        return detailVo;
+    }
+
+    @Override
+    public H5BbbTradeInvoiceVO.DetailVO detailInvoice(H5BbbTradeInvoiceQTO.IdQTO dto) {
+        H5BbbTradeInvoiceVO.DetailVO detailVo = new H5BbbTradeInvoiceVO.DetailVO();
+        QueryWrapper<TradeInvoiceTemplate> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",dto.getJwtUserId())
+                    .eq("is_default",TradeInvoiceEnum.默认发票.getCode());
+        TradeInvoiceTemplate tradeInvoiceTemplate = iTradeInvoiceTemplateRepository.getOne(wrapper);
+        if(ObjectUtils.isEmpty(tradeInvoiceTemplate)){
+            return detailVo;
+        }
+        BeanUtils.copyProperties(tradeInvoiceTemplate, detailVo);
         return detailVo;
     }
 
@@ -130,11 +220,14 @@ public class H5BbbTradeInvoiceServiceImpl implements IH5BbbTradeInvoiceService {
         listVO.setFirmName(tradeInvoice.getFirmName());
         listVO.setTaxNumber(tradeInvoice.getTaxNumber());
         listVO.setInvoiceRise(tradeInvoice.getInvoiceRise());
+        listVO.setInvoiceName(listVO.getInvoiceName());
         listVO.setRegisterAddress(tradeInvoice.getRegisterAddress());
         listVO.setOpeningBank(tradeInvoice.getOpeningBank());
         listVO.setAccountNumber(tradeInvoice.getAccountNumber());
         listVO.setPhone(tradeInvoice.getPhone());
-        listVO.setIsDefault(tradeInvoice.getIsDefault());
+        listVO.setContactsUser(tradeInvoice.getContactsUser());
+        listVO.setContactsEmail(tradeInvoice.getContactsEmail());
+        listVO.setInvoiceContent(tradeInvoice.getInvoiceContent());
     }
 
     private void packInvoiceAddressDate(TradeInvoiceAddress tradeInvoiceAddress,H5BbbTradeInvoiceVO.AddressDateVO listVO){
@@ -155,53 +248,78 @@ public class H5BbbTradeInvoiceServiceImpl implements IH5BbbTradeInvoiceService {
 
     @Override
     public void updateByIsDefaultList(H5BbbTradeInvoiceDTO.UpdateByIsDefaultIsDefaultDTO eto) {
-        QueryWrapper<TradeInvoice> tradeInvoiceQueryWrapper = new QueryWrapper<>();
-        tradeInvoiceQueryWrapper.eq("user_id", eto.getJwtUserId());
-        tradeInvoiceQueryWrapper.eq("is_default", TradeInvoiceEnum.默认发票.getCode());
-        TradeInvoice tradeInvoice = repository.getOne(tradeInvoiceQueryWrapper);
-        if (ObjectUtils.isNotEmpty(tradeInvoice)) {
-            tradeInvoice.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
-            repository.updateById(tradeInvoice);
+        if (ObjectUtils.isEmpty(eto.getTradeId()) || ObjectUtils.isEmpty(eto.getInvoiceId()) || ObjectUtils.isEmpty(eto.getInvoiceAddressId()) || ObjectUtils.isEmpty(eto.getEmailNum())){
+            throw new BusinessException("没有模版或没有传入联系人邮箱");
         }
-        TradeInvoice repositoryById = repository.getById(eto.getInvoiceId());
-        if (ObjectUtils.isNotEmpty(repositoryById)) {
-            repositoryById.setIsDefault(TradeInvoiceEnum.默认发票.getCode());
-            repositoryById.setTradeId(eto.getTradeId());
-            repositoryById.setInvoiceStatus(TradeInvoiceEnum.待开具.getCode());
-            repository.updateById(repositoryById);
+        if (ObjectUtils.isEmpty(eto.getTradeId())){
+            throw new BusinessException("请传订单号");
+        }
+        QueryWrapper<TradeInvoice> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",eto.getTradeId()));
+        List<TradeInvoice> list = repository.list(query);
+        if (ObjectUtils.isNotEmpty(list)){
+            throw new BusinessException("此订单已经开过发票了");
+        }
+        Trade trade = iTradeRepository.getById(eto.getTradeId());
+        if (ObjectUtils.isEmpty(trade)){
+            throw new BusinessException("没有查询到相应的订单");
+        }
+        TradeInvoice tradeInvoice = new TradeInvoice();
+        TradeInvoiceAddress tradeInvoiceAddress = iTradeInvoiceAddressRepository.getById(eto.getInvoiceAddressId());
+        if (ObjectUtils.isEmpty(tradeInvoiceAddress)){
+            throw new BusinessException("没有查询到相应的发票地址模版");
+        }
+        BeanUtils.copyProperties(tradeInvoiceAddress,tradeInvoice);
+        TradeInvoiceTemplate tradeInvoiceTemplate = iTradeInvoiceTemplateRepository.getById(eto.getInvoiceId());
+        if (ObjectUtils.isEmpty(tradeInvoiceTemplate)){
+            throw new BusinessException("没有查询到相应到发票模版");
+        }
+        BeanUtils.copyProperties(tradeInvoiceTemplate,tradeInvoice);
+        CommonUserVO.DetailVO details = iCommonUserRpc.details(trade.getUserId());
+        if (ObjectUtils.isNotEmpty(details)){
+            tradeInvoice.setUserName(details.getUserName());
+        }
+        tradeInvoice.setInvoiceStatus(TradeInvoiceEnum.已开具.getCode()).
+                setShopId(trade.getShopId()).
+                setTradeId(trade.getId()).setUserId(trade.getUserId()).setInvoiceAmount(trade.getTradeAmount()).setContactsEmail(eto.getEmailNum());
+        //封装发票内容
+        PackTradeInviceContent(trade,tradeInvoice);
+        tradeInvoice.setId(null);
+        repository.save(tradeInvoice);
+    }
+    private void PackTradeInviceContent(Trade trade, TradeInvoice tradeInvoice) {
+        QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",trade.getId()));
+        List<TradeGoods> list = iTradeGoodsRepository.list(query);
+        if (ObjectUtils.isNotEmpty(list)){
+            List<PCBbbTradeInvoiceVO.invoiceContendVO> contend=list.parallelStream().map(e ->{
+                PCBbbTradeInvoiceVO.invoiceContendVO invoiceContendVO = new PCBbbTradeInvoiceVO.invoiceContendVO();
+                BeanUtils.copyProperties(e,invoiceContendVO);
+                return invoiceContendVO;
+            }).collect(Collectors.toList());
+            String contendJSON = JSONObject.toJSONString(contend);
+            tradeInvoice.setInvoiceContent(contendJSON);
         }
 
-        QueryWrapper<TradeInvoiceAddress> tradeInvoiceAddressQueryWrapper = new QueryWrapper<>();
-        tradeInvoiceAddressQueryWrapper.eq("user_id", eto.getJwtUserId());
-        tradeInvoiceAddressQueryWrapper.eq("is_default", TradeInvoiceAddressEnum.默认地址.getCode());
-        TradeInvoiceAddress tradeInvoiceAddress = iTradeInvoiceAddressRepository.getOne(tradeInvoiceAddressQueryWrapper);
-        if (ObjectUtils.isNotEmpty(tradeInvoiceAddress)) {
-            tradeInvoiceAddress.setIsDefault(TradeInvoiceAddressEnum.普通地址.getCode());
-            iTradeInvoiceAddressRepository.updateById(tradeInvoiceAddress);
-        }
-        TradeInvoiceAddress tradeInvoiceAddressRepositoryById = iTradeInvoiceAddressRepository.getById(eto.getInvoiceId());
-        if (ObjectUtils.isNotEmpty(tradeInvoiceAddressRepositoryById)) {
-            tradeInvoiceAddressRepositoryById.setIsDefault(TradeInvoiceAddressEnum.默认地址.getCode());
-            tradeInvoiceAddressRepositoryById.setInvoiceId(repositoryById.getId());
-            iTradeInvoiceAddressRepository.updateById(tradeInvoiceAddressRepositoryById);
-        }
     }
 
 
     @Override
     public H5BbbTradeInvoiceVO.DetailVO detailByTradeId(H5BbbTradeInvoiceQTO.TradeIdQTO qto) {
-        QueryWrapper<TradeInvoice> wrapper = MybatisPlusUtil.query();
         if(ObjectUtils.isEmpty(qto.getTradeId())){
             throw new BusinessException("订单编号不能为空");
         }
-        wrapper.eq("trade_id",qto.getTradeId());
-        TradeInvoice tradeInvoice = repository.getOne(wrapper);
-        if(ObjectUtils.isEmpty(tradeInvoice)){
-            throw new BusinessException("没有数据");
+        Trade byId = iTradeRepository.getById(qto.getTradeId());
+        if (ObjectUtils.isNotEmpty(byId)){
+            TradeInvoice byId1 = repository.getById(byId.getInvoiceId());
+            if (ObjectUtils.isNotEmpty(byId1)){
+                H5BbbTradeInvoiceVO.DetailVO detailVo = new H5BbbTradeInvoiceVO.DetailVO();
+                BeanUtils.copyProperties(byId1, detailVo);
+                return detailVo;
+            }
         }
-        H5BbbTradeInvoiceVO.DetailVO detailVo = new H5BbbTradeInvoiceVO.DetailVO();
-        BeanUtils.copyProperties(tradeInvoice, detailVo);
-        return detailVo;
+        return null;
+
     }
 
 }

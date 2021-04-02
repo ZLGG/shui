@@ -102,6 +102,9 @@ public class IBbbTradeRightsServiceImpl implements IBbbTradeRightsService {
 
     @Override
     public void addTradeRights(BbbTradeRightsBuildDTO.ETO dto) {
+        if (org.apache.commons.lang3.StringUtils.isEmpty(dto.getRightsRemark())){
+            throw new BusinessException("请填写售后原因");
+        }
         //根据订单id查询订单数据
         Trade trade = tradeRepository.getById(dto.getTradeId());
         if(ObjectUtils.isEmpty(trade)){
@@ -198,6 +201,12 @@ public class IBbbTradeRightsServiceImpl implements IBbbTradeRightsService {
 
     @Override
     public void addAddress(BbbTradeRightsBuildDTO.AddAddressDTO dto) {
+        if (ObjectUtils.isEmpty(dto.getReturnGoodsLogisticsName())){
+            throw new BusinessException("请填写物流公司名字");
+        }
+        if (ObjectUtils.isEmpty(dto.getReturnGoodsLogisticsNum())){
+            throw new BusinessException("请填写物流单号");
+        }
         TradeRights tradeRights = repository.getById(dto.getId());
         if (ObjectUtils.isNotEmpty(tradeRights)){
            if (tradeRights.getState().equals(TradeRightsStateEnum.通过.getCode()) && (tradeRights.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())||tradeRights.getRightsType().equals(TradeRightsTypeEnum.退货退款.getCode()))){

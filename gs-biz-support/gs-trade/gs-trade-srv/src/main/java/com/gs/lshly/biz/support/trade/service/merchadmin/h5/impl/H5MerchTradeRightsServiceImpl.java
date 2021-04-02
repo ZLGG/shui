@@ -88,6 +88,7 @@ public class H5MerchTradeRightsServiceImpl implements IH5MerchTradeRightsService
         if (ObjectUtils.isNotEmpty(qto.getEndTime()) || ObjectUtils.isNotEmpty(qto.getStartTime())){
             queryWrapper.and(i->i.ge("t.`cdate`",qto.getStartTime()).le("t.`cdate`",qto.getEndTime()));
         }
+        queryWrapper.orderByDesc("t.cdate");
         IPage<H5MerchTradeRightsVO.ListVO> pager = MybatisPlusUtil.pager(qto);
         repository.selectMerchH5RightList(pager,queryWrapper);
         //获取售后表
@@ -242,14 +243,13 @@ public class H5MerchTradeRightsServiceImpl implements IH5MerchTradeRightsService
                 throw new BusinessException("没有退货凭证数据");
             }
             H5MerchShopVO.ShopSimpleVO shopSimpleVO = ipcMerchShopRpc.innerShopSimple(trade.getShopId());
-            if (StringUtils.isBlank(shopSimpleVO.getShopName())){
-                throw new BusinessException("没有商家信息数据");
+            if (ObjectUtils.isNotEmpty(shopSimpleVO)){
+                detailVo.setMerchantName(shopSimpleVO.getShopName());//商家名称
             }
             H5MerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(trade.getUserId());
-            if (StringUtils.isBlank(userSimpleVO.getUserName())){
-                throw new BusinessException("没有用户信息数据");
+            if (ObjectUtils.isNotEmpty(userSimpleVO)){
+                detailVo.setUserName(userSimpleVO.getUserName());//会员名称
             }
-
             H5MerchTradeRightsVO.RightGoodsList rightGoodsList = new H5MerchTradeRightsVO.RightGoodsList();
             rightGoodsList.setGoodsName(tradeRightsGoods.getGoodsName()).
                     setQuantity(tradeRightsGoods.getQuantity()).
@@ -260,9 +260,10 @@ public class H5MerchTradeRightsServiceImpl implements IH5MerchTradeRightsService
             //售后商品集合
             detailVo.setRightGoodsList(goodsLists);
             detailVo.setGoodsName(tradeRightsGoods.getGoodsName());//商品名称
-            detailVo.setSkuImg(iTradeGoodsRepository.getById(tradeRightsGoods.getTradeGoodsId()).getSkuImg());//商品图片
-            detailVo.setMerchantName(shopSimpleVO.getShopName());//商家名称
-            detailVo.setUserName(userSimpleVO.getUserName());//会员名称
+            TradeGoods byId = iTradeGoodsRepository.getById(tradeRightsGoods.getTradeGoodsId());
+            if (ObjectUtils.isNotEmpty(byId)){
+                detailVo.setSkuImg(byId.getSkuImg());//商品图片
+            }
             detailVo.setTradeDate(trade.getCdate());//下单时间
             detailVo.setTradeState(trade.getTradeState());//订单完成状态
             detailVo.setReceivingInformation(trade.getRecvPersonName()+" "+trade.getRecvPhone()+" "+trade.getRecvFullAddres());//收货信息(收货人名+电话+地址)

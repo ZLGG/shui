@@ -61,7 +61,7 @@ public class CodeGeneratorLxus {
         packageConfig.setServiceImpl("biz.support.foundation.repository.impl");
 
         //路径G
-        globalConfig.setOutputDir("C:/works/program/citydo/gs-mall/gs-biz-support/gs-foundation/gs-foundation-repository/src/main/java");
+        globalConfig.setOutputDir("/Users/lxus/Desktop/gs-lshly/gs-biz-support/gs-foundation/gs-foundation-repository/src/main/java");
         //表名
         strategy.setInclude("gs_oauth2_client","gs_oauth2_code","gs_oauth2_token");
         // 作者

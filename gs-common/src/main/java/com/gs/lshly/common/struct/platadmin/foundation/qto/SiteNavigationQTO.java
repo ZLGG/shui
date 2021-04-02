@@ -17,7 +17,8 @@ public abstract class SiteNavigationQTO implements Serializable {
     @Data
     @ApiModel("SiteNavigationQTO.H5QTO")
     @Accessors(chain = true)
-    public static class H5QTO extends BaseDTO {
+    @AllArgsConstructor
+    public class H5QTO extends BaseDTO {
 
         @ApiModelProperty(value = "终端[10=2b 20=2c]",hidden = true)
         private Integer terminal;
@@ -30,16 +31,14 @@ public abstract class SiteNavigationQTO implements Serializable {
     @Data
     @ApiModel("SiteNavigationQTO.PCQTO")
     @Accessors(chain = true)
-    public static class PCQTO extends BaseDTO {
+    @AllArgsConstructor
+    public class PCQTO extends BaseDTO {
 
         @ApiModelProperty(value = "终端[10=2b 20=2c]",hidden = true)
         private Integer terminal;
 
         @ApiModelProperty(value = "导航类型[10=顶部链接 20=菜单导航]",hidden = true)
         private Integer type;
-        
-        @ApiModelProperty(value = "终端[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50积分专栏]",hidden=true)
-        private Integer subject;
 
     }
 }

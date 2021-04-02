@@ -18,10 +18,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableDubboConfig
 @DubboComponentScan("com.gs.lshly.biz.support.trade.rpc")
 @MapperScan(basePackages="com.gs.lshly.biz.support.trade.mapper")
-@ComponentScan( value = {"com.gs.lshly.middleware.sms","com.gs.lshly.biz.support.trade"})
+@ComponentScan( value = {"com.gs.lshly.middleware.sms","com.gs.lshly.biz.support.trade","com.gs.lshly.middleware.mq"})
 @EnableTransactionManagement
 public class TradeApplication {
     public static void main(String[] args) {
         SpringApplication.run(TradeApplication.class, args);
     }
+
 }

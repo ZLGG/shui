@@ -21,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/merchant/bbb/pc")
 @Api(tags = "店铺装饰(B2B-PC)")
-@Module(code = "configB2BPC", parent = "shop", name = "B2B-PC站点配置", index = 4)
 public class PCMerchDecorateB2bPcController {
 
     @DubboReference
@@ -48,14 +47,12 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("店招配置详情")
     @GetMapping("/signboard")
-    @Func(code="view", name="查")
     public ResponseData<PCMerchShopSignboardVO.DetailVO> signboard(PCMerchShopSignboardQTO.QTO qto) {
         return ResponseData.data(pCMerchShopSignboardRpc.detailSignboard(qto));
     }
 
     @ApiOperation("店招配置编辑")
     @PutMapping(value = "/signboardEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> signboardEditor(@Valid @RequestBody PCMerchShopSignboardDTO.ETO eto) {
         pCMerchShopSignboardRpc.editShopSignboard(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
@@ -79,7 +76,6 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("通栏广告图")
     @GetMapping("/shopAdvert")
-    @Func(code="view", name="查")
     public ResponseData<PCMerchShopAdvertVO.DetailVO> detailShopAdvert(PCMerchShopAdvertQTO.QTO qto) {
         qto.setTerminal(TerminalEnum.BBB.getCode());
         qto.setAdvertType(AdvertTypeEnum.通栏广告.getCode());
@@ -88,7 +84,6 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("通栏广告图编辑")
     @PutMapping(value = "/shopAdvertEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> editShopAdvert(@Valid @RequestBody PCMerchShopAdvertDTO.ETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         eto.setAdvertType(AdvertTypeEnum.通栏广告.getCode());
@@ -105,7 +100,6 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("B2bPc店铺导航编辑")
     @PutMapping(value = "/shopMenuEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> shopMenuEditor(@Valid @RequestBody PCMerchShopNavigationMenuDTO.PCShopMenuETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         pcMerchShopNavigationMenuRpc.pcShopMenuEditor(eto);
@@ -114,7 +108,6 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("B2bPc楼层列表")
     @GetMapping("/floorList")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopFloorVO.PCListVO>> floorList(PCMerchShopFloorQTO.PCQTO qto) {
         qto.setTerminal(TerminalEnum.BBB.getCode());
         return ResponseData.data(pCMerchShopFloorRpc.pcList(qto));
@@ -122,7 +115,6 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("B2bPc楼层编辑")
     @PutMapping(value = "/floorEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> floorEditor(@Valid @RequestBody PCMerchShopFloorDTO.PCETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         pCMerchShopFloorRpc.pcEditor(eto);
@@ -131,14 +123,12 @@ public class PCMerchDecorateB2bPcController {
 
     @ApiOperation("B2bPc自定义区域详情")
     @GetMapping("/customArea")
-    @Func(code="view", name="查")
     public ResponseData<PCMerchShopCustomAreaVO.DetailVO> customArea(PCMerchShopCustomAreaQTO.QTO qto) {
         return ResponseData.data(pCMerchShopCustomAreaRpc.detailShopCustomArea(qto));
     }
 
     @ApiOperation("B2bPc自定义区域编辑")
     @PutMapping(value = "/customAreaEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> customAreaEditor(@Valid @RequestBody PCMerchShopCustomAreaDTO.ETO eto) {
         pCMerchShopCustomAreaRpc.editShopCustomArea(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);

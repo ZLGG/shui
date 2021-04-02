@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCategory;
+import com.gs.lshly.biz.support.merchant.entity.Shop;
 import com.gs.lshly.biz.support.merchant.entity.ShopGoodsCategory;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyCategoryTypeEnum;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyStateEnum;
@@ -13,7 +14,11 @@ import com.gs.lshly.biz.support.merchant.mapper.MerchantApplyCategoryMapper;
 import com.gs.lshly.biz.support.merchant.mapper.views.MerchantApplyCategoryView;
 import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCategoryRepository;
 import com.gs.lshly.biz.support.merchant.repository.IShopGoodsCategoryRepository;
+import com.gs.lshly.biz.support.merchant.repository.IShopRepository;
 import com.gs.lshly.biz.support.merchant.service.platadmin.IMerchantShopCategoryApplyService;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.enums.ShopTypeEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
@@ -21,6 +26,7 @@ import com.gs.lshly.common.struct.platadmin.merchant.dto.MerchantShopCategoryApp
 import com.gs.lshly.common.struct.platadmin.merchant.qto.MerchantShopCategoryApplyQTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.MerchantShopCategoryApplyVO;
 import com.gs.lshly.common.utils.EnumUtil;
+import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -49,6 +55,13 @@ public class MerchantShopCategoryApplyServiceImpl implements IMerchantShopCatego
     private IShopGoodsCategoryRepository shopGoodsCategoryRepository;
 
     @Autowired
+    private IShopRepository shopRepository;
+
+    @Autowired
+    private IMerchantApplyCategoryRepository applyCategoryRepository;
+
+
+    @Autowired
     private MerchantApplyCategoryMapper merchantApplyCategoryMapper;
 
     @DubboReference
@@ -64,6 +77,7 @@ public class MerchantShopCategoryApplyServiceImpl implements IMerchantShopCatego
             wrapper.eq("state", qto.getState());
         }
         wrapper.eq("apply_type", MerchantApplyCategoryTypeEnum.店铺申请.getCode());
+        wrapper.orderByDesc("cdate");
         IPage<MerchantApplyCategoryView> page = MybatisPlusUtil.pager(qto);
         merchantApplyCategoryMapper.mapperPageList(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, MerchantShopCategoryApplyVO.ListVO.class, page);
@@ -83,11 +97,12 @@ public class MerchantShopCategoryApplyServiceImpl implements IMerchantShopCatego
         //店铺已有类目 申请的是一级分类
         QueryWrapper<ShopGoodsCategory> shopGoodsCategoryQueryWrapper = MybatisPlusUtil.query();
         shopGoodsCategoryQueryWrapper.eq("shop_id", view.getShopId());
+        shopGoodsCategoryQueryWrapper.eq("category_leve", GoodsCategoryLevelEnum.ONE.getCode());
         List<ShopGoodsCategory> shopGoodsCategoryList = shopGoodsCategoryRepository.list(shopGoodsCategoryQueryWrapper);
         if (ObjectUtils.isNotEmpty(shopGoodsCategoryList)) {
-            for (ShopGoodsCategory category : shopGoodsCategoryList) {
-                detailVO.getCategoryNameList().add(category.getCategoryName());
-            }
+            List<String> list = ListUtil.getIdList(ShopGoodsCategory.class,shopGoodsCategoryList,"categoryId");
+           List<GoodsCategoryVO.CategoryTreeVO> categoryTreeVOS = goodsCategoryRpc.listCategoryTree(list);
+           detailVO.setCategoryTreeVOS(categoryTreeVOS);
         }
         return detailVO;
     }
@@ -137,8 +152,32 @@ public class MerchantShopCategoryApplyServiceImpl implements IMerchantShopCatego
                 shopGoodsCategoryRepository.shopGoodsCategoryBatchSave(merchantShopCategoryApply.getMerchantId(),merchantShopCategoryApply.getShopId(),categoryTree);
                 merchantShopCategoryApply.setState(MerchantShopCategoryApplyStateEnum.通过.getCode());
                 repository.updateById(merchantShopCategoryApply);
+
+                //如果店铺类型为类目专营店，申请成功后店铺类型升级成多品类
+                Shop shop =  shopRepository.getById(merchantShopCategoryApply.getShopId());
+                if (null == shop){
+                    throw new BusinessException("店铺不存在！");
+                }
+                if (shop.getShopType().equals(ShopTypeEnum.类目专营店.getCode())){
+                    Shop shop1 = new Shop();
+                    shop1.setId(shop.getId());
+                    shop1.setShopType(ShopTypeEnum.多品类通用.getCode());
+                    shopRepository.updateById(shop1);
+                }
             }
         }
+    }
+
+    @Override
+    public List<String> innerGetApplyCategoryIdList(String applyId) {
+        List<String> categoryIdList = new ArrayList<>();
+        QueryWrapper<MerchantApplyCategory> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("apply_id",applyId);
+        List<MerchantApplyCategory> categories = repository.list(wrapper);
+        if (ObjectUtils.isNotEmpty(categories)){
+            categoryIdList = ListUtil.getIdList(MerchantApplyCategory.class,categories,"goodsCategoryId");
+        }
+       return categoryIdList;
     }
 
 

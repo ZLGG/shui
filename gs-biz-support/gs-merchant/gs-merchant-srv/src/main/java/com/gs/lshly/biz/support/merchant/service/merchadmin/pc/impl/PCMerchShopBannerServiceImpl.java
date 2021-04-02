@@ -47,6 +47,7 @@ public class PCMerchShopBannerServiceImpl implements IPCMerchShopBannerService {
         queryWrapper.eq("terminal",qto.getTerminal());
         queryWrapper.eq("pc_show", PcH5Enum.NO.getCode());
         queryWrapper.eq("shop_id",qto.getJwtShopId());
+        queryWrapper.orderByDesc("cdate");
         List<ShopBanner> shopBannerList = repository.list(queryWrapper);
         return ListUtil.listCover(PCMerchShopBannerVO.H5ListVO.class,shopBannerList);
     }

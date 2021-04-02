@@ -72,7 +72,7 @@ public class BbcTradeController {
 
     @ApiOperation("支付回调")
     @PostMapping("/doPayNotify")
-    public String doPayNotify(@Valid @RequestBody BbcTradeResultNotifyVO.notifyVO notifyVO) {
+    public String doPayNotify(BbcTradeResultNotifyVO.notifyVO notifyVO) {
 
         return bbcTradeRpc.payNotify(notifyVO);
     }

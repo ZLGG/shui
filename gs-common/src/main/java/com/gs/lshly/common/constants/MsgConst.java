@@ -36,6 +36,8 @@ public class MsgConst {
 
     public static final String APPLY_Fail = "审核驳回";
 
+    public static final String DETERMINE_SUCCESS = "确定成功";
+
     public static final String APPEAL_COMMENT = "申诉已提交，请耐心等待审核结果";
 
     public static final String ENUM_CHECK_VALUE = "枚举参数错误";
@@ -73,6 +75,12 @@ public class MsgConst {
     public static final String SIGNIN_SUCCESS = "签到成功";
 
     public static final String REVICE_SUCCESS = "领取成功";
+
+    public static final String RECORD_SUCCESS = "记录成功";
+
+    public static final String OPEN_SUCCESS = "开启成功";
+
+
 
 
 }

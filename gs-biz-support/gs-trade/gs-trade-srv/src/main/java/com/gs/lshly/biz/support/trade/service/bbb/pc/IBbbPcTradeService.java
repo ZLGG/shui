@@ -46,4 +46,7 @@ public interface IBbbPcTradeService {
     List<BbbTradeListVO.UseCard> useCard(BbbOrderDTO.UseCard dto);
 
     List<BbbTradeListVO.InnerGoodsCompareTo> innerCommpareTo(BbbOrderDTO.innerCommpareTo dto);
+
+    BbbTradeListVO.InnerGoodsScore innerShopScore(String shopId, String id);
+
 }

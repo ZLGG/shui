@@ -20,4 +20,6 @@ public interface IPCMerchDataNoticeRpc {
 
     PCMerchDataNoticeVO.DetailVO detailDataNotice(PCMerchDataNoticeDTO.IdDTO dto);
 
+    List<PCMerchDataNoticeVO.ListVO> innerList(PCMerchDataNoticeDTO.innerDTO qto);
+
 }

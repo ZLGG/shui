@@ -94,4 +94,14 @@ public class BbbH5MarketActivityRpc implements IBbbH5MarketActivityRpc {
        return iBbbH5MarketActivityService.jurisdiction();
 
     }
+
+    @Override
+    public List<BbbH5MarketActivityVO.merchantCard> activityCardGoodsInfo(BbbH5MarketMerchantActivityDTO.MerchantIdDTO dto) {
+        return iBbbH5MarketActivityService.activityCardGoodsInfo(dto);
+    }
+
+    @Override
+    public PageData<BbbH5MarketActivityVO.activityListPageVO> activityListPage(BbbH5MarketActivityQTO.QTO qto) {
+        return iBbbH5MarketActivityService.activityListPage(qto);
+    }
 }

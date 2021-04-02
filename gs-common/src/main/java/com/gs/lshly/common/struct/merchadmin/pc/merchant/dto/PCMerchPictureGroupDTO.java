@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
 * @author Starry
 * @since 2020-10-22
@@ -18,14 +21,37 @@ public abstract class PCMerchPictureGroupDTO implements Serializable {
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
-        @ApiModelProperty(value = "图片分组id",hidden = true)
+        @ApiModelProperty(value = "图片分组id")
         private String id;
-
-        @ApiModelProperty("所属id（店铺id,-1为平台）")
-        private String belongId;
 
         @ApiModelProperty("分组名称")
         private String groupValue;
+
+    }
+
+    @Data
+    @ApiModel("PCMerchPictureGroupDTO.SaveETO")
+    @Accessors(chain = true)
+    public static class SaveETO extends BaseDTO {
+
+        @ApiModelProperty(value = "图片分组父id，全部为-1")
+        private String parentId;
+
+        @ApiModelProperty("图片分组父文件级别，全都级别为0")
+        private Integer parentLevel;
+
+        @ApiModelProperty("子文件列表")
+        private List<ETO> groupValues = new ArrayList<>();
+    }
+
+
+    @Data
+    @ApiModel("PCMerchPictureGroupDTO.ParentIdDTO")
+    @Accessors(chain = true)
+    public static class ParentIdDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "图片分组父id,全部为-1")
+        private String parentId;
 
     }
 
@@ -36,6 +62,14 @@ public abstract class PCMerchPictureGroupDTO implements Serializable {
 
         @ApiModelProperty(value = "图片分组id")
         private String id;
+    }
+
+    @Data
+    @ApiModel("PCMerchPictureGroupDTO.IdListDTO")
+    public static class IdListDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "图片分组id")
+        private List<String> idList = new ArrayList<>();
     }
 
 

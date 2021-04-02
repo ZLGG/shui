@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.merchant.entity.Pictures;
 import com.gs.lshly.biz.support.merchant.repository.IPicturesRepository;
 import com.gs.lshly.biz.support.merchant.service.merchadmin.pc.IPCMerchPicturesService;
+import com.gs.lshly.common.enums.OrderByTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.middleware.mybatisplus.MerchantPermitUtil;
@@ -42,13 +43,22 @@ public class PCMerchPicturesServiceImpl implements IPCMerchPicturesService {
             boost.eq("group_id",qto.getGroupId());
         }
         if (StringUtils.isNotEmpty(qto.getImageName())){
-            boost.eq("image_name",qto.getImageName());
+            boost.like("original_image_name",qto.getImageName());
         }
         if (StringUtils.isNotEmpty(qto.getOrderByProperty()) && qto.getOrderByProperty().equals("name")){
-            boost.orderByAsc("image_name");
+            if (ObjectUtils.isNotEmpty(qto.getOrderWays()) && qto.getOrderByProperty().equals(OrderByTypeEnum.升序.getCode())){
+                boost.orderByAsc("original_image_name");
+            }else {
+                boost.orderByDesc("original_image_name");
+            }
+
         }
         if (StringUtils.isNotEmpty(qto.getOrderByProperty()) && qto.getOrderByProperty().equals("time")){
-            boost.orderByAsc("cdate");
+            if (ObjectUtils.isNotEmpty(qto.getOrderWays()) && qto.getOrderByProperty().equals(OrderByTypeEnum.升序.getCode())){
+                boost.orderByAsc("cdate");
+            }else {
+                boost.orderByDesc("cdate");
+            }
         }
         IPage<Pictures> page = MybatisPlusUtil.pager(qto);
         repository.page(page, boost);

@@ -122,6 +122,9 @@ public abstract class CommonStockTemplateDTO implements Serializable {
 
         @ApiModelProperty(value = "市数组",position = 3)
         private List<RegionCDTO> regionCDTO;
+
+//        @ApiModelProperty(value = "区数组",position = 4)
+//        private List<CountyCDTO> countyCDTO;
     }
 
     @Data
@@ -134,6 +137,19 @@ public abstract class CommonStockTemplateDTO implements Serializable {
 
         @ApiModelProperty("市")
         private String city;
+
+    }
+
+    @Data
+    @ApiModel("CommonStockTemplateDTO.CountyCDTO")
+    @Accessors(chain = true)
+    public static class CountyCDTO implements Serializable{
+
+        @ApiModelProperty("区ID")
+        private String id;
+
+        @ApiModelProperty("区")
+        private String county;
 
     }
 

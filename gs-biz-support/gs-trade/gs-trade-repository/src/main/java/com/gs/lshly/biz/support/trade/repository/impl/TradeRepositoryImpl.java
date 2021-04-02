@@ -41,14 +41,14 @@ public class TradeRepositoryImpl extends ServiceImpl<TradeMapper, Trade> impleme
     }
 
     @Override
-    public IPage<BbcTradeListVO.tradeVO> selectTradeListPage(IPage<BbcTradeListVO.tradeVO> page, QueryWrapper<BbcTradeQTO.TradeList> qw) {
+    public List<BbcTradeListVO.tradeVO> selectTradeListPage(QueryWrapper<BbcTradeQTO.TradeList> qw) {
 
-        return tradeMapper.selectTradeListPage(page,qw);
+        return tradeMapper.selectTradeListPage(qw);
     }
 
     @Override
-    public IPage<BbbH5TradeListVO.tradeVO> BbbH5selectTradeListPage(IPage<BbbH5TradeListVO.tradeVO> page, QueryWrapper<BbbH5TradeQTO.TradeList> qw) {
-        return tradeMapper.BbbH5selectTradeListPage(page,qw);
+    public   List<BbbH5TradeListVO.tradeVO>  BbbH5selectTradeListPage( QueryWrapper<BbbH5TradeQTO.TradeList> qw) {
+        return tradeMapper.BbbH5selectTradeListPage(qw);
     }
 
     @Override
@@ -84,5 +84,15 @@ public class TradeRepositoryImpl extends ServiceImpl<TradeMapper, Trade> impleme
     @Override
     public List<Trade> yesterdayTrade(QueryWrapper<MerchantHomeDashboardDTO.ETO> queryWrapper) {
         return tradeMapper.yesterdayTrade(queryWrapper);
+    }
+
+    @Override
+    public BbbTradeListVO.InnerGoodsScore selectShopScore( QueryWrapper<Object> queryWrapper) {
+        return tradeMapper.selectShopScore(queryWrapper);
+    }
+
+    @Override
+    public BbbTradeListVO.InnerGoodsScore selectGoodScore( QueryWrapper<Object> queryWrapper) {
+        return tradeMapper.selectGoodScore(queryWrapper);
     }
 }

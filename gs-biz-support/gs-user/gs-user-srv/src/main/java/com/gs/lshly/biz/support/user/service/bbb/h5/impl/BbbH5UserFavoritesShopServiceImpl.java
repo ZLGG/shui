@@ -58,6 +58,7 @@ public class BbbH5UserFavoritesShopServiceImpl implements IBbbH5UserFavoritesSho
         QueryWrapper<UserFavoritesShop> queryWrapper = MybatisPlusUtil.query();
         IPage<UserFavoritesShop> pager = MybatisPlusUtil.pager(qto);
         queryWrapper.eq("user_id", qto.getJwtUserId());
+        queryWrapper.orderByDesc("cdate");
         repository.page(pager,queryWrapper);
         if(ObjectUtils.isEmpty(pager.getRecords())){
             return new PageData<>(new ArrayList<>(),qto.getPageNum(),qto.getPageSize(),pager.getTotal());

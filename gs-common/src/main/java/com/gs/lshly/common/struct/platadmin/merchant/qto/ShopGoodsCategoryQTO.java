@@ -39,9 +39,11 @@ public abstract class ShopGoodsCategoryQTO implements Serializable {
 
     @Data
     @ApiModel("ShopGoodsCategoryDTO.ShopIdDTO")
-    @AllArgsConstructor
     public static class ShopIdQTO extends BaseQTO {
         @ApiModelProperty(value = "店铺ID")
         private String shopId;
+
+        @ApiModelProperty(value = "店铺类型")
+        private Integer shopType;
     }
 }

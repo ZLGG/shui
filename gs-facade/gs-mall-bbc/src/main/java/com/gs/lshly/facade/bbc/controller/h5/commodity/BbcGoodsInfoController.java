@@ -38,7 +38,7 @@ public class BbcGoodsInfoController {
 
     @ApiOperation("2C商城商家商品信息管理列表")
     @GetMapping("/getMerchantGoods")
-    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> pageDataResponseData(BbcGoodsInfoQTO.MerchantGoodsQTO qto) {
+    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> pageMerchantGoods(BbcGoodsInfoQTO.MerchantGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageMerchantGoods(qto));
     }
 

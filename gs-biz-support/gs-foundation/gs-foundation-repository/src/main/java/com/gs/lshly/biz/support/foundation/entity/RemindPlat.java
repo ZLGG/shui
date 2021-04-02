@@ -65,6 +65,11 @@ public class RemindPlat extends Model {
      */
     private Integer triggerType;
 
+    /**
+     * 10=待读 20=已读
+     */
+    private Integer state;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdate;
 

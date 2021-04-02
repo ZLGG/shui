@@ -39,7 +39,7 @@ public class BbbH5UserCenterController {
     @DubboReference
     private IBbbH5UserCardRpc bbbH5UserCardRpc;
 
-    @ApiOperation("我的会员信息-v1.1.0")
+    @ApiOperation("我的会员信息")
     @GetMapping("/getUserInfo")
     public ResponseData<BbbH5UserVO.DetailVO> getUserInfo(BbbH5UserQTO.QTO qto) {
         BbbH5UserVO.DetailVO detailVO =  bbbH5UserRpc.getUserInfo(qto);

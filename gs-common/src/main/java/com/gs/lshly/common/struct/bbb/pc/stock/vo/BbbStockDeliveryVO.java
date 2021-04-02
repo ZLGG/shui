@@ -38,12 +38,15 @@ public class BbbStockDeliveryVO implements Serializable {
         @ApiModelProperty(value = "运费")
         private BigDecimal amount;
 
+        @ApiModelProperty(value = "总种量")
+        private BigDecimal totalWeight;
+
         public static DeliveryAmountVO ofZero(String shopId) {
             return new DeliveryAmountVO().setShopId(shopId).setAmount(BigDecimal.ZERO);
         }
 
-        public static DeliveryAmountVO of(BigDecimal totalCost, String shopId) {
-            return new DeliveryAmountVO().setShopId(shopId).setAmount(totalCost);
+        public static DeliveryAmountVO of(BigDecimal totalCost, String shopId,BigDecimal totalWeight) {
+            return new DeliveryAmountVO().setShopId(shopId).setAmount(totalCost).setTotalWeight(totalWeight);
         }
     }
 

@@ -6,7 +6,8 @@ import com.gs.lshly.common.enums.EnumMessage;
 public enum StockTemplateRegionLeveEnum implements EnumMessage {
 
     省(10, "省"),
-    市(20, "市");
+    市(20, "市"),
+    区(30, "区");
     StockTemplateRegionLeveEnum(Integer code, String remark){
         this.code = code;
         this.remark = remark;

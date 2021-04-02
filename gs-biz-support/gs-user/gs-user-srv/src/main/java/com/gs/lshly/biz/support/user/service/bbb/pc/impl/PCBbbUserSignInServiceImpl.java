@@ -33,6 +33,7 @@ public class PCBbbUserSignInServiceImpl implements IPCBbbUserSignInService {
     @Override
     public PageData<PCBbbUserSignInVO.ListVO> pageData(PCBbbUserSignInQTO.QTO qto) {
         QueryWrapper<UserSignIn> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<UserSignIn> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCBbbUserSignInVO.ListVO.class, page);

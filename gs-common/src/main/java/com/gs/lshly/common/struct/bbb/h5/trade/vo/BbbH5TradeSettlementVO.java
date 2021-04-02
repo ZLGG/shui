@@ -86,6 +86,9 @@ public abstract class BbbH5TradeSettlementVO implements Serializable {
         @ApiModelProperty("交易总金额")
         private BigDecimal tradeAmount;
 
+        @ApiModelProperty("总重量")
+        private BigDecimal totalWeight;
+
         @ApiModelProperty("商品合计数量")
         private Integer goodsCount;
 
@@ -128,9 +131,6 @@ public abstract class BbbH5TradeSettlementVO implements Serializable {
 
             @ApiModelProperty("销售价")
             private BigDecimal salePrice;
-
-            @ApiModelProperty(value = "零售价/只参与结算计算", hidden = true)
-            private BigDecimal basePrice;
 
             @ApiModelProperty("活动及券后价")
             private BigDecimal activePrice;

@@ -151,6 +151,8 @@ public abstract class TradeRightsVO implements Serializable {
         private Integer state;
         @ApiModelProperty("订单ID")
         private String tradeId;
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
 
     }
     @Data
@@ -166,8 +168,10 @@ public abstract class TradeRightsVO implements Serializable {
         private Integer rightsType;
         @ApiModelProperty("状态(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成)")
         private Integer state;
-        @ApiModelProperty("订单编号")
+        @ApiModelProperty("订单id")
         private String tradeId;
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
         @ApiModelProperty("商品标题")
         private String goodsTitle;
         @ApiModelProperty("申请售后数量")
@@ -205,8 +209,10 @@ public abstract class TradeRightsVO implements Serializable {
 
         @ApiModelProperty("售后类型(10:换货,20:仅退款,30:退货退款)")
         private Integer rightsType;
-        @ApiModelProperty("订单编号")
+        @ApiModelProperty("订单号")
         private String tradeId;
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
         @ApiModelProperty("状态(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成)")
         private Integer state;
         @ApiModelProperty("创建时间")

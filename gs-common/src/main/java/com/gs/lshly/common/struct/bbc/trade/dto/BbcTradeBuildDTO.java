@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -14,15 +15,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * @author oy
- * @since 2020-10-28
- */
+* @author oy
+* @since 2020-10-28
+*/
 public abstract class BbcTradeBuildDTO implements Serializable {
 
     @Data
     @ApiModel(value = "BbcTradeDTO.TradeBuildDTO")
     @Accessors(chain = true)
-    public static class DTO extends BaseDTO implements Serializable {
+    public static class DTO  extends BaseDTO implements Serializable {
 
         @ApiModelProperty(value = "店铺ID")
         private String shopId;
@@ -54,14 +55,8 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         @ApiModelProperty(value = "业务来源端", hidden = true)
         private ActivityTerminalEnum terminal;
 
-        @ApiModelProperty(value = "商品来源类型：1:商城商品，2:积分商品")
-        private Integer goodsSourceType;
-
-        @ApiModelProperty(value = "订单支付金额（1:商城商品）", hidden = true)
-        private BigDecimal shopProductAmount;
-
-        @ApiModelProperty(value = "订单支付积分（2:积分商城商品）", hidden = true)
-        private BigDecimal goodsPointAmount;
+        @ApiModelProperty(value = "订单支付金额", hidden = true)
+        BigDecimal shopProductAmount;
 
         @ApiModelProperty(value = "营销活动", hidden = true)
         private CommonMarketVO.ActiveVO marketActiveVO;
@@ -90,6 +85,7 @@ public abstract class BbcTradeBuildDTO implements Serializable {
     @Data
     @ApiModel("BbcTradeDTO.cartIdsDTO")
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class cartIdsDTO extends BaseDTO {
 
         @ApiModelProperty(value = "购物车ID数组")

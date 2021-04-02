@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.repository.impl;
 
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
@@ -12,4 +13,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GoodsCategoryRepositoryImpl extends ServiceImpl<GoodsCategoryMapper, GoodsCategory> implements IGoodsCategoryRepository {
+
+    @Override
+    public GoodsCategoryMapper getMapper() {
+        return this.getBaseMapper();
+    }
 }

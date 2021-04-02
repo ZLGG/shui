@@ -34,6 +34,7 @@ public class BbbUserCardServiceImpl implements IBbbUserCardService {
     public PageData<PCBbbUserCardVO.ListVO> pageData(PCBbbUserCardQTO.QTO qto) {
         QueryWrapper<UserCard> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id",qto.getJwtUserId());
+        wrapper.orderByDesc("cdate");
         IPage<UserCard> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCBbbUserCardVO.ListVO.class, page);

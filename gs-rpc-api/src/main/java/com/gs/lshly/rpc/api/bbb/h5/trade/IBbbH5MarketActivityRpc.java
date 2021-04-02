@@ -45,4 +45,7 @@ public interface IBbbH5MarketActivityRpc {
 
     BbbH5MarketActivityVO.jurisdiction jurisdiction();
 
+    List<BbbH5MarketActivityVO.merchantCard> activityCardGoodsInfo(BbbH5MarketMerchantActivityDTO.MerchantIdDTO dto);
+
+    PageData<BbbH5MarketActivityVO.activityListPageVO> activityListPage(BbbH5MarketActivityQTO.QTO qto);
 }

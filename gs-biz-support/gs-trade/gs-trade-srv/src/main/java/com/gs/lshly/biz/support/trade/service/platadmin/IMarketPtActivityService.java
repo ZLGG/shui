@@ -22,4 +22,9 @@ public interface IMarketPtActivityService {
 
     List<MarketPtActivityVO.ListVO> list();
 
+    void updateActivity(MarketPtActivityDTO.updateDTO eto);
+
+    MarketPtActivityVO.updateDTO getActivity();
+
+
 }

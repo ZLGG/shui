@@ -40,6 +40,7 @@ public class SettingsPayMethodServiceImpl implements ISettingsPayMethodService {
         if(!PayMethodTypeEnum.全部.getCode().equals(qto.getSupport())){
             queryWrapper.eq("support",qto.getSupport());
         }
+        queryWrapper.orderByDesc("cdate");
         IPage<SettingsPayMethod> page = MybatisPlusUtil.pager(qto);
         repository.page(page, queryWrapper);
         return MybatisPlusUtil.toPageData(qto, SettingsPayMethodVO.ListVO.class, page);

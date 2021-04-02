@@ -29,7 +29,9 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -146,11 +148,18 @@ public class GoodsMaterialLibraryServiceImpl implements IGoodsMaterialLibrarySer
     }
 
     @Override
-    public List<GoodsMaterialLibraryVO.exportDataVO> exportData(BaseQTO qto) {
-        List<GoodsMaterialLibraryVO.exportDataVO> exportDataVOS = materialLibraryMapper.getExportData();
+    public List<GoodsMaterialLibraryVO.exportDataVO> exportData(GoodsMaterialLibraryDTO.IdListDTO dto) {
+        if (null == dto || ObjectUtils.isEmpty(dto.getIdList())){
+            throw new BusinessException("请选择要导出的模板！");
+        }
+        QueryWrapper<GoodsMaterialLibrary> wrapper = MybatisPlusUtil.query();
+        wrapper.in("gml.id",dto.getIdList());
+        List<GoodsMaterialLibraryVO.exportDataVO> exportDataVOS = materialLibraryMapper.getExportData(wrapper);
         if (ObjectUtils.isEmpty(exportDataVOS)){
             return new ArrayList<>();
         }
+        exportDataVOS = exportDataVOS.parallelStream()
+                .collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(f -> f.getId()))), ArrayList::new));
         for (GoodsMaterialLibraryVO.exportDataVO dataVO : exportDataVOS){
             GoodsCategoryVO.ParentCategoryVO parentCategoryVO = categoryMapper.selectParentCategoryVO(dataVO.getCategoryId());
             dataVO.setLevel1CategoryName(StringUtils.isNotBlank(parentCategoryVO.getLevName())?parentCategoryVO.getLevName():"");

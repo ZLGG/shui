@@ -151,7 +151,8 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         }
         QueryWrapper<UserShoppingCar> userShoppingCar = new QueryWrapper<>();
         userShoppingCar.eq("user_id",dto.getJwtUserId());
-        int count = repository.count(userShoppingCar);
+        userShoppingCar.eq("terminal",TerminalEnum.BBC.getCode());
+        int count = userShoppingCarMapper.countShoppingCarGoods(userShoppingCar);
         BbcUserShoppingCarVO.CountVO countVO  = new BbcUserShoppingCarVO.CountVO();
         countVO.setCount(count);
         return countVO;

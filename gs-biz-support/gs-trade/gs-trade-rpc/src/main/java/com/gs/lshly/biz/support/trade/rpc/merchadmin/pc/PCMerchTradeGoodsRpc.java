@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.rpc.merchadmin.pc;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeGoodsService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeGoodsDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeGoodsQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeGoodsVO;
@@ -11,6 +12,7 @@ import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeGoodsDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
+import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeGoodsRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,18 @@ public class PCMerchTradeGoodsRpc implements IPCMerchTradeGoodsRpc{
     @Override
     public List<TradeGoodsVO.GoodsSaleVO> goodsSaleListDetail(TradeGoodsDTO.GoodsSale dto){
         return  pCMerchTradeGoodsService.goodsSaleListDetail(dto);
+    }
+
+    //导出商品销售分析列表
+    @Override
+    public ExportDataDTO exportGoodsSaleList(TradeDTO.PayDateList qo) throws Exception {
+        return ExcelUtil.treatmentBean(pCMerchTradeGoodsService.exportGoodsSaleList(qo), TradeGoodsVO.GoodsSaleVO.class);
+    }
+
+    //导出商品销售排行明细
+    @Override
+    public ExportDataDTO exportGoodsSaleListDetail(TradeDTO.PayDateList qo) throws Exception {
+        return ExcelUtil.treatmentBean(pCMerchTradeGoodsService.exportGoodsSaleListDetail(qo), TradeGoodsVO.GoodsSaleVO.class);
     }
 
     @Override

@@ -19,7 +19,7 @@ public interface IBbbH5UserAuthService {
 
     AuthDTO loadUserByUsername(String username);
 
-    BbbH5UserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey);
+    BbbH5UserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid);
 
     String loadSessionKeyByWxOpenid(String openid);
 
@@ -32,4 +32,6 @@ public interface IBbbH5UserAuthService {
     BbbH5UserVO.LoginVO updateUserPhoneByWxInnerPhone(BBcWxUserPhoneDTO dto);
 
     void logout(String phone, String openid);
+
+    BbbH5UserVO.ThirdVO innerGetWXNickName(String userId);
 }

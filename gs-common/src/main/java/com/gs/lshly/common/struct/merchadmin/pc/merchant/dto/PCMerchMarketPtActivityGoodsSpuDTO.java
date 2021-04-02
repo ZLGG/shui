@@ -68,7 +68,9 @@ public abstract class PCMerchMarketPtActivityGoodsSpuDTO implements Serializable
     public static class Sign extends BaseDTO {
         @ApiModelProperty(value = "活动ID")
         private String  activityId;
+        @ApiModelProperty(value = "活动商品")
         private List<SignGoods> goodsAll;
+        @ApiModelProperty(value = "活动商品规格价格")
         private List<SignGoodsSku> goodsSPUAll;
     }
     @Data

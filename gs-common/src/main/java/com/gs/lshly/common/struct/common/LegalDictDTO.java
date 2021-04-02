@@ -30,10 +30,10 @@ public abstract class LegalDictDTO implements Serializable {
         @ApiModelProperty(value = "商业类型[10=买家 20=卖家 30=全部]",hidden = true)
         private Integer businessType;
 
-        @ApiModelProperty(value = "企业类型ID",hidden = true)
+        @ApiModelProperty(value = "企业类型ID")
         private String corpTypeId;
 
-        @ApiModelProperty(value = "企业类型名称",hidden = true)
+        @ApiModelProperty(value = "企业类型名称")
         private String corpTypeName;
 
         @ApiModelProperty("公司名称")
@@ -44,6 +44,9 @@ public abstract class LegalDictDTO implements Serializable {
 
         @ApiModelProperty("营业执照有效期")
         private String corpLicenseIndate;
+
+        @ApiModelProperty(value = "营业执照有效期截止日期")
+        private String corpLicenseEndDate;
 
         @ApiModelProperty("营业执照证件")
         private String corpLicenseCert;
@@ -119,6 +122,50 @@ public abstract class LegalDictDTO implements Serializable {
 
         @ApiModelProperty(value = "证照数组",position = 11)
         private List<CertDTO> certList;
+
+        @ApiModelProperty(value = "入驻资料修改申请id",hidden = true)
+        private String editSettledApplyId;
+
+        @ApiModelProperty(value = "10 =待审 20=通过 30 =拒绝 入驻资料修改状态",hidden = true)
+        private Integer editSettledState;
+    }
+
+    @Data
+    @ApiModel("LegalDictDTO.SettledInfoETO")
+    @Accessors(chain = true)
+    public static class SettledInfoETO extends ETO {
+        @ApiModelProperty("店主姓名")
+        private String shopManName;
+
+        @ApiModelProperty("店主身份证复印件(正)")
+        private String shopManIdcardFront;
+
+        @ApiModelProperty("店主身份证复印件(反)")
+        private String shopManIdcardBack;
+
+        @ApiModelProperty("店主手机号")
+        private String shopManPhone;
+
+        @ApiModelProperty("店铺名称")
+        private String shopName;
+
+        @ApiModelProperty("店铺描述")
+        private String shopDesc;
+
+        @ApiModelProperty("店铺logo")
+        private String shopLogo;
+
+        @ApiModelProperty("详细地址")
+        private String shopAddress;
+
+        @ApiModelProperty("电子邮箱")
+        private String shopManEmail;
+
+        @ApiModelProperty("店铺类型")
+        private Integer shopType;
+
+        @ApiModelProperty("经营品牌")
+        private String brandName;
     }
 
     @Data
@@ -143,28 +190,31 @@ public abstract class LegalDictDTO implements Serializable {
         @ApiModelProperty(value = "营业执照注册号",position = 6)
         private String corpLicenseNum;
 
-        @ApiModelProperty(value = "营业执照有效期",position = 7)
+        @ApiModelProperty(value = "营业执照有效期开始日期",position = 7)
         private String corpLicenseIndate;
 
-        @ApiModelProperty(value = "营业执照证件",position = 8)
+        @ApiModelProperty(value = "营业执照有效期截止日期",position = 8)
+        private String corpLicenseEndDate;
+
+        @ApiModelProperty(value = "营业执照证件",position = 9)
         private String corpLicenseCert;
 
-        @ApiModelProperty(value = "公司成立日期",position = 9)
+        @ApiModelProperty(value = "公司成立日期",position = 10)
         private String corpEstablishDate;
 
-        @ApiModelProperty(value = "法定经营范围",position = 10)
+        @ApiModelProperty(value = "法定经营范围",position = 11)
         private String corpLicenseScope;
 
-        @ApiModelProperty(value = "公司所在地址（省市区）",position = 11)
+        @ApiModelProperty(value = "公司所在地址（省市区）",position = 12)
         private String corpCityAddress;
 
-        @ApiModelProperty(value = "公司详细地址",position = 11)
+        @ApiModelProperty(value = "公司详细地址",position = 13)
         private String corpRealAddress;
 
-        @ApiModelProperty(value = "公司电话",position = 12)
+        @ApiModelProperty(value = "公司电话",position = 14)
         private String corpTelephone;
 
-        @ApiModelProperty(value = "公司联系人",position = 13)
+        @ApiModelProperty(value = "公司联系人",position = 15)
         private String corpPersal;
 
         @ApiModelProperty(value = "公司联系人手机号",position = 14)
@@ -173,37 +223,37 @@ public abstract class LegalDictDTO implements Serializable {
         @ApiModelProperty(value = "公司邮箱",position = 15)
         private String corpEmail;
 
-        @ApiModelProperty(value = "注册资本",position = 15)
+        @ApiModelProperty(value = "注册资本",position = 16)
         private String corpCapital;
 
-        @ApiModelProperty(value = "公司官网",position = 16)
+        @ApiModelProperty(value = "公司官网",position = 17)
         private String corpSite;
 
-        @ApiModelProperty(value = "法人姓名",position = 17)
+        @ApiModelProperty(value = "法人姓名",position = 18)
         private String personName;
 
-        @ApiModelProperty(value = "法人身份类型[10=中国大陆 20=非中国大陆]",position = 18)
+        @ApiModelProperty(value = "法人身份类型[10=中国大陆 20=非中国大陆]",position = 19)
         private Integer personIdcardType;
 
-        @ApiModelProperty(value = "法人身份证号或护照号",position = 19)
+        @ApiModelProperty(value = "法人身份证号或护照号",position = 20)
         private String personIdcardNo;
 
-        @ApiModelProperty(value = "法人身份证正面",position = 20)
+        @ApiModelProperty(value = "法人身份证正面",position = 21)
         private String personIdcardFront;
 
-        @ApiModelProperty(value = "法人身份证反面",position = 21)
+        @ApiModelProperty(value = "法人身份证反面",position = 22)
         private String personIdcardBack;
 
-        @ApiModelProperty(value = "组织机构代码",position = 22)
+        @ApiModelProperty(value = "组织机构代码",position = 23)
         private String tissueCode;
 
-        @ApiModelProperty(value = "组织机构代码证复印件",position = 23)
+        @ApiModelProperty(value = "组织机构代码证复印件",position = 24)
         private String tissueCodeCert;
 
-        @ApiModelProperty(value = "税务登记号",position = 24)
+        @ApiModelProperty(value = "税务登记号",position = 25)
         private String taxCode;
 
-        @ApiModelProperty(value = "税务登记证复印件",position = 25)
+        @ApiModelProperty(value = "税务登记证复印件",position = 26)
         private String taxCodeCert;
 
     }
@@ -249,6 +299,16 @@ public abstract class LegalDictDTO implements Serializable {
         @ApiModelProperty(value = "id")
         private String id;
     }
+
+    @Data
+    @ApiModel("LegalDictDTO.MerchantApplyIdDTO")
+    @AllArgsConstructor
+    public static class MerchantApplyIdDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "申请id")
+        private String merchantApplyId;
+    }
+
 
     @Data
     @ApiModel("LegalDictDTO.IdListDTO")

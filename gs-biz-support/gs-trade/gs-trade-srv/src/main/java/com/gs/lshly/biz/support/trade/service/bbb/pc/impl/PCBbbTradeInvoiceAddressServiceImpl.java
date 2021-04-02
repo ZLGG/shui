@@ -38,6 +38,7 @@ public class PCBbbTradeInvoiceAddressServiceImpl implements IPCBbbTradeInvoiceAd
     public PageData<PCBbbTradeInvoiceAddressVO.ListVO> pageData(PCBbbTradeInvoiceAddressQTO.QTO qto) {
         QueryWrapper<TradeInvoiceAddress> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id" , qto.getJwtUserId());
+        wrapper.orderByDesc("cdate");
         IPage<TradeInvoiceAddress> page = MybatisPlusUtil.pager(qto);
         IPage<TradeInvoiceAddress> iPage = repository.page(page, wrapper);
         if(ObjectUtils.isEmpty(iPage) || ObjectUtils.isEmpty(iPage.getRecords())){
@@ -81,7 +82,7 @@ public class PCBbbTradeInvoiceAddressServiceImpl implements IPCBbbTradeInvoiceAd
         TradeInvoiceAddress tradeInvoiceAddress = repository.getById(dto.getId());
         PCBbbTradeInvoiceAddressVO.DetailVO detailVo = new PCBbbTradeInvoiceAddressVO.DetailVO();
         if(ObjectUtils.isEmpty(tradeInvoiceAddress)){
-            throw new BusinessException("没有数据");
+            return detailVo;
         }
         BeanUtils.copyProperties(tradeInvoiceAddress, detailVo);
         return detailVo;

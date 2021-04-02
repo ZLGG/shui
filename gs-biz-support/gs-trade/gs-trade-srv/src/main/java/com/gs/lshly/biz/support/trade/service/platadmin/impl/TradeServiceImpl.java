@@ -4,19 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.trade.entity.Trade;
-import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
-import com.gs.lshly.biz.support.trade.entity.TradeGoods;
-import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
+import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeService;
-import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
-import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonUserVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayQTO;
@@ -24,15 +21,19 @@ import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradePayVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
+import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.lakala.boss.api.common.Common;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +51,19 @@ public class TradeServiceImpl implements ITradeService {
     private final ITradeGoodsRepository tradeGoodsRepository;
     private final ITradeDeliveryRepository tradeDeliveryRepository;
 
+    @Autowired
+    private ITradePayRepository iTradePayRepository;
+    @Autowired
+    private ITradeCancelRepository iTradeCancelRepository;
+
     @DubboReference
     private ICommonShopRpc commonShopRpc;
     @DubboReference
     private ICommonUserRpc commonUserRpc;
     @DubboReference
     private ICommonLogisticsCompanyRpc commonLogisticsCompanyRpc;
+    @DubboReference
+    private ICommonStockRpc commonStockRpc;
 
     public TradeServiceImpl(ITradeRepository tradeRepository, ITradeGoodsRepository tradeGoodsRepository, ITradeDeliveryRepository tradeDeliveryRepository) {
         this.tradeRepository = tradeRepository;
@@ -105,12 +113,25 @@ public class TradeServiceImpl implements ITradeService {
         List<TradeListVO.tradeVO> voList = new ArrayList<>();
         for(TradeListVO.tradeVO tradeVO : page.getRecords()){
             //查询店铺信息
-//            CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(tradeVO.getShopId());
-//            tradeVO.setShopName(simpleVO.getShopName());
+            CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(tradeVO.getShopId());
+            tradeVO.setShopName(simpleVO.getShopName());
+            //查询会员信息
+            CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
+            if (ObjectUtils.isNotEmpty(details)){
+                tradeVO.setUserName(details.getUserName());
+            }
             //根据交易ID查询交易商品集合
+            QueryWrapper<TradePay> query = MybatisPlusUtil.query();
+            query.and(i->i.eq("trade_id",tradeVO.getId()));
+            TradePay one = iTradePayRepository.getOne(query);
+
             fillTradeVO(tradeVO);
             if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
                 tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
+            }else {
+                if (ObjectUtils.isNotEmpty(one)){
+                    tradeVO.setPayTime(one.getUdate());
+                }
             }
             voList.add(tradeVO);
         }
@@ -118,6 +139,47 @@ public class TradeServiceImpl implements ITradeService {
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
 
+    private void fillTradeCancel(BbcTradeCancelDTO.CancelDTO dto, TradeCancel tradeCancel, Trade trade, String tradePayId, Integer cancelState, Integer cancelRefundState) {
+        tradeCancel.setTradeId(trade.getId());
+        tradeCancel.setTradeCode(trade.getTradeCode());
+        tradeCancel.setUserId(trade.getUserId());
+        tradeCancel.setShopId(trade.getShopId());
+        tradeCancel.setPayId(tradePayId);
+        tradeCancel.setTradeAmount(trade.getTradeAmount());
+        tradeCancel.setCancelState(cancelState);
+        tradeCancel.setApplyType(TradeCancelApplyTypeEnum.用户取消订单.getCode());
+        tradeCancel.setApplyTime(LocalDateTime.now());
+        tradeCancel.setReasonType(dto.getReasonType());
+        tradeCancel.setRemark(dto.getRemark());
+        tradeCancel.setRefundState(cancelRefundState);
+    }
+    /**
+     * 取消交易,回库存
+     * @param tradeId
+     * @return
+     */
+    private boolean cancelTradeReturnStock(String tradeId) {
+        List<CommonStockDTO.InnerChangeStockItem> goodsItemList = new ArrayList<>();
+        fillChangeStockItem(tradeId, goodsItemList);
+        return commonStockRpc.innerPlusStockForTrade(goodsItemList);
+    }
+
+    /**
+     * 填充skuId/购买数量
+     * @param tradeId
+     * @param goodsItemList
+     */
+    private void fillChangeStockItem(String tradeId, List<CommonStockDTO.InnerChangeStockItem> goodsItemList) {
+        QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
+        tradeGoodsQueryWrapper.eq("trade_id",tradeId);
+        List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
+        for(TradeGoods tradeGoods : tradeGoodsList){
+            CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
+            innerChangeStockItem.setSkuId(tradeGoods.getSkuId());
+            innerChangeStockItem.setQuantity(tradeGoods.getQuantity());
+            goodsItemList.add(innerChangeStockItem);
+        }
+    }
     @Override
     public TradeListVO.tradeVO detail(TradeDTO.IdDTO dto) {
         TradeListVO.tradeVO tradeVO = new TradeListVO.tradeVO();
@@ -209,6 +271,22 @@ public class TradeServiceImpl implements ITradeService {
             for (Trade trade:list){
                 TradeVO.ListVOExport listVOExport = new TradeVO.ListVOExport();
                 BeanUtils.copyProperties(trade,listVOExport);
+                CommonUserVO.DetailVO details = commonUserRpc.details(trade.getUserId());
+                if (ObjectUtils.isNotEmpty(details)){
+                    listVOExport.setUserName(details.getUserName());
+                }
+                CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(trade.getShopId());
+                if (ObjectUtils.isNotEmpty(simpleVO)){
+                    listVOExport.setShopName(simpleVO.getShopName());
+                }
+                listVOExport.setTradeState(EnumUtil.getText(trade.getTradeState(),TradeStateEnum.class));
+                if (trade.getTradeState()==10){
+                    listVOExport.setPayType("未支付");
+                }else {
+                    listVOExport.setPayType(EnumUtil.getText(trade.getPayType(), TradePayTypeEnum.class));
+                }
+                listVOExport.setDeliveryType(EnumUtil.getText(trade.getDeliveryType(), TradeDeliveryTypeEnum.class));
+                listVOExport.setTimeoutCancel(EnumUtil.getText(trade.getTimeoutCancel(), TradeTimeOutCancelEnum.class));
                 voList.add(listVOExport);
             }
         }

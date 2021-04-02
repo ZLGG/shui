@@ -1,10 +1,15 @@
 package com.gs.lshly.facade.bbc.controller.h5.merchant;
+import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopNavigationVO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
+import com.gs.lshly.common.struct.common.dto.CommonMerchantArticleDTO;
+import com.gs.lshly.common.struct.common.qto.CommonMerchantArticleQTO;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonMerchantArticleRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -28,6 +33,8 @@ public class BbcShopController {
 
     @DubboReference
     private IBbcShopRpc bbcShopRpc;
+    @DubboReference
+    private ICommonMerchantArticleRpc commonMerchantArticleRpc;
 
     @ApiOperation("店铺列表")
     @GetMapping("")
@@ -39,6 +46,12 @@ public class BbcShopController {
     @GetMapping("/scopeList")
     public ResponseData<PageData<BbcShopVO.ScopeListVO>> nearShopList(BbcShopQTO.ScopeQTO qto) {
         return ResponseData.data(bbcShopRpc.nearShopListPageData(qto));
+    }
+
+    @ApiOperation("附近门店(附近10公里)")
+    @GetMapping("/nearShop")
+    public ResponseData<List<BbcShopVO.ScopeListVO>> nearShop(BbcShopQTO.ScopeQTO qto) {
+        return ResponseData.data(bbcShopRpc.nearShopList(qto));
     }
 
     @ApiOperation("店铺详情")
@@ -64,6 +77,32 @@ public class BbcShopController {
     @PostMapping(value = "/navigation/isCity")
     public ResponseData<BbcShopVO.isCity> isCity(@Valid @RequestBody BbcShopDTO.isCity dto) {
         return ResponseData.data(bbcShopRpc.isCity(dto));
+    }
+
+    @ApiOperation("2c店铺分类列表")
+    @PostMapping(value = "/listNavigationListVO/{shopId}")
+    public ResponseData<BbcShopNavigationVO.NavigationListVO> listNavigationListVO(@PathVariable String shopId) {
+        return ResponseData.data(bbcShopRpc.listNavigationListVO(new BbcShopDTO.IdDTO(shopId)));
+    }
+
+    @ApiOperation("获取店铺ID")
+    @GetMapping(value = "/getShopId/{shopNavigationId}")
+    public ResponseData<BbcShopVO.ShopIdName> getShopId(@PathVariable String shopNavigationId) {
+        return ResponseData.data(bbcShopRpc.getShopIdName(new BbcShopDTO.ShopNavigationIdDTO(shopNavigationId)));
+    }
+
+    @ApiOperation("商家文章列表")
+    @GetMapping(value = "/getMerchantArticle/{shopId}")
+    public ResponseData<BbcShopVO.ShopIdName> getMerchantArticle(@PathVariable String shopId, CommonMerchantArticleQTO.QTO qto) {
+        qto.setShopId(shopId);
+        qto.setPcShow(PcH5Enum.YES.getCode());
+        return ResponseData.data(commonMerchantArticleRpc.pageMerchantArticleVO(qto));
+    }
+
+    @ApiOperation("商家文章详情")
+    @GetMapping(value = "/getMerchantArticleDetail/{articleId}")
+    public ResponseData<BbcShopVO.ShopIdName> getMerchantArticleDetail(@PathVariable String articleId) {
+        return ResponseData.data(commonMerchantArticleRpc.detailMerchantArticle(new CommonMerchantArticleDTO.IdDTO(articleId)));
     }
 
 

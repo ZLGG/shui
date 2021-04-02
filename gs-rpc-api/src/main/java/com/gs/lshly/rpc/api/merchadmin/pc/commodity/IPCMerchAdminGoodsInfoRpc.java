@@ -227,4 +227,10 @@ public interface IPCMerchAdminGoodsInfoRpc {
      * */
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerSkuIdByGoodsNo(String goodsNo);
 
+
+    /**
+     * 为Pos同步库存提供支持
+     * */
+    PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69);
+
 }

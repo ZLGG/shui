@@ -43,6 +43,11 @@ public abstract class PCMerchDataNoticeDTO implements Serializable {
     public static class IdDTO extends BaseDTO {
         private String id;
     }
+    @Data
+    @ApiModel("PCMerchDataNoticeDTO.IdDTO")
+    @AllArgsConstructor
+    public static class innerDTO extends BaseDTO {
+    }
 
 
 }

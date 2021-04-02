@@ -33,6 +33,7 @@ public class PCMerchTradeRightsGoodsServiceImpl implements IPCMerchTradeRightsGo
     @Override
     public PageData<PCMerchTradeRightsGoodsVO.ListVO> pageData(PCMerchTradeRightsGoodsQTO.QTO qto) {
         QueryWrapper<TradeRightsGoods> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeRightsGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchTradeRightsGoodsVO.ListVO.class, page);

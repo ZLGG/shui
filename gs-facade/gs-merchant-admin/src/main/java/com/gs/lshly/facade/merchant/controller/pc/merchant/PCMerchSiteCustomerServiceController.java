@@ -28,7 +28,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/merchadmin/siteCustomerService")
 @Api(tags = "商家在线客服管理")
-@Module(code = "merchantOnlineCustomerService", parent = "bussiness", name = "商家在线客服", index = 2)
 public class PCMerchSiteCustomerServiceController {
 
     @DubboReference
@@ -38,14 +37,12 @@ public class PCMerchSiteCustomerServiceController {
 
     @ApiOperation("商家在线客服展示")
     @GetMapping("/list")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopServiceVO.ListVO>>  list(PCMerchShopServiceQTO.QTO qto){
         return ResponseData.data(pcMerchSiteCustomerServiceRpc.list(qto));
     }
 
     @ApiOperation("新增或者修改商家在线客服")
     @PostMapping("")
-    @Func(code="edit", name="改")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchShopServiceDTO.ETO dto) {
         pcMerchSiteCustomerServiceRpc.addSiteCustomerService(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -53,14 +50,12 @@ public class PCMerchSiteCustomerServiceController {
 
     @ApiOperation("商家电话客服展示")
     @GetMapping("/listPhone")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopServiceVO.PhoneVO>> listPhone(PCMerchShopServiceQTO.QTO qto){
         return ResponseData.data(pcMerchSiteCustomerServiceRpc.listPhone(qto));
     }
 
     @ApiOperation("新增或者修改商家电话客服")
     @PostMapping("/addPhone")
-    @Func(code="edit", name="改")
     public ResponseData<Void> addPhone(@Valid @RequestBody PCMerchShopServiceDTO.ETOPhone dto) {
         pcMerchSiteCustomerServiceRpc.addSiteCustomerServicPhone(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -68,7 +63,6 @@ public class PCMerchSiteCustomerServiceController {
 
     @ApiOperation("平台电话客服展示")
     @GetMapping("/platformShow")
-    @Func(code="view", name="查")
     public ResponseData<CommonSiteCustomerServiceVO.ServiceVO> platformShow(BaseDTO dto){
         return ResponseData.data(siteCustomerServiceRpc.getService(dto));
     }

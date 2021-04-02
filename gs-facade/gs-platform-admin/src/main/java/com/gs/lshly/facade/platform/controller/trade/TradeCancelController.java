@@ -1,4 +1,5 @@
 package com.gs.lshly.facade.platform.controller.trade;
+import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.ExportDataDTO;
@@ -11,10 +12,7 @@ import com.gs.lshly.rpc.api.platadmin.trade.ITradeCancelRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +51,13 @@ public class TradeCancelController {
     @GetMapping(value = "/{id}")
     public ResponseData<TradeCancelVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(TradeCancelRpc.detailTradeCancel(new TradeCancelDTO.IdDTO(id)));
+    }
+
+    @ApiOperation("交易订单取消表删除")
+    @PostMapping(value = "/delete")
+    public ResponseData<Void> delete(@RequestBody TradeCancelQTO.IdListQTO ids) {
+        TradeCancelRpc.delete(ids);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
 
 

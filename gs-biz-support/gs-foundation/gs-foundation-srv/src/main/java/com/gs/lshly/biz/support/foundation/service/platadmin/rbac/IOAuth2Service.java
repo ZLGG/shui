@@ -15,8 +15,6 @@ public interface IOAuth2Service {
 
     OAuth2VO.TokenVO generationToken(OAuth2DTO.GenerationTokenDTO dto);
 
-    OAuth2VO.SysUserVO userInfo(OAuth2DTO.UserInfoDTO dto);
-
     OAuth2VO.MerchantVO merchantInfo(OAuth2DTO.UserInfoDTO dto);
 
     OAuth2VO.TokenVO refreshToken(OAuth2DTO.RefreshTokenDTO dto);

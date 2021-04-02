@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.foundation.service.common;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.common.LegalDictDTO;
 import com.gs.lshly.common.struct.common.LegalDictQTO;
@@ -59,6 +60,7 @@ public interface ILegalDictService {
      */
     void deleteBatchLegalDict(LegalDictDTO.IdListDTO dto);
 
+
     LegalDictVO.CheckCertVO checkUploadCert(String corpTypeId,List<String> certIdList);
 
     /**
@@ -68,6 +70,21 @@ public interface ILegalDictService {
      * @throws Exception
      */
     ExportDataDTO export(LegalDictDTO.IdListDTO dto) throws Exception;
+
+
+    /**
+     * 获取商家入驻信息
+     * @param dto
+     * @return
+     */
+    LegalDictVO.SettledInfoVO getSettledInfo(BaseDTO dto);
+
+    /**
+     * 修改入驻信息并返回id
+     * @param eto
+     * @return
+     */
+    LegalDictVO.MerchantApplyIdVO editSettledInfo(LegalDictDTO.SettledInfoETO eto);
 
     //-------------内部服务--------------
 
@@ -83,4 +100,15 @@ public interface ILegalDictService {
     LegalDictVO.InnerDetailVO innerdetailLegalDict(String legalDictId);
 
     LegalDictVO.ListVO innerViewlLegalDict(String legalDictId);
+
+    /**
+     * 统计某企业类型必传证照数量
+     * @param corpTypeId
+     * @return
+     */
+    int innerCountNeedCert(String corpTypeId);
+
+    LegalDictVO.SettledCertInfoVO innerCertInfoVO(String corpTypeId);
+
+    void  innereditSettleState(String legalId,Integer state);
 }

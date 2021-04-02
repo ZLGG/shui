@@ -3,7 +3,6 @@ package com.gs.lshly.biz.support.stock.service.common.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.stock.entity.*;
 import com.gs.lshly.biz.support.stock.enums.StockTemplateRegionLeveEnum;
 import com.gs.lshly.biz.support.stock.enums.StockTemplateTypeEnum;
@@ -17,9 +16,11 @@ import com.gs.lshly.common.struct.common.stock.CommonStockTemplateDTO;
 import com.gs.lshly.common.struct.common.stock.CommonStockTemplateVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JsonUtils;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsStockRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -290,8 +291,12 @@ public class CommonStockTemplateServiceImpl implements ICommonStockTemplateServi
         CommonStockTemplateVO.QuotaVO defaultVO = null;
         //匹配到的免邮规则
         CommonStockTemplateVO.QuotaVO matchedVO = null;
-        log.info("所有【按金额范围】规则：{}", JsonUtils.toJson(quotaVOList));
+        Collections.sort(quotaVOList, (o1, o2) -> ObjectUtils.isNotEmpty(o1.getRegionVOList()) && ObjectUtils.isEmpty(o1.getRegionVOList()) ? 1 : -1);
+        log.info("所有【按金额范围】的规则：{}", JsonUtils.toJson(quotaVOList));
         for (CommonStockTemplateVO.QuotaVO vo : quotaVOList) {
+            if (matchedVO != null) {
+                continue;
+            }
             if (ObjectUtils.isEmpty(vo.getRegionVOList())) {
                 defaultVO = vo;
             }
@@ -325,8 +330,8 @@ public class CommonStockTemplateServiceImpl implements ICommonStockTemplateServi
         if (unitVO != null) {
             log.info("地址：{} ，匹配到【{}】的运费计算规则：{}", msgUnit, JsonUtils.toJson(address), JsonUtils.toJson(unitVO));
             CommonDeliveryCostCalcParam.QuantityParam quantityParam = new CommonDeliveryCostCalcParam.QuantityParam()
-                    .setFirst(new BigDecimal(unitVO.getFirstQuantity() + "")).setFirstPrice(unitVO.getFirstPrice())
-                    .setIncrease(new BigDecimal(unitVO.getIncreaseQuantity() + "")).setIncreasePrice(unitVO.getIncreasePrice());
+                    .setFirst(new BigDecimal(ObjectUtils.isNotEmpty(unitVO.getFirstQuantity())?unitVO.getFirstQuantity() + "":0+"")).setFirstPrice(ObjectUtils.isNotEmpty(unitVO.getFirstPrice())?unitVO.getFirstPrice():BigDecimal.ZERO)
+                    .setIncrease(new BigDecimal(ObjectUtils.isNotEmpty(unitVO.getIncreaseQuantity())?unitVO.getIncreaseQuantity() + "":0+"")).setIncreasePrice(ObjectUtils.isNotEmpty(unitVO.getIncreasePrice())?unitVO.getIncreasePrice():BigDecimal.ZERO);
             return param.setCalcWay(calcWayEnum).setQuantityParam(quantityParam);
         } else {
             throw new BusinessException(String.format("地址：%s ，未能匹配到【%s】的运费计算规则，规则配置有误", msgUnit, JsonUtils.toJson(address)));
@@ -346,8 +351,12 @@ public class CommonStockTemplateServiceImpl implements ICommonStockTemplateServi
         //匹配到的免邮规则
         CommonStockTemplateVO.UnitVO matchedVO = null;
         String msgUnit = StockDeliveryCostCalcWayEnum.按件数 == calcWayEnum ? "件数" : "重量";
+        Collections.sort(unitVOList, (o1, o2) -> ObjectUtils.isNotEmpty(o1.getRegionVOList()) && ObjectUtils.isEmpty(o1.getRegionVOList()) ? 1 : -1);
         log.info("所有按【{}】的规则：{}", msgUnit, JsonUtils.toJson(unitVOList));
         for (CommonStockTemplateVO.UnitVO vo : unitVOList) {
+            if (matchedVO != null) {
+                continue;
+            }
             if (ObjectUtils.isEmpty(vo.getRegionVOList())) {
                 defaultVO = vo;
             }
@@ -426,8 +435,12 @@ public class CommonStockTemplateServiceImpl implements ICommonStockTemplateServi
         CommonStockTemplateVO.FreeVO defaultVO = null;
         //匹配到的免邮规则
         CommonStockTemplateVO.FreeVO matchedVO = null;
+        Collections.sort(freeVOList, (o1, o2) -> ObjectUtils.isNotEmpty(o1.getRegionVOList()) && ObjectUtils.isEmpty(o1.getRegionVOList()) ? 1 : -1);
         log.info("所有【包邮】的规则：{}", JsonUtils.toJson(freeVOList));
         for (CommonStockTemplateVO.FreeVO vo : freeVOList) {
+            if (matchedVO != null) {
+                continue;
+            }
             if (ObjectUtils.isEmpty(vo.getRegionVOList())) {
                 defaultVO = vo;
             }
@@ -447,6 +460,7 @@ public class CommonStockTemplateServiceImpl implements ICommonStockTemplateServi
      * @return
      */
     private boolean matchedAddress(StockAddress address, List<CommonStockTemplateVO.RegionVO> regions) {
+        log.info("地址匹配：省{}-市{}\n 区域规则{}", address.getProvinceCode(), address.getCityCode(), JsonUtils.toJson(regions));
         for(CommonStockTemplateVO.RegionVO vo : regions) {
             if (ObjectUtils.isNotEmpty(vo.getRegionCVO())) {
                 for (CommonStockTemplateVO.RegionCVO cvo : vo.getRegionCVO()) {
@@ -482,5 +496,19 @@ public class CommonStockTemplateServiceImpl implements ICommonStockTemplateServi
     @Override
     public String queryStockAddress(String id) {
         return goodsStockRpc.queryStockAddress(id);
+    }
+
+    @Override
+    public CommonStockTemplateVO.IdNameVO innerIdNameVO(String templateId) {
+        QueryWrapper<StockTemplate> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("id",templateId);
+        wrapper.select("id","template_name");
+        StockTemplate template = repository.getOne(wrapper);
+        if (ObjectUtils.isNotEmpty(template)){
+            CommonStockTemplateVO.IdNameVO idNameVO = new CommonStockTemplateVO.IdNameVO();
+            BeanUtils.copyProperties(template,idNameVO);
+            return idNameVO;
+        }
+        return null;
     }
 }

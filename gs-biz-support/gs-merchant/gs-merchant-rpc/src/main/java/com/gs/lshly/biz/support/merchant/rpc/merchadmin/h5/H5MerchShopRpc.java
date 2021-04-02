@@ -32,7 +32,7 @@ public class H5MerchShopRpc implements IH5MerchShopRpc{
     }
 
     @Override
-    public H5MerchShopVO.DetailVO detailShop(BaseDTO dto){
+    public H5MerchShopVO.DetailVO detailShop(H5MerchShopDTO.IdDTO dto){
         return  h5MerchShopService.detailShop(dto);
     }
 

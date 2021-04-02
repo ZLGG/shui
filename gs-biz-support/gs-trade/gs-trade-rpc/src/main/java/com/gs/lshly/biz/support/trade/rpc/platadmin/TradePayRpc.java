@@ -45,7 +45,17 @@ public class TradePayRpc implements ITradePayRpc{
 
     @Override
     public ExportDataDTO export(TradePayDTO.IdsDTO qo) throws Exception{
-        return ExcelUtil.treatmentBean(TradePayService.export(qo),TradePayVO.RelationDetailVO.class);
+        return ExcelUtil.treatmentBean(TradePayService.export(qo),TradePayVO.RelationDetailExport.class);
+    }
+
+    @Override
+    public ExportDataDTO payExport(TradePayQTO.IdListQTO qo) throws Exception{
+        return  ExcelUtil.treatmentBean(TradePayService.payExport(qo),TradePayVO.ListVOExport.class);
+    }
+
+    @Override
+    public void delete(TradePayQTO.IdListQTO ids) {
+        TradePayService.delete(ids);
     }
 
 

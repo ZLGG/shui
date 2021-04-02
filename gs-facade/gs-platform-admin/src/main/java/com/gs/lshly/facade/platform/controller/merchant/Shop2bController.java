@@ -69,7 +69,7 @@ public class Shop2bController {
         ShopDTO.IdDTO dto = new ShopDTO.IdDTO(id);
         dto.setId(id);
         shopRpc.closeShop(dto);
-        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+        return ResponseData.success(MsgConst.CLOSE_SUCCESS);
     }
 
 
@@ -79,7 +79,7 @@ public class Shop2bController {
     public ResponseData<Void> update(@PathVariable String id) {
         ShopDTO.IdDTO dto = new ShopDTO.IdDTO(id);
         shopRpc.openShop(dto);
-        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+        return ResponseData.success(MsgConst.OPEN_SUCCESS);
     }
 
 

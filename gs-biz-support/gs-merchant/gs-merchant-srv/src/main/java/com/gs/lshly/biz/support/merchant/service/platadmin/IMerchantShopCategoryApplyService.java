@@ -4,6 +4,8 @@ import com.gs.lshly.common.struct.platadmin.merchant.dto.MerchantShopCategoryApp
 import com.gs.lshly.common.struct.platadmin.merchant.qto.MerchantShopCategoryApplyQTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.MerchantShopCategoryApplyVO;
 
+import java.util.List;
+
 public interface IMerchantShopCategoryApplyService {
 
     PageData<MerchantShopCategoryApplyVO.ListVO> pageData(MerchantShopCategoryApplyQTO.QTO qto);
@@ -13,5 +15,12 @@ public interface IMerchantShopCategoryApplyService {
     void deleteBatchMerchantShopCategoryApply(MerchantShopCategoryApplyDTO.IdListDTO dto);
 
     void apply(MerchantShopCategoryApplyDTO.ApplyDTO dto);
+
+    /**
+     * 内部服务
+     * @param applyId
+     * @return
+     */
+    List<String> innerGetApplyCategoryIdList(String applyId);
 
 }

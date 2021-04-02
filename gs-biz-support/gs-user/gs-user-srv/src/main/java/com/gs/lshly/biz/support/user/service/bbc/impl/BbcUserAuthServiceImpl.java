@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserThirdLogin;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
@@ -18,6 +19,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +39,7 @@ import org.springframework.stereotype.Component;
 public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
 
     private static final String PhoneValidCodeGroup = "PhoneValidCode_";
-    private static final String H5PhoneUser = "h5Phone_User_";
+    private static final String BbcH5PhoneUser = "BbcH5Phone_User_";
     private static final String WxOpenidUser = "wxOpenid_User_";
     private static final String WxOpenidSessionKey = "wxOpenid_SessionKey_";
     private static final String WxSessionKeyOpenid = "wxSessionKey_Openid_";
@@ -116,8 +118,8 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
         if (!StringUtils.equals(validCode, dto.getValidCode())) {
             throw new BusinessException("验证码不匹配");
         }
-        BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(H5PhoneUser + dto.getPhone());
-        if (vo != null) {
+        BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
+        if (vo != null && JwtUtil.getJwtUser(vo.getAuthToken()) != null) {
             return vo;
         }
         User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
@@ -127,18 +129,18 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             repository.save(user);
         }
         vo = userToLoginVO(user, null);
-        redisUtil.set(H5PhoneUser + dto.getPhone(), vo);
+        redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, 60 * 60 * 5);
         return vo;
     }
 
     @Override
-    public BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey) {
+    public BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid) {
 
         //数据库中并无该openid，缓存sessionKey，登录需要调用下一个login接口
         String oldSessionKey = (String)redisUtil.get(WxOpenidSessionKey + openid);
-        redisUtil.set(WxOpenidSessionKey + openid, sessionKey);
+        redisUtil.set(WxOpenidSessionKey + openid, sessionKey, 60 * 60 * 24);
         //用户获取手机时使用
-        log.info("oldSessionKey:"+oldSessionKey+";newSessionKey:"+sessionKey);
+        log.info("oldSessionKey:" + oldSessionKey + ";newSessionKey:" + sessionKey);
         if (StringUtils.isNotBlank(oldSessionKey) && !oldSessionKey.equals(sessionKey)) {
             redisUtil.del(WxSessionKeyOpenid + oldSessionKey);
         }
@@ -148,14 +150,14 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
         if (vo != null) {
             return vo;
         }
-        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", appid).eq("openid", openid));
+        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("unionid", unionid).isNotNull("user_id").last(" limit 1"));
         User user = null;
-        if (thirdLogin!=null && StringUtils.isNotBlank(thirdLogin.getUserId())) {
+        if (thirdLogin!=null) {
             user = repository.getById(thirdLogin.getUserId());
             if (user != null) {
                 vo = userToLoginVO(user, openid);
                 //缓存user
-                redisUtil.set(WxOpenidUser + openid, vo);
+                redisUtil.set(WxOpenidUser + openid, vo, 60 * 60 * 5);
             }
         }
         if (user == null && StringUtils.isNotEmpty(sessionKey)) {
@@ -177,27 +179,38 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
      */
     @Override
     public BbcUserVO.LoginVO addWxThirdLogin(BBcWxUserInfoDTO dto) {
-        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", dto.getAppId()).eq("openid", dto.getOpenId()));
+        BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO)redisUtil.get(WxOpenidUser + dto.getOpenId());
+        if (vo != null) {
+            return vo;
+        }
+        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("unionid", dto.getUnionId()).isNotNull("user_id").last(" limit 1"));
+        User user = null;
+        if (thirdLogin != null) {
+            user = repository.getById(thirdLogin.getUserId());
+            if (user != null) {
+                vo = userToLoginVO(user, dto.getOpenId());
+                //缓存user
+                redisUtil.set(WxOpenidUser + dto.getOpenId(), vo, 60 * 60 * 5);
+            }
+        }
+        if (vo == null) {
+            vo = new BbcUserVO.LoginVO();
+            vo.setWxOpenid(dto.getOpenId());
+        }
+        thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", dto.getAppId()).eq("openid", dto.getOpenId()));
         if (thirdLogin != null) {
             thirdLogin.setHeadImg(dto.getAvatarUrl());
             thirdLogin.setSex("1".equals(dto.getGender()) ? GenderEnum.男.getCode() : ("2".equals(dto.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()));
-            thirdLogin.setNickname(dto.getNickName());
+            thirdLogin.setNickname(dto.getNickName()).setUnionid(dto.getUnionId()).setUserId(user!=null ? user.getId() : null);
             thirdLoginRepository.updateById(thirdLogin);
-            if (StringUtils.isNotBlank(thirdLogin.getUserId())) {
-                User user = repository.getById(thirdLogin.getUserId());
-                if (user != null) {
-                    return userToLoginVO(user, thirdLogin.getOpenid());
-                }
-            }
+
         } else {
             thirdLogin = new UserThirdLogin();
             thirdLogin.setNickname(dto.getNickName()).setHeadImg(dto.getAvatarUrl())
                     .setSex("1".equals(dto.getGender()) ? GenderEnum.男.getCode() : ("2".equals(dto.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()))
-                    .setOpenid(dto.getOpenId()).setAppId(dto.getAppId());
+                    .setOpenid(dto.getOpenId()).setUnionid(dto.getUnionId()).setAppId(dto.getAppId()).setUserId(user!=null ? user.getId() : null);
             thirdLoginRepository.save(thirdLogin);
         }
-        BbcUserVO.LoginVO vo = new BbcUserVO.LoginVO();
-        vo.setWxOpenid(dto.getOpenId());
         return vo;
     }
 
@@ -244,12 +257,26 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     public void logout(String phone, String openid) {
         //H5退出
         if (StringUtils.isNotBlank(phone)) {
-            redisUtil.del(H5PhoneUser + phone);
+            redisUtil.del(BbcH5PhoneUser + phone);
         }
 
         //小程序退出
         if (StringUtils.isNotBlank(openid)) {
             redisUtil.del(WxOpenidUser + openid);
         }
+    }
+
+    @Override
+    public BbcUserVO.ThirdVO innerGetWXNickName(String userId) {
+        QueryWrapper<UserThirdLogin> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("user_id",userId));
+        query.last("limit 0,1");
+        UserThirdLogin one = thirdLoginRepository.getOne(query);
+        if (ObjectUtils.isNotEmpty(one)){
+            BbcUserVO.ThirdVO thirdVO = new BbcUserVO.ThirdVO();
+            thirdVO.setNickName(one.getNickname());
+            return thirdVO;
+        }
+        return null;
     }
 }

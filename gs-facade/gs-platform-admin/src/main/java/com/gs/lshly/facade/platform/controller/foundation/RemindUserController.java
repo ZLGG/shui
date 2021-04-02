@@ -22,45 +22,22 @@ import javax.validation.Valid;
 */
 @RestController
 @RequestMapping("/platadmin/remindUser")
-@Api(tags = "用户消息提醒管理")
+@Api(tags = "平台对用户消息提醒管理")
 public class RemindUserController {
 
     @DubboReference
-    private IRemindUserRpc RemindUserRpc;
+    private IRemindUserRpc remindUserRpc;
 
     @ApiOperation("用户消息提醒列表")
     @GetMapping("")
     public ResponseData<PageData<RemindUserVO.ListVO>> list(RemindUserQTO.QTO qto) {
-        return ResponseData.data(RemindUserRpc.pageData(qto));
+        return ResponseData.data(remindUserRpc.platPageData(qto));
     }
 
     @ApiOperation("用户消息提醒详情")
     @GetMapping(value = "/{id}")
     public ResponseData<RemindUserVO.DetailVO> get(@PathVariable String id) {
-        return ResponseData.data(RemindUserRpc.detailRemindUser(new RemindUserDTO.IdDTO(id)));
+        return ResponseData.data(remindUserRpc.detailRemindUser(new RemindUserDTO.IdDTO(id)));
     }
-
-    @ApiOperation("新增用户消息提醒")
-    @PostMapping("")
-    public ResponseData<Void> add(@Valid @RequestBody RemindUserDTO.ETO dto) {
-            RemindUserRpc.addRemindUser(dto);
-        return ResponseData.success(MsgConst.ADD_SUCCESS);
-    }
-
-//    @ApiOperation("删除用户消息提醒")
-//    @DeleteMapping(value = "/{id}")
-//    public ResponseData<Void> delete(@PathVariable String id) {
-//        RemindUserDTO.IdDTO dto = new RemindUserDTO.IdDTO(id);
-//        RemindUserRpc.deleteRemindUser(dto);
-//        return ResponseData.success(MsgConst.DELETE_SUCCESS);
-//    }
-//
-//
-//    @ApiOperation("修改用户消息提醒")
-//    @PutMapping(value = "/{id}")
-//    public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody RemindUserDTO.ETO eto) {
-//        RemindUserRpc.editRemindUser(id,eto);
-//        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
-//    }
 
 }

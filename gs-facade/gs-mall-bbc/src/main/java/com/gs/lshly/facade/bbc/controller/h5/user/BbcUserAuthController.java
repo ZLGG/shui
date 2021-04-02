@@ -3,6 +3,7 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
@@ -10,6 +11,9 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JsonUtils;
+import com.gs.lshly.common.utils.JwtUtil;
+import com.gs.lshly.middleware.log.Log;
+import com.gs.lshly.middleware.log.aop.LogAspect;
 import com.gs.lshly.middleware.wx.WxMaConfiguration;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 import io.swagger.annotations.Api;
@@ -47,8 +51,10 @@ public class BbcUserAuthController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
+    @Log(module = "登陆", func = "2C-手机验证码")
     public ResponseData<BbcUserVO.LoginVO> login(@Valid @RequestBody BbcUserDTO.LoginETO dto) {
         BbcUserVO.LoginVO vo = bbcUserAuthRpc.login(dto);
+        setLogAspect(vo);
         return ResponseData.data(vo);
     }
 
@@ -64,7 +70,7 @@ public class BbcUserAuthController {
             WxMaService wxService = WxMaConfiguration.getMaService(appid);
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
             //通过微信openid查找，针对已登录过的用户
-            BbcUserVO.LoginVO loginVO = bbcUserAuthRpc.loadUserByWxOpenid(appid, session.getOpenid(), session.getSessionKey());
+            BbcUserVO.LoginVO loginVO = bbcUserAuthRpc.loadUserByWxOpenid(appid, session.getOpenid(), session.getSessionKey(), session.getUnionid());
             if (loginVO != null) {
                 log.info("微信小程序通过code获取openid或直接登录："+JsonUtils.toJson(loginVO));
                 return ResponseData.data(loginVO);
@@ -78,6 +84,7 @@ public class BbcUserAuthController {
 
     @GetMapping("/wxminiapp/{appid}/login")
     @ApiOperation(value = "2,通过openid登陆")
+    @Log(module = "登陆", func = "2C-小程序")
     public ResponseData<BbcUserVO.LoginVO> login(@PathVariable String appid, String openid, String encryptedData, String ivStr) {
         if (StringUtils.isBlank(openid)) {
             return ResponseData.fail("openid为空");
@@ -96,6 +103,7 @@ public class BbcUserAuthController {
             dto.setAppId(appid);
             BbcUserVO.LoginVO loginVO = bbcUserAuthRpc.addWxThirdLogin(dto);
             if (loginVO != null) {
+                setLogAspect(loginVO);
                 log.info("通过openid登陆："+JsonUtils.toJson(loginVO));
                 return ResponseData.data(loginVO);
             }
@@ -107,6 +115,7 @@ public class BbcUserAuthController {
     }
     @GetMapping("/wxminiapp/{appid}/bindInnerPhone")
     @ApiOperation(value = "3,微信自身手机号绑定")
+    @Log(module = "登陆", func = "2C-小程序")
     public ResponseData<BbcUserVO.LoginVO> bindInnerPhone(@PathVariable String appid, String openid, String encryptedData, String iv){
         final WxMaService wxService = WxMaConfiguration.getMaService(appid);
         String sessionKey = bbcUserAuthRpc.loadSessionKeyByWxOpenid(openid);
@@ -123,6 +132,7 @@ public class BbcUserAuthController {
             }
             BbcUserVO.LoginVO vo = bbcUserAuthRpc.updateUserPhoneByWxInnerPhone(dto);
             log.info("微信自身手机号绑定："+JsonUtils.toJson(vo));
+            setLogAspect(vo);
             return ResponseData.data(vo);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -132,10 +142,18 @@ public class BbcUserAuthController {
 
     @GetMapping("/wxminiapp/{appid}/bindOutPhone")
     @ApiOperation(value = "4,微信默认登陆后外部手机号绑定")
+    @Log(module = "登陆", func = "2C-小程序")
     public ResponseData<BbcUserVO.LoginVO> phone(@PathVariable String appid, String openid, String validCode, String phone){
         BbcUserVO.LoginVO vo = bbcUserAuthRpc.bindPhone(appid, openid, validCode, phone);
         log.info("微信默认登陆后外部手机号绑定："+JsonUtils.toJson(vo));
+        setLogAspect(vo);
         return ResponseData.data(vo);
+    }
+
+    private void setLogAspect(BbcUserVO.LoginVO vo){
+        if (vo!=null && StrUtil.isNotBlank(vo.getAuthToken())) {
+            LogAspect.set(LogAspect.toDTO(JwtUtil.getJwtUser(vo.getAuthToken())));
+        }
     }
 
     @ApiOperation("退出(1，H5退出-需要带上phone；2，小程序退出-需要带上openid),目的清空服务端的缓存")

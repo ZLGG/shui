@@ -1,6 +1,5 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsPosTemporaryDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsPosTemporaryQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
@@ -50,5 +49,5 @@ public interface IPCMerchGoodsPosTemporaryService {
      * 修改发布状态
      * @param dto
      */
-    void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.IdDTO dto);
+    void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.PosSpuIdDTO dto);
 }

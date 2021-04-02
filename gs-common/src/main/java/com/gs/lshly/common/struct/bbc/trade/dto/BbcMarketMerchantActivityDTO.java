@@ -41,6 +41,9 @@ public abstract class BbcMarketMerchantActivityDTO implements Serializable {
 
         @ApiModelProperty(value = "商家id")
         private String id;
+
+        @ApiModelProperty(value = "商品id(商品详情页才传)")
+        private String goodsId;
     }
     @Data
     @ApiModel("BbcMarketMerchantActivityDTO.CardIdDTO")

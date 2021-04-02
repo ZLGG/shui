@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantGroupbuyGoods;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyGoodsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketMerchantGroupbuyGoodsService;
@@ -14,13 +15,11 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchMarketMerchantG
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchMarketMerchantGroupbuyGoodsQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantGroupbuyGoodsVO;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,6 +39,7 @@ public class PCMerchMarketMerchantGroupbuyGoodsServiceImpl implements IPCMerchMa
     @Override
     public PageData<PCMerchMarketMerchantGroupbuyGoodsVO.ListVO> pageData(PCMerchMarketMerchantGroupbuyGoodsQTO.QTO qto) {
         QueryWrapper<MarketMerchantGroupbuyGoods> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<MarketMerchantGroupbuyGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMarketMerchantGroupbuyGoodsVO.ListVO.class, page);
@@ -81,7 +81,8 @@ public class PCMerchMarketMerchantGroupbuyGoodsServiceImpl implements IPCMerchMa
         List<String> spuIds = ListUtil.getIdList(CommonMarketDTO.SkuId.class, skuIds, "spuId");
         String idsStr = CollUtil.isNotEmpty(spuIds) ? CollUtil.join(spuIds, "','") : "-1";
         List<CommonMarketDTO.MarketSku> list = repository.baseMapper().activeSpuPrice(idsStr, terminal.getCode());
-        return CommonMarketDTO.MarketSku.pickBest(list, skuIds);
+        CommonMarketDTO.MarketSku marketSku = CommonMarketDTO.MarketSku.pickBest(list, skuIds);
+        return marketSku != null ? marketSku.setMarketName("商家团购") : null;
     }
 
 }

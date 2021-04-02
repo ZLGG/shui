@@ -33,15 +33,6 @@ public abstract class PCMerchGoodsInfoQTO implements Serializable {
         @ApiModelProperty("使用平台")
         private Integer usePlatform;
 
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
     }
 
     @Data

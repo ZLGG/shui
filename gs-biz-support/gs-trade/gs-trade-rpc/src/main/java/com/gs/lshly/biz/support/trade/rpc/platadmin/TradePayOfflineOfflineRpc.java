@@ -45,6 +45,6 @@ public class TradePayOfflineOfflineRpc implements ITradePayOfflineRpc {
 
     @Override
     public ExportDataDTO export(TradePayOfflineQTO.IdListQTO qo) throws Exception {
-        return ExcelUtil.treatmentBean(iTradePayOfflineService.exportPayOfficeData(qo), TradePayOfflineVO.ListVO.class);
+        return ExcelUtil.treatmentBean(iTradePayOfflineService.exportPayOfficeData(qo), TradePayOfflineVO.ListVOExport.class);
     }
 }

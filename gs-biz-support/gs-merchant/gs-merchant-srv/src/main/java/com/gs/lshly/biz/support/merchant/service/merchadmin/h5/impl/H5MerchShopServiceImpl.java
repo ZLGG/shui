@@ -6,8 +6,6 @@ import com.gs.lshly.biz.support.merchant.entity.Shop;
 import com.gs.lshly.biz.support.merchant.repository.IShopRepository;
 import com.gs.lshly.biz.support.merchant.service.merchadmin.h5.IH5MerchShopService;
 import com.gs.lshly.common.enums.UserTypeEnum;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.h5.merchant.dto.H5MerchShopDTO;
 import com.gs.lshly.common.struct.merchadmin.h5.merchant.qto.H5MerchShopQTO;
 import com.gs.lshly.common.struct.merchadmin.h5.merchant.vo.H5MerchShopVO;
@@ -40,6 +38,7 @@ public class H5MerchShopServiceImpl implements IH5MerchShopService {
         if(UserTypeEnum._2C商家主账号.getCode().equals(qto.getJwtUserType()) || UserTypeEnum._2B商家主账号.getCode().equals(qto.getJwtUserType())){
             QueryWrapper<Shop> wq = new QueryWrapper<>();
             wq.eq("merchant_id",qto.getJwtMerchantId());
+            wq.orderByDesc("cdate");
             List<Shop> shopList = repository.list(wq);
             return ListUtil.listCover(H5MerchShopVO.ListVO.class,shopList);
         }
@@ -56,11 +55,11 @@ public class H5MerchShopServiceImpl implements IH5MerchShopService {
 
 
     @Override
-    public H5MerchShopVO.DetailVO detailShop(BaseDTO dto) {
-        Shop shop = repository.getById(dto.getJwtShopId());
+    public H5MerchShopVO.DetailVO detailShop(H5MerchShopDTO.IdDTO dto) {
+        Shop shop = repository.getById(dto.getId());
         H5MerchShopVO.DetailVO detailVo = new H5MerchShopVO.DetailVO();
         if(ObjectUtils.isEmpty(shop)){
-            throw new BusinessException("没有数据");
+            return detailVo;
         }
         BeanCopyUtils.copyProperties(shop, detailVo);
         detailVo.setShopDescribe(ObjectUtils.isEmpty(shop.getShopDesc())?"":shop.getShopDesc());

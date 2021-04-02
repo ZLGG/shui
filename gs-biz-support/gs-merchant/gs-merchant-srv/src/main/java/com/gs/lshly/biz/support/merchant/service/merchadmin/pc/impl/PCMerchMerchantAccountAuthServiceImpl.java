@@ -1,8 +1,10 @@
 package com.gs.lshly.biz.support.merchant.service.merchadmin.pc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.merchant.entity.MerchantAccount;
 import com.gs.lshly.biz.support.merchant.entity.Shop;
+import com.gs.lshly.biz.support.merchant.enums.MerchantAccountStateEnum;
 import com.gs.lshly.biz.support.merchant.enums.MerchantAccountTypeEnum;
 import com.gs.lshly.biz.support.merchant.repository.IMerchantAccountRepository;
 import com.gs.lshly.biz.support.merchant.repository.IMerchantRepository;
@@ -16,6 +18,7 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.dto.CommonPhoneLoginDTO;
+import com.gs.lshly.common.struct.merchadmin.h5.merchant.dto.H5MerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
@@ -28,6 +31,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
 * <p>
 *  服务实现类
@@ -39,6 +44,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAccountAuthService {
 
+    private static final String H5PhoneUser = "h5Phone_User_";
+    private static final String WxOpenidUser = "wxOpenid_User_";
     private static final String WxOpenidSessionKey = "wxOpenid_SessionKey_";
     private static final String WxSessionKeyOpenid = "wxSessionKey_Openid_";
 
@@ -75,7 +82,7 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     public AuthDTO findByWxOpenid(String openid, String sessionKey) {
         //数据库中并无该openid，缓存sessionKey，登录需要调用下一个login接口
         String oldSessionKey = (String)redisUtil.get(WxOpenidSessionKey + openid);
-        redisUtil.set(WxOpenidSessionKey + openid, sessionKey);
+        redisUtil.set(WxOpenidSessionKey + openid, sessionKey, 60 * 60 * 24);
         //用户获取手机时使用
         log.info("oldSessionKey:"+oldSessionKey+";newSessionKey:"+sessionKey);
         if (StringUtils.isNotBlank(oldSessionKey) && !oldSessionKey.equals(sessionKey)) {
@@ -184,4 +191,64 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     public BbbUserVO.LoginVO merchantLoginByWxInnerPhone(CommonPhoneLoginDTO.WxUserPhone dto) {
         return null;
     }
+
+    @Override
+    public void logout(String phone, String openid) {
+        //H5退出
+        if (StringUtils.isNotBlank(phone)) {
+            redisUtil.del(H5PhoneUser + phone);
+        }
+
+        //小程序退出
+        if (StringUtils.isNotBlank(openid)) {
+            redisUtil.del(WxOpenidUser + openid);
+        }
+    }
+
+    @Override
+    public String regMerchantAccount(H5MerchMerchantAccountDTO.RegDTO eto) {
+        if(!eto.getUserPwd().equals(eto.getUserPwdCfm())){
+            throw new BusinessException("确认密码输入错误");
+        }
+        QueryWrapper<MerchantAccount> merchantAccountQueryWrapper = MybatisPlusUtil.query();
+        merchantAccountQueryWrapper.eq("user_name",eto.getUserName());
+        merchantAccountQueryWrapper.or();
+        merchantAccountQueryWrapper.eq("phone",eto.getPhone());
+        List<MerchantAccount> merchantAccountList =  repository.list(merchantAccountQueryWrapper);
+        if(ObjectUtils.isNotEmpty(merchantAccountList)){
+            for(MerchantAccount merchantAccount:merchantAccountList){
+                if(merchantAccount.getUserName().equals(eto.getUserName())){
+                    throw new BusinessException("用户名已注册");
+                }
+                if(merchantAccount.getPhone().equals(eto.getPhone())){
+                    throw new BusinessException("手机号已注册");
+                }
+            }
+        }
+        //注册成功生成主帐号(所有的入驻信息是关联在这个主帐号下),平台审核的时候为帐号分配商家,审核开通店铺的时候创建详细的商品分类数据,和企业字点
+        MerchantAccount merchantAccount = new MerchantAccount();
+        BeanUtils.copyProperties(eto,merchantAccount);
+        merchantAccount.setAccountType(MerchantAccountTypeEnum.主帐号.getCode());
+        merchantAccount.setTerminal(TerminalEnum.BBB.getCode());
+        merchantAccount.setAccountState(MerchantAccountStateEnum.启用.getCode());
+        merchantAccount.setUserPwd(PwdUtil.encode(merchantAccount.getUserPwd()));
+        repository.save(merchantAccount);
+
+        return this.createMerchantAccountJwtToken(merchantAccount);
+    }
+    /** 商家帐号token **/
+    private String createMerchantAccountJwtToken(MerchantAccount merchantAccount){
+        AuthDTO authDTO = new AuthDTO().setId(merchantAccount.getId())
+                .setType(UserTypeEnum._2B商家主账号.getCode())
+                .setPassword(merchantAccount.getUserPwd())
+                .setUsername(merchantAccount.getUserName())
+                .setHeadImg(merchantAccount.getHeadImg())
+                .setState(merchantAccount.getAccountState())
+                .setShopId(merchantAccount.getShopId())
+                .setPhone(merchantAccount.getPhone())
+                .setMerchantId(merchantAccount.getMerchantId());
+        return JwtUtil.createToken(new JwtUser(authDTO));
+
+    }
+
 }

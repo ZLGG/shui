@@ -13,12 +13,15 @@ import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryServic
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.*;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsCategoryQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.platadmin.merchant.IMerchantShopCategoryApplyRpc;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -48,6 +53,13 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     private IGoodsCategoryAttributeRepository categoryAttributeRepository;
     @Autowired
     private IGoodsCategorySpecRepository categorySpecRepository;
+    @Autowired
+    private IGoodsInfoRepository goodsInfoRepository;
+    @Autowired
+    private IGoodsMaterialLibraryRepository goodsMaterialLibraryRepository;
+
+    @DubboReference
+    private IMerchantShopCategoryApplyRpc categoryApplyRpc;
 
     @Override
     public void addCategory(GoodsCategoryDTO.ETO eto) {
@@ -219,7 +231,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         List<GoodsCategoryVO.Level3VO> voList = page.getRecords()
                 .stream()
                 .map(e -> convertVO(e))
-                .collect(Collectors.toList());
+                .collect(toList());
         return new PageData(voList, (int) page.getCurrent(), (int) page.getSize(), page.getTotal());
     }
 
@@ -281,8 +293,13 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             throw new BusinessException("参数不能为空！");
         }
         //判断品牌id是否为空
-        if (ObjectUtils.isEmpty(brandIdListDTO)) {
+        if (ObjectUtils.isEmpty(brandIdListDTO) || ObjectUtils.isEmpty(brandIdListDTO.getIdList())) {
             throw new BusinessException("关联失败,请选择要关联的品牌");
+        }
+
+        //判断品牌是否已经关联了商品
+        if (countBindGoods(brandIdListDTO.getIdList(),dto.getId()) > 0){
+            throw new BusinessException("品牌已经关联商品不可以直接取消！");
         }
 
         int level = this.getGoodsCategory(dto).getGsCategoryLevel().intValue();
@@ -313,6 +330,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     }
 
     private void bindBrand(GoodsBrandDTO.IdListDTO brandIdListDTO, List<String> categoryIds) {
+
         //清理原有绑定关系
         clearBindBrand(categoryIds);
 
@@ -492,7 +510,29 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
                     GoodsCategoryVO.ListVO listVo = new GoodsCategoryVO.ListVO();
                     BeanUtils.copyProperties(e, listVo);
                     return listVo;
-                }).collect(Collectors.toList());
+                }).collect(toList());
+        return listVOS;
+    }
+
+    @Override
+    public List<GoodsCategoryVO.ListVO> level2Categories(GoodsCategoryDTO.ApplyIdDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getApplyId())){
+            throw new BusinessException("参数为空异常！！");
+        }
+       List<String> idList = categoryApplyRpc.innerGetApplyCategoryIdList(dto.getApplyId());
+        QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
+        boost.in("parent_id",idList);
+        boost.eq("gs_category_level", GoodsCategoryLevelEnum.TWO.getCode());
+        List<GoodsCategory> categories = categoryRepository.list(boost);
+        if (ObjectUtils.isEmpty(categories)) {
+            return new ArrayList<>();
+        }
+        List<GoodsCategoryVO.ListVO> listVOS = categories.stream()
+                .map(e -> {
+                    GoodsCategoryVO.ListVO listVo = new GoodsCategoryVO.ListVO();
+                    BeanUtils.copyProperties(e, listVo);
+                    return listVo;
+                }).collect(toList());
         return listVOS;
     }
 
@@ -547,6 +587,17 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         }
         List<GoodsCategoryVO.CategoryJoinSearchVO> searchVOList = com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.CategoryJoinSearchVO.class,categories);
         return searchVOList;
+    }
+
+    @Override
+    public List<GoodsCategoryVO.InnerListVO> innerCategoryList(BaseDTO dto) {
+        List<GoodsCategoryVO.InnerListVO> innerListVOS = new ArrayList<>();
+        QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
+        List<GoodsCategory> categories = categoryRepository.list(wrapper);
+        if (ObjectUtils.isNotEmpty(categories)){
+            innerListVOS = com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.InnerListVO.class,categories);
+        }
+        return innerListVOS;
     }
 
     private GoodsCategoryVO.Level3VO convertVO(GoodsCategory e) {
@@ -614,5 +665,32 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             }
         }
         return count;
+    }
+
+    private int countBindGoods(List<String> brandIdList,String categoryId){
+        int totalCount = 0;
+        QueryWrapper<CategoryBrand> categoryBrandQueryWrapper = MybatisPlusUtil.query();
+        categoryBrandQueryWrapper.eq("category_id",categoryId);
+        List<CategoryBrand> categoryBrands = categoryBrandRepository.list(categoryBrandQueryWrapper);
+        if (ObjectUtils.isEmpty(categoryBrands)){
+            return totalCount;
+        }
+        List<String> brandIds = com.gs.lshly.common.utils.ListUtil.getIdList(CategoryBrand.class,categoryBrands,"brandId");
+        List<String> reduceIds = brandIds.stream().filter(item -> !brandIdList.contains(item)).collect(toList());
+        if (ObjectUtils.isEmpty(reduceIds)){
+            return totalCount;
+        }
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.in("brand_id",reduceIds);
+        wrapper.eq("category_id",categoryId);
+        int count =  goodsInfoRepository.count(wrapper);
+
+        QueryWrapper<GoodsMaterialLibrary> wrapper1 = MybatisPlusUtil.query();
+        wrapper1.in("brand_id",reduceIds);
+        wrapper1.eq("category_id",categoryId);
+        int count2 =  goodsMaterialLibraryRepository.count(wrapper1);
+
+        totalCount = count+ count2;
+        return totalCount;
     }
 }

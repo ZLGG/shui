@@ -107,6 +107,26 @@ public abstract class PCMerchMarketMerchantGroupbuyVO implements Serializable {
 
         @ApiModelProperty("商品信息")
         private List<PCMerchMarketMerchantGroupbuyVO.GoodsInfo> goodsInfos;
+        @ApiModelProperty("所属商家")
+        private List<PCMerchMarketMerchantCardVO.PlatformView.CheckVO> checkInfo;
+
+
+        @Data
+        @ApiModel("PCMerchMarketMerchantGroupbuyVO.PlatformCutView.CheckVO")
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class  CheckVO  implements Serializable{
+            @ApiModelProperty("审核时间")
+            @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+            private LocalDateTime checkDate;
+
+            @ApiModelProperty("审核状态")
+            private Integer checkState;
+
+            @ApiModelProperty("原因")
+            private String remark;
+        }
     }
     @Data
     @Accessors(chain = true)
@@ -268,5 +288,27 @@ public abstract class PCMerchMarketMerchantGroupbuyVO implements Serializable {
 
         @ApiModelProperty("团购价价格")
         private BigDecimal groupbuyPrice;
+
+        @ApiModelProperty("sku信息")
+        private List<PCMerchMarketMerchantGroupbuyVO.ActivityGoodsSku> skuInfo;
+    }
+    @Data
+    @Accessors(chain = true)
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @ApiModel("PCMerchMarketMerchantGroupbuyVO.ActivityGoodsSku")
+    public static class ActivityGoodsSku implements Serializable {
+
+        @ApiModelProperty("商品名字")
+        private String name;
+
+        @ApiModelProperty("规格值组")
+        private String specsValue;
+
+        @ApiModelProperty("图片地址")
+        private String imageUrl;
+
+        @ApiModelProperty("促销价")
+        private BigDecimal activitySaleSkuPrice;
     }
 }

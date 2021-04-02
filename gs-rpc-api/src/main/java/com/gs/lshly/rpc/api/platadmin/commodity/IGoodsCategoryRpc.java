@@ -1,6 +1,7 @@
 package com.gs.lshly.rpc.api.platadmin.commodity;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsCategoryVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsAttributeDictionaryDTO;
@@ -140,6 +141,12 @@ public interface IGoodsCategoryRpc {
     List<GoodsCategoryVO.ListVO> level1Categories();
 
     /**
+     * 查询商品二级分类
+     * @return
+     */
+    List<GoodsCategoryVO.ListVO> level2Categories(GoodsCategoryDTO.ApplyIdDTO dto);
+
+    /**
      * 根据一级类目查询子分类信息
      * @param dto
      * @return
@@ -164,4 +171,11 @@ public interface IGoodsCategoryRpc {
      */
     List<GoodsCategoryVO.CategoryJoinSearchVO> innerGetIdAndName(List<String> categoryIds);
 
+
+    /**
+     * 获取所有所有分类
+     * @param dto
+     * @return
+     */
+    List<GoodsCategoryVO.InnerListVO> innerCategoryList(BaseDTO dto);
 }

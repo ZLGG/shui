@@ -53,7 +53,8 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
        PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoService.addGoodsInfo(eto);
 
         //如果该商品是扶贫商品
-        settingFuPin(eto);
+
+        settingFuPin(eto,goodsIdVO.getGoodsId());
     }
 
     @Override
@@ -71,7 +72,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         goodsInfoService.editGoodsInfo(eto);
 
         //如果该商品是扶贫商品
-        settingFuPin(eto);
+        settingFuPin(eto,eto.getId());
 
     }
 
@@ -232,18 +233,23 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         return goodsInfoService.innerSkuIdByGoodsNo(goodsNo);
     }
 
+    @Override
+    public PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69) {
+        return goodsInfoService.innerByNoSkuId(posSku69);
+    }
 
-    private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto){
+
+    private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto,String goodsId){
         if (ObjectUtils.isNotEmpty(eto.getFuPinEto())){
             PCMerchGoodsFupinDTO.ETO fuPinEto = new PCMerchGoodsFupinDTO.ETO();
             BeanCopyUtils.copyProperties(eto.getFuPinEto(),fuPinEto);
             fuPinEto.setEtoList(eto.getFuPinEto().getEtoList());
-            fuPinEto.setGoodsId(eto.getId());
+            fuPinEto.setGoodsId(goodsId);
             fuPinEto.setShopId(eto.getJwtShopId());
             fuPinEto.setMerchantId(eto.getJwtMerchantId());
             goodsFupinService.saveGoodsFupin(fuPinEto);
         }else {
-            PCMerchGoodsFupinDTO.IdDTO dto = new PCMerchGoodsFupinDTO.IdDTO(eto.getId());
+            PCMerchGoodsFupinDTO.IdDTO dto = new PCMerchGoodsFupinDTO.IdDTO(goodsId);
             goodsFupinService.deleteGoodsFupin(dto);
         }
     }

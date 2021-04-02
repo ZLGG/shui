@@ -75,6 +75,7 @@ public class UserUser2bApplyServiceImpl implements IUserUser2bApplyService {
                 wrapper.like("corp_phone",qto.getQueryValue());
             }
         }
+        wrapper.orderByDesc("cdate");
         IPage<UserUser2bApply> page = MybatisPlusUtil.pager(qto);
         IPage<UserUser2bApply> user2bApplyIPage = repository.page(page, wrapper);
         List<UserUser2bApplyVO.ListVO> voList = new ArrayList<>();

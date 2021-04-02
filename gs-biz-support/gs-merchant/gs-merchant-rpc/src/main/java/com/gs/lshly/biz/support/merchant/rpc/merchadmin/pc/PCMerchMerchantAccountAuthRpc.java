@@ -5,6 +5,7 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.dto.CommonPhoneLoginDTO;
+import com.gs.lshly.common.struct.merchadmin.h5.merchant.dto.H5MerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountAuthRpc;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -71,4 +72,15 @@ public class PCMerchMerchantAccountAuthRpc implements IPCMerchMerchantAccountAut
     public BbbUserVO.LoginVO merchantLoginByWxInnerPhone(CommonPhoneLoginDTO.WxUserPhone dto) {
         return accountService.merchantLoginByWxInnerPhone(dto);
     }
+
+    @Override
+    public void logout(String phone, String openid) {
+        accountService.logout(phone, openid);
+    }
+
+    @Override
+    public String regMerchantAccount(H5MerchMerchantAccountDTO.RegDTO eto) {
+        return accountService.regMerchantAccount(eto);
+    }
+
 }

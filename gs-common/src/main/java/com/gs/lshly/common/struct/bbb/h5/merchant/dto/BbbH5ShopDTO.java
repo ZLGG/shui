@@ -78,6 +78,15 @@ public abstract class BbbH5ShopDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("BBB.CommonShopDTO.ShopNavigationIdDTO")
+    @AllArgsConstructor
+    public static class ShopNavigationIdDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "店铺类目ID")
+        private String shopNavigationId;
+    }
+
+    @Data
     @ApiModel("CommonShopDTO.MerchantIdDTO")
     @AllArgsConstructor
     public static class MerchantIdDTO extends BaseDTO {

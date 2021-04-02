@@ -55,6 +55,13 @@ public interface IGoodsInfoService {
     void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto);
 
     /**
+     * 批量审核商品
+     *
+     * @param dto
+     */
+    void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto);
+
+    /**
      * 获取商品名称
      *
      * @param dto
@@ -145,11 +152,5 @@ public interface IGoodsInfoService {
      * @param shopId
      */
     void innerServiceUnderShelfGoods(List<String> shopId);
-    
-    /**
-     * 
-     * @return
-     */
-    List<GoodsInfoVO.ListVO> listGoodsData();
 
 }

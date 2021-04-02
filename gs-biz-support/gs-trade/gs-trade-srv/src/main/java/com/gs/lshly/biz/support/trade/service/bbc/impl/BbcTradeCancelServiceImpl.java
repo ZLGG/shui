@@ -32,6 +32,7 @@ public class BbcTradeCancelServiceImpl implements IBbcTradeCancelService {
     @Override
     public PageData<BbcTradeCancelVO.ListVO> pageData(BbcTradeCancelQTO.QTO qto) {
         QueryWrapper<TradeCancel> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeCancel> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbcTradeCancelVO.ListVO.class, page);

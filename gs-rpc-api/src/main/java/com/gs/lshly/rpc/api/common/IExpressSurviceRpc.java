@@ -11,6 +11,7 @@ public interface IExpressSurviceRpc {
 
     LogisticsInformationVO.ListVO orderLogisticsInformation(StockKdniaoDTO.TradeTailDTO dto);
 
-    LogisticsInformationVO.ListVO queryUPS(StockKdniaoDTO.TradeTailDTO dto);
+    //在途监控
+    LogisticsInformationVO.ListVO onLineMonitoring(StockKdniaoDTO.TradeTailDTO dto);
 
 }

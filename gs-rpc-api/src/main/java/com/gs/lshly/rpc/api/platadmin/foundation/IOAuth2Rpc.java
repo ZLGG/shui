@@ -26,13 +26,6 @@ public interface IOAuth2Rpc {
     OAuth2VO.TokenVO generationToken(OAuth2DTO.GenerationTokenDTO dto);
 
     /**
-     * 通过token获取平台账号信息
-     * @param dto
-     * @return
-     */
-    OAuth2VO.SysUserVO sysUserInfo(OAuth2DTO.UserInfoDTO dto);
-
-    /**
      * 通过token获取商家账号信息
      * @param dto
      * @return

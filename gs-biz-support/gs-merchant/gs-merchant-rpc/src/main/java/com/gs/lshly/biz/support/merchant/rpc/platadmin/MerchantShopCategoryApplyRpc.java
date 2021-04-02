@@ -8,6 +8,8 @@ import com.gs.lshly.rpc.api.platadmin.merchant.IMerchantShopCategoryApplyRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
 *
 * @author xxfc
@@ -39,6 +41,10 @@ public class MerchantShopCategoryApplyRpc implements IMerchantShopCategoryApplyR
         merchantShopCategoryApplyService.apply(dto);
     }
 
+    @Override
+    public List<String> innerGetApplyCategoryIdList(String applyId) {
+        return merchantShopCategoryApplyService.innerGetApplyCategoryIdList(applyId);
+    }
 
 
 }

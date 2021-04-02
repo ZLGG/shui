@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.user.service.bbb.pc;
 
+import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
@@ -21,7 +22,7 @@ public interface IBbbUserAuthService {
 
     AuthDTO loadUserByUsername(String username);
 
-    BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey);
+    BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid);
 
     String loadSessionKeyByWxOpenid(String openid);
 
@@ -39,4 +40,11 @@ public interface IBbbUserAuthService {
 
     String test();
 
+    void forgetByEmail(BbbUserDTO.ForgetByEmailETO dto);
+
+    ResponseData<BbbUserVO.LoginVO> loadUserBySceneId(long sceneId);
+
+    void loadUserBySceneId(String sceneId, BBcWxUserInfoDTO dto);
+
+    BbbUserVO.LoginVO bindQRPhone(long sceneId, String validCode, String phone);
 }

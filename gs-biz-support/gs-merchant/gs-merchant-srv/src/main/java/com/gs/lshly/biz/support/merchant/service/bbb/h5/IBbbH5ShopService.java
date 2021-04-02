@@ -1,14 +1,11 @@
 package com.gs.lshly.biz.support.merchant.service.bbb.h5;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
-import com.gs.lshly.common.struct.bbb.h5.foundation.vo.BbbH5SiteFloorVO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.dto.BbbH5ShopDTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.qto.BbbH5ShopQTO;
+import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopNavigationVO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopVO;
-import com.gs.lshly.common.struct.bbb.h5.stock.dto.BbbH5StockDeliveryDTO;
-import com.gs.lshly.common.struct.bbb.h5.stock.vo.BbbH5StockDeliveryVO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
-import com.gs.lshly.common.struct.common.stock.CommonDeliveryCostCalcParam;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import java.util.List;
 
@@ -58,4 +55,26 @@ public interface IBbbH5ShopService {
      * @return
      */
     List<String> innerGetShopIdList(String shopName);
+
+    /**
+     * 2B店铺分类列表
+     * @param dto
+     * @return
+     */
+    List<BbbH5ShopNavigationVO.NavigationListVO> listNavigationListVO(BbbH5ShopDTO.IdDTO dto);
+
+
+    /**
+     * 内部服务
+     * @param shopNavigationId
+     * @return
+     */
+    List<String> innerGetNavigationList(String shopNavigationId);
+
+    /**
+     * 获取店铺id+name
+     * @param dto
+     * @return
+     */
+    BbbH5ShopVO.ShopIdName getShopIdName(BbbH5ShopDTO.ShopNavigationIdDTO dto);
 }

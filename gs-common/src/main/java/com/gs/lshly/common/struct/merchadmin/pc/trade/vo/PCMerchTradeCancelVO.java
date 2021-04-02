@@ -120,6 +120,12 @@ public abstract class PCMerchTradeCancelVO implements Serializable {
         @ApiModelProperty("买家备注")
         private String buyerRemark;
 
+        @ApiModelProperty("用户名")
+        private String userName;
+
+        @ApiModelProperty("用户电话")
+        private String userPhone;
+
 
     }
 }

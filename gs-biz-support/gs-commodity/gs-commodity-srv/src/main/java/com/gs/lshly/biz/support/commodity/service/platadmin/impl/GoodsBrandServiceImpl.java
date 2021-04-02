@@ -4,12 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.CategoryBrand;
-import com.gs.lshly.biz.support.commodity.entity.GoodsBrand;
-import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
-import com.gs.lshly.biz.support.commodity.repository.ICategoryBrandRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsBrandRepository;
+import com.gs.lshly.biz.support.commodity.entity.*;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
+import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsBrandDTO;
@@ -31,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * <p>
  * 商品品牌 服务实现类
@@ -47,6 +48,18 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
 
     @Autowired
     private ICategoryBrandRepository categoryBrandRepository;
+
+    @Autowired
+    private IGoodsInfoRepository goodsInfoRepository;
+
+    @Autowired
+    private IGoodsCategoryRepository iGoodsCategoryRepository;
+
+    @Autowired
+    private GoodsCategoryMapper categoryMapper;
+
+    @Autowired
+    private IGoodsMaterialLibraryRepository goodsMaterialLibraryRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -77,6 +90,10 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
     public void update(GoodsBrandDTO.ETO dto) {
         //数据校验
         checkBrandData(dto);
+        if (countBindGoods(dto.getId(),dto.getCategoryIds()) >0){
+            throw new BusinessException("该品牌下已经关联了商品不可以直接取消类目与品牌的关联");
+        }
+
         GoodsBrand goodsBrand = new GoodsBrand();
         BeanUtils.copyProperties(dto, goodsBrand);
         repository.updateById(goodsBrand);
@@ -221,6 +238,32 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
             throw new BusinessException("请选择要关联的类目！！");
         }
     }
+    private int countBindGoods(String brandId,List<String> categoryIds){
+        int totalCount = 0;
+        QueryWrapper<CategoryBrand> categoryBrandQueryWrapper = MybatisPlusUtil.query();
+        categoryBrandQueryWrapper.eq("brand_id",brandId);
+        List<CategoryBrand> categoryBrands = categoryBrandRepository.list(categoryBrandQueryWrapper);
+        if (ObjectUtils.isEmpty(categoryBrands)){
+            return totalCount;
+        }
+        List<String> categoryIdList = ListUtil.getIdList(CategoryBrand.class,categoryBrands,"categoryId");
+        List<String> reduceIds = categoryIdList.stream().filter(item -> !categoryIds.contains(item)).collect(toList());
+        if (ObjectUtils.isEmpty(reduceIds)){
+            return totalCount;
+        }
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("brand_id",brandId);
+        wrapper.in("category_id",reduceIds);
+        int count =  goodsInfoRepository.count(wrapper);
+
+        QueryWrapper<GoodsMaterialLibrary> wrapper1 = MybatisPlusUtil.query();
+        wrapper1.eq("brand_id",brandId);
+        wrapper1.in("category_id",reduceIds);
+        int count2 =  goodsMaterialLibraryRepository.count(wrapper1);
+
+        totalCount = count+ count2;
+        return totalCount;
+    }
 
     private int filterSameName(GoodsBrandDTO.ETO dto){
         QueryWrapper<GoodsBrand> wrapper = MybatisPlusUtil.query();
@@ -243,9 +286,8 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
     private void bindCategory(List<String> categoryIds,String brandId){
         //先清除绑定关系
         QueryWrapper<CategoryBrand> wrapper = MybatisPlusUtil.query();
-        wrapper.in("category_id",categoryIds);
+        wrapper.eq("brand_id",brandId);
         categoryBrandRepository.remove(wrapper);
-
         List<CategoryBrand> categoryBrands = new ArrayList<>();
         for (String categoryId : categoryIds){
             CategoryBrand categoryBrand = new CategoryBrand();
@@ -253,7 +295,6 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
             categoryBrand.setBrandId(brandId);
             categoryBrands.add(categoryBrand);
         }
-
         categoryBrandRepository.saveBatch(categoryBrands);
     }
 }

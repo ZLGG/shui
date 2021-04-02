@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.merchadmin.pc.trade.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.merchadmin.pc.foundation.vo.PCMerchDataNoticeVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -81,6 +82,12 @@ public abstract class MerchantHomeDashboardVO implements Serializable {
         private Integer  receivedTrade;
 
         /**
+         * 今日订单
+         * */
+        @ApiModelProperty("今日订单")
+        private Integer  todayTrade;
+
+        /**
          * 售后
          * */
 
@@ -121,7 +128,7 @@ public abstract class MerchantHomeDashboardVO implements Serializable {
          * 通知
          * */
         @ApiModelProperty("通知")
-        private List<notice> notices;
+        private List<PCMerchDataNoticeVO.ListVO> notices;
 
     }
 

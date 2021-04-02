@@ -54,7 +54,12 @@ public class PCMerchMarketMerchantCardServiceImpl implements IPCMerchMarketMerch
     @Override
     public PageData<PCMerchMarketMerchantCardVO.ListVO> pageData(PCMerchMarketMerchantCardQTO.QTO qto) {
         QueryWrapper<MarketMerchantCard> wrapper = new QueryWrapper<>();
-        List<MarketMerchantCard> list = repository.list();
+        wrapper.and(i->i.eq("shop_id",qto.getJwtShopId()));
+        wrapper.orderByDesc("cdate");
+        List<MarketMerchantCard> list = repository.list(wrapper);
+        if (ObjectUtils.isEmpty(list)){
+            return new PageData<>();
+        }
         List<PCMerchMarketMerchantCardVO.ListVO> cardList=new ArrayList<>();
         Long now = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
         for (MarketMerchantCard card:list){
@@ -117,6 +122,8 @@ public class PCMerchMarketMerchantCardServiceImpl implements IPCMerchMarketMerch
     @Override
     @Transactional
     public void addMarketMerchantCard(PCMerchMarketMerchantCardDTO.ETO eto) {
+        checkETO(eto);
+
         MarketMerchantCard marketMerchantCard = new MarketMerchantCard();
         BeanUtils.copyProperties(eto, marketMerchantCard);
         String cardPrefix = UUID.randomUUID().toString().replace("-","").toUpperCase().substring(0, 5);
@@ -166,6 +173,57 @@ public class PCMerchMarketMerchantCardServiceImpl implements IPCMerchMarketMerch
             }
         }
 
+    }
+
+    private void checkETO(PCMerchMarketMerchantCardDTO.ETO eto) {
+        if (ObjectUtils.isEmpty(eto.getCardName())){
+            throw new BusinessException("请填写优惠卷名字");
+        }
+        if (ObjectUtils.isEmpty(eto.getCardDescribe())){
+            throw new BusinessException("请填写优惠卷描述");
+        }
+        if (ObjectUtils.isEmpty(eto.getCutPrice())){
+            throw new BusinessException("请填写优惠金额");
+        }
+        if (ObjectUtils.isEmpty(eto.getGetEndTime())){
+            throw new BusinessException("请填写优惠卷结束时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getGetStartTime())){
+            throw new BusinessException("请填写优惠卷开始时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidStartTime())){
+            throw new BusinessException("请填写优惠卷有效开始时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidEndTime())){
+            throw new BusinessException("请填写优惠卷有效结束时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getOnUserLeve())){
+            throw new BusinessException("请填写优惠卷适用会员等级(1,2,3,4,5,6)");
+        }
+        if (ObjectUtils.isEmpty(eto.getQuantity())){
+            throw new BusinessException("请填写优惠卷发行数量");
+        }
+        if (ObjectUtils.isEmpty(eto.getUserGetMax())){
+            throw new BusinessException("请填写优惠卷每人可领");
+        }
+        if (LocalDateTime.now().isAfter(eto.getGetStartTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getGetEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidStartTime())){
+            throw new BusinessException("请检查时间");
+        }
+
+    }
+
+    public static void main(String[] args) {
+        LocalDateTime localDateTime = LocalDateTime.of(2020, 1, 1, 0, 0);
+        System.out.println(LocalDateTime.now().isBefore(localDateTime));
     }
 
     @Override

@@ -91,6 +91,7 @@ public class PCMerchUserServiceImpl implements IPCMerchUserService {
                 queryWrapper.like("u.to",qto.getConditionValue());
             }
         }
+        queryWrapper.orderByDesc("pu.cdate");
         IPage<UserPrivateUserView> page = MybatisPlusUtil.pager(qto);
         IPage<UserPrivateUserView> userViewIPage = userPrivateUserMapper.selectUserPrivateUser(page,queryWrapper);
         List<String> legalIdist = new ArrayList<>();
@@ -419,6 +420,7 @@ public class PCMerchUserServiceImpl implements IPCMerchUserService {
         PCMerchUserVO.UserSimpleVO userSimpleVO = new PCMerchUserVO.UserSimpleVO();
         userSimpleVO.setUserId(user.getId());
         userSimpleVO.setUserName(user.getUserName());
+        userSimpleVO.setPhone(user.getPhone());
         return userSimpleVO;
     }
 

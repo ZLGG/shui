@@ -67,6 +67,7 @@ public class BbcUserFavoritesGoodsServiceImpl implements IBbcUserFavoritesGoodsS
         }
         QueryWrapper queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("user_id",qto.getJwtUserId());
+        queryWrapper.orderByDesc("cdate");
         IPage<UserFavoritesGoods> pager = MybatisPlusUtil.pager(qto);
         repository.page(pager,queryWrapper);
         if(ObjectUtils.isEmpty(pager.getRecords())){

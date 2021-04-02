@@ -37,6 +37,7 @@ public class BbcSiteBroadServiceImpl implements IBbcSiteBroadService {
     public List<BbcSiteBroadVO.ListVO> list(BbcSiteBroadQTO.QTO qto) {
         QueryWrapper<SiteBroad> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        wrapper.orderByDesc("cdate");
         List<SiteBroad> siteBroadList = repository.list( wrapper);
         return ListUtil.listCover(BbcSiteBroadVO.ListVO.class,siteBroadList);
     }

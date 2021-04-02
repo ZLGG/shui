@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.repository;
 
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gs.lshly.biz.support.commodity.entity.GoodsBrand;
 
@@ -13,4 +14,5 @@ import com.gs.lshly.biz.support.commodity.entity.GoodsBrand;
  */
 public interface IGoodsBrandRepository extends IService<GoodsBrand> {
 
+    Mapper<GoodsBrand> getMapper();
 }

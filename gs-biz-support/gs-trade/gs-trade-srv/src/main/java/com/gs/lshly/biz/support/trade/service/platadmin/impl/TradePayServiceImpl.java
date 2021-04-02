@@ -3,18 +3,25 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradePay;
 import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradePayService;
 import com.gs.lshly.common.enums.TradePayStateEnum;
+import com.gs.lshly.common.enums.TradePayTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
+import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradePayDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradePayVO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
+import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -39,8 +46,12 @@ public class TradePayServiceImpl implements ITradePayService {
 
     @Autowired
     private ITradePayRepository repository;
+    @Autowired
+    private ITradeRepository iTradeRepository;
     @DubboReference
     private IUserRpc iUserRpc;
+    @DubboReference
+    private IShopRpc iShopRpc;
 
     @Override
     public PageData<TradePayVO.ListVO> pageData(TradePayQTO.QTO qto) {
@@ -71,11 +82,12 @@ public class TradePayServiceImpl implements ITradePayService {
             query.and(i->i.eq("pay_state",qto.getPayState()));
         }
         if (ObjectUtils.isNotEmpty(qto.getId())){
-            query.and(i->i.like("id",qto.getId()));
+            query.and(i->i.like("trade",qto.getId()));
         }
         if (ObjectUtils.isNotEmpty(qto.getCdate()) || ObjectUtils.isNotEmpty(qto.getCdateState())){
             GetQuery(query,qto.getCdateState(),qto.getCdate(),qto.getCdateLittleDate());
         }
+        query.orderByDesc("cdate");
         IPage<TradePay> page = MybatisPlusUtil.pager(qto);
         IPage<TradePay> payIPage = repository.page(page,query);
         if (ObjectUtils.isEmpty(payIPage) || (ObjectUtils.isEmpty(payIPage.getRecords()))){
@@ -84,6 +96,14 @@ public class TradePayServiceImpl implements ITradePayService {
         List<TradePayVO.ListVO> listVOS =payIPage.getRecords().parallelStream().map(e ->{
             TradePayVO.ListVO listVO = new TradePayVO.ListVO();
             BeanUtils.copyProperties(e,listVO);
+            UserVO.MiniVO mini = iUserRpc.mini(new UserDTO.IdDTO(listVO.getUserId()));
+            if (ObjectUtils.isNotEmpty(mini)){
+                listVO.setUserName(mini.getUserName());
+            }
+            ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(listVO.getShopId()));
+            if (ObjectUtils.isNotEmpty(detailVO)){
+                listVO.setShopName(detailVO.getShopName());
+            }
             return listVO;
         }).collect(Collectors.toList());
        return new PageData<>(listVOS,qto.getPageNum(),qto.getPageSize(),payIPage.getTotal());
@@ -145,6 +165,10 @@ public class TradePayServiceImpl implements ITradePayService {
             }else {
                 relationDetailVO.setFinishDate(null);
             }
+            Trade byId = iTradeRepository.getById(i.getTradeId());
+            if (ObjectUtils.isNotEmpty(byId)){
+                relationDetailVO.setTradeCode(byId.getTradeCode());
+            }
             return relationDetailVO;
         }).collect(Collectors.toList());
         return new PageData<>(listVO,qto.getPageNum(),qto.getPageSize(),page.getTotal());
@@ -201,7 +225,7 @@ public class TradePayServiceImpl implements ITradePayService {
     }
 
     @Override
-    public List<TradePayVO.RelationDetailVO> export(TradePayDTO.IdsDTO qo) {
+    public List<TradePayVO.RelationDetailExport> export(TradePayDTO.IdsDTO qo) {
         if (ObjectUtils.isEmpty(qo.getIds())){
             throw new BusinessException("请传入ID");
         }
@@ -209,9 +233,11 @@ public class TradePayServiceImpl implements ITradePayService {
         if (ObjectUtils.isEmpty(tradePays)){
             return new ArrayList<>();
         }
-        List<TradePayVO.RelationDetailVO> listVO=tradePays.parallelStream().map(i->{
-            TradePayVO.RelationDetailVO relationDetailVO = new TradePayVO.RelationDetailVO();
+        List<TradePayVO.RelationDetailExport> listVO=tradePays.parallelStream().map(i->{
+            TradePayVO.RelationDetailExport relationDetailVO = new TradePayVO.RelationDetailExport();
             BeanUtils.copyProperties(i,relationDetailVO);
+            relationDetailVO.setPayType(EnumUtil.getText(i.getPayType(),TradePayTypeEnum.class));
+            relationDetailVO.setPayState(EnumUtil.getText(i.getPayState(),TradePayStateEnum.class));
             if (relationDetailVO.getPayState().equals(TradePayStateEnum.已支付)){
                 relationDetailVO.setFinishDate(i.getUdate());
             }else {
@@ -220,6 +246,40 @@ public class TradePayServiceImpl implements ITradePayService {
             return relationDetailVO;
         }).collect(Collectors.toList());
         return listVO;
+    }
+
+    @Override
+    public void delete(TradePayQTO.IdListQTO ids) {
+        if (ObjectUtils.isNotEmpty(ids.getIds())){
+            repository.removeByIds(ids.getIds());
+        }
+    }
+
+    @Override
+    public List<TradePayVO.ListVOExport> payExport(TradePayQTO.IdListQTO qo) {
+        if (ObjectUtils.isEmpty(qo.getIds())){
+            throw new BusinessException("请传入参数");
+        }
+        List<TradePay> tradePays = repository.listByIds(qo.getIds());
+        if (ObjectUtils.isNotEmpty(tradePays)){
+            List<TradePayVO.ListVOExport> list=tradePays.parallelStream().map(e ->{
+                TradePayVO.ListVOExport listVO = new TradePayVO.ListVOExport();
+                BeanUtils.copyProperties(e,listVO);
+                UserVO.MiniVO mini = iUserRpc.mini(new UserDTO.IdDTO(e.getUserId()));
+                if (ObjectUtils.isNotEmpty(mini)){
+                    listVO.setUserName(mini.getUserName());
+                }
+                ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(e.getShopId()));
+                if (ObjectUtils.isNotEmpty(detailVO)){
+                    listVO.setShopName(detailVO.getShopName());
+                }
+                listVO.setPayType(EnumUtil.getText(e.getPayType(), TradePayTypeEnum.class));
+                listVO.setPayState(EnumUtil.getText(e.getPayState(),TradePayStateEnum.class));
+                return listVO;
+            }).collect(Collectors.toList());
+            return list;
+        }
+        return new ArrayList<>();
     }
 
 

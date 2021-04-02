@@ -35,6 +35,8 @@ public class SMSServiceAliyunImpl implements ISMSService {
     @Value("${aliyun.sms.templates.settlementInform.templateCode}")
     private String settlementInformTemplateCode;
 
+    @Value("${aliyun.sms.templates.pickup.newTemplateCode}")
+    private String pickupTemplateCode;
 
     @Override
     public String sendRegistrySMSCode(String phone) {
@@ -53,6 +55,17 @@ public class SMSServiceAliyunImpl implements ISMSService {
         stringStringHashMap.put("code", String.valueOf(pickUpNum));
         stringStringHashMap.put("name", String.valueOf(name));
         sendSMS(phone,stringStringHashMap,signName,templateCode);
+        return pickUpNum;
+    }
+
+    @Override
+    public String sendPickUpSMSCode(String phone, String pickUpNum, String name, String shopName) {
+        checkPhoneNumber(phone);
+        Map<String, String> stringStringHashMap = new HashMap<>();
+        stringStringHashMap.put("code", String.valueOf(pickUpNum));
+        stringStringHashMap.put("name", String.valueOf(name));
+        stringStringHashMap.put("shopName", String.valueOf(shopName));
+        sendSMS(phone,stringStringHashMap,signName,pickupTemplateCode);
         return pickUpNum;
     }
 

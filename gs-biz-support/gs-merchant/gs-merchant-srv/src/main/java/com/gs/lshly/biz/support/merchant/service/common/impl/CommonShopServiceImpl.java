@@ -17,6 +17,7 @@ import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsCategoryVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsCategoryRpc;
@@ -25,6 +26,8 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +54,8 @@ public class CommonShopServiceImpl implements ICommonShopService {
     private IShopGoodsCategoryRepository shopGoodsCategoryRepository;
     @Autowired
     private IShopServiceRepository shopServiceRepository;
+    @Autowired
+    private IShopVisitsRepository iShopVisitsRepository;
 
     @DubboReference
     private IPCMerchAdminGoodsCategoryRpc categoryRpc;
@@ -243,7 +248,7 @@ public class CommonShopServiceImpl implements ICommonShopService {
             queryWrapperCategoryL1.eq("shop_id",shop.getId());
             queryWrapperCategoryL1.eq("category_leve", GoodsCategoryLevelEnum.ONE.getCode());
             List<ShopGoodsCategory> goodsCategoryList = shopGoodsCategoryRepository.list(queryWrapperCategoryL1);
-            if(ObjectUtils.isEmpty(goodsCategoryList)){
+            if(ObjectUtils.isNotEmpty(goodsCategoryList)){
                 for(ShopGoodsCategory goodsCategory:goodsCategoryList){
                     CommonShopVO.CategoryVO categoryVO = new CommonShopVO.CategoryVO();
                     categoryVO.setGoodsCategoryId(goodsCategory.getCategoryId());
@@ -261,7 +266,7 @@ public class CommonShopServiceImpl implements ICommonShopService {
         if(null == shop){
             return null;
         }
-        Merchant merchant =  merchantRepository.getById(shop.getId());
+        Merchant merchant =  merchantRepository.getById(shop.getMerchantId());
         if(null == merchant){
             return null;
         }
@@ -384,6 +389,66 @@ public class CommonShopServiceImpl implements ICommonShopService {
             idList.add(navigationId);
         }
         return idList;
+    }
+
+    @Override
+    public CommonShopVO.ListVO innerShopInfo(String shopId) {
+        if (StringUtils.isBlank(shopId)){
+            throw new BusinessException("店铺id为空，异常");
+        }
+        Shop shop = repository.getById(shopId);
+        if (null == shop){
+            throw new BusinessException("店铺不存在，异常！");
+        }
+        CommonShopVO.ListVO listVO = new CommonShopVO.ListVO();
+        BeanUtils.copyProperties(shop,listVO);
+        return listVO;
+    }
+
+    @Override
+    public CommonShopVO.ShopCategoryInfoVO innerShopCategoryInfoVO(String shopId) {
+        if (StringUtils.isBlank(shopId)){
+            throw new BusinessException("店铺id为空，异常");
+        }
+        QueryWrapper<ShopGoodsCategory> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("category_leve",GoodsCategoryLevelEnum.ONE.getCode());
+        wrapper.eq("shop_id",shopId);
+        List<ShopGoodsCategory> shopGoodsCategories = shopGoodsCategoryRepository.list(wrapper);
+        if (ObjectUtils.isNotEmpty(shopGoodsCategories)){
+            CommonShopVO.ShopCategoryInfoVO shopCategoryInfoVO = new CommonShopVO.ShopCategoryInfoVO();
+            BigDecimal price = new BigDecimal("0");
+            StringBuffer stringBuffer = new StringBuffer();
+
+            for (ShopGoodsCategory category : shopGoodsCategories){
+                stringBuffer.append(category.getCategoryName()+",");
+                if (ObjectUtils.isNotEmpty(category.getSharePrice())){
+                    price = price.add(category.getSharePrice());
+                }
+            }
+            shopCategoryInfoVO.setCategoryName(stringBuffer.toString().substring(0, stringBuffer.toString().lastIndexOf(",")));
+            shopCategoryInfoVO.setSharePrice(price);
+
+            return shopCategoryInfoVO;
+
+        }
+        return null;
+    }
+
+    @Override
+    public void visits(CommonShopDTO.VisitsDTO shopId) {
+        if (StringUtils.isNotBlank(shopId.getShopId())){
+            ShopVisits shopVisits = new ShopVisits();
+            shopVisits.setShopId(shopId.getShopId());
+            if (ObjectUtils.isNotEmpty(shopId.getJwtUserId())){
+                shopVisits.setUserId(shopId.getJwtUserId());
+            }
+            if(ObjectUtils.isNotEmpty(IpUtil.getHttpServletRequest())){
+                shopVisits.setIp(IpUtil.getRemoteHost(IpUtil.getHttpServletRequest()));
+            }else{
+                shopVisits.setIp("127.0.0.1");
+            }
+            iShopVisitsRepository.save(shopVisits);
+        }
     }
 
 }

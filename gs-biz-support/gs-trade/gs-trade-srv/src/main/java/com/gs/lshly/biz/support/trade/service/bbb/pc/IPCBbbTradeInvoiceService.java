@@ -10,6 +10,8 @@ public interface IPCBbbTradeInvoiceService {
 
     void addTradeInvoice(PCBbbTradeInvoiceDTO.ETO eto);
 
+    PCBbbTradeInvoiceVO.ChooseVO choose(PCBbbTradeInvoiceDTO.ETO eto);
+
     void deleteTradeInvoice(PCBbbTradeInvoiceDTO.IdDTO dto);
 
     void editTradeInvoice(PCBbbTradeInvoiceDTO.ETO eto);
@@ -18,7 +20,11 @@ public interface IPCBbbTradeInvoiceService {
 
     void updateByIsDefault(PCBbbTradeInvoiceDTO.IsDefaultDTO eto);
 
-    PCBbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(PCBbbTradeInvoiceQTO.QTO qto);
+    PCBbbTradeInvoiceVO.ApplyInvoiceVO applyInvoiceList(PCBbbTradeInvoiceDTO.ETO qto);
 
     void updateByIsDefaultList(PCBbbTradeInvoiceDTO.UpdateByIsDefaultIsDefaultDTO eto);
+
+    void updateByAddressIsDefault(PCBbbTradeInvoiceDTO.IsDefaultDTO eto);
+
+    PCBbbTradeInvoiceVO.clickBillingVO clickBilling(PCBbbTradeInvoiceDTO.clickBilingDTO dto);
 }

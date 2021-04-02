@@ -40,6 +40,8 @@ public interface IBbbShopRpc {
      */
    BbbShopVO.ComplexDetailVO inneComplexDetailShop(String shopId,BaseDTO dto);
 
+   BbbShopVO.ComplexDetailVO innerSimple(String shopId);
+
     /**
      * 带评分的店铺信息
      * @param shopId
@@ -67,4 +69,11 @@ public interface IBbbShopRpc {
      */
     List<BbbShopVO.ShopNavigationIdName> innerListShopNavigation(ShopDTO.IdDTO dto);
 
+
+    /**
+     * 内部服务
+     * @param shopNavigationId
+     * @return
+     */
+    List<String> innerGetNavigationList(String shopNavigationId);
 }

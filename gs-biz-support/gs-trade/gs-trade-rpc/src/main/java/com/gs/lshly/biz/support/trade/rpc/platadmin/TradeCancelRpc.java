@@ -36,4 +36,9 @@ public class TradeCancelRpc implements ITradeCancelRpc{
         return ExcelUtil.treatmentBean(TradeCancelService.export(qo),TradeCancelVO.ListVOExport.class);
     }
 
+    @Override
+    public void delete(TradeCancelQTO.IdListQTO ids) {
+        TradeCancelService.delete(ids);
+    }
+
 }

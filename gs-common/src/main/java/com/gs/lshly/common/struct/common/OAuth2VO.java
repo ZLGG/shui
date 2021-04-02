@@ -77,6 +77,15 @@ public class OAuth2VO implements Serializable {
         @ApiModelProperty("手机号")
         private String phone;
 
+        @ApiModelProperty("平台用户id")
+        private String sysUserId;
+
+        @ApiModelProperty(value = "平台用户登录名")
+        private String sysUserName;
+
+        @ApiModelProperty(value = "平台用户头像")
+        private String sysHeadImg;
+
     }
 
 }

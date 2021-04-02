@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsAttributeDictionaryDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
@@ -118,6 +119,11 @@ public class GoodsCategoryRpc implements IGoodsCategoryRpc {
     }
 
     @Override
+    public List<GoodsCategoryVO.ListVO> level2Categories(GoodsCategoryDTO.ApplyIdDTO dto) {
+        return categoryService.level2Categories(dto);
+    }
+
+    @Override
     public GoodsCategoryVO.CategoryTreeVO categoryTree(GoodsCategoryDTO.IdDTO dto) {
         return categoryService.categoryTree(dto);
     }
@@ -135,5 +141,10 @@ public class GoodsCategoryRpc implements IGoodsCategoryRpc {
     @Override
     public List<GoodsCategoryVO.CategoryJoinSearchVO> innerGetIdAndName(List<String> categoryIds) {
         return categoryService.innerGetIdAndName(categoryIds);
+    }
+
+    @Override
+    public List<GoodsCategoryVO.InnerListVO> innerCategoryList(BaseDTO dto) {
+        return categoryService.innerCategoryList(dto);
     }
 }

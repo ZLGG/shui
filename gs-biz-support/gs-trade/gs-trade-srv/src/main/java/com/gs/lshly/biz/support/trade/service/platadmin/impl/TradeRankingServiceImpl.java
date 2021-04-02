@@ -128,20 +128,97 @@ public class TradeRankingServiceImpl implements ITradeRankingService {
                 return new PageData<>();
             }
             List<TradeRankingVO.RankingVO> listVOS = ListUtil.listCover(TradeRankingVO.RankingVO.class,pageVO.getRecords());
+            Integer conversionRate;
             if(ObjectUtils.isNotEmpty(listVOS)){
                 for (TradeRankingVO.RankingVO rankingVO1:listVOS) {
-                    for (TradeRankingVO.RankingVO ranVO :pageVO.getRecords()) {
-                        Integer conversionRate= ranVO.getMarkeNumSpu()/ranVO.getClickRate();
-                        if(ObjectUtils.isNotEmpty(conversionRate)){
-                            rankingVO1.setConversionRate(conversionRate);
-                        }
+                     conversionRate= rankingVO1.getMarkeNumSpu()/rankingVO1.getClickRate();
+                    if(ObjectUtils.isNotEmpty(conversionRate)){
+                        rankingVO1.setConversionRate(conversionRate);
+                        continue;
                     }
                 }
             }
-
             return new PageData<>(listVOS,qto.getPageNum(),qto.getPageSize(),pageVO.getTotal());
         }
 
+        //导出销售数据分析
+        @Override
+        public List<TradeSettlementVO.SaleslVO> exportSalesList (TradeSettlementQTO.SaleslQTO qto){
+            List<TradeSettlementVO.SaleslVO> saleslVOS = new ArrayList<>();
+            TradeSettlementVO.SaleslVO saleslVO = new TradeSettlementVO.SaleslVO();
+            QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
+            QueryWrapper<TradeGoods> wrapperGoods = MybatisPlusUtil.query();
+
+            if (ObjectUtils.isNotEmpty(qto.getQueryTimes())) {
+                switch (qto.getQueryTimes()){
+                    case 10:
+                        Calendar calYesterDayStat = new GregorianCalendar();
+                        calYesterDayStat.setTime(getDayBegin());
+                        calYesterDayStat.add(Calendar.DAY_OF_MONTH, -1);
+                        Calendar calYesterDayEnd = new GregorianCalendar();
+                        calYesterDayEnd.setTime(getDayEnd());
+                        calYesterDayEnd.add(Calendar.DAY_OF_MONTH, -1);
+                        wrapper.ge("cdate", LocalDateTime.ofInstant(calYesterDayStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calYesterDayEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+
+                        wrapperGoods.ge("cdate", LocalDateTime.ofInstant(calYesterDayStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calYesterDayEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+                        break;
+                    case 20:
+                        Calendar calAnteayerStat = new GregorianCalendar();
+                        calAnteayerStat.setTime(getDayBegin());
+                        calAnteayerStat.add(Calendar.DAY_OF_MONTH, -2);
+                        Calendar calAnteayerEnd = new GregorianCalendar();
+                        calAnteayerEnd.setTime(getDayEnd());
+                        calAnteayerEnd.add(Calendar.DAY_OF_MONTH, -2);
+                        wrapper.ge("cdate", LocalDateTime.ofInstant(calAnteayerStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calAnteayerEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+
+                        wrapperGoods.ge("cdate", LocalDateTime.ofInstant(calAnteayerStat.getTime().toInstant(), ZoneOffset.systemDefault()))
+                                .le("cdate",LocalDateTime.ofInstant(calAnteayerEnd.getTime().toInstant(), ZoneOffset.systemDefault()));
+                        break;
+                    case 30:
+                        wrapper.ge("cdate", LocalDateTime.now().minus(Period.ofDays(7)))
+                                .le("cdate",LocalDateTime.now());
+
+                        wrapperGoods.ge("cdate", LocalDateTime.now().minus(Period.ofDays(7)))
+                                .le("cdate",LocalDateTime.now());
+                        break;
+                    case 40:
+                        wrapper.ge("cdate", LocalDateTime.now().minus(Period.ofDays(30)))
+                                .le("cdate",LocalDateTime.now());
+
+                        wrapperGoods.ge("cdate", LocalDateTime.now().minus(Period.ofDays(30)))
+                                .le("cdate",LocalDateTime.now());
+                        break;
+                     default:
+                         throw new BootstrapMethodError("错误时间查询方式！");
+                }
+            }
+
+            BigDecimal settlementAmount = tradeSettlementMapper.settlementAmount(wrapper);
+            saleslVO.setSettlementAmount(settlementAmount);
+            Integer orderQuantity = tradeSettlementMapper.orderQuantity(wrapper);
+            saleslVO.setOrderQuantity(orderQuantity);
+            Integer shopQuantity =tradeGoodsMapper.shopQuantity(wrapperGoods);
+            saleslVO.setShopQuantity(shopQuantity);
+            //平均订单价=销售金额/订单数量
+            BigDecimal aveGprice = BigDecimal.ZERO;
+            if(settlementAmount.compareTo(BigDecimal.ZERO)  == 0){
+                saleslVO.setAveGprice(BigDecimal.ZERO);
+            }else {
+                aveGprice = settlementAmount
+                        .divide(new BigDecimal(orderQuantity),2, RoundingMode.HALF_UP);
+                if(ObjectUtils.isNotEmpty(aveGprice)){
+                    saleslVO.setAveGprice(aveGprice);
+                }
+            }
+
+            packDateSales(qto,saleslVO,wrapper,wrapperGoods);
+
+            saleslVOS.add(saleslVO);
+            return saleslVOS;
+        }
 
         @Override
         public TradeSettlementVO.SaleslVO salesList (TradeSettlementQTO.SaleslQTO qto){

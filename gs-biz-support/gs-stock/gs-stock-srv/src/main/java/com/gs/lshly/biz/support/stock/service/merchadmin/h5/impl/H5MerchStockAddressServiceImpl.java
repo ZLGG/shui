@@ -39,6 +39,7 @@ public class H5MerchStockAddressServiceImpl implements IH5MerchStockAddressServi
     @Override
     public PageData<H5MerchStockAddressVO.ListVO> pageData(H5MerchStockAddressQTO.QTO qto) {
         QueryWrapper<StockAddress> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<StockAddress> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, H5MerchStockAddressVO.ListVO.class, page);

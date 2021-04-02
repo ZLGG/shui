@@ -22,6 +22,6 @@ public interface IStockLogisticsCorpRpc {
 
     StockLogisticsCorpVO.DetailVO detailStockLogisticsCorp(StockLogisticsCorpDTO.IdDTO dto);
 
-    void initializeLogisticsCompany(StockLogisticsCorpDTO.ETO dto);
+    void initializeLogisticsCompany(StockLogisticsCorpDTO.QTO dto);
 
 }

@@ -4,18 +4,11 @@ import com.alibaba.druid.sql.ast.statement.SQLForeignKeyImpl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivity;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsSku;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsSpu;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivityMerchant;
+import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.MarketPtActivityCheckStatusEnum;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsCategory;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtActivityCheckService;
-import com.gs.lshly.common.enums.ActivitySignEnum;
-import com.gs.lshly.common.enums.ActivitySignOperationEnum;
-import com.gs.lshly.common.enums.ShopTypeEnum;
-import com.gs.lshly.common.enums.SkuActivityPriceEnum;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -30,6 +23,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.MarketPtActivityQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtActivityVO;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
@@ -62,6 +56,8 @@ public class MarketPtActivityCheckServiceImpl implements IMarketPtActivityCheckS
     //商品sku报名表
     @Autowired
     private IMarketPtActivityGoodsSkuRepository iMarketPtActivityGoodsSkuRepository;
+    @Autowired
+    private IMarketCheckRepository iMarketCheckRepository;
     //商品表
     @DubboReference
     private IGoodsInfoRpc iGoodsInfoRpc;
@@ -72,7 +68,18 @@ public class MarketPtActivityCheckServiceImpl implements IMarketPtActivityCheckS
     private IGoodsCategoryRpc iGoodsCategoryRpc;
     @Override
     public PageData<PCMerchMarketPtActivityMerchantVO.platformCheck> noChcekList(MarketPtActivityQTO.QTO qto) {
-        List<MarketPtActivityMerchant> list = iMarketPtActivityMerchantRepository.list();
+        QueryWrapper<MarketPtActivityMerchant> query = MybatisPlusUtil.query();
+        if (ObjectUtils.isNotEmpty(qto.getShopName())){
+            PCMerchShopVO.ShopIdVO shopIdVO = shopRpc.innerLikeSimple(qto.getShopName());
+            if (ObjectUtils.isNotEmpty(shopIdVO)){
+                query.in("shop_id",shopIdVO.getId());
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getAcName())){
+            query.like("name",qto.getAcName());
+        }
+        query.orderByDesc("cdate");
+        List<MarketPtActivityMerchant> list = iMarketPtActivityMerchantRepository.list(query);
         List<PCMerchMarketPtActivityMerchantVO.platformCheck> platformChecks = new ArrayList<>();
         for (MarketPtActivityMerchant marketPtActivityMerchant:list){
             PCMerchMarketPtActivityMerchantVO.platformCheck platformCheck = new PCMerchMarketPtActivityMerchantVO.platformCheck();
@@ -156,8 +163,7 @@ public class MarketPtActivityCheckServiceImpl implements IMarketPtActivityCheckS
         List<PCMerchMarketPtActivityMerchantVO.platformCheckGoodsInfo> goodsInfoList=new ArrayList<>();
         QueryWrapper<MarketPtActivityGoodsSpu> spuQueryWrapper = new QueryWrapper<>();
         spuQueryWrapper.eq("activity_id",activityMerchant.getActivityId()).
-                eq("shop_id",activityMerchant.getShopId()).
-                eq("merchant_id",activityMerchant.getMerchantId());
+                eq("shop_id",activityMerchant.getShopId());
         List<MarketPtActivityGoodsSpu> activityGoodsSpuList = iMarketPtActivityGoodsSpuRepository.list(spuQueryWrapper);
         if (ObjectUtils.isNotEmpty(activityGoodsSpuList)) {
             List<String> goodsList = new ArrayList<>();
@@ -168,7 +174,6 @@ public class MarketPtActivityCheckServiceImpl implements IMarketPtActivityCheckS
                 QueryWrapper<MarketPtActivityGoodsSku> skuQueryWrapper = new QueryWrapper<>();
                 skuQueryWrapper.eq("activity_id", activityMerchant.getActivityId()).
                         eq("shop_id", activityMerchant.getShopId()).
-                        eq("merchant_id", activityMerchant.getMerchantId()).
                         eq("goods_id", activityGoodsSpu.getGoodsId()).
                         eq("goods_spu_item_id", activityGoodsSpu.getId());
                 List<MarketPtActivityGoodsSku> skuList = iMarketPtActivityGoodsSkuRepository.list(skuQueryWrapper);
@@ -210,9 +215,11 @@ public class MarketPtActivityCheckServiceImpl implements IMarketPtActivityCheckS
 
     @Override
     public void checkSuccess(PCMerchMarketPtActivityMerchantDTO.idRecordDTO dto) {
-        if (iMarketPtActivityMerchantRepository.getById(dto).getState().equals(ActivitySignEnum.已审核.getCode().toString())){
+        MarketPtActivityMerchant byId = iMarketPtActivityMerchantRepository.getById(dto.getId());
+        if (byId.getState().equals(ActivitySignEnum.已审核.getCode().toString())){
             throw new BusinessException("已审核回");
         }
+        saveCheck(byId);
         iMarketPtActivityMerchantRepository.updateById(new MarketPtActivityMerchant().
                 setId(dto.getId()).
                 setState(ActivitySignEnum.已审核.getCode().toString()));
@@ -223,12 +230,24 @@ public class MarketPtActivityCheckServiceImpl implements IMarketPtActivityCheckS
         if (StringUtils.isBlank(dto.getReasonsForRejection())){
             throw new BusinessException("请输入驳回原因");
         }
-        if (iMarketPtActivityMerchantRepository.getById(dto).getState().equals(ActivitySignEnum.审核驳回.getCode().toString())){
+        MarketPtActivityMerchant byId = iMarketPtActivityMerchantRepository.getById(dto.getId());
+        if (byId.getState().equals(ActivitySignEnum.审核驳回.getCode().toString())){
             throw new BusinessException("已驳回");
         }
+        saveCheck(byId,dto);
         iMarketPtActivityMerchantRepository.updateById(new MarketPtActivityMerchant().
                 setId(dto.getId()).
                 setState(ActivitySignEnum.审核驳回.getCode().toString()).
                 setReasonsForRejection(dto.getReasonsForRejection()));
+    }
+    private void saveCheck(MarketPtActivityMerchant byId,PCMerchMarketPtActivityMerchantDTO.idRecordRejectionDTO dto) {
+        MarketCheck marketCheck = new MarketCheck();
+        marketCheck.setCheckType(MarketCheckTypeEnum.活动.getCode()).setCheckState(Integer.parseInt(byId.getState())).setActivityId(byId.getId()).setRemark(ObjectUtils.isNotEmpty(dto.getReasonsForRejection())?dto.getReasonsForRejection():"");
+        iMarketCheckRepository.save(marketCheck);
+    }
+    private void saveCheck(MarketPtActivityMerchant byId) {
+        MarketCheck marketCheck = new MarketCheck();
+        marketCheck.setCheckType(MarketCheckTypeEnum.活动.getCode()).setCheckState(Integer.parseInt(byId.getState())).setActivityId(byId.getId());
+        iMarketCheckRepository.save(marketCheck);
     }
 }

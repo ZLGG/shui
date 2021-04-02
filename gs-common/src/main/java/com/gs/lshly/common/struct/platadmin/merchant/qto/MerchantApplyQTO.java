@@ -27,6 +27,9 @@ public abstract class MerchantApplyQTO implements Serializable {
 
         @ApiModelProperty("审核状态[10=待审 20=通过 30=拒审 40=全部]")
         private Integer state;
+
+        @ApiModelProperty(value = "入驻申请类型",hidden = true)
+        private Integer applyType;
     }
 
     @Data

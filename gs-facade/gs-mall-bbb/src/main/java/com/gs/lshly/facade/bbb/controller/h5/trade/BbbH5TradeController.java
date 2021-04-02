@@ -11,16 +11,12 @@ import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5TradeQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeListVO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeSettlementVO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbOrderDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeListVO;
 import com.gs.lshly.rpc.api.bbb.h5.trade.IBbbH5TradeRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -33,7 +29,7 @@ import java.util.List;
 * @since 2020-10-28
 */
 @RestController
-@RequestMapping("/bbb/h5/userCenter/trade")
+@RequestMapping("/bbb/h5")
 @Api(tags = "交易订单管理")
 public class BbbH5TradeController {
 
@@ -71,7 +67,7 @@ public class BbbH5TradeController {
 
     @ApiOperation("支付回调")
     @PostMapping("/doPayNotify")
-    public String doPayNotify(@Valid @RequestBody BbbH5TradeResultNotifyVO.notifyVO notifyVO) {
+    public String doPayNotify(BbbH5TradeResultNotifyVO.notifyVO notifyVO) {
 
         return bbcTradeRpc.payNotify(notifyVO);
     }
@@ -136,6 +132,20 @@ public class BbbH5TradeController {
     public ResponseData<Void> deleteTrade(@Valid @RequestBody BbbH5TradeDTO.IdDTO dto) {
         bbcTradeRpc.deleteTrade(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
+    }
+
+    @ApiOperation("线下支付")
+    @PostMapping("/userCenter/offlinePay")
+    public ResponseData<Void> offlinePay(@Valid @RequestBody BbbH5TradeDTO.OfflinePayDTO dto) {
+        bbcTradeRpc.offlinePay(dto);
+        return ResponseData.success(MsgConst.OFFLINEPAY_SUCCESS);
+    }
+
+    @ApiOperation("修改凭证信息")
+    @GetMapping("/userCenter/offlineDetail")
+    public ResponseData<BbbH5TradeListVO.OfflinePayVO> offlineDetail(BbbH5TradeDTO.IdDTO dto ) {
+
+        return bbcTradeRpc.offlineDetail(dto);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.platadmin.trade.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -93,6 +94,66 @@ public class MarketPtActivityVO implements Serializable {
         @ApiModelProperty("活动封面图")
         private String coverImage;
 
+
+    }
+    @Data
+    @ApiModel("MarketPtActivityVO.updateDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class updateDTO implements Serializable {
+        /**
+         * 配置活动表id
+         */
+        @ApiModelProperty(value = "配置活动表id")
+        private String id;
+
+        /**
+         * pc端满减
+         */
+        @ApiModelProperty(value = "pc端满减")
+        private Integer pcCut;
+
+        /**
+         * pc端满赠
+         */
+        @ApiModelProperty(value = "pc端满赠")
+        private Integer pcGift;
+
+        /**
+         * pc端团购
+         */
+        @ApiModelProperty(value = "pc端团购")
+        private Integer pcGroupbuy;
+
+        /**
+         * pc端满折
+         */
+        @ApiModelProperty(value = "pc端满折")
+        private Integer pcDiscount;
+
+        /**
+         * h5端满减
+         */
+        @ApiModelProperty(value = "h5端满减")
+        private Integer h5Cut;
+
+        /**
+         * h5端满赠
+         */
+        @ApiModelProperty(value = "h5端满赠")
+        private Integer h5Gift;
+
+        /**
+         * h5端团购
+         */
+        @ApiModelProperty(value = "h5端团购")
+        private Integer h5Groupbuy;
+
+        /**
+         * h5端满折
+         */
+        @ApiModelProperty(value = "h5端满折")
+        private Integer h5Discount;
 
     }
 

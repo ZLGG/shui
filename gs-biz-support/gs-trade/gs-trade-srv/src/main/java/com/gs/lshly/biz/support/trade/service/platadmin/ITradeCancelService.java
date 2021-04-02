@@ -13,4 +13,6 @@ public interface ITradeCancelService {
     TradeCancelVO.DetailVO detailTradeCancel(TradeCancelDTO.IdDTO dto);
 
     List<TradeCancelVO.ListVOExport> export(TradeCancelQTO.IdListQTO qo);
+
+    void delete(TradeCancelQTO.IdListQTO ids);
 }

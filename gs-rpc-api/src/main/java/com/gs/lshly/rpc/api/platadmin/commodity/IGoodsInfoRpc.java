@@ -47,6 +47,13 @@ public interface IGoodsInfoRpc {
      */
     void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto);
 
+    /**
+     * 批量审核商品
+     *
+     * @param dto
+     */
+    void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto);
+
 
     /**
      * 提供店铺楼层选择的商品列表
@@ -130,11 +137,5 @@ public interface IGoodsInfoRpc {
      * @param shopId
      */
     void innerServiceUnderShelfGoods(List<String> shopId);
-    
-    /**
-     * 获取所有商品列表
-     * @return
-     */
-    List<GoodsInfoVO.ListVO> listGoodsData();
 }
 

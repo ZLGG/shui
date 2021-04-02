@@ -1,15 +1,20 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.h5.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
 import com.gs.lshly.biz.support.trade.entity.TradeGoods;
+import com.gs.lshly.biz.support.trade.entity.TradePay;
 import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.h5.IH5MerchTradeService;
+import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -31,7 +36,6 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -51,6 +55,8 @@ public class H5MerchTradeServiceImpl implements IH5MerchTradeService {
     private ITradeRepository repository;
     @Autowired
     private ITradeDeliveryRepository tradeDeliveryRepository;
+    @Autowired
+    private ITradePayRepository tradePayRepository;
     @DubboReference
     private ICommonUserRpc commonUserRpc;
     @Autowired
@@ -77,7 +83,11 @@ public class H5MerchTradeServiceImpl implements IH5MerchTradeService {
         if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())){
             if (ObjectUtils.isNotEmpty(dto.getOrderAmount())){
                 //修改交易总金额
-                trade.setTradeAmount(dto.getOrderAmount());
+                BigDecimal differencePrice = dto.getOrderAmount().subtract(trade.getTradeAmount());
+                trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
+                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
+                //修改优惠
+                trade.setDiscountAmount(trade.getDiscountAmount()!=null ? trade.getDiscountAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
             }
             if (ObjectUtils.isNotEmpty(dto.getFreight())){
                 //修改运费
@@ -85,9 +95,23 @@ public class H5MerchTradeServiceImpl implements IH5MerchTradeService {
                 trade.setDeliveryAmount(dto.getFreight());
                 trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
             }
+            trade.setChangePriceCause(dto.getChangePriceCause());
+            //改订单编号
+            trade.setTradeCode(TradeUtils.getTradeCode());
+            //改支付单支付信息
+            tradePayRepository.update(new UpdateWrapper<TradePay>()
+                    .set("trade_code", trade.getTradeCode())
+                    .set("token", "")
+                    .set("pay_code", "")
+                    .set("pay_info", "")
+                    .set("total_amount", trade.getTradeAmount())
+                    .eq("trade_id", trade.getId()));
+            //改定订单
+            tradeRepository.saveOrUpdate(trade);
+
+        } else {
+            throw new BusinessException("该订单状态已无法修改价格");
         }
-        trade.setChangePriceCause(dto.getChangePriceCause());
-        tradeRepository.saveOrUpdate(trade);
 
     }
 

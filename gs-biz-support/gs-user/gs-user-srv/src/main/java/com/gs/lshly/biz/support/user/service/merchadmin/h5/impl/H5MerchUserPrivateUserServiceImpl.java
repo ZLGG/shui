@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.UserPrivateUser;
 import com.gs.lshly.biz.support.user.enums.PrivateUserApplyStateEnum;
 import com.gs.lshly.biz.support.user.enums.PrivateUserBindStateEnum;
-import com.gs.lshly.biz.support.user.enums.UserQueryTypeEnum;
 import com.gs.lshly.biz.support.user.mapper.UserPrivateUserMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserPrivateUserView;
 import com.gs.lshly.biz.support.user.repository.IUserPrivateUserRepository;
@@ -24,14 +23,10 @@ import com.gs.lshly.common.struct.merchadmin.h5.user.vo.H5MerchUserPrivateUserVO
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantUserTypeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantUserTypeVO;
 import com.gs.lshly.common.struct.merchadmin.pc.user.dto.PCMerchUserDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.user.qto.PCMerchUserQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.EnumUtil;
-import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
-import com.gs.lshly.rpc.api.merchadmin.h5.user.IH5MerchUserPrivateUserRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantUserTypeRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -71,22 +66,19 @@ public class H5MerchUserPrivateUserServiceImpl implements IH5MerchUserPrivateUse
     @Override
     public PageData<H5MerchUserPrivateUserVO.ListVO> pageData(H5MerchUserPrivateUserQTO.QTO qto) {
         QueryWrapper<UserPrivateUserView> queryWrapper = MybatisPlusUtil.query();
-        queryWrapper.eq("pu.state", PrivateUserApplyStateEnum.通过.getCode());
-        queryWrapper.eq("pu.shop_id",qto.getJwtShopId());
-        if(StringUtils.isNotBlank(qto.getConditionValue())){
-            if(UserQueryTypeEnum.手机号.getCode().equals(qto.getConditionType())){
-                queryWrapper.like("u.phone",qto.getConditionValue());
-            }
-            else if(UserQueryTypeEnum.用户名.getCode().equals(qto.getConditionType())){
-                queryWrapper.like("u.user_name",qto.getConditionValue());
-            }
-            else if(UserQueryTypeEnum.真实姓名.getCode().equals(qto.getConditionType())){
-                queryWrapper.like("u.real_name",qto.getConditionValue());
-            }
-            else if(UserQueryTypeEnum.邮箱.getCode().equals(qto.getConditionType())){
-                queryWrapper.like("u.to",qto.getConditionValue());
-            }
+        if(ObjectUtils.isEmpty(qto.getApplyState())){
+            queryWrapper.eq("pu.state", PrivateUserApplyStateEnum.全部.getCode());
+        }else {
+            queryWrapper.eq("pu.state", qto.getApplyState());
         }
+        if(ObjectUtils.isNotEmpty(qto.getConditionValue())){
+            queryWrapper.eq("u.phone",qto.getConditionValue()).or().
+                                eq("u.user_name",qto.getConditionValue()).or().
+                                    eq("u.real_name",qto.getConditionValue()).or().
+                                        eq("u.email",qto.getConditionValue());
+        }
+        queryWrapper.eq("pu.shop_id",qto.getJwtShopId());
+        queryWrapper.orderByDesc("pu.cdate");
         IPage<UserPrivateUserView> page = MybatisPlusUtil.pager(qto);
         IPage<UserPrivateUserView> userViewIPage = userPrivateUserMapper.selectUserPrivateUser(page,queryWrapper);
         List<String> legalIdist = new ArrayList<>();

@@ -7,7 +7,6 @@ import com.gs.lshly.biz.support.trade.entity.TradeGoods;
 import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.h5.IH5MerchTradeCancelService;
-import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.h5.trade.dto.H5MerchTradeCancelDTO;
 import com.gs.lshly.common.struct.merchadmin.h5.trade.qto.H5MerchTradeCancelQTO;
@@ -57,6 +56,7 @@ public class H5MerchTradeCancelServiceImpl implements IH5MerchTradeCancelService
         if (ObjectUtils.isNotEmpty(qto.getStartTime()) || ObjectUtils.isNotEmpty(qto.getEndTime())){
             wrapper.and(i->i.ge("td.`cdate`",qto.getStartTime()).le("td.`cdate`",qto.getEndTime()));
         }
+        wrapper.orderByDesc("td.cdate");
         IPage<TradeCancel> page = MybatisPlusUtil.pager(qto);
         repository.selectCancelListPage(page, wrapper);
         List<H5MerchTradeCancelVO.ListVO> listVOS = new ArrayList<>();
@@ -106,7 +106,7 @@ public class H5MerchTradeCancelServiceImpl implements IH5MerchTradeCancelService
         TradeCancel tradeCancel = repository.getById(dto.getId());
         H5MerchTradeCancelVO.DetailVO detailVo = new H5MerchTradeCancelVO.DetailVO();
         if(ObjectUtils.isEmpty(tradeCancel)){
-            throw new BusinessException("没有数据");
+            return detailVo;
         }
         BeanUtils.copyProperties(tradeCancel, detailVo);
         return detailVo;

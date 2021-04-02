@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: biz-support-user
+  cloud:
+    nacos:
+      config:
+        group: biz-support
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        namespace: 871b6d8e-dbdb-4dc4-b221-6e2c46d0500e
+      discovery:
+        server-addr: 127.0.0.1:8848

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.math.BigDecimal;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -136,21 +135,6 @@ public class SkuGoodInfo extends Model {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;
-
-    @ApiModelProperty("积分价格")
-    private Double pointPrice;
-
-    @ApiModelProperty("办理备注")
-    private String remarks;
-
-    @ApiModelProperty("是否是积分商品")
-    private Boolean isPointGood;
-
-    @ApiModelProperty("是否是in会员礼品")
-    private Boolean isInMemberGift;
-
-    @ApiModelProperty("in会员积分价格")
-    private Double inMemberPointPrice;
 
 
 }

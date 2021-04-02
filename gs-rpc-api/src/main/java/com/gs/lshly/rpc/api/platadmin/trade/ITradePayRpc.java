@@ -21,4 +21,8 @@ public interface ITradePayRpc {
     TradePayVO.DetailVO relationGet(TradePayDTO.IdDTO idDTO);
 
     ExportDataDTO export(TradePayDTO.IdsDTO qo) throws Exception;
+
+    ExportDataDTO payExport(TradePayQTO.IdListQTO qo)throws Exception ;
+
+    void delete(TradePayQTO.IdListQTO ids);
 }

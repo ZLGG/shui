@@ -51,4 +51,5 @@ public interface IBbbH5StockAddressService {
     BbbH5StockAddressVO.DetailVO innerGetDefault(BaseDTO dto, Integer addressType);
 
 
+    BbbH5StockAddressVO.DetailVO innerdetailStockAddress(BbbH5StockAddressDTO.IdAndTypeDTO dto);
 }

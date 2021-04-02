@@ -54,5 +54,15 @@ public class MarketPtActivityRpc implements IMarketPtActivityRpc{
         return MarketPtActivityService.list();
     }
 
+    @Override
+    public void updateActivity(MarketPtActivityDTO.updateDTO eto) {
+        MarketPtActivityService.updateActivity(eto);
+    }
+
+    @Override
+    public MarketPtActivityVO.updateDTO getActivity() {
+        return MarketPtActivityService.getActivity();
+    }
+
 
 }

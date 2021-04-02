@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.bbc.trade;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
@@ -58,4 +59,5 @@ public interface IBbcTradeRpc {
      * @return
      */
     int innerMonthSaleNum(String goodsId);
+    Integer myMerchantCard(BaseDTO dto);
 }

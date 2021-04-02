@@ -3,24 +3,23 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantCutGoods;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutGoodsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketMerchantCutGoodsService;
 import com.gs.lshly.common.enums.ActivityTerminalEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.common.dto.CommonMarketDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchMarketMerchantCutGoodsDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchMarketMerchantCutGoodsQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantCutGoodsVO;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -45,6 +44,7 @@ public class PCMerchMarketMerchantCutGoodsServiceImpl implements IPCMerchMarketM
     @Override
     public PageData<PCMerchMarketMerchantCutGoodsVO.ListVO> pageData(PCMerchMarketMerchantCutGoodsQTO.QTO qto) {
         QueryWrapper<MarketMerchantCutGoods> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<MarketMerchantCutGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMarketMerchantCutGoodsVO.ListVO.class, page);
@@ -123,7 +123,7 @@ public class PCMerchMarketMerchantCutGoodsServiceImpl implements IPCMerchMarketM
             result.add(marketSku);
         }
 
-        return CommonMarketDTO.SkuId.calcBestMarketSku(result, goods);
+        return CommonMarketDTO.SkuId.calcBestMarketSku(result, goods, false);
     }
 
 }

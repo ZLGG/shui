@@ -18,6 +18,14 @@ public abstract class PCMerchMerchantArticleQTO implements Serializable {
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
 
+        @ApiModelProperty("显示类型[10=pc 20=h5 30=全部]")
+        private Integer pcShow;
+
+        @ApiModelProperty("标题")
+        private String title;
+
+        @ApiModelProperty("状态[10=待审 20=通过 30=拒审]")
+        private String state;
      }
 
 

@@ -28,6 +28,7 @@ public class MerchantPermissionDictRepositoryImpl extends ServiceImpl<MerchantPe
     @Override
     public List<PCMerchMerchantPermissionDictVO.ListVO> selectPermissionDictForGroup() {
         QueryWrapper<MerchantPermissionDict> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         List<MerchantPermissionDict> dataList= this.list(wrapper);
         if(ObjectUtils.isEmpty(dataList)){
             return new ArrayList<>();

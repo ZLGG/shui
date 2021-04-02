@@ -54,4 +54,6 @@ public interface IBbcTradeService {
      * @return
      */
     int innerMonthSaleNum(String goodsId);
+
+    Integer myMerchantCard(BaseDTO dto);
 }

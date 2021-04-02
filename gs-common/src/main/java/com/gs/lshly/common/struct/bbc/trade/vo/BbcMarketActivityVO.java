@@ -2,6 +2,7 @@ package com.gs.lshly.common.struct.bbc.trade.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -105,6 +106,34 @@ public abstract class BbcMarketActivityVO implements Serializable {
 
 
     }
+    @Data
+    @ApiModel("BbcMarketActivityVO.activityListPageVO")
+    @Accessors(chain = true)
+    public static class activityListPageVO implements Serializable{
+        @ApiModelProperty("活动id")
+        private String id;
+
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("标签")
+        private String label;
+
+        @ApiModelProperty("宣传图")
+        private String coverImage;
+
+        @ApiModelProperty("优惠折扣范围")
+        private String discountRange;
+
+        @ApiModelProperty("活动开始时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime activityStartTime;
+
+        @ApiModelProperty("活动结束时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime activityEndTime;
+
+    }
 
     @Data
     @ApiModel("BbcMarketActivityVO.activityVO")
@@ -137,6 +166,7 @@ public abstract class BbcMarketActivityVO implements Serializable {
         private PageData<activityGoodsVO> goodsVOList;
 
     }
+
     @Data
     @ApiModel("BbcMarketActivityVO.activityGoodsVO")
     @Accessors(chain = true)
@@ -185,6 +215,10 @@ public abstract class BbcMarketActivityVO implements Serializable {
     public static class merchantCard implements Serializable{
         @ApiModelProperty("优惠卷id")
         private String id;
+
+        @ApiModelProperty("优惠卷名字")
+        private String name;
+
 
         @ApiModelProperty("面额")
         private BigDecimal faceValue;
@@ -311,7 +345,9 @@ public abstract class BbcMarketActivityVO implements Serializable {
         @ApiModelProperty("商家满增活动")
         private List<GiftActivity> giftActivity;
         @ApiModelProperty("商家团购活动")
-        private List<GroupbuyActivity> groupbuyActivity;
+        private List<GroupbuyActivity> groupbuyActivity;@ApiModelProperty("商家优惠卷")
+        private List<BbcMarketActivityVO.merchantCard> cardActivity;
+
     }
     @Data
     @ApiModel("BbcMarketActivityVO.PlataformActivity")

@@ -92,7 +92,7 @@ public class PCMerchGoodsQaServiceImpl implements IPCMerchGoodsQaService {
        GoodsQa goodsQa = new GoodsQa();
        BeanUtils.copyProperties(eto,goodsQa);
        goodsQa.setIsReply(GoodsQaReplyStateEnum.已回复.getCode());
-       goodsQa.setIsShowContent(ShowQuizStateEnum.不显示.getCode());
+       goodsQa.setIsShowContent(ShowQuizStateEnum.显示.getCode());
        repository.updateById(goodsQa);
     }
 

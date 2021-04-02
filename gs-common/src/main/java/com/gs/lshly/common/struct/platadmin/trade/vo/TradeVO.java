@@ -147,118 +147,102 @@ public abstract class TradeVO implements Serializable {
         private String id;
 
 
-        @ApiModelProperty(value = "会员ID",position = 2)
-        private String userId;
-
-        @ApiModelProperty(value = "会员名称",position = 3)
+        @ApiModelProperty(value = "会员名称",position = 2)
         private String userName;
 
 
-        @ApiModelProperty(value = "店铺ID",position = 4)
-        private String shopId;
-
-        @ApiModelProperty(value = "店铺名称",position = 5)
+        @ApiModelProperty(value = "店铺名称",position = 3)
         private String shopName;
 
 
-        @ApiModelProperty(value = "商家ID",position = 6)
-        private String merchantId;
 
-
-        @ApiModelProperty(value = "交易编号",position = 7)
+        @ApiModelProperty(value = "交易编号",position = 4)
         private String tradeCode;
 
 
-        @ApiModelProperty(value = "交易状态",position = 8)
-        private Integer tradeState;
+        @ApiModelProperty(value = "交易状态",position = 5)
+        private String  tradeState;
 
 
-        @ApiModelProperty(value = "商品总金额",position = 9)
+        @ApiModelProperty(value = "商品总金额",position = 6)
         private BigDecimal goodsAmount;
 
 
-        @ApiModelProperty(value = "优惠金额",position = 10)
+        @ApiModelProperty(value = "优惠金额",position = 7)
         private BigDecimal discountAmount;
 
 
-        @ApiModelProperty(value = "运费金额",position = 11)
+        @ApiModelProperty(value = "运费金额",position = 8)
         private BigDecimal deliveryAmount;
 
 
-        @ApiModelProperty(value = "交易总金额",position = 12)
+        @ApiModelProperty(value = "交易总金额",position = 9)
         private BigDecimal tradeAmount;
 
 
-        @ApiModelProperty(value = "创建时间",position = 13)
+        @ApiModelProperty(value = "创建时间",position = 10)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime createTime;
 
 
-        @ApiModelProperty(value = "支付时间",position = 14)
+        @ApiModelProperty(value = "支付时间",position = 11)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payTime;
 
-        @ApiModelProperty(value = "支付截止时间",position = 15)
+        @ApiModelProperty(value = "支付截止时间",position = 12)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payDeadline;
 
 
-        @ApiModelProperty(value = "收货时间",position = 16)
+        @ApiModelProperty(value = "收货时间",position = 13)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime recvTime;
 
 
-        @ApiModelProperty(value = "支付类型",position = 17)
-        private Integer payType;
+        @ApiModelProperty(value = "支付类型",position = 14)
+        private String  payType;
 
 
-        @ApiModelProperty(value = "配送类型",position = 18)
-        private Integer deliveryType;
+        @ApiModelProperty(value = "配送类型",position = 15)
+        private String deliveryType;
 
-        @ApiModelProperty(value = "物流单号",position = 19)
+        @ApiModelProperty(value = "物流单号",position = 16)
         private String logisticsNumber;
 
-        @ApiModelProperty(value = "物流公司代码",position = 20)
+        @ApiModelProperty(value = "物流公司代码",position = 17)
         private String logisticsCompanyCode;
 
-        @ApiModelProperty(value = "物流公司名称",position = 21)
+        @ApiModelProperty(value = "物流公司名称",position = 18)
         private String logisticsCompanyName;
 
 
-        @ApiModelProperty(value = "自提码",position = 22)
+        @ApiModelProperty(value = "自提码",position = 19)
         private String takeGoodsCode;
 
 
-        @ApiModelProperty(value = "自提码图片",position = 23)
+        @ApiModelProperty(value = "自提码图片",position = 20)
         private String takeGoodsQrcode;
 
 
-        @ApiModelProperty(value = "收货地址ID",position = 24)
-        private String recvAddresId;
-
-
-        @ApiModelProperty(value = "收货人",position = 25)
+        @ApiModelProperty(value = "收货人",position = 21)
         private String recvPersonName;
 
 
-        @ApiModelProperty(value = "收货人电话",position = 26)
+        @ApiModelProperty(value = "收货人电话",position = 22)
         private String recvPhone;
 
 
-        @ApiModelProperty(value = "收货地址全文本",position = 27)
+        @ApiModelProperty(value = "收货地址全文本",position = 23)
         private String recvFullAddres;
 
 
-        @ApiModelProperty(value = "是否超时取消",position = 28)
-        private Integer timeoutCancel;
+        @ApiModelProperty(value = "是否超时取消",position = 24)
+        private String timeoutCancel;
 
 
-        @ApiModelProperty(value = "买家留言",position = 29)
+        @ApiModelProperty(value = "买家留言",position = 25)
         private String buyerRemark;
 
-
-        @ApiModelProperty(value = "发货备注",position = 30)
-        private String deliveryRemark;
 
     }
 

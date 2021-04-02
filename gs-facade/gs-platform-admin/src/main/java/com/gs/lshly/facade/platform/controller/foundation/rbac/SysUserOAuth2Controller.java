@@ -51,10 +51,10 @@ public class SysUserOAuth2Controller {
 
     @ApiOperation("通过token获取用户信息")
     @PostMapping("/userInfo")
-    public ResponseData<OAuth2VO.SysUserVO> userInfo(String token) {
+    public ResponseData<OAuth2VO.MerchantVO> userInfo(String token) {
         OAuth2DTO.UserInfoDTO dto = new OAuth2DTO.UserInfoDTO();
         dto.setToken(token);
-        OAuth2VO.SysUserVO userVO = oAuth2SysUserRpc.sysUserInfo(dto);
+        OAuth2VO.MerchantVO userVO = oAuth2SysUserRpc.merchantInfo(dto);
         return ResponseData.data(userVO);
     }
 

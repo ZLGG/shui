@@ -31,6 +31,7 @@ public class BbcShopBannerServiceImpl implements IBbcShopBannerService {
         QueryWrapper<ShopBanner> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("shop_id",qto.getShopId());
+        wrapper.orderByDesc("cdate");
         IPage<ShopBanner> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbcShopBannerVO.ListVO.class, page);

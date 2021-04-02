@@ -50,7 +50,11 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
         //获取所有的一级类目信息
         QueryWrapper<GoodsCategory> wrapperBoost = MybatisPlusUtil.query();
         if (ObjectUtils.isNotEmpty(merchantVO.getCategoryList())){
-           wrapperBoost.in("id",merchantVO.getCategoryList());
+            List<String> categoryIdLevel1Ids = new ArrayList<>();
+            for (CommonShopVO.CategoryVO categoryVO : merchantVO.getCategoryList()){
+                categoryIdLevel1Ids.add(categoryVO.getGoodsCategoryId());
+            }
+           wrapperBoost.in("id",categoryIdLevel1Ids);
         }
         wrapperBoost.eq("gs_category_level",GoodsCategoryLevelEnum.ONE.getCode());
         List<GoodsCategory> lev1Categories = categoryRepository.list(wrapperBoost);

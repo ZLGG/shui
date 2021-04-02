@@ -56,7 +56,7 @@ public class PosStockServiceImpl implements IPosStockService {
         iStockPosLogRepository.save(stockPosLog);
         //处理逻辑
         StockLog stockLog = new StockLog();
-        PCMerchGoodsInfoVO.SkuIdByGoodsNoVO skuIdByGoodsNoVO = ipcMerchAdminGoodsInfoRpc.innerSkuIdByGoodsNo(posStockRequestDTO.getPosSKU69Code());
+        PCMerchGoodsInfoVO.SkuIdByGoodsNoVO skuIdByGoodsNoVO = ipcMerchAdminGoodsInfoRpc.innerByNoSkuId(posStockRequestDTO.getPosSKU69Code());
 
         if (ObjectUtils.isNotEmpty(skuIdByGoodsNoVO)){
             QueryWrapper<Stock> query = MybatisPlusUtil.query();

@@ -1,6 +1,7 @@
 package com.gs.lshly.rpc.api.merchadmin.pc.trade;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDeliveryDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeDeliveryQTO;
@@ -27,4 +28,5 @@ public interface IPCMerchTradeDeliveryRpc {
 
     void addTakeGoodsCodeCheck(PCMerchTradeDeliveryDTO.takeGoodsCodeCheckDTO eto);
 
+    ExportDataDTO export(PCMerchTradeDeliveryQTO.IdListQTO qo) throws Exception;
 }

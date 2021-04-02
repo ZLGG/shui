@@ -40,16 +40,6 @@ public class OAuth2Rpc implements IOAuth2Rpc {
     }
 
     /**
-     * 通过token获取平台用户信息
-     * @param dto
-     * @return
-     */
-    @Override
-    public OAuth2VO.SysUserVO sysUserInfo(OAuth2DTO.UserInfoDTO dto) {
-        return oAuth2Service.userInfo(dto);
-    }
-
-    /**
      * 通过token获取商家信息
      * @param dto
      * @return

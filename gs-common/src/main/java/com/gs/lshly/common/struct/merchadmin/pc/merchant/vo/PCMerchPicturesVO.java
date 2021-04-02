@@ -30,7 +30,7 @@ public abstract class PCMerchPicturesVO implements Serializable {
 
 
         @ApiModelProperty("分组id")
-        private String groupId;
+        private Integer groupId;
 
 
         @ApiModelProperty("存储引擎")
@@ -55,6 +55,9 @@ public abstract class PCMerchPicturesVO implements Serializable {
 
         @ApiModelProperty("图片名字")
         private String imageName;
+
+        @ApiModelProperty("原图片名称")
+        private String originalImageName;
 
 
         @ApiModelProperty("图片路径")

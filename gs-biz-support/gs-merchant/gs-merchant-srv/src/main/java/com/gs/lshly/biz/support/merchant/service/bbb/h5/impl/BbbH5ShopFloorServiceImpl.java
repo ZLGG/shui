@@ -28,6 +28,7 @@ public class BbbH5ShopFloorServiceImpl implements IBbbH5ShopFloorService {
     @Override
     public PageData<BbbH5ShopFloorVO.ListVO> pageData(BbbH5ShopFloorQTO.QTO qto) {
         QueryWrapper<ShopFloor> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<ShopFloor> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbbH5ShopFloorVO.ListVO.class, page);

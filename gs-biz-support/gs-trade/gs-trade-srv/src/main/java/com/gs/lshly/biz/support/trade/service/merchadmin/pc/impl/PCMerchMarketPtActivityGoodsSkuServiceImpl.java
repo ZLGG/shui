@@ -2,8 +2,8 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsSku;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityGoodsSkuRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketPtActivityGoodsSkuService;
@@ -19,10 +19,7 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +38,7 @@ public class PCMerchMarketPtActivityGoodsSkuServiceImpl implements IPCMerchMarke
     @Override
     public PageData<PCMerchMarketPtActivityGoodsSkuVO.ListVO> pageData(PCMerchMarketPtActivityGoodsSkuQTO.QTO qto) {
         QueryWrapper<MarketPtActivityGoodsSku> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<MarketPtActivityGoodsSku> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto,PCMerchMarketPtActivityGoodsSkuVO.ListVO.class, page);
@@ -83,7 +81,8 @@ public class PCMerchMarketPtActivityGoodsSkuServiceImpl implements IPCMerchMarke
         List<String> ids = ListUtil.getIdList(CommonMarketDTO.SkuId.class, skuIds, "skuId");
         String idsStr = CollUtil.isNotEmpty(ids) ? CollUtil.join(ids, "','") : "-1";
         List<CommonMarketDTO.MarketSku> list = repository.baseMapper().activeSkuPrice(idsStr);
-        return CommonMarketDTO.MarketSku.pickBest(list, skuIds);
+        CommonMarketDTO.MarketSku marketSku = CommonMarketDTO.MarketSku.pickBest(list, skuIds);
+        return marketSku != null ? marketSku.setMarketName("平台活动") : null;
     }
 
 }

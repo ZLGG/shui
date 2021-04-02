@@ -20,7 +20,7 @@ public interface IBbcUserAuthService {
 
     AuthDTO loadUserByUsername(String username);
 
-    BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey);
+    BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid);
 
     String loadSessionKeyByWxOpenid(String openid);
 
@@ -33,4 +33,6 @@ public interface IBbcUserAuthService {
     BbcUserVO.LoginVO updateUserPhoneByWxInnerPhone(BBcWxUserPhoneDTO dto);
 
     void logout(String phone, String openid);
+
+    BbcUserVO.ThirdVO innerGetWXNickName(String userId);
 }

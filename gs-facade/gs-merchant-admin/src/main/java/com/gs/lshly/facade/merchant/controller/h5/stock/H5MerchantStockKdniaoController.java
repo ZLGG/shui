@@ -38,10 +38,10 @@ public class H5MerchantStockKdniaoController {
     }
 
 
-//    @ApiOperation("顺丰查询")
-//    @GetMapping("/queryUPS")
-//    public ResponseData<LogisticsInformationVO.ListVO> queryUPS(StockKdniaoDTO.TradeTailDTO dto) {
-//        return ResponseData.data(iExpressSurviceRpc.queryUPS(dto));
-//    }
+    @ApiOperation("在途监控")
+    @GetMapping("/onLineMonitoring")
+    public ResponseData<LogisticsInformationVO.ListVO> onLineMonitoring(StockKdniaoDTO.TradeTailDTO dto) {
+        return ResponseData.data(iExpressSurviceRpc.onLineMonitoring(dto));
+    }
 
 }

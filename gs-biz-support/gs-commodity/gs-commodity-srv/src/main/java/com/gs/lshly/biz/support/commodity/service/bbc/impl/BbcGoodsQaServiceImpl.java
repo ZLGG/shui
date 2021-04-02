@@ -7,32 +7,27 @@ import com.gs.lshly.biz.support.commodity.entity.GoodsQa;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsQaMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodsQaCountView;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsQaRepository;
-import com.gs.lshly.biz.support.commodity.service.bbb.pc.IPCBbbGoodsQaService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsQaService;
 import com.gs.lshly.common.enums.GoodsQaReplyStateEnum;
-import com.gs.lshly.common.enums.QuizTypeEnum;
 import com.gs.lshly.common.enums.ShowQuizStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.dto.PCBbbGoodsQaDTO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsQaQTO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsQaVO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsQaDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsQaQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsQaVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.dto.RemindMerchantDTO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.IRemindMerchantRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,6 +49,8 @@ public class BbcGoodsQaServiceImpl implements IBbcGoodsQaService {
     private ICommonShopRpc commonShopRpc;
     @DubboReference
     private IBbcUserRpc bbcUserRpc;
+    @DubboReference
+    private IRemindMerchantRpc remindMerchantRpc;
 
     @Override
     public PageData<BbcGoodsQaVO.ShowListVO> pageData(BbcGoodsQaQTO.QTO qto) {
@@ -63,6 +60,7 @@ public class BbcGoodsQaServiceImpl implements IBbcGoodsQaService {
             qaQueryWrapper.eq("quiz_type",qto.getQuizType());
         }
         qaQueryWrapper.eq("is_show_quiz_content", ShowQuizStateEnum.显示.getCode());
+        qaQueryWrapper.orderByDesc("cdate","id");
         IPage<GoodsQa> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsQa> goodsQas = repository.page(page,qaQueryWrapper);
         if (ObjectUtils.isEmpty(goodsQas)){
@@ -77,10 +75,12 @@ public class BbcGoodsQaServiceImpl implements IBbcGoodsQaService {
                     showListVO.setMerchantName(StringUtils.isEmpty(merchantVO.getMerchantName())?"":merchantVO.getMerchantName());
                     QueryWrapper<GoodsQa> wrapper = MybatisPlusUtil.query();
                     wrapper.eq("good_id",e.getGoodId());
+                    wrapper.eq("is_show_quiz_content", ShowQuizStateEnum.显示.getCode());
                     GoodsQaCountView countView = goodsQaMapper.countView(wrapper);
                     if (ObjectUtils.isNotEmpty(countView)){
                         BbcGoodsQaVO.CountQuizVO countQuizVO = new BbcGoodsQaVO.CountQuizVO();
                         BeanUtils.copyProperties(countView,countQuizVO);
+                        countQuizVO.setAllNum(countView.getGoodsQuizNum()+countView.getInventoryDistributionNum()+countView.getInvoiceWarrantyNum()+countView.getPaymentWayNum());
                         showListVO.setCountQuizVO(countQuizVO);
                     }
                     return showListVO;
@@ -102,8 +102,11 @@ public class BbcGoodsQaServiceImpl implements IBbcGoodsQaService {
             }
         }
         goodsQa.setIsReply(GoodsQaReplyStateEnum.未回复.getCode());
-        goodsQa.setIsShowQuizContent(ShowQuizStateEnum.不显示.getCode());
+        goodsQa.setIsShowQuizContent(ShowQuizStateEnum.显示.getCode());
         repository.save(goodsQa);
+
+        //触发商家商品咨询提醒
+        remindMerchantRpc.addRemindMerchantForAskTalk(new RemindMerchantDTO.JustDTO(goodsQa.getShopId(),eto.getJwtUserId(),goodsQa.getId()));
     }
 
 

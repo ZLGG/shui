@@ -1,6 +1,7 @@
 package com.gs.lshly.rpc.api.merchadmin.pc.trade;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeGoodsDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeGoodsQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeGoodsVO;
@@ -33,6 +34,12 @@ public interface IPCMerchTradeGoodsRpc {
     List<TradeGoodsVO.GoodsSaleVO> goodsSaleList(TradeGoodsDTO.GoodsSale dto);
 
     List<TradeGoodsVO.GoodsSaleVO> goodsSaleListDetail(TradeGoodsDTO.GoodsSale dto);
+
+    //导出商品销售分析列表
+    ExportDataDTO exportGoodsSaleList(TradeDTO.PayDateList qo) throws Exception;
+
+    //导出商品销售排行明细
+    ExportDataDTO exportGoodsSaleListDetail(TradeDTO.PayDateList qo) throws Exception;
 
     TradeVO.SalesSummaryVO salesSummaryList(BaseDTO dto);
 

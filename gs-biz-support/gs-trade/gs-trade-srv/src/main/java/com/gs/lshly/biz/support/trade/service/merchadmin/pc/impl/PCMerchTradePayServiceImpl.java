@@ -32,6 +32,7 @@ public class PCMerchTradePayServiceImpl implements IPCMerchTradePayService {
     @Override
     public PageData<PCMerchTradePayVO.ListVO> pageData(PCMerchTradePayQTO.QTO qto) {
         QueryWrapper<TradePay> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradePay> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchTradePayVO.ListVO.class, page);

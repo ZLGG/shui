@@ -19,6 +19,8 @@ public abstract class BbbH5MarketActivityQTO implements Serializable {
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
 
+        @ApiModelProperty("店铺ID")
+        private String shopId;
     }
     @Data
     @ApiModel("BbbH5MarketActivityQTO.QTO")

@@ -1,8 +1,6 @@
 package com.gs.lshly.common.struct.bbc.commodity.qto;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -177,15 +175,4 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
-    
-    @Data
-    @ApiModel("BbcGoodsInfoQTO.TopicQTO")
-    @Accessors(chain = true)
-    public static class TopicQTO extends BaseDTO {
-    	@ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50]",hidden=true)
-        private Integer subject;
-    	
-    	@ApiModelProperty(value="10 20",hidden=true)
-        private Integer terminal;
-    }
 }

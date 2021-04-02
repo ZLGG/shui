@@ -84,12 +84,24 @@ public class BbcMarkeActivityController {
     public ResponseData<BbcMarketActivityVO.activityVO> activity(BbcMarketActivityQTO.IdQTO qto) {
         return ResponseData.data(iBbcMarketActivityRpc.activity(qto));
     }
+    @ApiOperation("活动列表")
+    @GetMapping("/marketActivity/activityList")
+    public ResponseData<PageData<BbcMarketActivityVO.activityListPageVO>> activityListPage(BbcMarketActivityQTO.QTO qto) {
+        return ResponseData.data(iBbcMarketActivityRpc.activityListPage(qto));
+    }
 
-    @ApiOperation("商家优惠卷")
+    @ApiOperation("商家优惠卷(店铺页)")
     @PostMapping("/marketActivity/activityCard")
     public ResponseData<List<BbcMarketActivityVO.merchantCard>> merchantCard(@Valid @RequestBody BbcMarketMerchantActivityDTO.MerchantIdDTO dto) {
 
         return ResponseData.data(iBbcMarketActivityRpc.merchantCard(dto));
+    }
+
+    @ApiOperation("商家优惠卷(商品详情页)")
+    @PostMapping("/marketActivity/activityCardGoodsInfo")
+    public ResponseData<List<BbcMarketActivityVO.merchantCard>> activityCardGoodsInfo(@Valid @RequestBody BbcMarketMerchantActivityDTO.MerchantIdDTO dto) {
+
+        return ResponseData.data(iBbcMarketActivityRpc.activityCardGoodsInfo(dto));
     }
 
     @ApiOperation("用户领取")

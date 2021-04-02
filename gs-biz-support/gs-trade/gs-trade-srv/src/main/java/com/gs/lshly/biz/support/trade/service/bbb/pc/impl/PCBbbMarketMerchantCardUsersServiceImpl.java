@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.bbb.pc.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardUsers;
 import com.gs.lshly.biz.support.trade.enums.MarketPtCardStatusEnum;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
@@ -13,15 +14,13 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.pc.trade.dto.PCBbbMarketMerchantCardUsersDTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketMerchantCardUsersQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketMerchantCardUsersVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.common.dto.CommonMarketDTO;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -147,7 +146,7 @@ public class PCBbbMarketMerchantCardUsersServiceImpl implements IPCBbbMarketMerc
             result.add(marketSku);
         }
 
-        return CommonMarketDTO.SkuId.calcBestMarketSku(result, goods);
+        return CommonMarketDTO.SkuId.calcBestMarketSku(result, goods, false);
     }
 
 }

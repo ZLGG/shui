@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -77,6 +76,11 @@ public class Pictures extends Model {
      * 图片名字
      */
     private String imageName;
+
+    /**
+     * 原图片名称
+     */
+    private String originalImageName;
 
     /**
      * 图片路径

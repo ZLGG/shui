@@ -1,6 +1,6 @@
 package com.gs.lshly.biz.support.trade.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
+    import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -12,215 +12,203 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author oy
- * @since 2020-10-28
- */
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
-@TableName("gs_trade")
-public class Trade extends Model {
+    /**
+    * <p>
+    * 
+    * </p>
+    *
+    * @author oy
+    * @since 2020-10-28
+    */
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    @Accessors(chain = true)
+    @TableName("gs_trade")
+    public class Trade extends Model {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 交易订单表(ID)
-     */
-    private String id;
+            /**
+            * 交易订单表(ID)
+            */
+        private String id;
 
-    /**
-     * 会员ID
-     */
-    private String userId;
 
-    /**
-     * 店铺ID
-     */
-    private String shopId;
+        /**
+         * 交易子订单号
+         */
+        private String childTradeId;
 
-    /**
-     * 商家ID
-     */
-    private String merchantId;
+            /**
+            * 会员ID
+            */
+        private String userId;
 
-    /**
-     * 来源类型:10:2C,20:2B,30:POS
-     */
-    private Integer sourceType;
+            /**
+            * 店铺ID
+            */
+        private String shopId;
 
-    /**
-     * 交易编号
-     */
-    private String tradeCode;
+            /**
+            * 商家ID
+            */
+        private String merchantId;
 
-    /**
-     * 交易状态
-     */
-    private Integer tradeState;
+            /**
+             * 来源类型:10:2C,20:2B,30:POS
+             */
+        private Integer sourceType;
 
-    /**
-     * 商品来源类型：1:商城商品，2:积分商品
-     */
-    private Integer goodsSourceType;
+            /**
+            * 交易编号
+            */
+        private String tradeCode;
 
-    /**
-     * 商品总金额（商城用）
-     */
-    private BigDecimal goodsAmount;
+            /**
+            * 交易状态
+            */
+        private Integer tradeState;
 
-    /**
-     * 商品总积分（积分商城用）
-     */
-    private BigDecimal goodsPointAmount;
+            /**
+            * 商品总金额
+            */
+        private BigDecimal goodsAmount;
 
-    /**
-     * 需要发票
-     */
-    private Boolean isInvoice;
+            /**
+             * 需要发票
+             * */
+        private Boolean isInvoice;
+            /**
+             * 发票id
+             * */
+        private String invoiceId;
 
-    /**
-     * 优惠金额
-     */
-    private BigDecimal discountAmount;
+        /**
+         * 发票地址id
+         * */
+        private String invoiceAddressId;
 
-    /**
-     * 运费金额
-     */
-    private BigDecimal deliveryAmount;
+            /**
+            * 优惠金额
+            */
+        private BigDecimal discountAmount;
 
-    /**
-     * 交易总金额
-     */
-    private BigDecimal tradeAmount;
+            /**
+            * 运费金额
+            */
+        private BigDecimal deliveryAmount;
 
-    /**
-     * 商家优惠金额
-     */
-    private BigDecimal merchantAmount;
+            /**
+            * 交易总金额
+            */
+        private BigDecimal tradeAmount;
 
-    /**
-     * 应付积分
-     */
-    private BigDecimal pointPricePayable;
+            /**
+             * 商家优惠金额
+             * */
+        private BigDecimal merchantAmount;
+            /**
+             * 用户优惠券id
+             * */
+        private String userCardId;
+            /**
+            * 创建时间
+            */
+        private LocalDateTime createTime;
 
-    /**
-     * 应付现金
-     */
-    private BigDecimal amountPayable;
+            /**
+            * 支付时间
+            */
+        private LocalDateTime payTime;
 
-    /**
-     * 实付积分
-     */
-    private BigDecimal pointPriceActuallyPaid;
+            /**
+            * 收货时间
+            */
+        private LocalDateTime recvTime;
 
-    /**
-     * 实付现金
-     */
-    private BigDecimal amountActuallyPaid;
+            /**
+            * 支付类型
+            */
+        private Integer payType;
 
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
+            /**
+            * 配送类型
+            */
+        private Integer deliveryType;
 
-    /**
-     * 支付时间
-     */
-    private LocalDateTime payTime;
+            /**
+            * 自提码
+            */
+        private String takeGoodsCode;
 
-    /**
-     * 收货时间
-     */
-    private LocalDateTime recvTime;
+            /**
+            * 自提码图片
+            */
+        private String takeGoodsQrcode;
 
-    /**
-     * 支付类型
-     */
-    private Integer payType;
+            /**
+            * 收货地址ID
+            */
+        private String recvAddresId;
 
-    /**
-     * 配送类型
-     */
-    private Integer deliveryType;
+            /**
+            * 收货人
+            */
+        private String recvPersonName;
 
-    /**
-     * 自提码
-     */
-    private String takeGoodsCode;
+            /**
+            * 收货人电话
+            */
+        private String recvPhone;
 
-    /**
-     * 自提码图片
-     */
-    private String takeGoodsQrcode;
+            /**
+            * 收货地址全文本
+            */
+        private String recvFullAddres;
 
-    /**
-     * 收货地址ID
-     */
-    private String recvAddresId;
+            /**
+            * 是否超时取消
+            */
+        private Integer timeoutCancel;
 
-    /**
-     * 收货人
-     */
-    private String recvPersonName;
+            /**
+            * 买家留言
+            */
+        private String buyerRemark;
 
-    /**
-     * 收货人电话
-     */
-    private String recvPhone;
+            /**
+            * 发货备注
+            */
+        private String deliveryRemark;
 
-    /**
-     * 收货地址全文本
-     */
-    private String recvFullAddres;
+        /**
+         * 是否隐藏订单:1:是
+         */
+        private Integer isHide;
 
-    /**
-     * 是否超时取消
-     */
-    private Integer timeoutCancel;
+        /**
+         * 改价原因
+         */
+        private String changePriceCause;
 
-    /**
-     * 买家留言
-     */
-    private String buyerRemark;
+            /**
+            * 创建时间
+            */
+            @TableField(fill = FieldFill.INSERT)
+            private LocalDateTime cdate;
 
-    /**
-     * 发货备注
-     */
-    private String deliveryRemark;
+            /**
+            * 更新时间
+            */
+            @TableField(fill = FieldFill.INSERT_UPDATE)
+            private LocalDateTime udate;
 
-    /**
-     * 是否隐藏订单:1:是
-     */
-    private Integer isHide;
-
-    /**
-     * 改价原因
-     */
-    private String changePriceCause;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime cdate;
-
-    /**
-     * 更新时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime udate;
-
-    /**
-     * 逻辑删除标记
-     */
-    @TableField(fill = FieldFill.INSERT)
-    @TableLogic
-    private Boolean flag;
+            /**
+            * 逻辑删除标记
+            */
+            @TableField(fill = FieldFill.INSERT)
+            @TableLogic
+            private Boolean flag;
 
 
 }

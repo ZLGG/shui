@@ -14,12 +14,16 @@ import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMerchantHome
 import com.gs.lshly.common.enums.TradeRightsStateEnum;
 import com.gs.lshly.common.enums.TradeRightsTypeEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.foundation.dto.PCMerchDataNoticeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.foundation.vo.PCMerchDataNoticeVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.MerchantHomeDashboardDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.MerchantHomeDashboardVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.foundation.IPCMerchDataNoticeRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -45,6 +49,8 @@ public class PCMerchMerchantHomeDashboardServiceImpl  implements IPCMerchMerchan
     private IPCMerchAdminGoodsInfoRpc ipcMerchAdminGoodsInfoRpc;
     @DubboReference
     private IPCMerchShopRpc ipcMerchShopRpc;
+    @DubboReference
+    private IPCMerchDataNoticeRpc ipcMerchDataNoticeRpc;
 
     @Override
     public MerchantHomeDashboardVO.ListVO HomeDashboard(MerchantHomeDashboardDTO.ETO dto) {
@@ -70,9 +76,8 @@ public class PCMerchMerchantHomeDashboardServiceImpl  implements IPCMerchMerchan
             listVO.setYesterdayTradeAmount(totalTrade);
             listVO.setSalesVolume(totalTrade);//昨日店铺转化的销售额
         }
-        //TODO 缺少昨日UV
-        listVO.setYesterdayUV(1);
-        listVO.setVisitCount(100);
+        listVO.setYesterdayUV(ipcMerchShopRpc.innUV(dto.getJwtShopId()));
+        listVO.setVisitCount(ipcMerchShopRpc.innPV(dto.getJwtShopId()));
         //店铺信息
         if (StringUtils.isNotBlank(dto.getJwtShopId())){
             PCMerchShopVO.ShopSimpleVO shopSimpleVO = ipcMerchShopRpc.innerShopSimple(dto.getJwtShopId());
@@ -90,6 +95,13 @@ public class PCMerchMerchantHomeDashboardServiceImpl  implements IPCMerchMerchan
         listVO.setNoPayTrade(noPayTradeCount);
         int receivedTradeCount =  getTradeCount(TradeStateEnum.待收货.getCode(),dto.getJwtShopId());
         listVO.setReceivedTrade(receivedTradeCount);
+        //今日订单
+        QueryWrapper<Trade> query2 = MybatisPlusUtil.query();
+        query2.and(i->i.ne("trade_state",10));
+        query2.and(i->i.ne("trade_state",50));
+        query2.and(i->i.eq("TO_DAYS(cdate)","TO_DAYS(now())"));
+        List<Trade> list = iTradeRepository.list(query2);
+        listVO.setTodayTrade(ObjectUtils.isNotEmpty(list)? list.size() : 0);
         //售后
         int pendingReturnCount= getTradeRights(TradeRightsStateEnum.通过.getCode(),TradeRightsTypeEnum.换货.getCode(),dto.getJwtShopId());
         listVO.setPendingReturn(pendingReturnCount);
@@ -118,7 +130,12 @@ public class PCMerchMerchantHomeDashboardServiceImpl  implements IPCMerchMerchan
         List<MerchantHomeDashboardVO.GoodsInfo>  goodsInfos=iTradeGoodsRepository.selectGoodsInfo(query1);
         goodsInfos.sort(Comparator.comparing(MerchantHomeDashboardVO.GoodsInfo::getGoodsSalesVolume).reversed());
         listVO.setGoodsInfos(goodsInfos);
-        //TODO 通知缺失
+        PCMerchDataNoticeDTO.innerDTO baseDTO = new PCMerchDataNoticeDTO.innerDTO();
+        baseDTO.setJwtShopId(dto.getJwtShopId());
+        List<PCMerchDataNoticeVO.ListVO> listVOS = ipcMerchDataNoticeRpc.innerList(baseDTO);
+        if (ObjectUtils.isNotEmpty(listVOS)){
+            listVO.setNotices(listVOS);
+        }
         return listVO;
     }
 

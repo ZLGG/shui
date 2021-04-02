@@ -5,22 +5,27 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
+import com.gs.lshly.biz.support.trade.repository.IMarketCheckRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyGoodsSkuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtMerchantGroupbuyService;
 import com.gs.lshly.common.enums.ActivitySignEnum;
+import com.gs.lshly.common.enums.MarketCheckTypeEnum;
 import com.gs.lshly.common.enums.PlatformCardStatusEnum;
 import com.gs.lshly.common.enums.ShopTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchMarketMerchantGroupbuyGoodsDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchMarketMerchantGroupbuyQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantCardVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantGroupbuyVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
@@ -35,6 +40,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MarketPtMerchantGroupbuyServiceImpl implements IMarketPtMerchantGroupbuyService {
@@ -42,6 +48,10 @@ public class MarketPtMerchantGroupbuyServiceImpl implements IMarketPtMerchantGro
     private IMarketMerchantGroupbuyRepository repository;
     @Autowired
     private IMarketMerchantGroupbuyGoodsRepository iMarketMerchantGroupbuyGoodsRepository;
+    @Autowired
+    private IMarketMerchantGroupbuyGoodsSkuRepository iMarketMerchantGroupbuyGoodsSkuRepository;
+    @Autowired
+    private IMarketCheckRepository iMarketCheckRepository;
     @DubboReference
     private IPCMerchAdminGoodsInfoRpc ipcMerchAdminGoodsInfoRpc;
     @DubboReference
@@ -55,6 +65,7 @@ public class MarketPtMerchantGroupbuyServiceImpl implements IMarketPtMerchantGro
         if (qto.getStatus()!=null){
             wrapper.eq("state",qto.getStatus());
         }
+        wrapper.orderByDesc("cdate");
         List<MarketMerchantGroupbuy> list = repository.list(wrapper);
         if (ObjectUtils.isEmpty(list)){
             return new PageData<>();
@@ -114,6 +125,18 @@ public class MarketPtMerchantGroupbuyServiceImpl implements IMarketPtMerchantGro
         if (ObjectUtils.isNotEmpty(detailVO)) {
             platformView.setShopName(detailVO.getShopName() + " " + ShopTypeEnum.findRemark(detailVO.getShopType()));
         }
+        QueryWrapper<MarketCheck> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("activity_id",platformView.getId()));
+        query.and(i->i.eq("check_type",MarketCheckTypeEnum.团购.getCode()));
+        List<MarketCheck> list = iMarketCheckRepository.list(query);
+        if (ObjectUtils.isNotEmpty(list)){
+            List<PCMerchMarketMerchantCardVO.PlatformView.CheckVO> checkVOS =list.stream().map(e ->{
+                PCMerchMarketMerchantCardVO.PlatformView.CheckVO checkVO = new PCMerchMarketMerchantCardVO.PlatformView.CheckVO();
+                checkVO.setCheckDate(e.getCdate()).setCheckState(e.getCheckState()).setRemark(e.getRemark());
+                return checkVO;
+            }).collect(Collectors.toList());
+            platformView.setCheckInfo(checkVOS);
+        }
         List<PCMerchMarketMerchantGroupbuyVO.GoodsInfo> goodsInfos=new ArrayList<>();
         BigDecimal total=new BigDecimal(0);
         List<MarketMerchantGroupbuyGoods> marketMerchantGroupbuyGoods = SelectCartGoods(id.getId(), platformView.getMerchantId(), platformView.getShopId());
@@ -133,23 +156,15 @@ public class MarketPtMerchantGroupbuyServiceImpl implements IMarketPtMerchantGro
                     innerServiceGoodsInfoVO = innerServiceGoodsInfoVOS.get(0);
                 }
                 if (ObjectUtils.isNotEmpty(innerServiceGoodsInfoVO)) {
+                    goodsInfo.setSalePrice(innerServiceGoodsInfoVO.getSalePrice());
                     goodsInfo.setGoodsName(innerServiceGoodsInfoVO.getGoodsName());
-                    List<SkuGoodsInfoVO.ListVO> skuList = innerServiceGoodsInfoVO.getSkuList();
-                    if (ObjectUtils.isNotEmpty(skuList)) {
-                        List<String> arrSkuIdList=null;
-                        if (ObjectUtils.isNotEmpty(goods.getSkuId())) {
-                           arrSkuIdList = Arrays.asList(goods.getSkuId().split(","));
-                        }
-                        if (ObjectUtils.isNotEmpty(arrSkuIdList)) {
-                            for (int i = 0; i < skuList.size(); i++) {
-                                if (!arrSkuIdList.contains(skuList.get(i).getId())) {
-                                    skuList.remove(i);
-                                }
-                            }
-                        }
-                        for (SkuGoodsInfoVO.ListVO goodsName : skuList) {
-                            goodsInfo.setId(goodsName.getId());
-                        }
+                    QueryWrapper<MarketMerchantGroupbuyGoodsSku> query1 = MybatisPlusUtil.query();
+                    query1.and(i->i.eq("groupbuy_id",goods.getGroupbuyId()));
+                    query1.and(i->i.eq("goods_id",goods.getGoodsId()));
+                    query1.last("limit 0,1");
+                    MarketMerchantGroupbuyGoodsSku one = iMarketMerchantGroupbuyGoodsSkuRepository.getOne(query1);
+                    if (ObjectUtils.isNotEmpty(one)){
+                        goodsInfo.setGroupbuyPrice(one.getGroupbuySaleSkuPrice());
                     }
                 }
                 total.add(ObjectUtils.isNotEmpty(goods.getGroupbuyPrice())?goods.getGroupbuyPrice():BigDecimal.ZERO);
@@ -165,12 +180,21 @@ public class MarketPtMerchantGroupbuyServiceImpl implements IMarketPtMerchantGro
         MarketMerchantGroupbuy marketMerchantGroupbuy = repository.getById(dto.getId());
         if (dto.getPattern().equals(ActivitySignEnum.已审核.getCode()) && marketMerchantGroupbuy.getIsCommit()){
             marketMerchantGroupbuy.setState(PlatformCardCheckStatusEnum.通过.getCode());
+            saveCheck(marketMerchantGroupbuy,dto);
         }
         if (dto.getPattern().equals(ActivitySignEnum.审核驳回.getCode() )&& marketMerchantGroupbuy.getIsCommit()){
-            marketMerchantGroupbuy.setState(PlatformCardCheckStatusEnum.待审.getCode()).
-                    setRevokeWhy(dto.getRevokeWhy());
+            marketMerchantGroupbuy.setState(PlatformCardCheckStatusEnum.拒审.getCode()).
+                    setRevokeWhy(dto.getRevokeWhy()).setIsCommit(false);
+            saveCheck(marketMerchantGroupbuy,dto);
         }
         repository.updateById(marketMerchantGroupbuy);
+    }
+    private void saveCheck(MarketMerchantGroupbuy marketMerchantGroupbuy,PCMerchMarketMerchantGroupbuyGoodsDTO.Check dto) {
+        MarketCheck marketCheck = new MarketCheck();
+        marketCheck.setCheckType(MarketCheckTypeEnum.团购.getCode()).
+                setCheckState(marketMerchantGroupbuy.getState()).
+                setActivityId(marketMerchantGroupbuy.getId()).setRemark(ObjectUtils.isNotEmpty(dto.getRevokeWhy())?dto.getRevokeWhy():"");
+        iMarketCheckRepository.save(marketCheck);
     }
     private List<MarketMerchantGroupbuyGoods> SelectCartGoods(String id, String jwtMerchantId, String jwtShopId) {
         QueryWrapper<MarketMerchantGroupbuyGoods> wrapper = new QueryWrapper<>();

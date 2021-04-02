@@ -45,7 +45,7 @@ public class StockLogisticsCorpRpc implements IStockLogisticsCorpRpc{
     }
 
     @Override
-    public void initializeLogisticsCompany(StockLogisticsCorpDTO.ETO dto){
+    public void initializeLogisticsCompany(StockLogisticsCorpDTO.QTO dto){
         StockLogisticsCorpService.initializeLogisticsCompany(dto);
     }
 }

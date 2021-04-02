@@ -68,6 +68,9 @@ public abstract class BbcTradeListVO implements Serializable {
         private String tradeCode;
 
 
+        @ApiModelProperty("退款状态")
+        private Integer rightsState;
+
         @ApiModelProperty("交易状态")
         private Integer tradeState;
 

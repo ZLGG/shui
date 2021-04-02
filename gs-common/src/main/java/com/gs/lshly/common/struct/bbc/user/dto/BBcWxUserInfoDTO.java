@@ -22,4 +22,6 @@ public class BBcWxUserInfoDTO implements Serializable {
     private String avatarUrl;
     private String unionId;
 
+    private String thirdLoginId;
+
 }

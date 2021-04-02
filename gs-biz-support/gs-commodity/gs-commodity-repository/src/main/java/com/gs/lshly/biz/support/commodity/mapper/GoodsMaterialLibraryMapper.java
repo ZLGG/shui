@@ -58,7 +58,7 @@ public interface GoodsMaterialLibraryMapper extends BaseMapper<GoodsMaterialLibr
             "LEFT JOIN gs_goods_category gc ON gml.category_id = gc.id \n" +
             "LEFT JOIN gs_goods_brand gb ON gml.brand_id = gb.id\n " +
             "WHERE\n" +
-            "gml.flag = 0 GROUP BY gml.id,gmlg.id,gc.id,gb.id")
-    List<GoodsMaterialLibraryVO.exportDataVO> getExportData();
+            "gml.flag = 0 AND ${ew.sqlSegment} GROUP BY gml.id,gmlg.id,gc.id,gb.id")
+    List<GoodsMaterialLibraryVO.exportDataVO> getExportData(@Param(Constants.WRAPPER) QueryWrapper<GoodsMaterialLibrary> qw);
 
 }

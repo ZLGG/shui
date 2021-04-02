@@ -12,6 +12,7 @@ import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketMerchantCardUsersQ
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketMerchantCardUsersVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
@@ -88,6 +89,12 @@ public class PCBbbMarkeActivityController {
         return ResponseData.data(ipcBbbMarketActivityRpc.activity(qto));
     }
 
+    @ApiOperation("活动列表")
+    @GetMapping("/marketActivity/activityList")
+    public ResponseData<PageData<PCBbbMarketActivityVO.activityListPageVO>> activityListPage(PCBbbMarketActivityQTO.QTO qto) {
+        return ResponseData.data(ipcBbbMarketActivityRpc.activityListPage(qto));
+    }
+
     @ApiOperation("活动(商品详情)")
     @PostMapping("/marketActivity/activityDetail")
     public ResponseData<PCBbbMarketActivityVO.ListActivityVO> activityList(@Valid @RequestBody BbbMarketMerchantActivityDTO.IdDTO dto) {
@@ -95,11 +102,17 @@ public class PCBbbMarkeActivityController {
         return ipcBbbMarketActivityRpc.activityList(dto);
     }
 
-    @ApiOperation("商家优惠卷")
+    @ApiOperation("商家优惠卷(店铺界面)")
     @PostMapping("/marketActivity/activityCard")
     public ResponseData<List<PCBbbMarketActivityVO.merchantCard>> merchantCard(@Valid @RequestBody BbbMarketMerchantActivityDTO.MerchantIdDTO dto) {
 
         return ResponseData.data(ipcBbbMarketActivityRpc.merchantCard(dto));
+    }
+    @ApiOperation("商家优惠卷(商品详情页)")
+    @PostMapping("/marketActivity/activityCardGoodsInfo")
+    public ResponseData<List<PCBbbMarketActivityVO.merchantCard>> activityCardGoodsInfo(@Valid @RequestBody BbcMarketMerchantActivityDTO.MerchantIdDTO dto) {
+
+        return ResponseData.data(ipcBbbMarketActivityRpc.activityCardGoodsInfo(dto));
     }
 
     @ApiOperation("用户领取")

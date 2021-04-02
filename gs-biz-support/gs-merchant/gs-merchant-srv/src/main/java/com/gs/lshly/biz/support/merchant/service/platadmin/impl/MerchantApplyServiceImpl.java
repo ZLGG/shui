@@ -110,6 +110,13 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
                 wrapper.like("apply.shop_man_phone",qto.getConditionValue());
             }
         }
+        if (ObjectUtils.isNotEmpty(qto.getApplyType()) && qto.getApplyType().equals(MerchantApplyTypeEnum.入驻后修改信息提交.getCode())){
+            wrapper.eq("apply.apply_type",qto.getApplyType());
+        }else {
+            wrapper.isNull("apply.apply_type");
+            wrapper.in("apply.progress",MerchantApplyProgressEnum.等待审核.getCode(),MerchantApplyProgressEnum.证照信息.getCode(),MerchantApplyProgressEnum.等待签约.getCode(),MerchantApplyProgressEnum.审核失败.getCode());
+        }
+        wrapper.orderByDesc("apply.cdate");
         IPage<MerchantApplyView> page = MybatisPlusUtil.pager(qto);
         merchantApplyMapper.mapperPageList(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, MerchantApplyVO.ListVO.class, page);
@@ -187,6 +194,9 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
             throw new BusinessException("入驻申请不在存");
         }
         if(dto.getState().equals(MerchantApplyStateEnum.拒审.getCode())){
+            if(StringUtils.isBlank(dto.getRejectWhy())){
+                throw new BusinessException("请填写拒绝原因！");
+            }
             merchantApply.setState(MerchantApplyStateEnum.拒审.getCode());
             merchantApply.setProgress(MerchantApplyProgressEnum.审核失败.getCode());
             merchantApply.setRejectTime(LocalDateTime.now());
@@ -194,14 +204,95 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
             repository.updateById(merchantApply);
         }else if(dto.getState().equals(MerchantApplyStateEnum.通过.getCode())){
             //审核需要检查新增的品牌是否以经在品牌库中已创建
-            if(TrueFalseEnum.是.getCode().equals(merchantApply.getBrandIsNew())){
-               throw new BusinessException("先在品牌库中创建【"+merchantApply.getBrandName()+"】");
-            }
-            merchantApply.setLakalaNo(dto.getLakalaNo());
+//            if(TrueFalseEnum.是.getCode().equals(merchantApply.getBrandIsNew())){
+//               throw new BusinessException("先在品牌库中创建【"+merchantApply.getBrandName()+"】");
+//            }
+            this.checkApplyCategory(merchantApply);
+            merchantApply.setLakalaNo(StringUtils.isBlank(dto.getLakalaNo())?"":dto.getLakalaNo());
             merchantApply.setState(MerchantApplyStateEnum.通过.getCode());
             merchantApply.setProgress(MerchantApplyProgressEnum.等待签约.getCode());
             merchantApply.setOkpassTime(LocalDateTime.now());
             repository.updateById(merchantApply);
+        }
+    }
+
+    private  List<GoodsCategoryVO.CategoryTreeVO> checkApplyCategory(MerchantApply merchantApply){
+        //查找申请的一级商品类目
+        QueryWrapper<MerchantApplyCategory> merchantApplyCategoryQueryWrapper = MybatisPlusUtil.query();
+        merchantApplyCategoryQueryWrapper.eq("apply_id",merchantApply.getId());
+        List<MerchantApplyCategory> merchantApplyCategoryList = merchantApplyCategoryRepository.list(merchantApplyCategoryQueryWrapper);
+        if(ObjectUtils.isEmpty(merchantApplyCategoryList)){
+            throw new BusinessException("商家提供的入驻申请数据没有商品分类");
+        }
+        //把商品分类1-3级复制到店铺申请的分类下,供平台设置三级商品类目的分成比率（自营店是全类目也不需要编辑费用，没有复制）
+        List<String> categoryIdList = ListUtil.getIdList(MerchantApplyCategory.class,merchantApplyCategoryList,"goodsCategoryId");
+        List<GoodsCategoryVO.CategoryTreeVO> categoryTree = goodsCategoryRpc.listCategoryTree(categoryIdList);
+        if (ObjectUtils.isEmpty(categoryTree)) {
+            throw new BusinessException("商品类目数据错误");
+        }
+        return categoryTree;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkEditApply(MerchantApplyDTO.CheckApplyDTO dto) {
+        if(null == dto || StringUtils.isBlank(dto.getId())){
+            throw new BusinessException("ID不能为空");
+        }
+        if(!EnumUtil.checkEnumCodeWithExcludes(dto.getState(),MerchantApplyStateEnum.class,MerchantApplyStateEnum.全部.getCode())){
+            throw new BusinessException("审核枚举不存在");
+        }
+        MerchantApply merchantApply =  repository.getById(dto.getId());
+        if(null == merchantApply){
+            throw new BusinessException("入驻申请不在存");
+        }
+        if(dto.getState().equals(MerchantApplyStateEnum.拒审.getCode())){
+            merchantApply.setState(MerchantApplyStateEnum.拒审.getCode());
+            merchantApply.setRejectTime(LocalDateTime.now());
+            merchantApply.setRejectWhy(dto.getRejectWhy());
+            repository.updateById(merchantApply);
+
+            legalDictRpc.innereditSettleState(merchantApply.getLegalId(),ApplyStateEnum.拒审.getCode());
+
+        }else if(dto.getState().equals(MerchantApplyStateEnum.通过.getCode())){
+            //更新正式表的数据
+            LegalDictDTO.ETO eto = new LegalDictDTO.ETO();
+            BeanUtils.copyProperties(merchantApply,eto);
+            eto.setEditSettledApplyId("");
+            eto.setEditSettledState(ApplyStateEnum.通过.getCode());
+            eto.setId(merchantApply.getLegalId());
+            eto.setCertList(new ArrayList<>());
+            List<LegalDictDTO.CertDTO> certListVO = new ArrayList<>();
+            QueryWrapper<MerchantApplyCert> wrapper = MybatisPlusUtil.query();
+            wrapper.eq("apply_id",merchantApply.getId());
+            List<MerchantApplyCert> certs = merchantApplyCertRepository.list(wrapper);
+            if (ObjectUtils.isNotEmpty(certs)){
+                for (MerchantApplyCert applyCert : certs){
+                    LegalDictDTO.CertDTO certDTO = new LegalDictDTO.CertDTO();
+                    BeanUtils.copyProperties(applyCert,certDTO);
+                    certDTO.setId(applyCert.getCertId());
+                    certListVO.add(certDTO);
+                }
+                eto.setCertList(certListVO);
+            }
+            legalDictRpc.editLegalDict(eto);
+
+            //更改店铺信息
+            Shop shop = new Shop();
+            shop.setShopDesc(merchantApply.getShopDesc());
+            shop.setShopAddress(merchantApply.getShopAddress());
+            shop.setShopLogo(merchantApply.getShopLogo());
+            shop.setShopManIdcardBack(merchantApply.getShopManIdcardBack());
+            shop.setShopManIdcardFront(merchantApply.getShopManIdcardFront());
+            shop.setShopManName(merchantApply.getShopManName());
+            shop.setShopManEmail(merchantApply.getShopManEmail());
+            shop.setShopManPhone(merchantApply.getShopManPhone());
+            shop.setShopName(merchantApply.getShopName());
+            shop.setId(merchantApply.getShopId());
+            shopRepository.updateById(shop);
+
+            //删掉临时表申请的数据
+            repository.removeById(dto.getId());
         }
     }
 
@@ -221,7 +312,13 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
         if(TrueFalseEnum.是.getCode().equals(merchantApply.getIsOpen())){
             throw new BusinessException("店铺已经开通");
         }
+        //先检查商品分类是否有效,并返回以前提交的时候写入到店铺下
+        List<GoodsCategoryVO.CategoryTreeVO> categoryTreeList = this.checkApplyCategory(merchantApply);
+        //查找企业字典，没有生成，有则返回企业信息
         LegalDictVO.DetailVO legalDictVo = this.findOrCreateLegalDict(merchantApply,BusinessTypeEnum.卖家.getCode());
+        if(null == legalDictVo || StringUtils.isBlank(legalDictVo.getId())){
+            throw new BusinessException("创建企业字典失败");
+        }
         //查找企业字典关联的商家,如果没有商家则创建一个商家，商家的名称就是企业公司名称
         QueryWrapper<Merchant> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("legal_id",legalDictVo.getId());
@@ -245,7 +342,7 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
         shop.setTerminal(merchantApply.getShopMerchantType());
         shop.setMainAccountId(merchantApply.getAccountId());
         shop.setMerchantId(merchant.getId());
-        shop.setPosShopId(ObjectUtils.isEmpty(merchantApply.getPosShopId())?"":merchantApply.getPosShopId());
+        shop.setPosShopId(ObjectUtils.isEmpty(merchantApply.getPosShopId()) ? "": merchantApply.getPosShopId());
         shopRepository.save(shop);
         //为商家帐号关联店铺ID
         MerchantAccount merchantAccount = new MerchantAccount();
@@ -253,21 +350,9 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
         merchantAccount.setShopId(shop.getId());
         merchantAccount.setMerchantId(shop.getMerchantId());
         merchantAccountRepository.updateById(merchantAccount);
-        //查找申请的一级商品类目
-        QueryWrapper<MerchantApplyCategory> merchantApplyCategoryQueryWrapper = MybatisPlusUtil.query();
-        merchantApplyCategoryQueryWrapper.eq("apply_id",merchantApply.getId());
-        List<MerchantApplyCategory> merchantApplyCategoryList = merchantApplyCategoryRepository.list(merchantApplyCategoryQueryWrapper);
-        if(ObjectUtils.isEmpty(merchantApplyCategoryList)){
-            throw new BusinessException("商家提供的入驻申请数据没有商品分类");
-        }
-        //把商品分类1-3级复制到店铺申请的分类下,供平台设置三级商品类目的分成比率（自营店是全类目也不需要编辑费用，没有复制）
-        List<String> categoryIdList = ListUtil.getIdList(MerchantApplyCategory.class,merchantApplyCategoryList,"goodsCategoryId");
-        List<GoodsCategoryVO.CategoryTreeVO> categoryTree = goodsCategoryRpc.listCategoryTree(categoryIdList);
-        if (ObjectUtils.isEmpty(categoryTree)) {
-            throw new BusinessException("商品类目数据错误");
-        }
-        if (ObjectUtils.isNotEmpty(categoryTree)) {
-            shopGoodsCategoryRepository.shopGoodsCategoryBatchSave(shop.getMerchantId(),shop.getId(),categoryTree);
+       //写入店铺的商品分类数据
+        if (ObjectUtils.isNotEmpty(categoryTreeList)) {
+            shopGoodsCategoryRepository.shopGoodsCategoryBatchSave(shop.getMerchantId(),shop.getId(),categoryTreeList);
         }
         //根据店铺的类型 查询默认的保证金信息 为交易中心生成默认保证金数据
         tradeMarginRpc.InnerCreateShopMargin(this.createInnerCreateMargin(shop));
@@ -276,7 +361,6 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
         merchantApply.setMerchantId(shop.getMerchantId());
         merchantApply.setIsOpen(TrueFalseEnum.是.getCode());
         repository.updateById(merchantApply);
-
         createDefaultUserAccount(legalDictVo.getId(),merchantAccount.getId());
     }
     private void createDefaultUserAccount(String legalDictId,String accountId){
@@ -358,7 +442,9 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
             legalDictDTO.setLegalType(LegalTypeEnum.企业.getCode());
             for(MerchantApplyCert applyCert:merchantApplyCertList){
                 LegalDictDTO.CertDTO certDTO  = new LegalDictDTO.CertDTO();
-                BeanUtils.copyProperties(applyCert,certDTO);
+                certDTO.setId(applyCert.getCertId());
+                certDTO.setCertName(StringUtils.isBlank(applyCert.getCertName())?"":applyCert.getCertName());
+                certDTO.setCertUrl(StringUtils.isBlank(applyCert.getCertUrl())?"":applyCert.getCertUrl());
                 legalDictDTO.getCertList().add(certDTO);
             }
             //创建企业典,并返回数据ID

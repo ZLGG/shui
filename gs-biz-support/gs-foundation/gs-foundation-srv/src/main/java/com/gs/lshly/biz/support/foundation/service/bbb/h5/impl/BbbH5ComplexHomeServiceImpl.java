@@ -16,10 +16,15 @@ import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.foundation.qto.BbbH5ComplexHomeQTO;
 import com.gs.lshly.common.struct.bbb.h5.foundation.qto.BbbH5SiteFloorQTO;
 import com.gs.lshly.common.struct.bbb.h5.foundation.vo.*;
+import com.gs.lshly.common.struct.common.dto.CommonSiteActiveDTO;
+import com.gs.lshly.common.struct.common.vo.CommonSiteActiveVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
+import com.gs.lshly.rpc.api.common.ICommonSiteActiveRpc;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +62,9 @@ public class BbbH5ComplexHomeServiceImpl implements IBbbH5ComplexHomeService {
     @DubboReference
     private IBbbH5GoodsInfoRpc bbbH5GoodsInfoRpc;
 
+    @DubboReference
+    private ICommonSiteActiveRpc commonSiteActiveRpc;
+
     @Override
     public BbbH5ComplexHomeVO.TopComplexVO topComplex(BbbH5ComplexHomeQTO.QTO qto) {
         BbbH5ComplexHomeVO.TopComplexVO topComplexVO = new BbbH5ComplexHomeVO.TopComplexVO();
@@ -64,7 +72,18 @@ public class BbbH5ComplexHomeServiceImpl implements IBbbH5ComplexHomeService {
         topComplexVO.setBannerList(this.bannerList(qto));
         topComplexVO.setVideoList(this.videoList(qto));
         topComplexVO.setFloorList(this.floorList(qto));
+        CommonSiteActiveVO.ListVO listVO = getSiteActiveVO();
+        if (null != listVO ){
+            topComplexVO.setSiteActiveVO(listVO);
+        }
         return topComplexVO;
+    }
+
+    private CommonSiteActiveVO.ListVO getSiteActiveVO(){
+        CommonSiteActiveDTO.QueryDTO queryDTO = new CommonSiteActiveDTO.QueryDTO();
+        queryDTO.setPcShow(PcH5Enum.NO.getCode());
+        queryDTO.setTerminal(TerminalEnum.BBB.getCode());
+        return commonSiteActiveRpc.getCommonSiteActiveVO(queryDTO);
     }
 
 
@@ -92,12 +111,25 @@ public class BbbH5ComplexHomeServiceImpl implements IBbbH5ComplexHomeService {
     }
 
     private List<BbbH5SiteVideoVO.ListVO> videoList(BbbH5ComplexHomeQTO.QTO qto) {
+
+        List<BbbH5SiteVideoVO.ListVO> listVOS = new ArrayList<>();
+
         QueryWrapper<SiteVideo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("pc_show", PcH5Enum.NO.getCode());
         wrapper.eq("terminal", TerminalEnum.BBB.getCode());
         wrapper.eq("subject",SubjectEnum.默认.getCode());
         List<SiteVideo> siteVideoList = siteVideoRepository.list( wrapper);
-        return ListUtil.listCover(BbbH5SiteVideoVO.ListVO.class,siteVideoList);
+        if (ObjectUtil.isEmpty(siteVideoList)){
+            return listVOS;
+        }
+        for (SiteVideo video : siteVideoList){
+            if (StringUtils.isNotBlank(video.getVideoUrl())){
+                BbbH5SiteVideoVO.ListVO listVO = new BbbH5SiteVideoVO.ListVO();
+                BeanUtils.copyProperties(video,listVO);
+                listVOS.add(listVO);
+            }
+        }
+        return listVOS;
     }
 
     private List<BbbH5SiteFloorVO.ListVO> floorList(BbbH5ComplexHomeQTO.QTO qto){

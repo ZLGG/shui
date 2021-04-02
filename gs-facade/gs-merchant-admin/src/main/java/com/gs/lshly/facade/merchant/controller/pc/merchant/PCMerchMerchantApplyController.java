@@ -84,4 +84,10 @@ public class PCMerchMerchantApplyController {
         return ResponseData.data(applyId);
     }
 
+    @ApiOperation("获取修改后的入驻提交信息")
+    @GetMapping(value = "/getAfterUpdateSettleInfo/{id}")
+    public ResponseData<LegalDictVO.SettledInfoVO> getAfterUpdateSettleInfo(@PathVariable String id) {
+        return ResponseData.data(commonMerchantApplyRpc.getAfterUpdateSettleInfo(new LegalDictDTO.MerchantApplyIdDTO(id)));
+    }
+
 }

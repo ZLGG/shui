@@ -33,6 +33,7 @@ public class MerchantPermissionDictServiceImpl implements IMerchantPermissionDic
     @Override
     public PageData<MerchantPermissionDictVO.ListVO> pageData(MerchantPermissionDictQTO.QTO qto) {
         QueryWrapper<MerchantPermissionDict> wq = new QueryWrapper<>();
+        wq.orderByDesc("cdate");
         IPage<MerchantPermissionDict> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wq);
         return MybatisPlusUtil.toPageData(qto, MerchantPermissionDictVO.ListVO.class, page);

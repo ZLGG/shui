@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDubboConfig
 @DubboComponentScan("com.gs.lshly.biz.support.merchant.rpc")
 @MapperScan(basePackages="com.gs.lshly.biz.support.merchant.mapper")
-@ComponentScan( value = {"com.gs.lshly.middleware.sms","com.gs.lshly.biz.support.merchant","com.gs.lshly.middleware.redis","com.gs.lshly.middleware.oss"})
+@ComponentScan( value = {"com.gs.lshly.middleware.sms","com.gs.lshly.biz.support.merchant","com.gs.lshly.middleware.mail","com.gs.lshly.middleware.redis","com.gs.lshly.middleware.oss"})
 public class MerchantApplication {
 
     public static void main(String[] args) {

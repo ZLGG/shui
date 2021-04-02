@@ -62,7 +62,7 @@ public class BbbH5TradeRightsServiceImpl implements IBbbH5TradeRightsService {
     @Override
     public PageData<BbbH5TradeRightsVO.ListVO> tradeRightsListData(BbbH5TradeRightsQTO.RightsList qto) {
         QueryWrapper<BbbH5TradeRightsQTO.RightsList> wrapper = new QueryWrapper<>();
-       // wrapper.and(i -> i.eq("`user_id`",qto.getJwtUserId()));
+        wrapper.and(i -> i.eq("`user_id`",qto.getJwtUserId()));
         wrapper.and(i -> i.eq("1",1));
         if(ObjectUtils.isNotEmpty(qto.getRightsType())){
             if(qto.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())){
@@ -175,6 +175,9 @@ public class BbbH5TradeRightsServiceImpl implements IBbbH5TradeRightsService {
     @Override
     @Transactional
     public void addTradeRights(BbbH5TradeRightsBuildDTO.ETO dto) {
+        if (org.apache.commons.lang3.StringUtils.isEmpty(dto.getRightsRemark())){
+            throw new BusinessException("请填写售后原因");
+        }
         //根据订单id查询订单数据
         Trade trade = tradeRepository.getById(dto.getTradeId());
         if(ObjectUtils.isEmpty(trade)){
@@ -182,7 +185,6 @@ public class BbbH5TradeRightsServiceImpl implements IBbbH5TradeRightsService {
         }else if(trade.getTradeState().intValue() != TradeStateEnum.已完成.getCode()){
             throw new BusinessException("请确认收货后再申请售后");
         }
-
         //根据订单id以及订单商品id查询商品数据
         BigDecimal refundAmount = BigDecimal.ZERO;
         List<TradeRightsGoods> tradeRightsGoodsS = new ArrayList<>();
@@ -198,6 +200,23 @@ public class BbbH5TradeRightsServiceImpl implements IBbbH5TradeRightsService {
             for(TradeRightsGoods tradeRightsGoods : tradeRightsGoodsList){
                 if(ObjectUtils.isNotEmpty(tradeRightsGoods)){
                     if (tradeRightsGoods.getTradeGoodsId().equals(productData.getTradeGoodsId())){
+                        //查询售后表的状态
+                        TradeRights byId = repository.getById(tradeRightsGoods.getRightsId());
+                        if (ObjectUtils.isNotEmpty(byId)){
+                            if (byId.getState()==TradeRightsStateEnum.驳回.getCode()){
+                                QueryWrapper<TradeComplaint> query = MybatisPlusUtil.query();
+                                query.and(i->i.eq("trade_goods_id",tradeRightsGoods.getTradeGoodsId()));
+                                query.and(i->i.eq("trade_id",tradeRightsGoods.getTradeId()));
+                                TradeComplaint one = iTradeComplaintRepository.getOne(query);
+                                if (ObjectUtils.isNotEmpty(one)){
+                                    if (one.getHandleState()==TradeComplaintStateEnum.投诉成功.getCode()){
+                                        byId.setState(TradeRightsStateEnum.申请.getCode());
+                                        return;
+                                    }
+                                }
+
+                            }
+                        }
                         throw new BusinessException("已经在执行售后操作");
                     }
                     if (ObjectUtils.isNotEmpty(tradeRightsGoods)) {
@@ -270,6 +289,12 @@ public class BbbH5TradeRightsServiceImpl implements IBbbH5TradeRightsService {
 
     @Override
     public void addAddress(BbbH5TradeRightsBuildDTO.AddAddressDTO dto) {
+        if (ObjectUtils.isEmpty(dto.getReturnGoodsLogisticsName())){
+            throw new BusinessException("请填写物流公司名字");
+        }
+        if (ObjectUtils.isEmpty(dto.getReturnGoodsLogisticsNum())){
+            throw new BusinessException("请填写物流单号");
+        }
         TradeRights tradeRights = repository.getById(dto.getId());
         if (ObjectUtils.isNotEmpty(tradeRights)){
             if (tradeRights.getState().equals(TradeRightsStateEnum.通过.getCode()) && (tradeRights.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())||tradeRights.getRightsType().equals(TradeRightsTypeEnum.退货退款.getCode()))){

@@ -87,6 +87,7 @@ public class PCMerchMarketPtActivityMerchantServiceImpl implements IPCMerchMarke
     @Override
     public PageData<PCMerchMarketPtActivityMerchantVO.ListVO> pageData(PCMerchMarketPtActivityMerchantQTO.QTO qto) {
         QueryWrapper<MarketPtActivityMerchant> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<MarketPtActivityMerchant> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto,PCMerchMarketPtActivityMerchantVO.ListVO.class, page);
@@ -94,6 +95,9 @@ public class PCMerchMarketPtActivityMerchantServiceImpl implements IPCMerchMarke
 
     @Override
     public void addMarketPtActivityMerchant(PCMerchMarketPtActivityMerchantDTO.ETO eto) {
+        if (ObjectUtils.isEmpty(eto)){
+            throw new BusinessException("请填写信息");
+        }
         MarketPtActivityMerchant marketPtActivityMerchant = new MarketPtActivityMerchant();
         BeanUtils.copyProperties(eto, marketPtActivityMerchant);
         marketPtActivityMerchant.setShopId(eto.getJwtShopId());

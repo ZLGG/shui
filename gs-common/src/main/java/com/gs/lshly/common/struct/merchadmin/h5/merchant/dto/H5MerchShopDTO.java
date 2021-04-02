@@ -35,6 +35,9 @@ public abstract class H5MerchShopDTO implements Serializable {
 
         @ApiModelProperty("店铺联系人手机号")
         private String shopManPhone;
+
+        @ApiModelProperty("距离（米）")
+        private Integer meters;
     }
 
     @Data

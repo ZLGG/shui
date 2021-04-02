@@ -34,6 +34,7 @@ public class SiteFloorMenuGoodsServiceImpl implements ISiteFloorMenuGoodsService
     @Override
     public PageData<SiteFloorMenuGoodsVO.ListVO> pageData(SiteFloorMenuGoodsQTO.QTO qto) {
         QueryWrapper<SiteFloorMenuGoods> wq =  MybatisPlusUtil.query();
+        wq.orderByDesc("cdate");
         IPage<SiteFloorMenuGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wq);
         return MybatisPlusUtil.toPageData(qto, SiteFloorMenuGoodsVO.ListVO.class, page);

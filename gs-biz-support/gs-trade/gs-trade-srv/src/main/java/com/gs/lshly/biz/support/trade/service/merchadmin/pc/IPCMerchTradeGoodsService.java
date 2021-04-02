@@ -29,6 +29,12 @@ public interface IPCMerchTradeGoodsService {
 
     List<TradeGoodsVO.GoodsSaleVO> goodsSaleListDetail(TradeGoodsDTO.GoodsSale dto);
 
+    //导出商品销售分析列表
+    List<TradeGoodsVO.GoodsSaleVO> exportGoodsSaleList(TradeDTO.PayDateList qo) throws Exception;
+
+    //导出商品销售排行明细
+    List<TradeGoodsVO.GoodsSaleVO> exportGoodsSaleListDetail(TradeDTO.PayDateList qo) throws Exception;
+
     TradeVO.SalesSummaryVO salesSummaryList(BaseDTO dto);
 
     TradeVO.PerformanceVO performanceList(TradeDTO.PerformanceListDTO dto);

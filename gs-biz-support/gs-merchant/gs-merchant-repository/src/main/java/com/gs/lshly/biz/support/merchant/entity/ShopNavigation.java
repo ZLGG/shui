@@ -75,6 +75,11 @@ public class ShopNavigation extends Model {
     private String merchantId;
 
     /**
+     * 图片地址
+     */
+    private String imgUrl;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)

@@ -9,7 +9,6 @@ import com.gs.lshly.biz.support.merchant.entity.MerchantAccountRole;
 import com.gs.lshly.biz.support.merchant.entity.MerchantRoleDict;
 import com.gs.lshly.biz.support.merchant.enums.MerchantAccountStateEnum;
 import com.gs.lshly.biz.support.merchant.enums.MerchantAccountTypeEnum;
-import com.gs.lshly.biz.support.merchant.enums.MerchantApplyStateEnum;
 import com.gs.lshly.biz.support.merchant.mapper.MerchantAccountMapper;
 import com.gs.lshly.biz.support.merchant.mapper.MerchantAccountRoleMapper;
 import com.gs.lshly.biz.support.merchant.mapper.views.AccountShopView;
@@ -24,15 +23,16 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.JwtUser;
-import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMerchantAccountQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
-import com.gs.lshly.common.utils.BeanCopyUtils;
-import com.gs.lshly.common.utils.JwtUtil;
-import com.gs.lshly.common.utils.ListUtil;
-import com.gs.lshly.common.utils.PwdUtil;
+import com.gs.lshly.common.utils.*;
+import com.gs.lshly.middleware.mail.Email;
+import com.gs.lshly.middleware.mail.IMailService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.middleware.redis.RedisUtil;
+import com.gs.lshly.middleware.sms.ISMSService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
 * <p>
@@ -49,7 +50,11 @@ import java.util.List;
 * @since 2020-10-23
 */
 @Component
+@Slf4j
 public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccountService {
+
+    private static final String PhoneValidCodeGroup = "PhoneValidCode_";
+    private static final String EmailValidCodeGroup = "EmailValidCode_";
 
     @Autowired
     private IMerchantAccountRepository repository;
@@ -65,6 +70,14 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
 
     @Autowired
     private IMerchantAccountRoleRepository merchantAccountRoleRepository;
+
+    @Autowired
+    private ISMSService smsService;
+
+    @Autowired
+    private RedisUtil redisUtil;
+    @Autowired
+    private IMailService iMailService;
 
     @Override
     public boolean checkUserName(PCMerchMerchantAccountDTO.CheckUserNameDTO dto) {
@@ -150,7 +163,6 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         }
         QueryWrapper<MerchantAccount> queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("user_name",eto.getUserName());
-        queryWrapper.eq("shop_id",eto.getJwtShopId());
         int count = repository.count(queryWrapper);
         if(count > 0 ){
             throw new BusinessException("帐号已存在");
@@ -201,6 +213,12 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         }
         if(ObjectUtils.isEmpty(eto.getRoleId())){
             throw new BusinessException("角色ID不能为空");
+        }
+        QueryWrapper<MerchantAccount> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.eq("user_name",eto.getUserName()).eq("id", eto.getId());
+        int count = repository.count(queryWrapper);
+        if(count > 0 ){
+            throw new BusinessException("帐号已存在");
         }
         MerchantAccount merchantAccount = new MerchantAccount();
         BeanCopyUtils.copyProperties(eto, merchantAccount);
@@ -284,6 +302,131 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         BeanUtils.copyProperties(one,listVO);
         return listVO;
     }
+
+    @Override
+    public void getPhoneValidCode(String phone) {
+        //通过手机号查询商家账户（主账户）
+        QueryWrapper<MerchantAccount> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("phone",phone));
+        //是主账户
+        query.and(i->i.eq("account_type",10));
+        //已启用
+        query.and(i->i.eq("account_state",10));
+        MerchantAccount one =null;
+        try {
+            one=repository.getOne(query);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            throw new BusinessException("此手机重复注册了商家");
+        }
+        if (ObjectUtils.isEmpty(one)){
+            throw new BusinessException("没有查询到此手机对应的商家账户");
+        }
+        String validCode=null;
+        try {
+                validCode = smsService.sendLoginSMSCode(phone);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
+        }
+        //验证码失效时间10分账
+        log.info("设置-手机号码："+phone+"-验证码："+validCode);
+        redisUtil.set(PhoneValidCodeGroup + phone, validCode, 10 * 60);
+    }
+
+    @Override
+    public String forgetPasswordByPhone(PCMerchMerchantAccountDTO.ForgetByPhoneETO dto) {
+        //校验验证码
+        Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
+        String validCode = code != null ? code + "" : "";
+        System.out.println("validCode:~~~~~~~~~~~~~"+validCode);
+        if (!StringUtils.equals(validCode, dto.getValidCode())) {
+            throw new BusinessException("验证码不匹配");
+        }
+        if(null == dto.getPassword() || null == dto.getPasswordCfm() || null == dto.getValidCode() || null == dto.getPhone()){
+            throw new BusinessException("注册信息错误");
+        }
+        if(!dto.getPassword().equals(dto.getPasswordCfm())){
+            throw new BusinessException("确认密码输入错误");
+        }
+        //通过手机号查询商家账户（主账户）
+        QueryWrapper<MerchantAccount> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("phone",dto.getPhone()));
+        //是主账户
+        query.and(i->i.eq("account_type",10));
+        //已启用
+        query.and(i->i.eq("account_state",10));
+        MerchantAccount one =null;
+        try {
+            one=repository.getOne(query);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            throw new BusinessException("此手机重复注册了商家");
+        }
+        one.setUserPwd(PwdUtil.encode(dto.getPassword()));
+        repository.updateById(one);
+        return one.getUserName();
+    }
+
+    @Override
+    public String forgetByEmail(PCMerchMerchantAccountDTO.ForgetByEmailETO dto) {
+        //校验验证码
+        Object code = redisUtil.get( EmailValidCodeGroup+ dto.getEmail());
+        String validCode = code != null ? code + "" : "";
+        if (!StringUtils.equals(validCode, dto.getValidCode())) {
+            throw new BusinessException("验证码不匹配");
+        }
+        if(null == dto.getPassword() || null == dto.getPasswordCfm() || null == dto.getValidCode() || null == dto.getEmail()){
+            throw new BusinessException("注册信息错误");
+        }
+        if(!dto.getPassword().equals(dto.getPasswordCfm())){
+            throw new BusinessException("确认密码输入错误");
+        }
+        //通过手机号查询商家账户（主账户）
+        QueryWrapper<MerchantAccount> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("email",dto.getEmail()));
+        //是主账户
+        query.and(i->i.eq("account_type",10));
+        //已启用
+        query.and(i->i.eq("account_state",10));
+        MerchantAccount one =null;
+        try {
+            one=repository.getOne(query);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            throw new BusinessException("此邮箱重复注册了商家");
+        }
+        if (ObjectUtils.isEmpty(one)){
+            throw new BusinessException("此邮箱下没有商家");
+        }
+        one.setUserPwd(PwdUtil.encode(dto.getPassword()));
+        repository.updateById(one);
+        return one.getUserName();
+    }
+
+    @Override
+    public void getEmailNum(String email) {
+        //校验邮箱
+        if (!CheckEmailUtils.checkEmail(email)) {
+            throw new BusinessException("输入的邮箱格式不正确");
+        }
+        String code=Integer.toString(randomCode());
+        iMailService.send(new Email().setTo(email)
+                .setSubject("好粮油商城账户邮箱绑定验证")
+                .setContent(email+",你好!<br/>以下是你绑定邮箱的验证码：<br/>"+code+"<br/><a href='www.baidu.com'>baidu</a>").setHtml(true));
+        //验证码失效时间10分账
+        log.info("设置-邮箱号："+email+"-验证码："+code);
+        redisUtil.set(EmailValidCodeGroup + email, code, 10 * 60);
+    }
+    /**
+     * 生成随机验证码.
+     *
+     * @return 随机数
+     */
+    static int randomCode() {
+        return 100_000 + ThreadLocalRandom.current().nextInt(1_000_000 - 100_000);
+    }
+
 
 
 }

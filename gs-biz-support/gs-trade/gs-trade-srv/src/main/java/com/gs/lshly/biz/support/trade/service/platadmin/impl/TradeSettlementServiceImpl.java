@@ -80,6 +80,7 @@ public class TradeSettlementServiceImpl implements ITradeSettlementService {
         if (ObjectUtils.isNotEmpty(qto.getSettlementState()) ){
             wrapper.eq("settlement_state", qto.getSettlementState());
         }
+        wrapper.orderByDesc("cdate");
         IPage<TradeSettlement> page = MybatisPlusUtil.pager(qto);
         iTradeSettlementRepository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, TradeSettlementVO.ListVO.class, page);

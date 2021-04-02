@@ -27,7 +27,7 @@
         <ali.version>2.1.2.RELEASE</ali.version>
 
         <spring-cloud-commons.version>2.1.5.RELEASE</spring-cloud-commons.version>
-        <dubbo.version>2.7.7</dubbo.version>
+        <dubbo.version>2.7.9</dubbo.version>
         <lombok.version>1.18.12</lombok.version>
         <swagger.version>2.7.0</swagger.version>
         <hutool.version>5.4.4</hutool.version>
@@ -176,6 +176,9 @@
         <!-- 开发环境配置 -->
         <profile>
             <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <env.dscs>dev</env.dscs>
                 <profiles.active>dev</profiles.active>
@@ -256,9 +259,6 @@
         <!-- 杭州商城测试配置 -->
         <profile>
             <id>hztest</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <env.dscs>hztest</env.dscs>
                 <profiles.active>hztest</profiles.active>

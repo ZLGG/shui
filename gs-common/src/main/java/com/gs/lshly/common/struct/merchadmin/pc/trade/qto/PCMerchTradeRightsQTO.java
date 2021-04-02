@@ -31,8 +31,8 @@ public abstract class PCMerchTradeRightsQTO implements Serializable {
         @ApiModelProperty("退换货ID")
         private String id;
 
-        @ApiModelProperty("订单ID")
-        private String tradeId;
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
 
         @ApiModelProperty("退换货类型[10=换货 20=仅退款 30=退货退款 40=取消订单]")
         private Integer tradeRightsType;

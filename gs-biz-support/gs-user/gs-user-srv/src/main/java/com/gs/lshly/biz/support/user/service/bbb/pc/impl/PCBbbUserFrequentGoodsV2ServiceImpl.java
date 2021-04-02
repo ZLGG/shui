@@ -52,6 +52,7 @@ public class PCBbbUserFrequentGoodsV2ServiceImpl implements IPCBbbUserFrequentGo
         IPage<UserFrequentSku> page = MybatisPlusUtil.pager(qto);
         QueryWrapper<UserFrequentSku> frequentSkuQueryWrapper = MybatisPlusUtil.query();
         frequentSkuQueryWrapper.eq("user_id",qto.getJwtUserId());
+        frequentSkuQueryWrapper.orderByDesc("cdate");
         List<UserFrequentSku> frequentSkuList  = frequentSkuRepository.list(frequentSkuQueryWrapper);
         if(ObjectUtils.isEmpty(frequentSkuList)){
             return MybatisPlusUtil.toPageData(new ArrayList<>(),qto.getPageNum(),qto.getPageSize(),page.getTotal());

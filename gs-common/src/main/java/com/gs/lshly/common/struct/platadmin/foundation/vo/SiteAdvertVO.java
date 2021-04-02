@@ -41,6 +41,24 @@ public abstract class SiteAdvertVO implements Serializable {
         @ApiModelProperty("文字")
         private String text;
     }
+    @Data
+    @ApiModel("SiteAdvertVO.H5ActivityListVO")
+    @Accessors(chain = true)
+    public static class H5ActivityListVO implements Serializable{
+
+        @ApiModelProperty("id")
+        private String id;
+
+        @ApiModelProperty("图片地址")
+        private String img;
+
+        @ApiModelProperty("跳转地址")
+        private String link;
+
+        @ApiModelProperty("楼层名字")
+        private String floorName;
+
+    }
 
     @Data
     @ApiModel("SiteAdvertVO.H5SubjectListVO")

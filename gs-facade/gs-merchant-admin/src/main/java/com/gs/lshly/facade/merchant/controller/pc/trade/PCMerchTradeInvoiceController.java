@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/merchadmin/invoice")
 @Api(tags = "发票管理")
-@Module(code = "invoiceList",parent = "settlement",name = "发票列表" ,index = 4)
 public class PCMerchTradeInvoiceController {
 
     @DubboReference
@@ -32,21 +31,18 @@ public class PCMerchTradeInvoiceController {
 
     @ApiOperation("发票列表")
     @GetMapping("/list")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<PageData<TradePayOfflineVO.ListVO>> list(PCMerchTradeInvoiceQTO.QTO qto) {
         return ResponseData.data(iPCMerchTradeInvoiceRpc.invoiceListPageData(qto));
     }
 
     @ApiOperation("开票")
     @GetMapping("/issueInvoice")
-    @Func(code = "edit" ,name = "修改")
     public ResponseData<PageData<TradeSettlementVO.ListVO>> issueInvoice(PCMerchTradeInvoiceQTO.IssueQTO qto) {
         return ResponseData.data(iPCMerchTradeInvoiceRpc.issueInvoice(qto));
     }
 
     @ApiOperation("寄出发票")
     @GetMapping("/mailInvoice")
-    @Func(code = "edit" ,name = "修改")
     public ResponseData<String> mailInvoice(PCMerchTradeInvoiceQTO.MailQTO qto) {
         return ResponseData.data(iPCMerchTradeInvoiceRpc.mailInvoice(qto));
     }

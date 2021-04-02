@@ -22,7 +22,7 @@ import javax.validation.Valid;
 */
 @RestController
 @RequestMapping("/platadmin/remindMerchant")
-@Api(tags = "商家消息提醒管理")
+@Api(tags = "平台对商家消息提醒管理（只是数据查询并非提醒）")
 public class RemindMerchantController {
 
     @DubboReference
@@ -31,21 +31,14 @@ public class RemindMerchantController {
     @ApiOperation("商家消息提醒列表")
     @GetMapping("")
     public ResponseData<PageData<RemindMerchantVO.ListVO>> list(RemindMerchantQTO.QTO qto) {
-        return ResponseData.data(RemindMerchantRpc.pageData(qto));
+        return ResponseData.data(RemindMerchantRpc.platPageData(qto));
     }
 
-    @ApiOperation("商家消息提醒详情")
-    @GetMapping(value = "/{id}")
-    public ResponseData<RemindMerchantVO.DetailVO> get(@PathVariable String id) {
-        return ResponseData.data(RemindMerchantRpc.detailRemindMerchant(new RemindMerchantDTO.IdDTO(id)));
-    }
-
-    @ApiOperation("新增商家消息提醒")
-    @PostMapping("")
-    public ResponseData<Void> add(@Valid @RequestBody RemindMerchantDTO.ETO dto) {
-            RemindMerchantRpc.addRemindMerchant(dto);
-        return ResponseData.success(MsgConst.ADD_SUCCESS);
-    }
+//    @ApiOperation("商家消息提醒详情")
+//    @GetMapping(value = "/{id}")
+//    public ResponseData<RemindMerchantVO.DetailVO> get(@PathVariable String id) {
+//        return ResponseData.data(RemindMerchantRpc.detailRemindMerchant(new RemindMerchantDTO.IdDTO(id)));
+//    }
 
 //    @ApiOperation("删除商家消息提醒")
 //    @DeleteMapping(value = "/{id}")
@@ -54,13 +47,6 @@ public class RemindMerchantController {
 //        RemindMerchantRpc.deleteRemindMerchant(dto);
 //        return ResponseData.success(MsgConst.DELETE_SUCCESS);
 //    }
-//
-//
-//    @ApiOperation("修改商家消息提醒")
-//    @PutMapping(value = "/{id}")
-//    public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody RemindMerchantDTO.ETO eto) {
-//        RemindMerchantRpc.editRemindMerchant(id,eto);
-//        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
-//    }
+
 
 }

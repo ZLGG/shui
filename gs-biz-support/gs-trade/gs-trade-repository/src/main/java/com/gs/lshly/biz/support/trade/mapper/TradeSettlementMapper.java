@@ -70,10 +70,10 @@ public interface TradeSettlementMapper extends BaseMapper<TradeSettlement> {
             "FROM gs_trade_settlement WHERE flag='0' and cdate >= '${startDate}' and cdate < '${endDate}'")
     Map<String, Object> queryStatementData(@Param("startDate") LocalDateTime startDate, @Param("endDate")LocalDateTime endDate);
 
-    @Select("SELECT IFNULL(sum(trade_amount), 0) tradeAmountquantity FROM gs_trade WHERE flag='0' AND ${ew.sqlSegment}")
+    @Select("SELECT IFNULL(sum(trade_amount), 0) tradeAmountquantity FROM gs_trade WHERE flag='0' and trade_state = 40  AND ${ew.sqlSegment}")
     BigDecimal settlementAmount(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
-    @Select("SELECT count(*) count FROM gs_trade WHERE flag='0' AND ${ew.sqlSegment}")
+    @Select("SELECT count(*) count FROM gs_trade WHERE flag='0' and trade_state = 40  AND ${ew.sqlSegment}")
     Integer orderQuantity(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 
     @Select("SELECT IFNULL(sum(trade_amount), 0) tradeAmount,IFNULL(sum(quantity), 0) quantity,count(*) count " +

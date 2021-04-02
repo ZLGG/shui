@@ -179,6 +179,9 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("订单ID")
         private String tradeId;
 
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
+
         @ApiModelProperty("售后类型(10:换货,20:仅退款,30:退货退款)")
         private Integer rightsType;
 

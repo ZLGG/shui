@@ -97,9 +97,24 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
             return new PageData<>();
         }
         wrapper.eq("pos_code",simpleVO.getPosShopId());
+        wrapper.orderByAsc("is_release","cdate");
 
         IPage<GoodsPosTemporary> page = MybatisPlusUtil.pager(qto);
-        repository.page(page, wrapper);
+        IPage<GoodsPosTemporary> temporaryIPage = repository.page(page, wrapper);
+        List<PCMerchGoodsPosTemporaryVO.ListVO> listVOS = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(temporaryIPage) && ObjectUtils.isNotEmpty(temporaryIPage.getRecords())){
+            //按规格名称分组
+            Map<String,List<GoodsPosTemporary>> map = temporaryIPage.getRecords().parallelStream()
+                    .collect(Collectors.groupingBy(GoodsPosTemporary::getSpuId));
+            //组装
+            listVOS = map.values().stream().map(e ->{
+                PCMerchGoodsPosTemporaryVO.ListVO list = new PCMerchGoodsPosTemporaryVO.ListVO();
+                BeanUtils.copyProperties(e.get(0),list);
+                return list;
+            }).collect(Collectors.toList());
+            return new PageData<>(listVOS,qto.getPageNum(),qto.getPageNum(),map.size());
+        }
+
         return MybatisPlusUtil.toPageData(qto, PCMerchGoodsPosTemporaryVO.ListVO.class, page);
     }
 
@@ -134,15 +149,19 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
                 eto.setId(posTemporary.getId());
             }else {
                 /**
-                 * 若没有该商品的数据而临时库中有该spuId,则判断传过来的参数是否符合多规格的参数条件
+                 * 若没有该商品的数据而临时库中有该spuId,则判断传过来的参数是否符合多规格或单规格的参数条件
                  * 1.若符合则同步骤2.3.4.5
                  * 2.若不符合则抛异常
                  */
-                if (StringUtils.isBlank(eto.getSpecName())){
-                    throw new BusinessException("多规格商品规格名称不能为空！");
-                }
-                if (StringUtils.isBlank(eto.getSpecValue())){
-                    throw new BusinessException("多规格商品规格值不能为空！");
+                if (StringUtils.isBlank(posTemporaries.get(0).getSpecName())){
+                    throw new BusinessException("商品规格数据参数错误");
+                }else {
+                    if (StringUtils.isBlank(eto.getSpecName())){
+                        throw new BusinessException("多规格商品规格名称不能为空！");
+                    }
+                    if (StringUtils.isBlank(eto.getSpecValue())){
+                        throw new BusinessException("多规格商品规格值不能为空！");
+                    }
                 }
                 eto.setIsRelease(GoodsIsReleaseEnum.未发布.getCode());
             }
@@ -225,7 +244,11 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
             List<PCMerchSkuGoodInfoVO.DetailVO> skuList = getSkuInfo(goodsInfo.getId(),goodsInfo.getShopId(),posTemporaryList);
             if (ObjectUtils.isNotEmpty(skuList) && StringUtils.isNotEmpty(skuList.get(0).getSpecsKey())){
                 detailVO.setSkuVoList(skuList);
+                if (posTemporaries.size() > 1 && posTemporaryList.size() >0){
+                    detailVO.getSkuVoList().addAll(getSkuInfoList(posTemporaryList));
+                }
             }
+
             if (posTemporaries.size() > 1){
                 detailVO.setSpecList(getSpecInfoList(posTemporaries));
             }
@@ -245,9 +268,11 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
             detailVO.setSalePrice(posTemporary.getPrice());
             detailVO.setGoodsImage(posTemporary.getImages());
             //判断是否为多规格商品
-            if (StringUtils.isNotBlank(posTemporary.getSpecName())){
+            if (posTemporaries.size() > 1){
                detailVO.setSkuVoList(getSkuInfoList(posTemporaries));
                detailVO.setSpecList(getSpecInfoList(posTemporaries));
+            }else {
+                detailVO.setGoodsNo(posTemporary.getPosSku69Code());
             }
         }
         return detailVO;
@@ -267,12 +292,12 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
     }
 
     @Override
-    public void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.IdDTO dto) {
-        if (null == dto || StringUtils.isBlank(dto.getId())){
+    public void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.PosSpuIdDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getSpuId())){
             throw new BusinessException("iD不能为空！");
         }
         QueryWrapper<GoodsPosTemporary> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("id",dto.getId());
+        wrapper.eq("spu_id",dto.getSpuId());
 
         GoodsPosTemporary posTemporary = new GoodsPosTemporary();
         posTemporary.setIsRelease(GoodsIsReleaseEnum.已发布.getCode());
@@ -431,7 +456,6 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
                 BeanUtils.copyProperties(goodsAttributeInfo,listVO);
                 listVOS.add(listVO);
             }
-            return listVOS;
         }
         return listVOS;
     }

@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.common;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +64,21 @@ public abstract class CommonShopVO implements Serializable {
 
         @ApiModelProperty("店铺联系人邮箱")
         private String shopManEmail;
+
+        @ApiModelProperty("店铺logo")
+        private String shopLogo;
+
+        @ApiModelProperty("店铺类型")
+        private String shopTypeName;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        private LocalDateTime openTime;
+
+        @ApiModelProperty("开通状态[10=营业 20=关闭]")
+        private Integer shopState;
+
+        @ApiModelProperty("经营品牌")
+        private String brandName;
 
         @ApiModelProperty("商家来源[10=平台入驻 20=平台添加]")
         private String shopMerchantFrom;
@@ -200,6 +217,19 @@ public abstract class CommonShopVO implements Serializable {
 
         @ApiModelProperty("类目平台")
         private Integer useFiled;
+
+    }
+
+    @Data
+    @ApiModel("CommonShopVO.ShopCategoryInfoVO")
+    @Accessors(chain = true)
+    public static class ShopCategoryInfoVO implements Serializable{
+
+        @ApiModelProperty("商品类目名称")
+        private String categoryName;
+
+        @ApiModelProperty("平台使用费")
+        private BigDecimal sharePrice;
 
     }
 

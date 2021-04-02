@@ -128,27 +128,6 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime publishTime;
 
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private Integer saleType;
-
-        @ApiModelProperty("信天游产品号")
-        private Integer thirdProductId;
-
     }
 
     @Data
@@ -371,25 +350,6 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "商品有效期",position = 21)
         private Integer goodsValidDays;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-
-        @ApiModelProperty("信天游产品号")
-        private Integer thirdProductId;
-
     }
 
     @Data
@@ -454,27 +414,6 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "同一商品标识",position =20)
         private String goodsNo;
-
-        @ApiModelProperty("积分价格")
-        private String pointPrice;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private String isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private String isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private String inMemberPointPrice;
-
-        @ApiModelProperty("出售类型（0普通，1活动）")
-        private String saleType;
-
-        @ApiModelProperty("信天游产品号")
-        private String thirdProductId;
     }
 
 
@@ -499,24 +438,6 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("商品售价")
         private BigDecimal salePrice;
-
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-
-        @ApiModelProperty("办理备注")
-        private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-
-        @ApiModelProperty("信天游产品号")
-        private Integer thirdProductId;
     }
 
     @Data
@@ -645,6 +566,18 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
     @ApiModel("PCMerchGoodsInfoVO.SkuIdByGoodsNoVO")
     @Accessors(chain = true)
     public static class SkuIdByGoodsNoVO implements Serializable{
+        @ApiModelProperty("skuId")
+        private String skuId;
+
+        @ApiModelProperty("商品ID")
+        private String goodsId;
+
+    }
+
+    @Data
+    @ApiModel("PCMerchGoodsInfoVO.SkuIdByGoodsNoPosVO")
+    @Accessors(chain = true)
+    public static class SkuIdByGoodsNoPosVO implements Serializable{
         @ApiModelProperty("skuId")
         private String skuId;
 

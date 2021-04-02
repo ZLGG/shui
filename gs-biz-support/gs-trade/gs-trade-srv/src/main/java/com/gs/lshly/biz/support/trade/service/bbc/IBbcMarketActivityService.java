@@ -3,8 +3,7 @@ package com.gs.lshly.biz.support.trade.service.bbc;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
+import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
@@ -44,10 +43,7 @@ public interface IBbcMarketActivityService {
 
     BbcMarketActivityVO.jurisdiction jurisdiction();
 
-    /**
-     * 秒杀列表
-     * @param dto
-     * @return
-     */
-    BbcSiteTopicVO.TopicVO listFlashsale(BaseDTO dto);
+    List<BbcMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto);
+
+    PageData<BbcMarketActivityVO.activityListPageVO> activityListPage(BbcMarketActivityQTO.QTO qto);
 }

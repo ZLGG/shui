@@ -33,8 +33,10 @@ public interface MarketMerchantGroupbuyMapper extends BaseMapper<MarketMerchantG
             "FROM\n" +
             "\tgs_market_merchant_groupbuy_goods goods\n" +
             "\tLEFT JOIN gs_market_merchant_groupbuy groupbuy ON goods.groupbuy_id = groupbuy.id \n" +
+            "\tLEFT JOIN gs_goods_info gg ON gg.id=goods.goods_id \n" +
             "WHERE\n" +
-            "\tgroupbuy.state = 20 \n" +
+            "\tgg.goods_state=20 \n" +
+            "\tAND groupbuy.state = 20 \n" +
             "\tAND groupbuy.flag = 0 \n" +
             "\tAND goods.flag =0 AND ${ew.sqlSegment}")
     IPage<PCBbbMarketActivityVO.groupbuyVO> selectGroupbuyListPage(IPage<PCBbbMarketActivityVO.groupbuyVO> pager, @Param(Constants.WRAPPER) QueryWrapper<PCBbbMarketActivityQTO.QTO> qw);
@@ -47,8 +49,10 @@ public interface MarketMerchantGroupbuyMapper extends BaseMapper<MarketMerchantG
             "FROM\n" +
             "\tgs_market_merchant_groupbuy_goods goods\n" +
             "\tLEFT JOIN gs_market_merchant_groupbuy groupbuy ON goods.groupbuy_id = groupbuy.id \n" +
+            "\tLEFT JOIN gs_goods_info gg ON gg.id=goods.goods_id \n" +
             "WHERE\n" +
-            "\tgroupbuy.state = 20 \n" +
+            "\tgg.goods_state=20 \n" +
+            "\tAND groupbuy.state = 20 \n" +
             "\tAND groupbuy.flag = 0 \n" +
             "\tAND goods.flag =0 AND ${ew.sqlSegment}")
     IPage<BbbH5MarketActivityVO.groupbuyVO> selectGroupbuyH5ListPage(IPage<BbbH5MarketActivityVO.groupbuyVO> pager,@Param(Constants.WRAPPER) QueryWrapper<BbbH5MarketActivityQTO.QTO> qw);
@@ -61,8 +65,10 @@ public interface MarketMerchantGroupbuyMapper extends BaseMapper<MarketMerchantG
             "FROM\n" +
             "\tgs_market_merchant_groupbuy_goods goods\n" +
             "\tLEFT JOIN gs_market_merchant_groupbuy groupbuy ON goods.groupbuy_id = groupbuy.id \n" +
+            "\tLEFT JOIN gs_goods_info gg ON gg.id=goods.goods_id \n" +
             "WHERE\n" +
-            "\tgroupbuy.state = 20 \n" +
+            "\tgg.goods_state=20 \n" +
+            "\tAND groupbuy.state = 20 \n" +
             "\tAND groupbuy.flag = 0 \n" +
             "\tAND goods.flag =0 AND ${ew.sqlSegment}")
     IPage<BbcMarketActivityVO.groupbuyVO> selectGroupbuyBbcH5ListPage(IPage<BbcMarketActivityVO.groupbuyVO> pager,@Param(Constants.WRAPPER)  QueryWrapper<BbcMarketActivityQTO.QTO> qw);

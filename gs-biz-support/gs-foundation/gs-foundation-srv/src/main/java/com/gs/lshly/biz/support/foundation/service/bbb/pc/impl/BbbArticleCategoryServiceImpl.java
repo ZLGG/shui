@@ -59,6 +59,7 @@ public class BbbArticleCategoryServiceImpl implements IBbbArticleCategoryService
     public List<BbbArticleCategoryVO.HelpListVO> helpList(BaseDTO dto) {
         QueryWrapper<DataArticleCategory> queryLeveWrapper =  MybatisPlusUtil.query();
         queryLeveWrapper.eq("terminal", TerminalEnum.BBB.getCode());
+        queryLeveWrapper.orderByDesc("cdate");
         List<DataArticleCategory> categoryList = repository.list(queryLeveWrapper);
         List<BbbArticleCategoryVO.HelpListVO> voList  = new ArrayList<>();
         for(DataArticleCategory category:categoryList){

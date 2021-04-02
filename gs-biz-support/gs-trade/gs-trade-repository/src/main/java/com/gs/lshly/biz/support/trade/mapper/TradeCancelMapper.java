@@ -23,12 +23,14 @@ public interface TradeCancelMapper extends BaseMapper<TradeCancel> {
     @Select("SELECT td.*,t.`pay_type` as `pay_type` " +
             "FROM `gs_trade_cancel` td " +
             "LEFT JOIN `gs_trade` t ON t.id=td.`trade_id` " +
+            "LEFT JOIN `gs_user` u ON t.user_id=u.id " +
             "WHERE td.`flag`=0 AND t.`flag`=0 AND ${ew.sqlSegment}")
     IPage<TradeCancelVO.ListVO> selectListPage(IPage<TradeCancelVO.ListVO> page, @Param(Constants.WRAPPER) QueryWrapper<TradeCancelQTO.QTO> qw);
 
     @Select("SELECT td.* " +
             "FROM `gs_trade_cancel` td " +
             "LEFT JOIN `gs_trade` t ON t.id=td.`trade_id` " +
+            "LEFT JOIN `gs_user` u ON td.`user_id`=u.`id` " +
             "WHERE td.`flag`=0 AND t.`flag`=0 AND ${ew.sqlSegment}")
     IPage<TradeCancel> selectCancelListPage(IPage<TradeCancel> page,@Param(Constants.WRAPPER)  QueryWrapper<TradeCancel> qw);
 }

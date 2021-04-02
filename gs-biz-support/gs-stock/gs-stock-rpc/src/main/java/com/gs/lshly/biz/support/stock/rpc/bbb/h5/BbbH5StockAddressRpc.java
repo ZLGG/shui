@@ -41,6 +41,12 @@ public class BbbH5StockAddressRpc implements IBbbH5StockAddressRpc {
     }
 
     @Override
+    public BbbH5StockAddressVO.DetailVO innerdetailStockAddress(BbbH5StockAddressDTO.IdAndTypeDTO dto) {
+
+        return stockAddressService.innerdetailStockAddress(dto);
+    }
+
+    @Override
     public PageData<BbbH5StockAddressVO.ListVO> pageAddressListVO(BbbH5StockAddressQTO.QTO qto) {
         return stockAddressService.pageAddressListVO(qto);
     }

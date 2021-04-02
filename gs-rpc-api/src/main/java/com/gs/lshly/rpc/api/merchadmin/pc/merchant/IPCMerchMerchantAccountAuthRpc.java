@@ -4,6 +4,7 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.dto.CommonPhoneLoginDTO;
+import com.gs.lshly.common.struct.merchadmin.h5.merchant.dto.H5MerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 
 /**
@@ -30,4 +31,9 @@ public interface IPCMerchMerchantAccountAuthRpc {
     String loadSessionKeyByWxOpenid(String openid);
 
     BbbUserVO.LoginVO merchantLoginByWxInnerPhone(CommonPhoneLoginDTO.WxUserPhone dto);
+
+    void logout(String phone, String openid);
+
+    //注册
+    String regMerchantAccount(H5MerchMerchantAccountDTO.RegDTO eto);
 }

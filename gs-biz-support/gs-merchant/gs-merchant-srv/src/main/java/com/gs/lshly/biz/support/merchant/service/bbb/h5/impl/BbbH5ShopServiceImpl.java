@@ -1,7 +1,7 @@
 package com.gs.lshly.biz.support.merchant.service.bbb.h5.impl;
 
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.ObjectUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -11,19 +11,16 @@ import com.gs.lshly.biz.support.merchant.enums.MerchShopNavigationEnum;
 import com.gs.lshly.biz.support.merchant.repository.*;
 import com.gs.lshly.biz.support.merchant.service.bbb.h5.IBbbH5ShopService;
 import com.gs.lshly.common.enums.ShopNavigationMenuTypeEnum;
+import com.gs.lshly.common.enums.SitePCShowEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.merchant.ShopStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
-import com.gs.lshly.common.struct.bbb.h5.foundation.vo.BbbH5SiteFloorVO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.dto.BbbH5ShopDTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.qto.BbbH5ShopQTO;
-import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopBannerVO;
-import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopFloorVO;
-import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopNavigationMenuVO;
-import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopVO;
+import com.gs.lshly.common.struct.bbb.h5.merchant.vo.*;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -34,16 +31,10 @@ import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserFavoritesShopRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.net.ssl.*;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +78,7 @@ public class BbbH5ShopServiceImpl implements IBbbH5ShopService {
             queryWrapper.like("shop_name", qto.getShopName());
         }
         queryWrapper.eq("shop_state", ShopStateEnum.开启状态.getCode());
+        queryWrapper.orderByDesc("cdate");
         IPage<Shop> page = MybatisPlusUtil.pager(qto);
         repository.page(page, queryWrapper);
         return MybatisPlusUtil.toPageData(qto, BbbH5ShopVO.ListVO.class, page);
@@ -149,7 +141,8 @@ public class BbbH5ShopServiceImpl implements IBbbH5ShopService {
         //店铺楼层
         QueryWrapper<ShopFloor> floorQueryWrapper = MybatisPlusUtil.query();
         floorQueryWrapper.eq("shop_id",dto.getId());
-        menuQueryWrapper.eq("terminal", TerminalEnum.BBB.getCode());
+        floorQueryWrapper.eq("pc_show", SitePCShowEnum.不显示.getCode());
+        floorQueryWrapper.eq("terminal", TerminalEnum.BBB.getCode());
         List<ShopFloor> shopFloorList = shopFloorRepository.list(floorQueryWrapper);
         if(ObjectUtils.isNotEmpty(shopFloorList)){
             complexVO.setFloorList( ListUtil.listCover(BbbH5ShopFloorVO.ListVO.class,shopFloorList));
@@ -163,7 +156,7 @@ public class BbbH5ShopServiceImpl implements IBbbH5ShopService {
         queryWrapper.eq("shop_floor_id",qto.getFloorId());
         IPage<ShopFloorGoods> pager = MybatisPlusUtil.pager(qto);
         shopFloorGoodsRepository.page(pager,queryWrapper);
-        List<String> goodsIdList = ListUtil.getIdList(ShopFloorGoods.class,pager.getRecords());
+        List<String> goodsIdList = ListUtil.getIdList(ShopFloorGoods.class,pager.getRecords(),"goodsId");
         if(ObjectUtil.isEmpty(goodsIdList)){
             PageData<BbbH5GoodsInfoVO.HomeInnerServiceVO> pageData = MybatisPlusUtil.toPageData(new ArrayList<>(),qto.getPageNum(),qto.getPageSize(),pager.getTotal());
             return pageData;
@@ -271,6 +264,86 @@ public class BbbH5ShopServiceImpl implements IBbbH5ShopService {
             return shopIdList;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<BbbH5ShopNavigationVO.NavigationListVO> listNavigationListVO(BbbH5ShopDTO.IdDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getId())){
+            throw new BusinessException("店铺id不能为空！");
+        }
+        QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("terminal",TerminalEnum.BBC.getCode());
+        wrapper.eq("shop_id",dto.getId());
+        wrapper.orderByAsc("idx","id");
+        List<ShopNavigation> dataList =  shopNavigationRepository.list(wrapper);
+        Map<String, BbbH5ShopNavigationVO.NavigationListVO> utilMap = new HashMap<>();
+        for(ShopNavigation item:dataList){
+            if(MerchShopNavigationEnum.一级分类.getCode().equals(item.getLeve())){
+                BbbH5ShopNavigationVO.NavigationListVO parentItem =  utilMap.get(item.getId());
+                if(ObjectUtils.isNull(parentItem)){
+                    parentItem = new BbbH5ShopNavigationVO.NavigationListVO();
+                    parentItem.setChildList(new ArrayList<>());
+                    utilMap.put(item.getId(),parentItem);
+                }
+                BeanUtils.copyProperties(item,parentItem);
+            }
+        }
+
+        for(ShopNavigation item:dataList){
+            if(MerchShopNavigationEnum.二级分类.getCode().equals(item.getLeve())){
+                BbbH5ShopNavigationVO.NavigationListVO parentItem =  utilMap.get(item.getParentId());
+                if(ObjectUtils.isNull(parentItem)){
+                    Console.log("二级分类:{},{},{}",item.getId(),item.getNavName(),item.getParentId());
+                    throw new BusinessException("二级分类的父ID无效");
+                }
+                BbbH5ShopNavigationVO.NavigationChildVO childItem = new BbbH5ShopNavigationVO.NavigationChildVO();
+                BeanUtils.copyProperties(item,childItem);
+                parentItem.getChildList().add(childItem);
+            }
+        }
+        List<BbbH5ShopNavigationVO.NavigationListVO> voList = new ArrayList<>(utilMap.values());
+        voList.sort((a, b) -> a.getIdx() - b.getIdx());
+        for(BbbH5ShopNavigationVO.NavigationListVO listItem:voList){
+            listItem.getChildList().sort((a,b)-> a.getIdx() - b.getIdx());
+        }
+        return voList;
+    }
+
+    @Override
+    public List<String> innerGetNavigationList(String shopNavigationId) {
+        QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("id",shopNavigationId);
+        ShopNavigation shopNavigation = shopNavigationRepository.getOne(wrapper);
+        if (ObjectUtils.isEmpty(shopNavigation)){
+            throw new BusinessException("店铺类目不存在！");
+        }
+        List<String> navigationIdList = new ArrayList<>();
+        if (shopNavigation.getLeve().equals(MerchShopNavigationEnum.一级分类.getCode())){
+            QueryWrapper<ShopNavigation> navigationQueryWrapper = MybatisPlusUtil.query();
+            navigationQueryWrapper.eq("parent_id",shopNavigationId);
+            List<ShopNavigation> shopNavigations = shopNavigationRepository.list(navigationQueryWrapper);
+            if (ObjectUtils.isNotEmpty(shopNavigations)){
+                List<String> list = ListUtil.getIdList(ShopNavigation.class,shopNavigations);
+                navigationIdList.addAll(list);
+            }
+        }
+        if (shopNavigation.getLeve().equals(MerchShopNavigationEnum.二级分类.getCode())){
+            navigationIdList.add(shopNavigationId);
+        }
+        return navigationIdList;
+    }
+
+    @Override
+    public BbbH5ShopVO.ShopIdName getShopIdName(BbbH5ShopDTO.ShopNavigationIdDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getShopNavigationId())){
+            throw new BusinessException("参数为空，异常！！");
+        }
+        BbbH5ShopVO.ShopIdName shopIdName = new BbbH5ShopVO.ShopIdName();
+        ShopNavigation shopNavigation = shopNavigationRepository.getById(dto.getShopNavigationId());
+        if (null != shopNavigation){
+            shopIdName.setId(StringUtils.isBlank(shopNavigation.getShopId())?"":shopNavigation.getShopId());
+        }
+        return shopIdName;
     }
 
 

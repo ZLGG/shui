@@ -19,6 +19,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchMarketMerchantG
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchMarketMerchantGroupbuyQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantDiscountVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantGroupbuyVO;
+import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
 import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -59,6 +62,9 @@ public class PCMerchMarketMerchantGroupbuyServiceImpl implements IPCMerchMarketM
         QueryWrapper<MarketMerchantGroupbuy> wrapper = new QueryWrapper<>();
         wrapper.eq("merchant_id",qto.getJwtMerchantId()).
                 eq("shop_id",qto.getJwtShopId());
+        IPage pager = MybatisPlusUtil.pager(qto);
+        wrapper.orderByDesc("cdate");
+        wrapper.last("limit "+pager.offset()+","+pager.getSize());
         List<MarketMerchantGroupbuy> list = repository.list(wrapper);
         List<PCMerchMarketMerchantGroupbuyVO.ViewVO> vos=new ArrayList<>();
         Long now = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
@@ -95,9 +101,11 @@ public class PCMerchMarketMerchantGroupbuyServiceImpl implements IPCMerchMarketM
                     if (now < start) {
                         viewVO.setCondition(MarketPtCutStatusEnum.待开始.getCode());
                         vos.add(viewVO);
+                        continue;
                     } else {
                         viewVO.setCondition(MarketPtCutStatusEnum.活动中.getCode());
                         vos.add(viewVO);
+                        continue;
                     }
                 }
                 vos.add(viewVO);
@@ -109,6 +117,10 @@ public class PCMerchMarketMerchantGroupbuyServiceImpl implements IPCMerchMarketM
     @Override
     @Transactional
     public void addMarketMerchantGroupbuy(PCMerchMarketMerchantGroupbuyDTO.AddDTO dto) {
+        if (ObjectUtils.isEmpty(dto)){
+            throw new BusinessException("请填写信息");
+        }
+        checkETO(dto);
         MarketMerchantGroupbuy marketMerchantGroupbuy = new MarketMerchantGroupbuy();
         BeanUtils.copyProperties(dto, marketMerchantGroupbuy);
         marketMerchantGroupbuy.setShopId(dto.getJwtShopId());
@@ -118,7 +130,36 @@ public class PCMerchMarketMerchantGroupbuyServiceImpl implements IPCMerchMarketM
         repository.save(marketMerchantGroupbuy);
         saveGoodsAndSku(dto,marketMerchantGroupbuy);
     }
+    private void checkETO(PCMerchMarketMerchantGroupbuyDTO.AddDTO eto) {
+        if (ObjectUtils.isEmpty(eto.getGroupbuyName())){
+            throw new BusinessException("请填写名字");
+        }
+        if (ObjectUtils.isEmpty(eto.getGroupbuyDescribe())){
+            throw new BusinessException("请填写描述");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidEndTime())){
+            throw new BusinessException("请填写结束时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidStartTime())){
+            throw new BusinessException("请填写优惠卷有效开始时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getOnUserLeve())){
+            throw new BusinessException("请填写优惠卷适用会员等级(1,2,3,4,5,6)");
+        }
+        if (ObjectUtils.isEmpty(eto.getUserDoNumber())){
+            throw new BusinessException("请填写可参与次数");
+        }
+        if (ObjectUtils.isEmpty(eto.getTerminal())){
+            throw new BusinessException("请填写适用平台[10=pc端 20=wap端 30=app端]");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidStartTime())){
+            throw new BusinessException("请检查时间");
+        }
 
+    }
 
     @Override
     @Transactional
@@ -168,6 +209,9 @@ public class PCMerchMarketMerchantGroupbuyServiceImpl implements IPCMerchMarketM
                 for (PCMerchMarketMerchantGroupbuyDTO.SignGoodsSku signGoodsSku : goodsSPUAll) {
                     if (marketMerchantGroupbuyGoods.getGoodsId().equals(signGoodsSku.getGoodsId())){
                         //是这个商品的SKU
+                        if (ObjectUtils.isEmpty(signGoodsSku.getActivitySalePrice())){
+                            throw new BusinessException("请填写团购价格");
+                        }
                         MarketMerchantGroupbuyGoodsSku marketMerchantGroupbuyGoodsSku = new MarketMerchantGroupbuyGoodsSku();
                         marketMerchantGroupbuyGoodsSku.setGroupbuyId(marketMerchantGroupbuy.getId()).
                                 setMerchantId(marketMerchantGroupbuy.getMerchantId()).
@@ -204,17 +248,39 @@ public class PCMerchMarketMerchantGroupbuyServiceImpl implements IPCMerchMarketM
                     ids.add(marketMerchantGroupbuyGoods.getGoodsId());
                     viewGoodsGift.setGoodsId(marketMerchantGroupbuyGoods.getGoodsId());
                 }
+                String goodsName=null;
                 PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO innerServiceGoodsInfoVO = null;
                 if (ObjectUtils.isNotEmpty(ids)) {
-                    List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceGoodsInfoVOS = ipcMerchAdminGoodsInfoRpc.innerServiceGoodsInfo(new PCMerchGoodsInfoDTO.IdsInnerServiceDTO().setGoodsIdList(ids).setQueryType(10));
+                    List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceGoodsInfoVOS = ipcMerchAdminGoodsInfoRpc.innerServiceAllGoodsInfo(new PCMerchGoodsInfoDTO.IdsInnerServiceDTO().setGoodsIdList(ids).setQueryType(10));
                     System.out.println(innerServiceGoodsInfoVO+"11111111111111111111");
                     if (ObjectUtils.isNotEmpty(innerServiceGoodsInfoVOS)){
                         innerServiceGoodsInfoVO=innerServiceGoodsInfoVOS.get(0);
                         System.out.println(innerServiceGoodsInfoVO+"222222222222222222");
                         if (ObjectUtils.isNotEmpty(innerServiceGoodsInfoVO)) {
                             viewGoodsGift.setGoodsName(innerServiceGoodsInfoVO.getGoodsName()).setImageUrl(innerServiceGoodsInfoVO.getGoodsImage());
+                            goodsName=innerServiceGoodsInfoVO.getGoodsName();
                         }
                     }
+                }
+                QueryWrapper<MarketMerchantGroupbuyGoodsSku> query = MybatisPlusUtil.query();
+                query.and(i->i.eq("goods_spu_item_id",marketMerchantGroupbuyGoods.getId()));
+                List<MarketMerchantGroupbuyGoodsSku> list = iMarketMerchantGroupbuyGoodsSkuRepository.list(query);
+                if (ObjectUtils.isNotEmpty(list)){
+                    ArrayList<PCMerchMarketMerchantGroupbuyVO.ActivityGoodsSku> activityGoodsSkus = new ArrayList<>();
+                    List<PCMerchSkuGoodInfoVO.ListVO> skuId = ipcMerchAdminGoodsInfoRpc.innerServiceSkuGoodsList(ListUtil.getIdList(MarketMerchantGroupbuyGoodsSku.class, list, "skuId"));
+                    if (ObjectUtils.isNotEmpty(skuId)){
+                        for (MarketMerchantGroupbuyGoodsSku marketMerchantGroupbuyGoodsSku : list) {
+                            for (PCMerchSkuGoodInfoVO.ListVO listVO : skuId) {
+                                if (listVO.getId().equals(marketMerchantGroupbuyGoodsSku.getSkuId())){
+                                    System.out.println("111111111111111111111111");
+                                    PCMerchMarketMerchantGroupbuyVO.ActivityGoodsSku activityGoodsSku = new PCMerchMarketMerchantGroupbuyVO.ActivityGoodsSku();
+                                    activityGoodsSku.setActivitySaleSkuPrice(marketMerchantGroupbuyGoodsSku.getGroupbuySaleSkuPrice()).setName(goodsName).setImageUrl(listVO.getImage()).setSpecsValue(listVO.getSpecsValue());
+                                    activityGoodsSkus.add(activityGoodsSku);
+                                }
+                            }
+                        }
+                    }
+                    viewGoodsGift.setSkuInfo(activityGoodsSkus);
                 }
                 goodsView.add(viewGoodsGift);
             }

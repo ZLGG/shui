@@ -13,6 +13,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeRightsDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeRightsRefundDTO;
@@ -28,7 +29,9 @@ import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
 import com.gs.lshly.rpc.api.pos.IPosTradeRpc;
 import com.lakala.boss.api.config.MerchantBaseEnum;
+import com.lakala.boss.api.entity.request.EntOrderDetailRefundRequest;
 import com.lakala.boss.api.entity.request.EntOrderRefundRequest;
+import com.lakala.boss.api.entity.request.RefundDetail;
 import com.lakala.boss.api.entity.response.EntOrderRefundResponse;
 import com.lakala.boss.api.utils.BossClient;
 import com.lakala.boss.api.utils.UuidUtil;
@@ -73,6 +76,8 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private ITradePayRepository iTradePayRepository;
     @Autowired
     private ITradeCancelRepository iTradeCancelRepository;
+    @Autowired
+    private IPosErrorInfoRepository iPosErrorInfoRepository;
     @DubboReference
     private IGoodsInfoRpc iGoodsInfoRpc;
     @DubboReference
@@ -141,6 +146,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
                         rightsListVO.setRightsType(tradeRights.getRightsType());
                         rightsListVO.setState(tradeRights.getState());
                         rightsListVO.setTradeId(tradeRights.getTradeId());
+                        rightsListVO.setTradeCode(tradeRights.getOrderCode());
                         listVOS.add(rightsListVO);
             }
         }
@@ -268,6 +274,10 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         if (StringUtils.isNotBlank(qto.getId())){
             query.and(i->i.like("id",qto.getId()));
         }
+        int count = repository.count(query);
+        query.orderByDesc("cdate");
+        IPage pager = MybatisPlusUtil.pager(qto);
+        query.last("limit "+pager.offset()+","+pager.getSize());
         List<TradeRights> list = repository.list(query);
         List<TradeRightsVO.RightsRefundListVO> ListVOS=new ArrayList<>();
         if (ObjectUtils.isNotEmpty(list)){
@@ -279,10 +289,11 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
                 if (ObjectUtils.isNotEmpty(trade)){
                     rightsRefundListVO.setTradeAmount(trade.getTradeAmount());
                 }
+                rightsRefundListVO.setTradeCode(tradeRights.getOrderCode());
                 ListVOS.add(rightsRefundListVO);
             }
         }
-        return new PageData<>(ListVOS,qto.getPageNum(),qto.getPageSize(),ListVOS.size());
+        return new PageData<>(ListVOS,qto.getPageNum(),qto.getPageSize(),count);
     }
 
     @Override
@@ -295,6 +306,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         if (ObjectUtils.isNotEmpty(tradeRights)){
             BeanUtils.copyProperties(tradeRights,rightsRefundViewVO);
         }
+        rightsRefundViewVO.setTradeCode(tradeRights.getOrderCode());
         UserVO.MiniVO mini = iUserRpc.mini(new UserDTO.IdDTO(tradeRights.getUserId()));
         if (ObjectUtils.isNotEmpty(mini)) {
             if (StringUtils.isNotBlank(mini.getUserName())) {
@@ -305,11 +317,9 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         if (ObjectUtils.isNotEmpty(trade)){
             rightsRefundViewVO.setTradeAmount(trade.getTradeAmount());
         }
-        List<String> shopIds=new ArrayList<>();
-        shopIds.add(tradeRights.getShopId());
-        ShopVO.InnerSimpleVO innerSimpleVO = iShopRpc.innerlistShopIdName(new BaseDTO(), shopIds).get(0);
-        if (ObjectUtils.isNotEmpty(innerSimpleVO)){
-            rightsRefundViewVO.setShopName(innerSimpleVO.getShopName());
+        ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(tradeRights.getTradeId()));
+        if (ObjectUtils.isNotEmpty(detailVO)){
+            rightsRefundViewVO.setShopName(detailVO.getShopName());
         }
         rightsRefundViewVO.setShopRefundAmount(tradeRights.getRefundAmount());
         if (tradeRights.getState().equals(TradeRightsStateEnum.完成.getCode())){
@@ -362,22 +372,34 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
                     QueryWrapper<TradePay> query = MybatisPlusUtil.query();
                     query.and(i->i.eq("trade_id",tradeRights.getTradeId()));
                     TradePay one = iTradePayRepository.getOne(query);
+                    Trade trade = iTradeRepository.getById(one.getTradeId());
+                    if (ObjectUtils.isEmpty(trade)){
+                        throw new BusinessException("没有查询到订单数据");
+                    }
                     if (ObjectUtils.isNotEmpty(one)){
                         if (one.getPayState()==40){
-                            EntOrderRefundRequest request = new EntOrderRefundRequest();
-//                            String merchantId = iCommonShopRpc.lakalaNoByShopId(one.getShopId());
-//                            if (StringUtils.isNotBlank(merchantId)){
-//                                request.setMerchantId( merchantId);
-//                            }
+                            EntOrderDetailRefundRequest request = new EntOrderDetailRefundRequest();
+                            String childMerchantId = iCommonShopRpc.lakalaNoByShopId(one.getShopId());
+
                             //测试放开
                             request.setMerchantId(MerchantBaseEnum.merchant_hly_Id.getValue());
                             request.setRequestId(UuidUtil.getUuid());
                             request.setOrderId(one.getTradeCode());
+                            request.setRefundOrderId(tradeRights.getId());
                             String total = String.valueOf(tradeRights.getRefundAmount().multiply(new BigDecimal(100)).intValue());
                             if (Integer.parseInt(total)==0){
                                 tradeRightsRefund.setState(TradeRightsRefundStateEnum.成功.getCode());
                             }else if (Integer.parseInt(total)>0){
-                                request.setRefundAmount(total);
+                                List<RefundDetail> list=new ArrayList<>();
+                                RefundDetail refundDetail = new RefundDetail();
+                                if (StringUtils.isNotBlank(childMerchantId)){
+                                    refundDetail.setRcvMerchantId( childMerchantId);
+                                }
+                                refundDetail.setDetailOrderId(trade.getChildTradeId());//子订单号
+                                refundDetail.setDetailRefundAmount(total);
+                                list.add(refundDetail);
+                                request.setRefundDetail(JSONObject.toJSONString(list));
+                                request.setRefundTolAmount(total);
                                 BossClient client = new BossClient(MerchantBaseEnum.merchant_hly_CertPath.getValue(),
                                         MerchantBaseEnum.merchant_hly_CertPass.getValue(), MerchantBaseEnum.serverUrl.getValue());
                                 EntOrderRefundResponse response = null;
@@ -390,6 +412,21 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
                                 System.out.println("[REQUEST]: " + request.toString());
                                 if (response.isSuccess()) {
                                     System.out.println("[END]: " + JSONObject.toJSONString(response));
+                                    try {
+                                        PosFinishAndCancelRequestDTO.DTO dto1 = new PosFinishAndCancelRequestDTO.DTO();
+                                        ShopVO.DetailVO detailVO1 = iShopRpc.innerByIdGetPosShopId(tradeRights.getShopId());
+                                        if (ObjectUtils.isNotEmpty(detailVO1)){
+                                            dto1.setShop(ObjectUtils.isNotEmpty(detailVO1.getPosShopId())?detailVO1.getPosShopId():"").
+                                                    setPlatformId(ObjectUtils.isNotEmpty(detailVO1.getPosShopId())?detailVO1.getPosShopId():"");
+                                        }
+                                        dto1.setNumber(tradeRights.getId());
+                                        iPosTradeRpc.FinishOrderRight(dto1);
+                                    }catch (Exception e){
+                                        log.info("订单推送POS发生异常："+e.getMessage(),e);
+                                        PosErrorInfo posErrorInfo = new PosErrorInfo();
+                                        posErrorInfo.setMessage("失败").setTarget("BbcTradeRightsServiceImpl.confirmReceipt 390：2c退换货完成推送失败");
+                                        iPosErrorInfoRepository.save(posErrorInfo);
+                                    }
                                 } else {
                                     System.out.println("返回数据: " + JSONObject.toJSONString(response));
                                     System.out.println("接口调用失败");
@@ -430,7 +467,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             }
              //推送到POS
 //             PosFinishAndCancelRequestDTO.DTO dto1 = new PosFinishAndCancelRequestDTO.DTO();
-//             dto1.setNumber(tradeRights.getId()).setShop("dpos1021").setPlatformId("dpos1021");
+//             dto1.setNumber(tradeRights.getId()).setShop("dpos-int1021").setPlatformId("dpos1021");
             // iPosTradeRpc.FinishOrderRight(dto1);
          }
     }

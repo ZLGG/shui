@@ -62,6 +62,12 @@ public abstract class BbbH5TradeBuildDTO implements Serializable {
 
         @ApiModelProperty(value = "优惠券", hidden = true)
         private CommonMarketVO.UserCardVO userCardVO;
+
+        @ApiModelProperty("发票ID")
+        private String invoiceId;
+
+        @ApiModelProperty("发票地址ID")
+        private String invoiceAddressId;
         @Data
         @ApiModel(value = "BbbH5TradeBuildDTO.ProductData")
         public static class ProductData implements Serializable {

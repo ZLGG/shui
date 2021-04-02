@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class BbbTradeSettlementVO implements Serializable {
 
     @Data
-    @ApiModel("BbbTradeSettlementVO.SettlementVO")
+    @ApiModel("BbbTradeSettlementVO.ListVO")
     @Accessors(chain = true)
     public static class ListVO implements Serializable {
         //返回地址
@@ -63,7 +63,7 @@ public abstract class BbbTradeSettlementVO implements Serializable {
         private Integer goodsCount;
 
         @ApiModelProperty("总总量")
-        private Integer totalWeight;
+        private BigDecimal totalWeight;
 
         @ApiModelProperty("商品总金额")
         private BigDecimal goodsAmount;
@@ -120,6 +120,18 @@ public abstract class BbbTradeSettlementVO implements Serializable {
             @ApiModelProperty("活动及券后价")
             private BigDecimal activePrice;
         }
+
+    }
+    @Data
+    @ApiModel("BbbTradeSettlementVO.TotalVO")
+    @Accessors(chain = true)
+    public static class TotalVO implements Serializable {
+        @ApiModelProperty("总总量")
+        private BigDecimal totalWeight;
+
+
+        @ApiModelProperty("总运费")
+        private BigDecimal deliveryAmount;
 
     }
 }

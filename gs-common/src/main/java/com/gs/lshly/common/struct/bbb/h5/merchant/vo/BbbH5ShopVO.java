@@ -134,6 +134,9 @@ public abstract class BbbH5ShopVO implements Serializable {
         @ApiModelProperty("店铺评分")
         private BigDecimal shopScore;
 
+        @ApiModelProperty("POS店铺ID")
+        private String posShopId;
+
     }
 
     @Data

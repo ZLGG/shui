@@ -126,8 +126,5 @@ public class MerchantAccount extends Model {
     @TableLogic
     private Boolean flag;
 
-    /**
-     * 联系地址
-     */
-    private String address;
+
 }

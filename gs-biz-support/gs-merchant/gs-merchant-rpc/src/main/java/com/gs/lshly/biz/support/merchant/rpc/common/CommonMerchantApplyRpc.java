@@ -1,5 +1,7 @@
 package com.gs.lshly.biz.support.merchant.rpc.common;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.LegalDictDTO;
+import com.gs.lshly.common.struct.common.LegalDictVO;
 import com.gs.lshly.common.struct.common.dto.CommonMerchantApplyDTO;
 import com.gs.lshly.common.struct.common.qto.CommonMerchantApplyQTO;
 import com.gs.lshly.common.struct.common.vo.CommonMerchantApplyVO;
@@ -51,6 +53,21 @@ public class CommonMerchantApplyRpc implements ICommonMerchantApplyRpc {
     @Override
     public void deleteCategoryRecord(CommonMerchantApplyDTO.IdDTO dto) {
         commonMerchantApplyService.deleteCategoryRecord(dto);
+    }
+
+    @Override
+    public String innerGetLegalId(String merchantId) {
+        return commonMerchantApplyService.innerGetLegalId(merchantId);
+    }
+
+    @Override
+    public String innerSaveSettledApply(LegalDictDTO.SettledInfoETO eto) {
+        return commonMerchantApplyService.innerSaveSettledApply(eto);
+    }
+
+    @Override
+    public LegalDictVO.SettledInfoVO getAfterUpdateSettleInfo(LegalDictDTO.MerchantApplyIdDTO dto) {
+        return commonMerchantApplyService.getAfterUpdateSettleInfo(dto);
     }
 
 

@@ -270,6 +270,27 @@ public abstract class PCMerchMarketMerchantGiftVO implements Serializable {
         @ApiModelProperty("赠品列表")
         private List<PCMerchMarketMerchantGiftVO.GoodsGiveInfo> giftView;
 
+        @ApiModelProperty("所属商家")
+        private List<PCMerchMarketMerchantCardVO.PlatformView.CheckVO> checkInfo;
+
+
+        @Data
+        @ApiModel("PCMerchMarketMerchantGiftVO.PlatformCutView.CheckVO")
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class  CheckVO  implements Serializable{
+            @ApiModelProperty("审核时间")
+            @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+            private LocalDateTime checkDate;
+
+            @ApiModelProperty("审核状态")
+            private Integer checkState;
+
+            @ApiModelProperty("原因")
+            private String remark;
+        }
+
     }
     @Data
     @Accessors(chain = true)

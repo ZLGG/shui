@@ -110,7 +110,7 @@ public class BbcStockDeliveryStyleServiceImpl implements IBbcStockDeliveryStyleS
      */
     private CommonStockTemplateVO.SkuAmountAndPriceVO merge(String templateId, String templateName, List<CommonStockTemplateVO.SkuAmountAndPriceVO> skus) {
         CommonStockTemplateVO.SkuAmountAndPriceVO merged = new CommonStockTemplateVO.SkuAmountAndPriceVO();
-        log.info("：包含以下%s种sku；", StringUtils.isEmpty(templateId) ? "门店配送" : String.format("运费模板id=%s；name=%s", templateId, templateName), skus.size());
+        log.info("：包含以下{}种sku；", StringUtils.isEmpty(templateId) ? "门店配送" : String.format("运费模板id=%s；name=%s", templateId, templateName), skus.size());
         for(CommonStockTemplateVO.SkuAmountAndPriceVO vo : skus){
             merged.setAmount(merged.getAmount() != null ? merged.getAmount().add(vo.getAmount()) : vo.getAmount());
             BigDecimal voWeight=BigDecimal.ZERO;
@@ -123,9 +123,9 @@ public class BbcStockDeliveryStyleServiceImpl implements IBbcStockDeliveryStyleS
                 voPrice = vo.getAmount().multiply(vo.getPrice());
             }
             merged.setPrice(merged.getPrice() != null ? merged.getPrice().add(voPrice) : voPrice);
-            log.info("\tskuId:%s,重量:%s,单价:%s；数量:%s,总重量:%s,总价:%s", vo.getSkuId(), vo.getWeight(), vo.getPrice(), vo.getAmount(), voWeight, voPrice);
+            log.info("\tskuId:{},重量:{},单价:{}；数量:{},总重量:{},总价:{}", vo.getSkuId(), vo.getWeight(), vo.getPrice(), vo.getAmount(), voWeight, voPrice);
         }
-        log.info("合并后：总重量:%s,总数量:%s,总价格:%s", merged.getWeight(), merged.getAmount(), merged.getPrice());
+        log.info("合并后：总重量:{},总数量:{},总价格:{}", merged.getWeight(), merged.getAmount(), merged.getPrice());
         return merged;
     }
 

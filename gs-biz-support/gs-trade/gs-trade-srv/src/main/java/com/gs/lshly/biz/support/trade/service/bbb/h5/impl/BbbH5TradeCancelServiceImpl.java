@@ -32,6 +32,7 @@ public class BbbH5TradeCancelServiceImpl implements IBbbH5TradeCancelService {
     @Override
     public PageData<BbbH5TradeCancelVO.ListVO> pageData(BbbH5TradeCancelQTO.QTO qto) {
         QueryWrapper<TradeCancel> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeCancel> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbbH5TradeCancelVO.ListVO.class, page);

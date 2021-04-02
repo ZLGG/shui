@@ -9,6 +9,7 @@ import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
 import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
@@ -73,6 +74,8 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
     private ISkuGoodInfoRepository skuGoodInfoRepository;
     @Autowired
     private GoodsCategoryMapper categoryMapper;
+    @Autowired
+    private GoodsInfoMapper goodsInfoMapper;
 
     @Autowired
     private IGoodsShopNavigationRepository shopNavigationRepository;
@@ -128,6 +131,41 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         }
         List<BbbH5GoodsInfoVO.GoodsListVO> goodsListVOS = getGoodsList2(pageData.getRecords(),qto,qto.getOrderByProperties(),qto.getOrderByType());
         return new PageData<>(goodsListVOS,qto.getPageNum(),qto.getPageSize(),pageData.getTotal());
+    }
+
+    @Override
+    public PageData<BbbH5GoodsInfoVO.GoodsListVO> pageMerchantGoodsListVO(BbbH5GoodsInfoQTO.MerchantShopGoodsQTO qto) {
+        QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
+        if (StringUtils.isNotEmpty(qto.getGoodsName())){
+            boost.like("gs.goods_name",qto.getGoodsName());
+        }
+        if (StringUtils.isNotBlank(qto.getShopId())){
+            boost.eq("gs.shop_id",qto.getShopId());
+        }
+        boost.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
+        boost.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
+        if (StringUtils.isNotEmpty(qto.getShopNavigationId())){
+            List<String> navigationList = listShopNavigationIds(qto.getShopNavigationId());
+            if (ObjectUtils.isEmpty(navigationList)){
+                return new PageData<>();
+            }
+            boost.in("gsn.shop_navigation",navigationList);
+        }
+        if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())){
+            boost.orderByAsc("gs.sale_price");
+        }
+        if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())){
+            boost.orderByDesc("gs.sale_price");
+        }
+        //获取2B商城的商品
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> pageData = goodsInfoMapper.getGoodsPageInfo(page,boost);
+        if (ObjectUtils.isEmpty(pageData) || ObjectUtils.isEmpty(pageData.getRecords())){
+            return new PageData<>();
+        }
+        List<BbbH5GoodsInfoVO.GoodsListVO> goodsListVOS = getGoodsList2(pageData.getRecords(),qto,qto.getOrderByProperties(),qto.getOrderByType());
+        return new PageData<>(goodsListVOS,qto.getPageNum(),qto.getPageSize(),pageData.getTotal());
+
     }
 
     @Override
@@ -612,8 +650,15 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
     private BbbH5GoodsInfoVO.WholesalePriceVO getWholesalePriceVO(BbbH5GoodsInfoDTO.WholesalePriceDTO dto){
 
         BbbH5GoodsInfoVO.WholesalePriceVO wholesalePriceVO = new BbbH5GoodsInfoVO.WholesalePriceVO();
+        //获取用户类型
+        BbbUserVO.InnerUserInfoVO userInfoVO = userRpc.innerUserVo(dto);
+        if (null == userInfoVO){
+            wholesalePriceVO.setStepPriceVOS(new ArrayList<>());
+            return wholesalePriceVO;
+        }
+        Integer userType = userInfoVO.getType();
 
-        if (ObjectUtils.isNotEmpty(dto.getJwtUserId()) && ObjectUtils.isNotEmpty(dto.getJwtUserType()) && dto.getJwtUserType().equals(UserTypeEnum._2B用户.getCode())){
+        if (ObjectUtils.isNotEmpty(dto.getJwtUserId()) && ObjectUtils.isNotEmpty(userType) && userType.equals(UserTypeEnum._2B用户.getCode())){
             PCBbbMerchantUserTypeVO.DetailsVO detailsVO = get2BUserPrivateUserInfo(dto.getJwtUserId(),dto.getShopId());
             if (ObjectUtils.isNotEmpty(detailsVO) && ObjectUtils.isNotEmpty(detailsVO.getRatioGoodsVOS())){
                 for (PCBbbMerchantUserTypeVO.RatioGoodsVO ratioGoodsVO : detailsVO.getRatioGoodsVOS()){
@@ -693,6 +738,11 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
             categoryList.addAll(categories);
         }
         return categoryList;
+    }
+
+    private List<String> listShopNavigationIds(String navigationId){
+        List<String> shopNavigationIds = bbbH5ShopRpc.innerGetNavigationList(navigationId);
+        return shopNavigationIds;
     }
 
 }

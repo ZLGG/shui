@@ -9,6 +9,7 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.dto.CommonPhoneLoginDTO;
+import com.gs.lshly.common.struct.merchadmin.h5.merchant.dto.H5MerchMerchantAccountDTO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JsonUtils;
 import com.gs.lshly.common.utils.JwtUtil;
@@ -139,4 +140,18 @@ public class H5MerchantAccountAuthController {
             return ResponseData.fail( "微信自身手机号登陆失败");
         }
     }
+
+
+    @ApiOperation("注册")
+    @PostMapping("/reg")
+    public ResponseData<String> add(@Valid @RequestBody H5MerchMerchantAccountDTO.RegDTO dto) {
+        return ResponseData.data(pcMerchMerchantAccountAuthRpc.regMerchantAccount(dto));
+    }
+
+    @ApiOperation("退出(1，H5退出-需要带上phone；2，小程序退出-需要带上openid),目的清空服务端的缓存")
+    @GetMapping("/logout")
+    public void logout(String phone, String openid) {
+        pcMerchMerchantAccountAuthRpc.logout(phone, openid);
+    }
+
 }

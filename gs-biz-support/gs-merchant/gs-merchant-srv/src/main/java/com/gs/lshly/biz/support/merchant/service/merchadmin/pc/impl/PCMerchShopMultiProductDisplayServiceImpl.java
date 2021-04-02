@@ -38,7 +38,7 @@ public class PCMerchShopMultiProductDisplayServiceImpl implements IPCMerchShopMu
         QueryWrapper<ShopMultiProductDisplay> wrapper = MybatisPlusUtil.query();
         wrapper.eq("shop_id",qto.getShopId());
         wrapper.eq("merchant_id",qto.getMerchantId());
-
+        wrapper.orderByDesc("cdate");
         IPage<ShopMultiProductDisplay> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchShopMultiProductDisplayVO.ListVO.class, page);

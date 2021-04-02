@@ -15,10 +15,8 @@
 
     <modules>
         <module>gs-user-repository</module>
-        <module>gs-user-repository-fuyou</module>
         <module>gs-user-rpc</module>
         <module>gs-user-srv</module>
-        <module>gs-user-srv-fuyou</module>
     </modules>
 
 </project>

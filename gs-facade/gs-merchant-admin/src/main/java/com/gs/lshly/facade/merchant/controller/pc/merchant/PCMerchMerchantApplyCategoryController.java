@@ -38,7 +38,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/merchadmin/merchantApplyCategory")
 @Api(tags = "申请商品类目申请管理",description = " ")
-@Module(code = "applyCategoryPermissions", parent = "shop", name = "申请类目权限", index = 8)
 public class PCMerchMerchantApplyCategoryController {
 
 

@@ -2,10 +2,12 @@ package com.gs.lshly.biz.support.trade.rpc.merchadmin.pc;
 
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeDeliveryService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDeliveryDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeDeliveryQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeDeliveryVO;
+import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeDeliveryRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,11 @@ public class PCMerchTradeDeliveryRpc implements IPCMerchTradeDeliveryRpc{
     @Override
     public void addTakeGoodsCodeCheck(PCMerchTradeDeliveryDTO.takeGoodsCodeCheckDTO eto) {
         pCMerchTradeDeliveryService.addTakeGoodsCodeCheck(eto);
+    }
+
+    @Override
+    public ExportDataDTO export(PCMerchTradeDeliveryQTO.IdListQTO qo) throws Exception {
+        return ExcelUtil.treatmentBean(pCMerchTradeDeliveryService.export(qo),PCMerchTradeDeliveryVO.ListVOExport.class);
     }
 
 }

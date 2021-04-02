@@ -49,7 +49,7 @@ public class PCMerchGoodsPosTemporaryRpc implements IPCMerchGoodsPosTemporaryRpc
     }
 
     @Override
-    public void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.IdDTO dto) {
+    public void modifyReleaseState(PCMerchGoodsPosTemporaryDTO.PosSpuIdDTO dto) {
         pCMerchGoodsPosTemporaryService.modifyReleaseState(dto);
     }
 

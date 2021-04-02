@@ -35,4 +35,11 @@ public interface ICommonStockTemplateService {
      * @return
      */
     String queryStockAddress(String templateId);
+
+    /**
+     * 通过运费模板id获取运费模板名称
+     * @param templateId
+     * @return
+     */
+    CommonStockTemplateVO.IdNameVO innerIdNameVO(String templateId);
 }

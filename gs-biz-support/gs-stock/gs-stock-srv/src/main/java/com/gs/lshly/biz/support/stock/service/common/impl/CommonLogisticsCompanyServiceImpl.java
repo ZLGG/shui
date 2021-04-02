@@ -43,6 +43,7 @@ public class CommonLogisticsCompanyServiceImpl implements ICommonLogisticsCompan
         QueryWrapper<StockShopLogisticsCorpView> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("sc.shop_id",shopId);
         queryWrapper.eq("sc.state", TrueFalseEnum.是.getCode());
+        queryWrapper.orderByDesc("sc.cdate");
         List<StockShopLogisticsCorpView> viewList = stockShopLogisticsCorpMapper.mapperListShopLogisticsCorp(queryWrapper);
         return ListUtil.listCover(CommonLogisticsCompanyVO.DetailVO.class,viewList);
     }

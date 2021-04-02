@@ -252,4 +252,6 @@ public interface IPCMerchGoodsInfoService {
     String saveGoodsAndGetId(GoodsInfo goodsInfo);
 
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerSkuIdByGoodsNo(String goodsNo);
+
+    PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69);
 }

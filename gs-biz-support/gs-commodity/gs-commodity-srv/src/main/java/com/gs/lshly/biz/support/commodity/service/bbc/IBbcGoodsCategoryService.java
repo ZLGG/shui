@@ -1,8 +1,7 @@
 package com.gs.lshly.biz.support.commodity.service.bbc;
-import java.util.List;
-
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
+
+import java.util.List;
 
 public interface IBbcGoodsCategoryService {
 

@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.bbb.h5.user.qto.BbbH5UserQTO;
 import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.rpc.api.bbb.h5.trade.IBbbH5TradeRpc;
+import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserAuthRpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserCardRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +37,9 @@ public class BbbH5UserServiceImpl implements IBbbH5UserService {
     @DubboReference
     private IBbbH5UserCardRpc bbbH5UserCardRpc;
 
+    @DubboReference
+    private IBbbH5UserAuthRpc iBbbH5UserAuthRpc;
+
     @Override
     public BbbH5UserVO.DetailVO getUserInfo(BbbH5UserQTO.QTO qto) {
         if(null == qto.getJwtUserId()){
@@ -51,6 +55,10 @@ public class BbbH5UserServiceImpl implements IBbbH5UserService {
         detailVO.setCountCard(integer);
         BbbH5TradeDTO.IdDTO idDTO = new BbbH5TradeDTO.IdDTO();
         idDTO.setJwtUserId(qto.getJwtUserId());
+        BbbH5UserVO.ThirdVO thirdVO = iBbbH5UserAuthRpc.innerGetWXNickName(qto.getJwtUserId());
+        if (ObjectUtils.isNotEmpty(thirdVO)){
+            detailVO.setNickName(thirdVO.getNickName());
+        }
         //todo 欧阳
         detailVO.setTradeStateList( bbbTradeRpc.tradeStateCount(idDTO));
         //获取用户的积分

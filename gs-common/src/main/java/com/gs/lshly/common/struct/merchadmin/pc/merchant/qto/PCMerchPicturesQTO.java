@@ -33,6 +33,9 @@ public abstract class PCMerchPicturesQTO implements Serializable {
         @ApiModelProperty(value = "排序字段 name=图片名称，time=时间")
         private String orderByProperty;
 
+        @ApiModelProperty(value = "排序方式 10=升序，20=降序")
+        private Integer orderWays;
+
     }
 
     @Data

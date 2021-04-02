@@ -18,6 +18,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.MerchantShopDTO;
+import com.gs.lshly.common.struct.common.dto.RemindMerchantDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.DataNoticeDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.DataNoticeQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.DataNoticeTypeVO;
@@ -25,6 +26,7 @@ import com.gs.lshly.common.struct.platadmin.foundation.vo.DataNoticeVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.IRemindMerchantRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ public class DataNoticeServiceImpl implements IDataNoticeService {
     @DubboReference
     private ICommonShopRpc  commonShopRpc;
 
+    @DubboReference
+    private IRemindMerchantRpc iRemindMerchantRpc;
+
     @Override
     public PageData<DataNoticeVO.ListVO> pageData(DataNoticeQTO.QTO qto) {
 
@@ -67,6 +72,7 @@ public class DataNoticeServiceImpl implements IDataNoticeService {
         if(StringUtils.isNotBlank(qto.getTitle())){
             queryWrapper.like("nt.title",qto.getTitle());
         }
+        queryWrapper.orderByDesc("nt.cdate");
         IPage<DataNoticeView> page = MybatisPlusUtil.pager(qto);
         dataNoticeMapper.mapperPage(page,queryWrapper);
         if(ObjectUtils.isEmpty(page.getRecords())){
@@ -111,9 +117,10 @@ public class DataNoticeServiceImpl implements IDataNoticeService {
     @Transactional(rollbackFor = RuntimeException.class)
     public void addDataNotice(DataNoticeDTO.ETO dto) {
         if(NoticeScopeTypeEnum.全部商家.getCode().equals(dto.getScopeType())){
-            DataNotice DataMessage = new DataNotice();
-            BeanUtils.copyProperties(dto, DataMessage);
-            repository.save(DataMessage);
+            DataNotice dataMessage = new DataNotice();
+            BeanUtils.copyProperties(dto, dataMessage);
+            repository.save(dataMessage);
+            iRemindMerchantRpc.addRemindMerchantForPlatNotic(new RemindMerchantDTO.NoticAcctAllDTO(null,null,dataMessage.getId(),dataMessage.getTitle()));
         }else  if(NoticeScopeTypeEnum.ID商家.getCode().equals(dto.getScopeType())){
             if(ObjectUtils.isEmpty(dto.getMerchantShopList())){
                 throw new BusinessException("指定接受商家ID数组不能为空");
@@ -122,6 +129,7 @@ public class DataNoticeServiceImpl implements IDataNoticeService {
             BeanUtils.copyProperties(dto, dataNotice);
             repository.save(dataNotice);
             List<DataNoticeRecv> noticeRecvList = new ArrayList<>();
+            List<String> acctIdList = new ArrayList<>();
             for(MerchantShopDTO.ETO etoItem:dto.getMerchantShopList()){
                 DataNoticeRecv dataNoticeRecv = new DataNoticeRecv();
                 dataNoticeRecv.setNoticeId(dataNotice.getId());
@@ -129,8 +137,10 @@ public class DataNoticeServiceImpl implements IDataNoticeService {
                 dataNoticeRecv.setShopId(etoItem.getShopId());
                 dataNoticeRecv.setMerchantId(etoItem.getMerchantId());
                 noticeRecvList.add(dataNoticeRecv);
+                acctIdList.add(etoItem.getShopId());
             }
             dataNoticeRecvRepository.saveBatch(noticeRecvList);
+            iRemindMerchantRpc.addRemindMerchantForPlatNotic(new RemindMerchantDTO.NoticAcctDTO(acctIdList,null,dataNotice.getId(),dataNotice.getTitle()));
         }
     }
 

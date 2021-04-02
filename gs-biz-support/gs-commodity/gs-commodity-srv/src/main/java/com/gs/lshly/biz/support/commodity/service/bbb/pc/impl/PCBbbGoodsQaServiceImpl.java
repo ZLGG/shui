@@ -22,11 +22,13 @@ import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsQaQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsQaVO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.dto.RemindMerchantDTO;
 import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserIntegralRpc;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.IRemindMerchantRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.http.conn.util.InetAddressUtils;
@@ -62,6 +64,8 @@ public class PCBbbGoodsQaServiceImpl implements IPCBbbGoodsQaService {
     private ICommonShopRpc commonShopRpc;
     @DubboReference
     private IBbbUserRpc userRpc;
+    @DubboReference
+    private IRemindMerchantRpc remindMerchantRpc;
 
     @Override
     public PageData<PCBbbGoodsQaVO.ShowListVO> pageData(PCBbbGoodsQaQTO.QTO qto) {
@@ -71,6 +75,7 @@ public class PCBbbGoodsQaServiceImpl implements IPCBbbGoodsQaService {
             qaQueryWrapper.eq("quiz_type",qto.getQuizType());
         }
         qaQueryWrapper.eq("is_show_quiz_content", ShowQuizStateEnum.显示.getCode());
+        qaQueryWrapper.orderByDesc("cdate","id");
         IPage<GoodsQa> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsQa> goodsQas = repository.page(page,qaQueryWrapper);
         if (ObjectUtils.isEmpty(goodsQas)){
@@ -92,8 +97,13 @@ public class PCBbbGoodsQaServiceImpl implements IPCBbbGoodsQaService {
         if (ObjectUtils.isEmpty(qto.getJwtUserId())){
             throw new BusinessException("未登录！！");
         }
+        //根据用户id查询用户名
+        BbbUserVO.InnerUserInfoVO userInfoVO = userRpc.innerGetUserInfo(qto.getJwtUserId());
+        if (ObjectUtils.isEmpty(userInfoVO)){
+            throw new BusinessException("用户不存在，或者查询异常！！");
+        }
         QueryWrapper<GoodsQaView> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("gq.operator",qto.getJwtUserId());
+        wrapper.eq("gq.operator",userInfoVO.getUserName());
         IPage<GoodsQaView> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsQaView> goodsQas = goodsQaMapper.getUserGoodsQaListVO(page,wrapper);
         if (ObjectUtils.isEmpty(goodsQas)){
@@ -125,8 +135,10 @@ public class PCBbbGoodsQaServiceImpl implements IPCBbbGoodsQaService {
             }
         }
         goodsQa.setIsReply(GoodsQaReplyStateEnum.未回复.getCode());
-        goodsQa.setIsShowQuizContent(ShowQuizStateEnum.不显示.getCode());
+        goodsQa.setIsShowQuizContent(ShowQuizStateEnum.显示.getCode());
         repository.save(goodsQa);
+        //触发商品资询提醒
+        remindMerchantRpc.addRemindMerchantForAskTalk(new RemindMerchantDTO.JustDTO(goodsQa.getShopId(),eto.getJwtUserId(),goodsQa.getId()));
     }
 
     @Override
@@ -176,8 +188,11 @@ public class PCBbbGoodsQaServiceImpl implements IPCBbbGoodsQaService {
     }
 
     private String getMerchantName(String shopId){
+        String name = "";
         CommonShopVO.MerchantVO merchantVO = commonShopRpc.merchantByShopId(shopId);
-        String name = StringUtils.isEmpty(merchantVO.getMerchantName())?"":merchantVO.getMerchantName();
+        if (ObjectUtils.isNotEmpty(merchantVO)){
+            name = StringUtils.isEmpty(merchantVO.getMerchantName())?"":merchantVO.getMerchantName();
+        }
         return name;
     }
 

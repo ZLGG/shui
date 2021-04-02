@@ -21,21 +21,21 @@ import javax.validation.Valid;
  * @Date 15:14 2020/10/14
  */
 @RestController
-@RequestMapping("/platform/GoodsInfo-v1.1.0")
+@RequestMapping("/platform/GoodsInfo")
 @Api(tags = "商品管理")
 @Module(code = "commodityManagement", parent = "commodity", name = "商品管理", index =1)
 public class GoodsInfoController {
     @DubboReference
     private IGoodsInfoRpc goodsInfoRpc;
 
-    @ApiOperation("商品管理列表-v1.1.0")
+    @ApiOperation("商品管理列表")
     @GetMapping("")
     @Func(code="view", name = "查看")
     public ResponseData<PageData<GoodsInfoVO.SpuListVO>> page(GoodsInfoQTO.QTO qto) {
         return ResponseData.data(goodsInfoRpc.pageGoodsData(qto));
     }
 
-    @ApiOperation("商品管理列表详情-v1.1.0")
+    @ApiOperation("商品管理列表详情")
     @GetMapping(value = "{id}")
     @Func(code="view", name = "查看")
     public ResponseData<GoodsInfoVO.DetailVO> page(@PathVariable String id) {
@@ -63,7 +63,15 @@ public class GoodsInfoController {
     @Func(code="edit", name = "修改")
     public ResponseData<Void> checkGoods(@Valid @RequestBody GoodsInfoDTO.CheckGoodsDTO dto) {
         goodsInfoRpc.checkGoods(dto);
-        return ResponseData.success(MsgConst.SAVE_SUCCESS);
+        return ResponseData.success(MsgConst.DETERMINE_SUCCESS);
+    }
+
+    @ApiOperation("批量审核商品")
+    @PostMapping(value = "checkGoodsBatches")
+    @Func(code="edit", name = "修改")
+    public ResponseData<Void> checkGoodsBatches(@Valid @RequestBody GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
+        goodsInfoRpc.checkGoodsBatches(dto);
+        return ResponseData.success(MsgConst.DETERMINE_SUCCESS);
     }
 
     @ApiOperation("提供楼层要选的商品列表")
@@ -80,7 +88,7 @@ public class GoodsInfoController {
         return ResponseData.data(goodsInfoRpc.getFupinFloorCommodityVO(qto));
     }
 
-    @ApiOperation("查看三级类目下关联的商品列表-v1.1.0")
+    @ApiOperation("查看三级类目下关联的商品列表")
     @GetMapping(value = "getBindCategoryCommodityVO")
     @Func(code="view", name = "查看")
     public ResponseData<PageData<GoodsInfoVO.BindCategoryGoodsVO>> getBindCategoryGoodsVO(GoodsInfoQTO.CategoryIdQTO qto) {

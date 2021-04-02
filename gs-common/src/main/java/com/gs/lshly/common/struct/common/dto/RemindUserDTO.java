@@ -55,5 +55,58 @@ public abstract class RemindUserDTO implements Serializable {
         private String id;
     }
 
+    @Data
+    @ApiModel("RemindUserDTO.JustDTO")
+    @AllArgsConstructor
+    public static class JustDTO extends BaseDTO {
+
+        @ApiModelProperty("接受者ID")
+        private String accetId;
+
+        @ApiModelProperty("触发者ID")
+        private String triggerId;
+
+        @ApiModelProperty("触发者业务ID")
+        private String triggerSid;
+    }
+
+    @Data
+    @ApiModel("RemindUserDTO.LogisticsStatesExtDTO")
+    @AllArgsConstructor
+    public static class LogisticsStatesExtDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "微信APP_ID")
+        private String appId;
+
+        @ApiModelProperty(value = "会员微信登录OPEN_ID")
+        private String openId;
+
+        @ApiModelProperty(value = "触发者ID")
+        private String  triggerId;
+
+        @ApiModelProperty(value = "触发者关联业务ID")
+        private String triggerSid;
+
+        @ApiModelProperty(value = "接受消息者ID")
+        private String  accetId;
+
+        @ApiModelProperty(value = "商品详情")
+        private String goodInfo;
+
+        @ApiModelProperty(value = "订单金额")
+        private String orderPrice;
+
+        @ApiModelProperty(value = "订单号")
+        private String orderNo;
+
+        @ApiModelProperty(value = "物流信息")
+        private String content;
+
+        @ApiModelProperty(value = "消息发布时间")
+        private LocalDateTime cdate;
+
+//        @ApiModelProperty(value = "商品详情")
+//        private String 备注;
+    }
 
 }

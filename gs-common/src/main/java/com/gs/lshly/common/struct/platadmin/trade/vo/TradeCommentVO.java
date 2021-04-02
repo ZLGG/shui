@@ -204,6 +204,9 @@ public abstract class TradeCommentVO implements Serializable {
         @ApiModelProperty("订单ID")
         private String tradeId;
 
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
+
         @ApiModelProperty("会员名字")
         private String userName;
 

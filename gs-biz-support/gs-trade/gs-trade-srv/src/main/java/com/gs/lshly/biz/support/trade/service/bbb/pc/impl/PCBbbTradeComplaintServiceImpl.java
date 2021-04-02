@@ -57,6 +57,7 @@ public class PCBbbTradeComplaintServiceImpl implements IPCBbbTradeComplaintServi
         }
         QueryWrapper<TradeComplaintView> wrapper = MybatisPlusUtil.query();
         wrapper.eq("tc.user_id",qto.getJwtUserId());
+        wrapper.orderByDesc("tc.cdate");
         IPage<TradeComplaintView> page = MybatisPlusUtil.pager(qto);
         IPage<TradeComplaintView> complaintViewIPage = complaintMapper.pageVo(page,wrapper);
         if (ObjectUtils.isEmpty(complaintViewIPage) || ObjectUtils.isEmpty(complaintViewIPage.getRecords())){

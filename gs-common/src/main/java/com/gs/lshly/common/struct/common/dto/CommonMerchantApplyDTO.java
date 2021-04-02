@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,8 +70,8 @@ public abstract class CommonMerchantApplyDTO implements Serializable {
         @ApiModelProperty(value = "终端",hidden = true)
         private Integer terminal;
 
-        @ApiModelProperty(value = "商品分类信息")
-        private CommonShopDTO.CategoryETO category;
+        @ApiModelProperty(value = "商品申请分类列表信息")
+        private List<CommonShopDTO.CategoryETO> category = new ArrayList<>();
 
     }
 

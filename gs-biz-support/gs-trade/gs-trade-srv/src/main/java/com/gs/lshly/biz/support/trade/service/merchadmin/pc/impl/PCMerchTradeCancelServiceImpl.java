@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradeCancel;
 import com.gs.lshly.biz.support.trade.entity.TradeGoods;
@@ -19,11 +20,15 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeCancelDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeCancelQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeCancelVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
+import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +47,8 @@ public class PCMerchTradeCancelServiceImpl implements IPCMerchTradeCancelService
     private final ITradeGoodsRepository tradeGoodsRepository;
     @Autowired
     private ITradeRepository tradeRepository;
+    @DubboReference
+    private IPCMerchUserRpc ipcMerchUserRpc;
 
     public PCMerchTradeCancelServiceImpl(ITradeCancelRepository repository, ITradeGoodsRepository tradeGoodsRepository) {
         this.repository = repository;
@@ -53,7 +60,7 @@ public class PCMerchTradeCancelServiceImpl implements IPCMerchTradeCancelService
         QueryWrapper<TradeCancel> wrapper = new QueryWrapper<>();
         wrapper.eq("td.`shop_id`",qto.getJwtShopId());
         if(ObjectUtils.isNotEmpty(qto.getTradeCode())){
-            wrapper.and(i -> i.eq("td.`trade_code`",qto.getTradeCode()));
+            wrapper.and(i -> i.like("td.`trade_code`",qto.getTradeCode()));
         }
         if(ObjectUtils.isNotEmpty(qto.getCancelState())){
             wrapper.and(i -> i.eq("td.`cancel_state`",qto.getCancelState()));
@@ -67,6 +74,16 @@ public class PCMerchTradeCancelServiceImpl implements IPCMerchTradeCancelService
         if (ObjectUtils.isNotEmpty(qto.getStartTime()) || ObjectUtils.isNotEmpty(qto.getEndTime())){
             wrapper.and(i->i.ge("td.`cdate`",qto.getStartTime()).le("td.`cdate`",qto.getEndTime()));
         }
+        if(ObjectUtils.isNotEmpty(qto.getPhone())){
+            wrapper.and(i -> i.eq("u.`phone`",qto.getPhone()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getAddress())){
+            wrapper.and(i -> i.like("t.`recv_full_addres`",qto.getAddress()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getApplyType())){
+            wrapper.and(i -> i.eq("td.`apply_type`",qto.getApplyType()));
+        }
+        wrapper.orderByDesc("td.`cdate`");
         IPage<TradeCancel> page = MybatisPlusUtil.pager(qto);
         repository.selectCancelListPage(page, wrapper);
         List<PCMerchTradeCancelVO.ListVO> listVOS = new ArrayList<>();
@@ -74,7 +91,11 @@ public class PCMerchTradeCancelServiceImpl implements IPCMerchTradeCancelService
             PCMerchTradeCancelVO.ListVO pcMerchTradeCancelVO = new PCMerchTradeCancelVO.ListVO();
             BeanUtils.copyProperties(tradeCancel,pcMerchTradeCancelVO);
             //填充商品信息
-
+            if (ObjectUtils.isNotEmpty(pcMerchTradeCancelVO.getRefundState())) {
+                if (tradeCancel.getRefundState() == TradeCancelRefundStateEnum.无需退款.getCode()) {
+                    pcMerchTradeCancelVO.setTradeAmount(BigDecimal.ZERO);
+                }
+            }
             QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
             tradeGoodsQueryWrapper.eq("trade_id",tradeCancel.getTradeId());
             List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
@@ -145,7 +166,10 @@ public class PCMerchTradeCancelServiceImpl implements IPCMerchTradeCancelService
             tradeGoodsVOS.add(tradeGoodsVO);
         }
         detailVo.setTradeGoodsVOS(tradeGoodsVOS);
-
+        PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(tradeCancel.getUserId());
+        if (ObjectUtils.isNotEmpty(userSimpleVO)){
+            detailVo.setUserName(userSimpleVO.getUserName()).setUserPhone(userSimpleVO.getPhone());
+        }
         return detailVo;
     }
 

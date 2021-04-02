@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Data;
@@ -32,6 +33,11 @@ public class MerchantApply extends Model {
      * id
      */
     private String id;
+
+    /**
+     * 企业字典id
+     */
+    private String legalId;
 
     /**
      * 帐号ID
@@ -102,6 +108,11 @@ public class MerchantApply extends Model {
      * 营业执照有效期
      */
     private String corpLicenseIndate;
+
+    /**
+     * 营业执照有效期截止日期
+     */
+    private String corpLicenseEndDate;
 
     /**
      * 法定经营范围
@@ -230,6 +241,12 @@ public class MerchantApply extends Model {
     private String shopName;
 
     /**
+     * 店铺logo
+     */
+    private String shopLogo;
+
+
+    /**
      * 店铺描述
      */
     private String shopDesc;
@@ -280,6 +297,16 @@ public class MerchantApply extends Model {
     private String shopId;
 
     /**
+     * 经度
+     */
+    private BigDecimal shopLongitude;
+
+    /**
+     * 纬度
+     */
+    private BigDecimal shopLatitude;
+
+    /**
      * 拉卡拉商户号
      */
     private String lakalaNo;
@@ -313,6 +340,11 @@ public class MerchantApply extends Model {
      * 是否以开通店铺
      */
     private Integer isOpen;
+
+    /**
+     * 提交类型（10或空=入驻前申请提交 20=入驻后修改信息提交）
+     */
+    private Integer applyType;
 
     /**
      * 创建时间

@@ -17,5 +17,9 @@ public interface ITradePayService {
     TradePayVO.DetailVO relationGet(TradePayVO.DetailVO detailVO);
 
 
-    List<TradePayVO.RelationDetailVO> export(TradePayDTO.IdsDTO qo);
+    List<TradePayVO.RelationDetailExport> export(TradePayDTO.IdsDTO qo);
+
+    void delete(TradePayQTO.IdListQTO ids);
+
+    List<TradePayVO.ListVOExport> payExport(TradePayQTO.IdListQTO qo);
 }

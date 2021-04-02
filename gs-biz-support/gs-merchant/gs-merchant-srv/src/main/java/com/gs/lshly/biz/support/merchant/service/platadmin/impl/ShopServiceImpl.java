@@ -28,6 +28,7 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -85,10 +86,20 @@ public class ShopServiceImpl implements IShopService {
     @Override
     public PageData<ShopVO.ListVO> pageListShop(ShopQTO.QTO qto) {
         QueryWrapper<MerchantShopView> wrapper = MybatisPlusUtil.query();
-        if(!ObjectUtils.isNull(qto.getConditionType(),qto.getConditionValue())){
-            if(qto.getConditionType().equals(ShopSearchStyleEnum.店铺名称.getCode())){
-                wrapper.eq("shop.shop_name",qto.getConditionValue());
-            }
+        if (ObjectUtils.isNotEmpty(qto.getEmail())){
+            wrapper.and(i->i.eq("shop.`shop_man_email`",qto.getEmail()));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getPhone())){
+            wrapper.and(i->i.eq("shop.`shop_man_phone`",qto.getPhone()));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getShopName())){
+            wrapper.and(i->i.eq("shop.`shop_name`",qto.getShopName()));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getRealName())){
+            wrapper.and(i->i.eq("shop.`shop_man_name`",qto.getRealName()));
+        }
+        if (ObjectUtils.isNotEmpty(qto.getUserCardId())){
+            wrapper.and(i->i.eq("shop.`shop_man_idcard_no`",qto.getUserCardId()));
         }
         wrapper.eq("shop.terminal", qto.getTerminal());
         IPage<MerchantShopView> page = MybatisPlusUtil.pager(qto);
@@ -280,6 +291,20 @@ public class ShopServiceImpl implements IShopService {
         queryWrapper.eq("shop_type",shopType);
         List<Shop> shopList = repository.list(queryWrapper);
         return ListUtil.listCover(ShopVO.InnerSimpleVO.class,shopList);
+    }
+
+    @Override
+    public ShopVO.DetailVO innerByIdGetPosShopId(String shopId) {
+        ShopVO.DetailVO detailVO = new ShopVO.DetailVO();
+        if (ObjectUtils.isNotEmpty(shopId)){
+            Shop byId = repository.getById(shopId);
+            if (ObjectUtils.isNotEmpty(byId)){
+                BeanUtils.copyProperties(byId,detailVO);
+                detailVO.setPosShopId(byId.getPosShopId());
+                return detailVO;
+            }
+        }
+        return null;
     }
 
 }

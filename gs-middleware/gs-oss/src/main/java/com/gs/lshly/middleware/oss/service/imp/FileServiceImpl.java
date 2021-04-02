@@ -65,15 +65,15 @@ public class FileServiceImpl implements IFileService {
             //文件名：uuid.扩展名
             String original = file.getOriginalFilename();
             String fileName = UUID.randomUUID().toString();
-            String fileType = original.substring(original.lastIndexOf("."));
+            String fileType = original.substring(original.lastIndexOf(".")).toLowerCase();
             String newName = fileName + fileType;
             String fileUrl = fileHost + "/" + filePath + "/" + newName;
 
             if (!fileType.equals(".jpg") && !fileType.equals(".png") && !fileType.equals(".bmp") &&
-            !fileType.equals(".gif") && !fileType.equals(".tiff")){
-                throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF");
+            !fileType.equals(".gif") && !fileType.equals(".tiff") && !fileType.equals(".jpeg")){
+                throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF、JPEG");
             }
-            if (file.getSize() >= (1024*1*1024)){
+            if (file.getSize() >= (1024*20*1024)){
                 throw new BusinessException("文件大小最大不能超过1M");
             }
 
@@ -98,6 +98,7 @@ public class FileServiceImpl implements IFileService {
             detailVO.setSize(size + "KB");
             detailVO.setStorageEngine("aliyuncs");
             detailVO.setImageUrl(uploadUrl);
+            detailVO.setOriginalImageName(original);
 
             System.out.println(detailVO + "图片信息");
         } catch (IOException e) {
@@ -147,11 +148,11 @@ public class FileServiceImpl implements IFileService {
                 detailVO.setImgHeight(imageHeight);
                 detailVO.setImgWeight(imageWidth);
 
-                String imgType = url.substring(url.lastIndexOf("."));
+                String imgType = url.substring(url.lastIndexOf(".")).toLowerCase();
 
                 if (!imgType.equals(".jpg") && !imgType.equals(".png") && !imgType.equals(".bmp") &&
-                        !imgType.equals(".gif") && !imgType.equals(".tiff")){
-                    throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF");
+                        !imgType.equals(".gif") && !imgType.equals(".tiff") && !imgType.equals(".jpeg")){
+                    throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF、JPEG");
                 }
                 if (inputStream.available() >= (1024*1024*1)){
                     throw new BusinessException("文件大小最大不能超过1M");

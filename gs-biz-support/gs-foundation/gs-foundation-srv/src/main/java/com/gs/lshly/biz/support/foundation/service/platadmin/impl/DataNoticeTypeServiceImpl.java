@@ -35,6 +35,7 @@ public class DataNoticeTypeServiceImpl implements IDataNoticeTypeService {
     @Override
     public PageData<DataNoticeTypeVO.ListVO> pageData(DataNoticeTypeQTO.QTO qoDTO) {
         QueryWrapper<DataNoticeType> wq =  MybatisPlusUtil.query();
+        wq.orderByDesc("cdate");
         IPage<DataNoticeType> page = MybatisPlusUtil.pager(qoDTO);
         repository.page(page, wq);
         return MybatisPlusUtil.toPageData(qoDTO, DataNoticeTypeVO.ListVO.class, page);

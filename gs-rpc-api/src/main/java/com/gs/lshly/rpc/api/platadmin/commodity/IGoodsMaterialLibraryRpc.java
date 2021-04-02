@@ -51,5 +51,5 @@ public interface IGoodsMaterialLibraryRpc {
      * @return
      * @throws Exception
      */
-    ExportDataDTO export() throws Exception;
+    ExportDataDTO export(GoodsMaterialLibraryDTO.IdListDTO dto) throws Exception;
 }

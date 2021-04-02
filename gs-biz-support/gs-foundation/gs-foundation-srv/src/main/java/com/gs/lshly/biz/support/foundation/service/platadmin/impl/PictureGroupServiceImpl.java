@@ -39,6 +39,7 @@ public class PictureGroupServiceImpl implements IPictureGroupService {
     public List<PictureGroupVO.ListVO> pageData(PictureGroupQTO.QTO qto) {
         QueryWrapper<PictureGroup> wq = MybatisPlusUtil.query();
         wq.eq("belong_id",-1);
+        wq.orderByDesc("cdate");
         List<PictureGroup> list = repository.list(wq);
         return qto.toListData(PictureGroupVO.ListVO.class, list);
     }

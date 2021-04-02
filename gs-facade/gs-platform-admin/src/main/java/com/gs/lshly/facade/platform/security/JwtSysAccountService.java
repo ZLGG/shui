@@ -11,6 +11,8 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.middleware.auth.rbac.IMenuSet;
 import com.gs.lshly.middleware.auth.rbac.MenuMessage;
 import com.gs.lshly.middleware.auth.rbac.RbacContants;
+import com.gs.lshly.middleware.log.Log;
+import com.gs.lshly.middleware.log.aop.LogAspect;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.rpc.api.platadmin.foundation.rbac.ISysAccountAuthRpc;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,7 @@ public class JwtSysAccountService implements UserDetailsService, IMenuSet {
     private String terminal;
 
     @Override
+    @Log(module = "登陆", func = "平台登陆")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AuthDTO dto = sysAccountAuthRpc.loadUserByUsername(username);
         if (dto != null) {
@@ -50,6 +53,7 @@ public class JwtSysAccountService implements UserDetailsService, IMenuSet {
             PermitNodeVO.PermitNodeTreeVO treeVO = convert(allPermitNode, dto.getPermitFuncs(), isAdmin);
             redisUtil.set(RbacContants.SESSION_PERMIT_PREFIX + terminal + jwtUser.getId(), treeVO);
             jwtUser.setPermitNode(treeVO);
+            LogAspect.set(LogAspect.toDTO(jwtUser));
             return jwtUser;
         } else {
             throw new UsernameNotFoundException(CommonConst.USERNAME_OR_PASSWORD_INCORRECT);

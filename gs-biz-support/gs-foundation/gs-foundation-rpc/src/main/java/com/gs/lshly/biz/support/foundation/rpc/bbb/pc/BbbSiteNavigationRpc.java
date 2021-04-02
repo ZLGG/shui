@@ -1,6 +1,5 @@
 package com.gs.lshly.biz.support.foundation.rpc.bbb.pc;
 import com.gs.lshly.biz.support.foundation.service.bbb.pc.IBbbSiteNavigationService;
-import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteNavigationQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteNavigationRpc;
@@ -19,8 +18,8 @@ public class BbbSiteNavigationRpc implements IBbbSiteNavigationRpc{
     private IBbbSiteNavigationService bbbSiteNavigationService;
 
     @Override
-    public BbbSiteNavigationVO.HomeVO homeDetail(PCBbbGoodsCategoryQTO.QTO qto) {
-        return bbbSiteNavigationService.homeDetail(qto);
+    public BbbSiteNavigationVO.HomeVO homeDetail() {
+        return bbbSiteNavigationService.homeDetail();
     }
 
     @Override

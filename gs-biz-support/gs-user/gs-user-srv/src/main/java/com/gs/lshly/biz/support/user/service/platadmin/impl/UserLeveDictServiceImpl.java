@@ -42,6 +42,7 @@ public class UserLeveDictServiceImpl implements IUserLeveDictService {
             throw new BusinessException("查询参数不能为Null");
         }
         wrapper.eq("leve_type",qto.getLeveType());
+        wrapper.orderByDesc("cdate");
         IPage<UserLeveDict> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, UserLeveDictVO.ListVO.class, page);

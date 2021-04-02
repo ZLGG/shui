@@ -73,6 +73,12 @@ public class LegalDict extends Model {
     */
     private String corpLicenseIndate;
 
+
+    /**
+     * 营业执照有效期截止日期
+     */
+    private String corpLicenseEndDate;
+
     /**
      * 营业执照证照
      */
@@ -218,6 +224,13 @@ public class LegalDict extends Model {
     * 开户银行
     */
     private String bankName;
+
+
+    private String editSettledApplyId;
+
+
+    private Integer editSettledState;
+
 
     /**
     * 创建时间

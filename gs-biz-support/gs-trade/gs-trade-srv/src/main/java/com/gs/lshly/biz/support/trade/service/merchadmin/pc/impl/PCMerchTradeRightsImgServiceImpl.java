@@ -33,6 +33,7 @@ public class PCMerchTradeRightsImgServiceImpl implements IPCMerchTradeRightsImgS
     @Override
     public PageData<PCMerchTradeRightsImgVO.ListVO> pageData(PCMerchTradeRightsImgQTO.QTO qto) {
         QueryWrapper<TradeRightsImg> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeRightsImg> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchTradeRightsImgVO.ListVO.class, page);

@@ -42,6 +42,9 @@ public abstract class BbcTradeSettlementVO implements Serializable {
         @ApiModelProperty("联系人")
         private String contactsName;
 
+        @ApiModelProperty("配送类型")
+        private List<String> shopDeliveryType;
+
         @ApiModelProperty("联系人电话")
         private String contactsPhone;
         //商家

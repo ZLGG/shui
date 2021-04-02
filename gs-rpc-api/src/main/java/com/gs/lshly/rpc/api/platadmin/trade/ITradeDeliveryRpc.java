@@ -1,5 +1,6 @@
 package com.gs.lshly.rpc.api.platadmin.trade;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDeliveryDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeDeliveryQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeDeliveryVO;
@@ -22,4 +23,5 @@ public interface ITradeDeliveryRpc {
 
     TradeDeliveryVO.DetailVO detailTradeDelivery(TradeDeliveryDTO.IdDTO dto);
 
+    ExportDataDTO deliveryExport(TradeDeliveryQTO.IdListQTO qo) throws Exception;
 }

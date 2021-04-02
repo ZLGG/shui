@@ -25,19 +25,17 @@ import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketMerchantCardUsersQ
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbUserQTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
-import com.gs.lshly.common.struct.common.LegalDictDTO;
-import com.gs.lshly.common.struct.common.LegalDictVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsIntegralVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReportVO;
-import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.common.utils.CheckEmailUtils;
 import com.gs.lshly.common.utils.PwdUtil;
+import com.gs.lshly.middleware.mail.IMailService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbMerchantAccountRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IPCBbbMerchantUserTypeRpc;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
-import com.gs.lshly.rpc.api.bbb.pc.user.IPCBbbUserSignInRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsIntegralRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReportRpc;
@@ -47,9 +45,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.gs.lshly.middleware.mail.Email;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
 * <p>
@@ -80,6 +78,8 @@ public class BbbUserServiceImpl implements IBbbUserService {
     private UserCardMapper userCardMapper;
     @Autowired
     private IUserSignInRepository iUserSignInRepository;
+    @Autowired
+    private IMailService iMailService;
     @DubboReference
     private IBbbMerchantAccountRpc bbbMerchantAccountRpc;
     @DubboReference
@@ -99,6 +99,7 @@ public class BbbUserServiceImpl implements IBbbUserService {
     private static final String WxOpenidUser = "wxOpenid_User_";
     private static final String WxOpenidSessionKey = "wxOpenid_SessionKey_";
     private static final String WxSessionKeyOpenid = "wxSessionKey_Openid_";
+    private static final String EmailValidCodeGroup = "EmailValidCode_";
 
     @Override
     public void editorPassword(BbbUserDTO.EditorPasswordETO dto) {
@@ -157,13 +158,29 @@ public class BbbUserServiceImpl implements IBbbUserService {
         if(null == user){
             throw new BusinessException("用户不存在");
         }
-        checkEmail(user,dto.getEmail());
+        if (ObjectUtils.isNotEmpty(user.getEmail())){
+            throw new BusinessException("已绑定过邮箱");
+        }
+        checkEmail(user,dto);
     }
 
-    private  void checkEmail(User user,String email) {
-        if (email.matches("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$")) {
-            user.setEmail(email);
-            userRepository.updateById(user);
+    private  void checkEmail(User user,BbbUserDTO.BindEmailDTO dto) {
+        if (dto.getEmail().matches("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$")) {
+            //校验验证码
+            Object code = redisUtil.get(PhoneValidCodeGroup + dto.getEmail());
+            String validCode = code != null ? code + "" : "";
+            redisUtil.del(EmailValidCodeGroup + dto.getEmail());
+            if (ObjectUtils.isEmpty(validCode)){
+                throw new BusinessException("验证码错误");
+            }else {
+                if (dto.getCode().equals(validCode)) {
+                    user.setEmail(dto.getEmail());
+                    userRepository.updateById(user);
+                }else {
+                    throw new BusinessException("验证码错误");
+                }
+            }
+
         } else {
             throw new BootstrapMethodError("邮箱格式错误, 请输出正确邮箱地址");
         }
@@ -405,5 +422,27 @@ public class BbbUserServiceImpl implements IBbbUserService {
         return null;
     }
 
+    @Override
+    public void getEmailNum(BbbUserDTO.BandEmailDTO qto) {
+        //校验邮箱
+        if (!CheckEmailUtils.checkEmail(qto.getEmailNum())) {
+            throw new BusinessException("输入的邮箱格式不正确");
+        }
+        String code=Integer.toString(randomCode());
+        iMailService.send(new Email().setTo(qto.getEmailNum())
+                .setSubject("就享买商城账户邮箱绑定验证")
+                .setContent(qto.getEmailNum()+",你好!<br/>以下是你绑定邮箱的验证码：<br/>"+code+"<br/><a href='www.baidu.com'>baidu</a>").setHtml(true));
+        //验证码失效时间10分账
+        log.info("设置-邮箱号："+qto.getEmailNum()+"-验证码："+code);
+        redisUtil.set(EmailValidCodeGroup + qto.getEmailNum(), code, 10 * 60);
+    }
+    /**
+     * 生成随机验证码.
+     *
+     * @return 随机数
+     */
+    static int randomCode() {
+        return 100_000 + ThreadLocalRandom.current().nextInt(1_000_000 - 100_000);
+    }
 
 }

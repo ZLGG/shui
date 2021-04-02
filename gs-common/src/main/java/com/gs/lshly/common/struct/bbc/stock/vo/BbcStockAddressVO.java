@@ -3,6 +3,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -46,7 +47,10 @@ public abstract class BbcStockAddressVO implements Serializable {
         private BigDecimal latitude;
 
         @ApiModelProperty("详细地址")
-        private String reals;
+        private String reals="";
+
+        @ApiModelProperty("街道地址")
+        private String street="";
 
         @ApiModelProperty("联系人")
         private String contactsName;
@@ -61,7 +65,9 @@ public abstract class BbcStockAddressVO implements Serializable {
         private String fullAddres;
 
         public String getFullAddres(){
-            return province + city + county + reals;
+            String streetO=StringUtils.isEmpty(street)?"":street;
+            String realsO=StringUtils.isEmpty(reals)?"":reals;
+            return province + city + county + streetO + realsO ;
         }
 
     }

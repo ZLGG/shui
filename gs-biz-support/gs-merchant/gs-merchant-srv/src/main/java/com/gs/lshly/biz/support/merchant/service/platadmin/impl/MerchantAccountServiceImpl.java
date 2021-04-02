@@ -2,8 +2,8 @@ package com.gs.lshly.biz.support.merchant.service.platadmin.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.merchant.entity.Merchant;
 import com.gs.lshly.biz.support.merchant.entity.MerchantAccount;
 import com.gs.lshly.biz.support.merchant.entity.Shop;
 import com.gs.lshly.biz.support.merchant.enums.MerchantAccountQueryTypeEnum;
@@ -30,7 +30,6 @@ import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 /**
 * <p>
@@ -62,7 +61,7 @@ public class MerchantAccountServiceImpl implements IMerchantAccountService {
         QueryWrapper<AccountShopView> queryWrapper = MybatisPlusUtil.query();
         if(StringUtils.isNotBlank(qto.getConditionValue())){
             if(MerchantAccountQueryTypeEnum.用户名.getCode().equals(qto.getConditionType())){
-                queryWrapper.like("act.user_name",qto.getConditionValue());
+                queryWrapper.like("act.real_name",qto.getConditionValue());
             }
             else if(MerchantAccountQueryTypeEnum.手机号.getCode().equals(qto.getConditionType())){
                 queryWrapper.like("act.phone",qto.getConditionValue());
@@ -70,6 +69,7 @@ public class MerchantAccountServiceImpl implements IMerchantAccountService {
         }
         queryWrapper.eq("act.terminal",qto.getTerminal());
         queryWrapper.eq("act.account_type",MerchantAccountTypeEnum.主帐号.getCode());
+        queryWrapper.orderByDesc("act.cdate");
         IPage<AccountShopView> page = MybatisPlusUtil.pager(qto);
         merchantAccountMapper.mapperPage(page,queryWrapper);
         return MybatisPlusUtil.toPageData(qto, MerchantAccountVO.ListVO.class, page);
@@ -84,6 +84,12 @@ public class MerchantAccountServiceImpl implements IMerchantAccountService {
         }
         if(StringUtils.isNotBlank(shop.getMainAccountId())){
             throw new BusinessException("店铺已有主帐号");
+        }
+        QueryWrapper<MerchantAccount> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.eq("user_name",eto.getUserName());
+        int count = repository.count(queryWrapper);
+        if(count > 0 ){
+            throw new BusinessException("帐号已存在");
         }
         MerchantAccount merchantAccount = new MerchantAccount();
         BeanCopyUtils.copyProperties(eto, merchantAccount);

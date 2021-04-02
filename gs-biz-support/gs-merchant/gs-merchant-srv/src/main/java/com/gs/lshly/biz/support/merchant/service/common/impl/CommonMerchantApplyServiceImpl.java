@@ -5,16 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.merchant.entity.MerchantApply;
-import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCategory;
-import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCert;
-import com.gs.lshly.biz.support.merchant.entity.ShopGoodsCategory;
+import com.gs.lshly.biz.support.merchant.entity.*;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyCategoryTypeEnum;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyStateEnum;
-import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCategoryRepository;
-import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCertRepository;
-import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyRepository;
-import com.gs.lshly.biz.support.merchant.repository.IShopGoodsCategoryRepository;
+import com.gs.lshly.biz.support.merchant.repository.*;
 import com.gs.lshly.biz.support.merchant.service.common.ICommonMerchantApplyService;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
@@ -25,6 +19,7 @@ import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.LegalDictDTO;
 import com.gs.lshly.common.struct.common.LegalDictVO;
 import com.gs.lshly.common.struct.common.dto.CommonMerchantApplyDTO;
+import com.gs.lshly.common.struct.common.dto.RemindPlatDTO;
 import com.gs.lshly.common.struct.common.qto.CommonMerchantApplyQTO;
 import com.gs.lshly.common.struct.common.vo.CommonMerchantApplyVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsCategoryVO;
@@ -32,9 +27,13 @@ import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
+import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonSiteCustomerServiceRpc;
+import com.gs.lshly.rpc.api.common.ILegalDictRpc;
+import com.gs.lshly.rpc.api.common.IRemindPlatRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsBrandRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsCategoryRpc;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +57,9 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
     private IMerchantApplyRepository repository;
 
     @Autowired
+    private IMerchantRepository merchantRepository;
+
+    @Autowired
     private IMerchantApplyCertRepository merchantApplyCertRepository;
 
     @Autowired
@@ -65,6 +67,9 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
 
     @Autowired
     private IShopGoodsCategoryRepository shopGoodsCategoryRepository;
+
+    @Autowired
+    private IShopRepository shopRepository;
 
     @DubboReference
     private IPCMerchAdminGoodsBrandRpc ipcMerchAdminGoodsBrandRpc;
@@ -74,6 +79,15 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
 
     @DubboReference
     private ICommonSiteCustomerServiceRpc commonSiteCustomerServiceRpc;
+
+    @DubboReference
+    private IRemindPlatRpc iRemindPlatRpc;
+
+    @DubboReference
+    private ILegalDictRpc legalDictRpc;
+
+    @DubboReference
+    private ICommonShopRpc commonShopRpc;
 
     @Autowired
     private ISMSService smsService;
@@ -181,6 +195,8 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
             if (StringUtils.isNotBlank(phone)){
                 smsService.sendSettlementInformSMSCode(phone,merchantApply.getShopName());
             }
+            //消息触发
+            iRemindPlatRpc.addRemindPlatForMerchantApply(new RemindPlatDTO.JustDTO(eto.getJwtUserId(),merchantApply.getId()));
         }
 
         return merchantApply.getId();
@@ -252,38 +268,41 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
 
     @Override
     public void editApplyCategory(CommonMerchantApplyDTO.ApplyCategoryDTO dto) {
-        if(null == dto.getCategory() || StringUtils.isBlank(dto.getCategory().getGoodsCategoryId())
-                || StringUtils.isBlank(dto.getCategory().getGoodsCategoryName())){
+        if(null == dto.getCategory() || ObjectUtils.isEmpty(dto.getCategory())){
             throw new BusinessException("申请的商品类目信息错误");
         }
-        String applyCategoryId = dto.getCategory().getGoodsCategoryId();
-        String applyCategoryName = dto.getCategory().getGoodsCategoryName();
-        QueryWrapper<ShopGoodsCategory> shopGoodsCategoryQueryWrapper = MybatisPlusUtil.query();
-        shopGoodsCategoryQueryWrapper.eq("terminal",dto.getTerminal());
-        shopGoodsCategoryQueryWrapper.eq("category_id",applyCategoryId);
-        shopGoodsCategoryQueryWrapper.eq("shop_id",dto.getJwtShopId());
-        List<ShopGoodsCategory> shopGoodsCategoryList = shopGoodsCategoryRepository.list(shopGoodsCategoryQueryWrapper);
-        if(ObjectUtils.isNotEmpty(shopGoodsCategoryList)){
-            throw new BusinessException("申请的商品类目店铺以存在");
+        for (CommonShopDTO.CategoryETO eto : dto.getCategory()){
+            String applyCategoryId = eto.getGoodsCategoryId();
+            String applyCategoryName = eto.getGoodsCategoryName();
+            QueryWrapper<ShopGoodsCategory> shopGoodsCategoryQueryWrapper = MybatisPlusUtil.query();
+            shopGoodsCategoryQueryWrapper.eq("category_id",applyCategoryId);
+            shopGoodsCategoryQueryWrapper.eq("shop_id",dto.getJwtShopId());
+            List<ShopGoodsCategory> shopGoodsCategoryList = shopGoodsCategoryRepository.list(shopGoodsCategoryQueryWrapper);
+            if(ObjectUtils.isNotEmpty(shopGoodsCategoryList)){
+                throw new BusinessException("申请的商品类目店铺以存在");
+            }
+            QueryWrapper<MerchantApplyCategory> merchantApplyCategoryQueryWrapper = MybatisPlusUtil.query();
+            merchantApplyCategoryQueryWrapper.eq("goods_category_id",applyCategoryId);
+            merchantApplyCategoryQueryWrapper.eq("shop_id",dto.getJwtShopId());
+            List<MerchantApplyCategory> applyCategoryList = merchantApplyCategoryRepository.list(merchantApplyCategoryQueryWrapper);
+            if(ObjectUtils.isNotEmpty(applyCategoryList)){
+                throw new BusinessException("提交申请的商品类目已经在申请列表中");
+            }
+            MerchantApplyCategory merchantApplyCategory = new MerchantApplyCategory();
+            merchantApplyCategory.setTerminal(dto.getTerminal());
+            merchantApplyCategory.setApplyType(MerchantApplyCategoryTypeEnum.店铺申请.getCode());
+            merchantApplyCategory.setState(MerchantApplyStateEnum.待审.getCode());
+            merchantApplyCategory.setApplyWhy(dto.getApplyWhy());
+            merchantApplyCategory.setGoodsCategoryId(applyCategoryId);
+            merchantApplyCategory.setGoodsCategoryName(applyCategoryName);
+            merchantApplyCategory.setShopId(dto.getJwtShopId());
+            merchantApplyCategory.setMerchantId(dto.getJwtMerchantId());
+            merchantApplyCategoryRepository.save(merchantApplyCategory);
+
+            //触发消息
+            iRemindPlatRpc.addRemindPlatForGoodsCategoryApply(new RemindPlatDTO.JustDTO(merchantApplyCategory.getShopId(),merchantApplyCategory.getId()));
+
         }
-        QueryWrapper<MerchantApplyCategory> merchantApplyCategoryQueryWrapper = MybatisPlusUtil.query();
-        merchantApplyCategoryQueryWrapper.eq("terminal",dto.getTerminal());
-        merchantApplyCategoryQueryWrapper.eq("goods_category_id",applyCategoryId);
-        merchantApplyCategoryQueryWrapper.eq("shop_id",dto.getJwtShopId());
-        List<MerchantApplyCategory> applyCategoryList = merchantApplyCategoryRepository.list(merchantApplyCategoryQueryWrapper);
-        if(ObjectUtils.isNotEmpty(applyCategoryList)){
-            throw new BusinessException("提交申请的商品类目以在申请列表中");
-        }
-        MerchantApplyCategory merchantApplyCategory = new MerchantApplyCategory();
-        merchantApplyCategory.setTerminal(dto.getTerminal());
-        merchantApplyCategory.setApplyType(MerchantApplyCategoryTypeEnum.店铺申请.getCode());
-        merchantApplyCategory.setState(MerchantApplyStateEnum.待审.getCode());
-        merchantApplyCategory.setApplyWhy(dto.getApplyWhy());
-        merchantApplyCategory.setGoodsCategoryId(applyCategoryId);
-        merchantApplyCategory.setGoodsCategoryName(applyCategoryName);
-        merchantApplyCategory.setShopId(dto.getJwtShopId());
-        merchantApplyCategory.setMerchantId(dto.getJwtMerchantId());
-        merchantApplyCategoryRepository.save(merchantApplyCategory);
     }
 
     @Override
@@ -291,7 +310,6 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
         List<PCMerchGoodsCategoryVO.ListVO> goodsCategoryList =  pCMerchAdminGoodsCategoryRpc.level1Categories();
         QueryWrapper<ShopGoodsCategory> shopGoodsCategoryQueryWrapper = MybatisPlusUtil.query();
         //店铺以有的一级商品分类
-        shopGoodsCategoryQueryWrapper.eq("terminal",dto.getTerminal());
         shopGoodsCategoryQueryWrapper.eq("category_leve",GoodsCategoryLevelEnum.ONE.getCode());
         shopGoodsCategoryQueryWrapper.eq("shop_id",dto.getJwtShopId());
         List<ShopGoodsCategory> shopGoodsCategoryList = shopGoodsCategoryRepository.list(shopGoodsCategoryQueryWrapper);
@@ -328,10 +346,152 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
         if(null == merchantApplyCategory){
             throw new BusinessException("商品类目申请不存在");
         }
-        if(!MerchantApplyStateEnum.待审.getCode().equals(merchantApplyCategory)){
-            throw new BusinessException("只能删除待审状态的申请");
-        }
+//        if(!MerchantApplyStateEnum.待审.getCode().equals(merchantApplyCategory)){
+//            throw new BusinessException("只能删除待审状态的申请");
+//        }
         merchantApplyCategoryRepository.removeById(merchantApplyCategory.getId());
+    }
+
+    @Override
+    public String innerGetLegalId(String merchantId) {
+        if (StringUtils.isBlank(merchantId)){
+            throw new BusinessException("商家id为空，异常！");
+        }
+        QueryWrapper<Merchant> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("id",merchantId);
+        Merchant merchant = merchantRepository.getOne(wrapper);
+        if (null == merchant){
+            throw new BusinessException("商家不存在，异常！");
+        }
+        return  merchant.getLegalId();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String innerSaveSettledApply(LegalDictDTO.SettledInfoETO eto) {
+        MerchantApply merchantApply = new MerchantApply();
+
+        QueryWrapper<MerchantApply> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("shop_id",eto.getJwtShopId());
+        wrapper.eq("merchant_id",eto.getJwtMerchantId());
+        wrapper.eq("apply_type",MerchantApplyTypeEnum.入驻后修改信息提交.getCode());
+        MerchantApply apply = repository.getOne(wrapper);
+        BeanUtils.copyProperties(eto,merchantApply);
+        if (null != apply){
+            merchantApply.setId(apply.getId());
+        }else {
+            merchantApply.setId("");
+        }
+        merchantApply.setLegalId(eto.getId());
+        merchantApply.setShopId(eto.getJwtShopId());
+        merchantApply.setMerchantId(eto.getJwtMerchantId());
+        merchantApply.setLegalType(LegalTypeEnum.企业.getCode());
+        merchantApply.setApplyType(MerchantApplyTypeEnum.入驻后修改信息提交.getCode());
+        merchantApply.setState(MerchantApplyStateEnum.待审.getCode());
+        repository.saveOrUpdate(merchantApply);
+
+        //保存该applyId的证照信息
+        if (ObjectUtils.isEmpty(eto.getCertList())){
+            int count = legalDictRpc.innerCountNeedCert(merchantApply.getCorpTypeId());
+            if(count > 0){
+                throw new BusinessException("入驻申请企业类型必传证照未传");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(eto.getCertList())){
+            List<String> idList = ListUtil.getIdList(LegalDictDTO.CertDTO.class,eto.getCertList());
+            LegalDictVO.CheckCertVO checkCertVo = legalDictRpc.checkUploadCert(merchantApply.getCorpTypeId(),idList);
+            if(checkCertVo.getCertList().size() > 0){
+                throw new BusinessException("入驻申请企业类型必传证照未传");
+            }
+            List<MerchantApplyCert> certBatchList = new ArrayList<>();
+            for (LegalDictDTO.CertDTO certItem : eto.getCertList()) {
+                MerchantApplyCert merchantApplyCert = new MerchantApplyCert();
+                BeanUtils.copyProperties(certItem, merchantApplyCert);
+                merchantApplyCert.setId("");
+                merchantApplyCert.setCertId(certItem.getId());
+                merchantApplyCert.setApplyId(merchantApply.getId());
+                certBatchList.add(merchantApplyCert);
+            }
+            //删除旧证照
+            QueryWrapper<MerchantApplyCert> removeWrapper = new QueryWrapper<>();
+            removeWrapper.eq("apply_id", merchantApply.getId());
+            merchantApplyCertRepository.remove(removeWrapper);
+            //保存新的
+            merchantApplyCertRepository.saveBatch(certBatchList);
+        }
+        return merchantApply.getId();
+    }
+
+    @Override
+    public LegalDictVO.SettledInfoVO getAfterUpdateSettleInfo(LegalDictDTO.MerchantApplyIdDTO dto) {
+        if (null == dto || org.apache.commons.lang3.StringUtils.isBlank(dto.getMerchantApplyId())){
+            throw new BusinessException("参数为空，异常！");
+        }
+        MerchantApply apply = repository.getById(dto.getMerchantApplyId());
+        if (null == apply){
+            throw new BusinessException("该ID不存在！！");
+        }
+        LegalDictVO.SettledInfoVO settledInfoVO = new LegalDictVO.SettledInfoVO();
+        settledInfoVO.setCertListVO(new ArrayList<>());
+        settledInfoVO.setNeedCertListVO(new ArrayList<>());
+        settledInfoVO.setId(apply.getLegalId());
+        //公司信息
+        LegalDictVO.CompanyVO companyVO = new LegalDictVO.CompanyVO();
+        BeanUtils.copyProperties(apply,companyVO);
+        settledInfoVO.setCompanyVO(companyVO);
+
+        //银行信息
+        LegalDictVO.BankVO bankVO = new LegalDictVO.BankVO();
+        BeanUtils.copyProperties(apply,bankVO);
+        settledInfoVO.setBankVO(bankVO);
+
+        LegalDictVO.SettledCertInfoVO settledCertInfoVO = legalDictRpc.innerCertInfoVO(apply.getCorpTypeId());
+        //需要证照信息数组
+        List<LegalDictVO.NeedCertVO> needCertListVO = new ArrayList<>();
+        if (null !=settledCertInfoVO && ObjectUtils.isNotEmpty(settledCertInfoVO.getNeedCertListVO())){
+            needCertListVO = settledCertInfoVO.getNeedCertListVO();
+        }
+        settledInfoVO.setNeedCertListVO(needCertListVO);
+
+
+        //已有证照信息数组
+        List<LegalDictVO.CertVO> certListVO = new ArrayList<>();
+       QueryWrapper<MerchantApplyCert> wrapper = MybatisPlusUtil.query();
+       wrapper.eq("apply_id",dto.getMerchantApplyId());
+       List<MerchantApplyCert> certs = merchantApplyCertRepository.list(wrapper);
+       if (ObjectUtils.isNotEmpty(certs)){
+           for (MerchantApplyCert applyCert : certs){
+               LegalDictVO.CertVO certVO = new LegalDictVO.CertVO();
+               BeanUtils.copyProperties(applyCert,certVO);
+               certVO.setId(applyCert.getCertId());
+               certListVO.add(certVO);
+           }
+           settledInfoVO.setCertListVO(certListVO);
+       }
+
+        //店铺信息
+        LegalDictVO.ShopVO shopVO = new LegalDictVO.ShopVO();
+        BeanUtils.copyProperties(apply,shopVO);
+        CommonShopVO.ShopCategoryInfoVO infoVO = commonShopRpc.innerShopCategoryInfoVO(dto.getJwtShopId());
+        if (ObjectUtils.isNotEmpty(infoVO)){
+            shopVO.setCategoryName(infoVO.getCategoryName());
+            shopVO.setSharePrice(infoVO.getSharePrice());
+        }
+        Shop shop = shopRepository.getById(apply.getShopId());
+        if (ObjectUtils.isEmpty(shop)){
+            throw new BusinessException("店铺ID不存在！");
+        }
+        shopVO.setOpenTime(shop.getOpenTime());
+        shopVO.setShopState(shop.getShopState());
+        shopVO.setShopType(shop.getShopType());
+        settledInfoVO.setShopVO(shopVO);
+
+
+        //店主信息
+        LegalDictVO.ShopManVO shopManVO = new LegalDictVO.ShopManVO();
+        BeanUtils.copyProperties(apply,shopManVO);
+        settledInfoVO.setShopManVO(shopManVO);
+        return settledInfoVO;
     }
 
 }

@@ -60,5 +60,17 @@ public abstract class RemindPlatDTO implements Serializable {
         private String id;
     }
 
+    @Data
+    @ApiModel("RemindPlatDTO.JustDTO")
+    @Accessors(chain = true)
+    @AllArgsConstructor
+    public static class JustDTO extends BaseDTO {
+
+        @ApiModelProperty("触发者ID")
+        private String triggerId;
+
+        @ApiModelProperty("触发业务ID")
+        private String triggerSid;
+    }
 
 }

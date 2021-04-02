@@ -94,17 +94,14 @@ public abstract class H5BbbTradeInvoiceDTO implements Serializable {
         @ApiModelProperty("发票类型[10增值税普通发票 20增值税专用发票]")
         private Integer invoiceType;
 
-        @ApiModelProperty("公司名称")
-        private String firmName;
+        @ApiModelProperty("抬头类型[10个人 20企业]")
+        private Integer invoiceRise;
 
-        @ApiModelProperty("税务人识别号")
+        @ApiModelProperty("发票抬头")
+        private String invoiceName;
+
+        @ApiModelProperty("税号")
         private String taxNumber;
-
-        @ApiModelProperty("订单编号")
-        private String tradeId;
-
-        @ApiModelProperty("注册地址")
-        private String registerAddress;
 
         @ApiModelProperty("开户银行")
         private String openingBank;
@@ -112,11 +109,24 @@ public abstract class H5BbbTradeInvoiceDTO implements Serializable {
         @ApiModelProperty("银行账户")
         private String accountNumber;
 
-        @ApiModelProperty("注册电话")
+        @ApiModelProperty("企业地址")
+        private String registerAddress;
+
+        @ApiModelProperty("企业电话")
         private String phone;
 
-        @ApiModelProperty("发票抬头[10个人 20企业]")
-        private Integer invoiceRise;
+        @ApiModelProperty("是否为默认发票")
+        private Integer isDefault;
+
+        @ApiModelProperty("发票内容")
+        private String invoiceContent;
+
+        @ApiModelProperty("联系人")
+        private String contactsUser;
+
+        @ApiModelProperty("联系人邮箱")
+        private String contactsEmail;
+
 
     }
 
@@ -132,14 +142,39 @@ public abstract class H5BbbTradeInvoiceDTO implements Serializable {
         @ApiModelProperty("发票类型[10增值税普通发票 20增值税专用发票]")
         private Integer invoiceType;
 
-        @ApiModelProperty("发票抬头[10个人 20企业]")
+        @ApiModelProperty("抬头类型[10个人 20企业]")
         private Integer invoiceRise;
 
-        @ApiModelProperty("公司名称")
-        private String firmName;
+        @ApiModelProperty("发票抬头")
+        private String invoiceName;
 
-        @ApiModelProperty("税务人识别号")
+        @ApiModelProperty("税号")
         private String taxNumber;
+
+        @ApiModelProperty("开户银行")
+        private String openingBank;
+
+        @ApiModelProperty("银行账户")
+        private String accountNumber;
+
+        @ApiModelProperty("企业地址")
+        private String registerAddress;
+
+        @ApiModelProperty("企业电话")
+        private String phone;
+
+        @ApiModelProperty("是否为默认发票")
+        private Integer isDefault;
+
+        @ApiModelProperty("发票内容")
+        private String invoiceContent;
+
+        @ApiModelProperty("联系人")
+        private String contactsUser;
+
+        @ApiModelProperty("联系人邮箱")
+        private String contactsEmail;
+
 
     }
 
@@ -162,6 +197,9 @@ public abstract class H5BbbTradeInvoiceDTO implements Serializable {
 
         @ApiModelProperty("订单编号")
         private String tradeId;
+
+        @ApiModelProperty("联系人邮箱")
+        private String emailNum;
     }
 
 }

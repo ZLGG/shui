@@ -50,6 +50,9 @@ public abstract class PCMerchPicturesDTO implements Serializable {
         @ApiModelProperty("图片名字")
         private String imageName;
 
+        @ApiModelProperty("原图片名称")
+        private String originalImageName;
+
         @ApiModelProperty("图片路径")
         private String imageUrl;
 

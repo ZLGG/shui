@@ -6,7 +6,9 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5MarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5MarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
+import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.rpc.api.bbb.h5.trade.IBbbH5MarketActivityRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -87,12 +89,23 @@ public class BbbH5MarkeActivityController {
 
         return iBbbH5MarketActivityRpc.activityList(dto);
     }
+    @ApiOperation("活动列表")
+    @GetMapping("/marketActivity/activityList")
+    public ResponseData<PageData<BbbH5MarketActivityVO.activityListPageVO>> activityListPage(BbbH5MarketActivityQTO.QTO qto) {
+        return ResponseData.data(iBbbH5MarketActivityRpc.activityListPage(qto));
+    }
 
-    @ApiOperation("商家优惠卷")
+    @ApiOperation("商家优惠卷（店铺页）")
     @PostMapping("/marketActivity/activityCard")
     public ResponseData<List<BbbH5MarketActivityVO.merchantCard>> merchantCard(@Valid @RequestBody BbbH5MarketMerchantActivityDTO.MerchantIdDTO dto) {
 
         return ResponseData.data(iBbbH5MarketActivityRpc.merchantCard(dto));
+    }
+    @ApiOperation("商家优惠卷(商品详情页)")
+    @PostMapping("/marketActivity/activityCardGoodsInfo")
+    public ResponseData<List<BbbH5MarketActivityVO.merchantCard>> activityCardGoodsInfo(@Valid @RequestBody BbbH5MarketMerchantActivityDTO.MerchantIdDTO dto) {
+
+        return ResponseData.data(iBbbH5MarketActivityRpc.activityCardGoodsInfo(dto));
     }
 
     @ApiOperation("用户领取")

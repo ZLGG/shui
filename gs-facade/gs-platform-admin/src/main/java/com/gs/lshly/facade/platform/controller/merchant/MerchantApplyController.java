@@ -2,6 +2,7 @@ package com.gs.lshly.facade.platform.controller.merchant;
 
 
 import com.gs.lshly.common.constants.MsgConst;
+import com.gs.lshly.common.enums.MerchantApplyTypeEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.MerchantApplyDTO;
@@ -93,6 +94,23 @@ public class MerchantApplyController {
         dto.setId(id);
         merchantApplyRpc.handBrandSubmit(dto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+
+    @ApiOperation("商家入驻后修改信息申请列表")
+    @GetMapping("afterSettledPageData")
+    @Func(code="view", name="查")
+    public ResponseData<PageData<MerchantApplyVO.ListVO>> afterSettledPageData(MerchantApplyQTO.QTO qto) {
+        qto.setApplyType(MerchantApplyTypeEnum.入驻后修改信息提交.getCode());
+        return ResponseData.data(merchantApplyRpc.pageData(qto));
+    }
+
+    @ApiOperation("商家入驻修改信息申请审核处理")
+    @PutMapping(value = "/checkEditApply/{id}")
+    @Func(code="edit", name="改")
+    public ResponseData<Void> checkEditApply(@PathVariable String id, @Valid @RequestBody MerchantApplyDTO.CheckApplyDTO dto) {
+        dto.setId(id);
+        merchantApplyRpc.checkEditApply(dto);
+        return ResponseData.success(MsgConst.APPLY_SUCCESS);
     }
 
 }

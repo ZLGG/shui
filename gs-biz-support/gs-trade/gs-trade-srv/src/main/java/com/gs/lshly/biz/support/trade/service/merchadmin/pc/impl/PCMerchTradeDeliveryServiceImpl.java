@@ -13,6 +13,7 @@ import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDeliveryDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeDeliveryQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeDeliveryVO;
@@ -20,6 +21,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -28,7 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * <p>
@@ -47,6 +51,9 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
 
     @DubboReference
     private IPCMerchUserRpc ipcMerchUserRpc;
+
+    @DubboReference
+    private IPCMerchShopRpc ipcMerchShopRpc;
 
     @Autowired
     private  ISMSService ismsService ;
@@ -67,11 +74,44 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
             wrapper.and(i -> i.eq("t.`trade_state`",qto.getTradeState()));//交易状态,不传则查所有状态数据
         }
         if(ObjectUtils.isNotEmpty(qto.getTradeCode())){
-            wrapper.and(i -> i.eq("t.`trade_code`",qto.getTradeCode()));
+            wrapper.and(i -> i.like("t.`trade_code`",qto.getTradeCode()));
         }
+        if(ObjectUtils.isNotEmpty(qto.getLogisticsNumber())){
+            wrapper.and(i -> i.like("td.`logistics_number`",qto.getLogisticsNumber()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getUserName())){
+            wrapper.and(i -> i.like("u.`user_name`",qto.getUserName()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getUserPhone())){
+            wrapper.and(i -> i.like("u.`phone`",qto.getUserPhone()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getAddress())){
+            wrapper.and(i -> i.like("t.`recv_full_addres`",qto.getAddress()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getName())){
+            wrapper.and(i -> i.like("t.`recv_person_name`",qto.getName()));
+        }
+        if(ObjectUtils.isNotEmpty(qto.getPhone())){
+            wrapper.and(i -> i.like("t.`recv_phone`",qto.getPhone()));
+        }
+        wrapper.orderByDesc("t.`cdate`");
         IPage<PCMerchTradeDeliveryVO.ListVO> page = MybatisPlusUtil.pager(qto);
         tradeDeliveryRepository.selectListPage(page,wrapper);
-        return MybatisPlusUtil.toPageData(qto, PCMerchTradeDeliveryVO.ListVO.class, page);
+        List<PCMerchTradeDeliveryVO.ListVO> listVOS = new ArrayList<>();
+        for (PCMerchTradeDeliveryVO.ListVO record : page.getRecords()) {
+            PCMerchTradeDeliveryVO.ListVO listVO = new PCMerchTradeDeliveryVO.ListVO();
+            BeanUtils.copyProperties(record,listVO);
+            CommonLogisticsCompanyVO.DetailVO logisticsCompany = commonLogisticsCompanyRpc.getLogisticsCompany(record.getLogisticsId());
+            if (ObjectUtils.isNotEmpty(logisticsCompany)){
+                listVO.setLogisticsName(logisticsCompany.getName());
+            }
+            PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(record.getUserId());
+            if (ObjectUtils.isNotEmpty(userSimpleVO)){
+                listVO.setUserName(userSimpleVO.getUserName());
+            }
+            listVOS.add(listVO);
+        }
+        return new PageData<>(listVOS,qto.getPageNum(),qto.getPageSize(),listVOS.size());
     }
 
     @Override
@@ -127,6 +167,10 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
             throw new BusinessException("没有数据");
         }
         BeanUtils.copyProperties(tradeDelivery, detailVo);
+        CommonLogisticsCompanyVO.DetailVO logisticsCompany = commonLogisticsCompanyRpc.getLogisticsCompany(detailVo.getLogisticsId());
+        if (ObjectUtils.isNotEmpty(logisticsCompany)){
+            detailVo.setLogisticsName(logisticsCompany.getName());
+        }
         return detailVo;
     }
 
@@ -152,6 +196,39 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
         trade.setTradeState(TradeStateEnum.已完成.getCode());
         trade.setRecvTime(LocalDateTime.now());
         tradeRepository.saveOrUpdate(trade);
+    }
+
+    @Override
+    public List<PCMerchTradeDeliveryVO.ListVOExport> export(PCMerchTradeDeliveryQTO.IdListQTO qo) {
+        if (ObjectUtils.isEmpty(qo.getIdList())){
+            throw new BusinessException("请传入导出ID");
+        }
+        List<TradeDelivery> tradeDeliveries = tradeDeliveryRepository.listByIds(qo.getIdList());
+        if (ObjectUtils.isNotEmpty(tradeDeliveries)) {
+            List<PCMerchTradeDeliveryVO.ListVOExport> listVOS = tradeDeliveries.parallelStream().map(i -> {
+                PCMerchTradeDeliveryVO.ListVOExport listVO = new PCMerchTradeDeliveryVO.ListVOExport();
+                BeanUtils.copyProperties(i, listVO);
+                CommonLogisticsCompanyVO.DetailVO logisticsCompany = commonLogisticsCompanyRpc.getLogisticsCompany(i.getLogisticsId());
+                if (ObjectUtils.isNotEmpty(logisticsCompany)){
+                    listVO.setLogisticsName(logisticsCompany.getName());
+                }
+                PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(i.getUserId());
+                if (ObjectUtils.isNotEmpty(userSimpleVO)){
+                    listVO.setUserName(userSimpleVO.getUserName());
+                }
+                PCMerchShopVO.ShopSimpleVO shopSimpleVO = ipcMerchShopRpc.innerShopSimple(i.getShopId());
+                if (ObjectUtils.isNotEmpty(shopSimpleVO)){
+                    listVO.setShopName(shopSimpleVO.getShopName());
+                }
+                Trade byId = tradeRepository.getById(i.getTradeId());
+                if (ObjectUtils.isNotEmpty(byId)){
+                    listVO.setTradeCode(byId.getTradeCode());
+                }
+                return listVO;
+            }).collect(Collectors.toList());
+            return listVOS;
+        }
+        return new ArrayList<>();
     }
 
 }

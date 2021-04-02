@@ -49,6 +49,7 @@ public class BbcDataArticleCategoryServiceImpl implements IBbcDataArticleCategor
     public List<BbcDataArticleCategoryVO.ListVO> list(BaseDTO dto) {
         QueryWrapper<DataArticleCategory> queryLeveWrapper =  MybatisPlusUtil.query();
         queryLeveWrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        queryLeveWrapper.orderByDesc("cdate");
         List<DataArticleCategory> categoryList = repository.list(queryLeveWrapper);
         List<BbcDataArticleCategoryVO.ListVO> voList  = new ArrayList<>();
         for(DataArticleCategory category:categoryList){

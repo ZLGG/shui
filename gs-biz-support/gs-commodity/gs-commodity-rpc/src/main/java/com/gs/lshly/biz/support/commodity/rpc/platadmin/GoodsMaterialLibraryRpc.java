@@ -49,8 +49,8 @@ public class GoodsMaterialLibraryRpc implements IGoodsMaterialLibraryRpc{
     }
 
     @Override
-    public ExportDataDTO export() throws Exception {
-        return ExcelUtil.treatmentBean(GoodsMaterialLibraryService.exportData(new BaseQTO()), GoodsMaterialLibraryVO.exportDataVO.class);
+    public ExportDataDTO export(GoodsMaterialLibraryDTO.IdListDTO dto) throws Exception {
+        return ExcelUtil.treatmentBean(GoodsMaterialLibraryService.exportData(dto), GoodsMaterialLibraryVO.exportDataVO.class);
     }
 
 }

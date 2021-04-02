@@ -1,5 +1,6 @@
 package com.gs.lshly.rpc.api.common;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.common.LegalDictDTO;
 import com.gs.lshly.common.struct.common.LegalDictQTO;
@@ -34,6 +35,7 @@ public interface ILegalDictRpc {
      */
     void editLegalDict(LegalDictDTO.ETO eto);
 
+
     /**
      * 企业信息详情
      * @param dto
@@ -67,6 +69,13 @@ public interface ILegalDictRpc {
      */
     ExportDataDTO export(LegalDictDTO.IdListDTO dto) throws Exception;
 
+    /**
+     * 获取商家入驻信息
+     * @param dto
+     * @return
+     */
+    LegalDictVO.SettledInfoVO getSettledInfo(BaseDTO dto);
+
     List<LegalDictVO.DetailVO>   innerListLegalDict(List<String> legalIdList);
 
     String  innerQueryAddLegalDict(LegalDictDTO.InnerETO eto);
@@ -77,4 +86,21 @@ public interface ILegalDictRpc {
 
     void innerUpdateLegalDict(String legalId,Integer bussinessType);
 
+    /**
+     * 统计某企业类型必传证照数量
+     * @param corpTypeId
+     * @return
+     */
+    int innerCountNeedCert(String corpTypeId);
+
+    /**
+     * 修改入驻信息并返回id
+     * @param eto
+     * @return
+     */
+    LegalDictVO.MerchantApplyIdVO editSettledInfo(LegalDictDTO.SettledInfoETO eto);
+
+    LegalDictVO.SettledCertInfoVO innerCertInfoVO(String corpTypeId);
+
+    void  innereditSettleState(String legalId,Integer state);
 }

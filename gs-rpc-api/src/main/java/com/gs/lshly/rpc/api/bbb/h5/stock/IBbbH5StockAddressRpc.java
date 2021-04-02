@@ -33,6 +33,8 @@ public interface IBbbH5StockAddressRpc {
      */
     BbbH5StockAddressVO.DetailVO detailStockAddress(BbbH5StockAddressDTO.IdAndTypeDTO dto);
 
+    BbbH5StockAddressVO.DetailVO innerdetailStockAddress(BbbH5StockAddressDTO.IdAndTypeDTO dto);
+
     /**
      * 查询个人地址列表
      * @param qto

@@ -33,4 +33,11 @@ public class BbcPcStockKdniaoController {
         return ResponseData.data(iExpressSurviceRpc.orderLogisticsInformation(dto));
     }
 
+
+    @ApiOperation("在途监控")
+    @GetMapping("/onLineMonitoring")
+    public ResponseData<LogisticsInformationVO.ListVO> onLineMonitoring(StockKdniaoDTO.TradeTailDTO dto) {
+        return ResponseData.data(iExpressSurviceRpc.onLineMonitoring(dto));
+    }
+
 }

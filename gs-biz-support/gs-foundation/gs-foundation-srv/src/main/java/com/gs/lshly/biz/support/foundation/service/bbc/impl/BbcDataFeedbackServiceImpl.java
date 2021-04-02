@@ -13,7 +13,10 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcDataFeedbackDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcDataFeedbackQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcDataFeedbackVO;
+import com.gs.lshly.common.struct.common.dto.RemindPlatDTO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.IRemindPlatRpc;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +37,9 @@ public class BbcDataFeedbackServiceImpl implements IBbcDataFeedbackService {
     @Autowired
     private IDataFeedbackRepository repository;
 
+    @DubboReference
+    private IRemindPlatRpc iRemindPlatRpc;
+
     @Override
     public PageData<BbcDataFeedbackVO.ListVO> pageData(BbcDataFeedbackQTO.QTO qto) {
         if(StringUtils.isBlank(qto.getJwtUserId())){
@@ -42,6 +48,7 @@ public class BbcDataFeedbackServiceImpl implements IBbcDataFeedbackService {
         QueryWrapper<DataFeedback> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("fb_operator_id",qto.getJwtUserId());
         wrapper.eq("fb_operator_type",OperatorTypeEnum.会员.getCode());
+        wrapper.orderByDesc("cdate");
         IPage<DataFeedback> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, BbcDataFeedbackVO.ListVO.class, page);
@@ -58,6 +65,11 @@ public class BbcDataFeedbackServiceImpl implements IBbcDataFeedbackService {
         dataFeedback.setFbOperatorTime(LocalDateTime.now());
         dataFeedback.setFbOperatorId(eto.getJwtUserId());
         repository.save(dataFeedback);
+
+        //触发消息
+        iRemindPlatRpc.addRemindForUserFackback(new RemindPlatDTO.JustDTO(eto.getJwtUserId(),dataFeedback.getId()));
     }
+
+
 
 }

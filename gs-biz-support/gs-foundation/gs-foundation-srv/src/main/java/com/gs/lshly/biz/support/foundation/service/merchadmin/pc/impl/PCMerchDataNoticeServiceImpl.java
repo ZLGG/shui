@@ -26,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,7 @@ public class PCMerchDataNoticeServiceImpl implements IPCMerchDataNoticeService {
     @Override
     public List<PCMerchDataNoticeVO.NoticeTypeListVO> noticeTypeList(PCMerchDataNoticeQTO.NoticeTypeQTO qto) {
         QueryWrapper<DataNoticeType> queryWrapper =  MybatisPlusUtil.query();
+        queryWrapper.orderByDesc("cdate");
         List<DataNoticeType> noticeTypeList =  dataNoticeTypeRepository.list(queryWrapper);
         return ListUtil.listCover(PCMerchDataNoticeVO.NoticeTypeListVO.class,noticeTypeList);
     }
@@ -106,6 +108,19 @@ public class PCMerchDataNoticeServiceImpl implements IPCMerchDataNoticeService {
         BeanUtils.copyProperties(noticeView, detailVo);
         detailVo.setState(NoticeReadStateEnum.已读.getCode());
         return detailVo;
+    }
+
+    @Override
+    public List<PCMerchDataNoticeVO.ListVO> innerList(PCMerchDataNoticeDTO.innerDTO qto) {
+        QueryWrapper<DataNoticeView> wrapper =  MybatisPlusUtil.query();
+        wrapper.and(i->i.eq("recv.shop_id",qto.getJwtShopId()));
+        wrapper.and(i->i.eq("recv.`state`",10));
+        wrapper.orderByDesc("recv.`cdate`");
+        List<PCMerchDataNoticeVO.ListVO> listVOS=dataNoticeMapper.innerList(wrapper);
+        if (ObjectUtils.isNotEmpty(listVOS)){
+            return listVOS;
+        }
+       return new ArrayList<>();
     }
 
 }

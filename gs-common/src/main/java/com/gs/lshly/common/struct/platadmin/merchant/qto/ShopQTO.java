@@ -18,11 +18,20 @@ public abstract class ShopQTO implements Serializable {
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
 
-        @ApiModelProperty("条件类型")
-        private String conditionType;
+        @ApiModelProperty("店铺名字")
+        private String shopName;
 
-        @ApiModelProperty("条件类型的值")
-        private String conditionValue;
+        @ApiModelProperty("店主手机号")
+        private String phone;
+
+        @ApiModelProperty("身份证号")
+        private String userCardId;
+
+        @ApiModelProperty("邮箱")
+        private String email;
+
+        @ApiModelProperty("店主姓名")
+        private String realName;
 
         @ApiModelProperty(value = "终端类型[10=2b,20=2c]",hidden = true)
         private Integer terminal;

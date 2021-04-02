@@ -2,16 +2,23 @@ package com.gs.lshly.facade.platform.controller.trade;
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDeliveryDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeDeliveryQTO;
+import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeDeliveryVO;
+import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.middleware.auth.rbac.Func;
 import com.gs.lshly.middleware.auth.rbac.Module;
+import com.gs.lshly.middleware.log.Log;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeDeliveryRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -43,6 +50,13 @@ public class TradeDeliveryController {
     @Func(code = "view",name = "查")
     public ResponseData<TradeDeliveryVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(TradeDeliveryRpc.detailTradeDelivery(new TradeDeliveryDTO.IdDTO(id)));
+    }
+    @ApiOperation("导出发货单")
+    @Log(module = "发货单", func = "导出发货单")
+    @GetMapping(value = "/export")
+    public void deliveryExport(TradeDeliveryQTO.IdListQTO qo, @ApiIgnore HttpServletResponse response) throws Exception {
+        ExportDataDTO exportData = TradeDeliveryRpc.deliveryExport(qo);
+        ExcelUtil.export(exportData, response);
     }
 
     @ApiOperation("新增交易订单发货表")

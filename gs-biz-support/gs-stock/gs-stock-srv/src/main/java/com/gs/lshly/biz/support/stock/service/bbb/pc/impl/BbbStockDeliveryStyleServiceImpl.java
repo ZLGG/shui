@@ -12,6 +12,7 @@ import com.gs.lshly.common.struct.common.stock.CommonStockTemplateVO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsSkuRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ public class BbbStockDeliveryStyleServiceImpl implements IBbbStockDeliveryStyleS
             log.info("门店自提");
             return BbbStockDeliveryVO.DeliveryAmountVO.ofZero(dto.getShopId());
         }
+        BigDecimal totalWeights=BigDecimal.ZERO;
 
         if (StockDeliveryTypeEnum.快递配送.getCode().equals(dto.getDeliveryType())) {
             log.info("快递配送");
@@ -78,9 +80,10 @@ public class BbbStockDeliveryStyleServiceImpl implements IBbbStockDeliveryStyleS
                 CommonDeliveryCostCalcParam calcParam = stockTemplateService.parseToDeliveryCostCalcParam(mergedVO, stockTemplateDetail, dto.getAddressId());
                 //通过计价数量，及计算模板，计算运费
                 BigDecimal cost = calculator.calculate(mergedVO, calcParam);
+                totalWeights=totalWeights.add(mergedVO.getWeight());
                 totalCost = totalCost.add(cost);
             }
-            return BbbStockDeliveryVO.DeliveryAmountVO.of(totalCost, dto.getShopId());
+            return BbbStockDeliveryVO.DeliveryAmountVO.of(totalCost, dto.getShopId(),totalWeights);
         }
 
         if (StockDeliveryTypeEnum.门店配送.getCode().equals(dto.getDeliveryType())) {
@@ -90,11 +93,15 @@ public class BbbStockDeliveryStyleServiceImpl implements IBbbStockDeliveryStyleS
             //通过计价数量，及计算模板，计算运费
             List<CommonStockTemplateVO.SkuAmountAndPriceVO> skus = new ArrayList<>();
             for(BbbStockDeliveryDTO.DeliverySKUDTO sku : dto.getSkus()){
-                skus.add(skuRpc.getGoodsSkuPrice(sku));
+                CommonStockTemplateVO.SkuAmountAndPriceVO goodsSkuPrice = skuRpc.getGoodsSkuPrice(sku);
+                if (ObjectUtils.allNotNull(goodsSkuPrice)) {
+                    totalWeights = totalWeights.add(goodsSkuPrice.getWeight());
+                    skus.add(goodsSkuPrice);
+                }
             }
             //合并sku数量、价格、重量后，计算运费
             BigDecimal totalCost =  calculator.calculate(merge("","", skus), calcParam);
-            return BbbStockDeliveryVO.DeliveryAmountVO.of(totalCost, dto.getShopId());
+            return BbbStockDeliveryVO.DeliveryAmountVO.of(totalCost, dto.getShopId(),totalWeights);
         }
         throw new BusinessException("配送方式错误");
     }

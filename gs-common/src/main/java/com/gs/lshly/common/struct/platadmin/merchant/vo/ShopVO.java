@@ -80,6 +80,9 @@ public abstract class ShopVO implements Serializable {
         @ApiModelProperty(value = "商家来源[10=平台入驻 20=平台添加]",position = 16)
         private Integer shopMerchantFrom;
 
+        @ApiModelProperty(value = "POS店铺Id",position = 17)
+        private String posShopId;
+
     }
 
     @Data

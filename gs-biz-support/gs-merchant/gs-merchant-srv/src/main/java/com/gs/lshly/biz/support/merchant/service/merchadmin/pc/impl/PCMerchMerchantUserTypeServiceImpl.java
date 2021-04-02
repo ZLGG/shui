@@ -49,6 +49,7 @@ public class PCMerchMerchantUserTypeServiceImpl implements IPCMerchMerchantUserT
     public PageData<PCMerchMerchantUserTypeVO.ListVO> pageData(PCMerchMerchantUserTypeQTO.QTO qto) {
         QueryWrapper<MerchantUserType> wrapper = MybatisPlusUtil.query();
         wrapper.eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         IPage<MerchantUserType> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMerchantUserTypeVO.ListVO.class, page);

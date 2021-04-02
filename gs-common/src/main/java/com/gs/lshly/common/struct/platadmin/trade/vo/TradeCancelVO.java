@@ -36,6 +36,9 @@ public abstract class TradeCancelVO implements Serializable {
         @ApiModelProperty("会员ID")
         private String userId;
 
+        @ApiModelProperty("会员名字")
+        private String userName;
+
 
         @ApiModelProperty("店铺ID")
         private String shopId;
@@ -131,74 +134,64 @@ public abstract class TradeCancelVO implements Serializable {
     @Data
     @ApiModel("TradeCancelVO.ListVOExport")
     public static class ListVOExport implements Serializable {
-        @ApiModelProperty(name = "id",position= 1)
+        @ApiModelProperty(value = "id", position = 1)
         private String id;
 
 
-        @ApiModelProperty(name = "订单ID",position= 2)
-        private String tradeId;
-
-
-        @ApiModelProperty(name = "订单编号",position= 3)
+        @ApiModelProperty(value = "订单编号", position = 2)
         private String tradeCode;
 
 
-        @ApiModelProperty(name = "会员ID",position= 4)
-        private String userId;
+        @ApiModelProperty(value = "会员名字", position = 3)
+        private String userName;
 
 
-        @ApiModelProperty(name = "店铺ID",position= 5)
-        private String shopId;
+        @ApiModelProperty(value = "店铺名字", position = 4)
+        private String shopName;
 
 
-        @ApiModelProperty(name = "支付ID",position= 6)
-        private String payId;
-
-
-        @ApiModelProperty(name = "退款金额",position= 7)
+        @ApiModelProperty(value = "退款金额", position = 5)
         private BigDecimal tradeAmount;
 
 
-        @ApiModelProperty(name = "提交申请:10,商家驳回:20,商家确认:30,退款:40,完成:50",position= 8)
-        private Integer cancelState;
+        @ApiModelProperty(value = "提交申请", position = 6)
+        private String cancelState;
 
 
-        @ApiModelProperty(name = "申请类型:用户取消订单:10,商家取消订单:20",position= 9)
-        private Integer applyType;
+        @ApiModelProperty(value = "申请类型", position = 7)
+        private String applyType;
 
 
-        @ApiModelProperty(name = "申请时间",position= 10)
+        @ApiModelProperty(value = "申请时间", position = 8)
         private LocalDateTime applyTime;
 
 
-        @ApiModelProperty(name = "原因类型:",position= 11)
-        private Integer reasonType;
+        @ApiModelProperty(value = "原因类型:", position = 9)
+        private String reasonType;
 
 
-        @ApiModelProperty(name = "原因说明",position= 12)
+        @ApiModelProperty(value = "原因说明", position = 10)
         private String remark;
 
 
-        @ApiModelProperty(name = "拒绝理由",position= 13)
+        @ApiModelProperty(value = "拒绝理由", position = 11)
         private String rejectReason;
 
 
-        @ApiModelProperty(name = "拒绝时间",position= 14)
+        @ApiModelProperty(value = "拒绝时间", position = 12)
         private LocalDateTime rejectTime;
 
 
-        @ApiModelProperty(name = "通过时间",position= 15)
+        @ApiModelProperty(value = "通过时间", position = 13)
         private LocalDateTime passTime;
 
 
-        @ApiModelProperty(name = "退款状态:无需退款:10,等待审核:20,等待退款:30,退款成功:40",position= 16)
-        private Integer refundState;
+        @ApiModelProperty(value = "退款状态", position = 14)
+        private String refundState;
 
 
-        @ApiModelProperty(name = "退款时间",position= 17)
+        @ApiModelProperty(value = "退款时间", position = 15)
         private LocalDateTime refundTime;
 
-        @ApiModelProperty(name = "支付方式:10=支付扫码,20=支付宝APP,30=微信扫码,40=微信公众号,50=微信APP支付,60=微信小程序支付,70=银联PC,80=银联移动,90=线下支付",position= 18)
-        private Integer payType;
     }
 }

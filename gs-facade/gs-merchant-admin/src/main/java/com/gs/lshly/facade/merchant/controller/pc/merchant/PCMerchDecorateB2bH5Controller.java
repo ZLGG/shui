@@ -29,7 +29,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/merchant/bbb/h5")
 @Api(tags = "店铺装饰B2B-H5")
-@Module(code = "configB2BH5", parent = "shop", name = "B2B-H5站点配置", index = 5)
 public class PCMerchDecorateB2bH5Controller {
 
     @DubboReference
@@ -44,7 +43,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("BbbH5文本导航列表")
     @GetMapping("/textMenuList")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopNavigationMenuVO.H5TextMenuListVO>> textMenuList(PCMerchShopNavigationMenuQTO.H5TextMenuQTO qto) {
         qto.setTerminal(TerminalEnum.BBB.getCode());
         return ResponseData.data(pcMerchShopNavigationMenuRpc.h5TextMenuList(qto));
@@ -52,7 +50,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("BbbH5文本导航编辑")
     @PutMapping(value = "/textMenuEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> textMenuEditor(@Valid @RequestBody PCMerchShopNavigationMenuDTO.H5TextMenuETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         pcMerchShopNavigationMenuRpc.h5TextMenuEditor(eto);
@@ -61,7 +58,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("店铺轮播图列表(BBB-H5)")
     @GetMapping("/bannerList")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopBannerVO.H5ListVO>> bannerList(PCMerchShopBannerQTO.H5QTO qto) {
         qto.setTerminal(TerminalEnum.BBB.getCode());
         return ResponseData.data(pcMerchShopBannerRpc.h5List(qto));
@@ -69,7 +65,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("店铺轮播图编辑(BBB-H5)")
     @PutMapping(value = "/bannerEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> bannerEditor(@Valid @RequestBody PCMerchShopBannerDTO.H5ETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         pcMerchShopBannerRpc.h5Editor(eto);
@@ -79,7 +74,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("BbbH5菜单导航列表")
     @GetMapping("/menuList")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopNavigationMenuVO.H5ListVO>> menuList(PCMerchShopNavigationMenuQTO.H5QTO qto) {
         qto.setTerminal(TerminalEnum.BBB.getCode());
         return ResponseData.data(pcMerchShopNavigationMenuRpc.h5List(qto));
@@ -87,7 +81,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("BbbH5菜单导航编辑")
     @PutMapping(value = "/menuEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> menuEditor(@Valid @RequestBody PCMerchShopNavigationMenuDTO.H5ETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         pcMerchShopNavigationMenuRpc.h5Editor(eto);
@@ -97,7 +90,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("BbbH5楼层列表")
     @GetMapping("/floorList")
-    @Func(code="view", name="查")
     public ResponseData<List<PCMerchShopFloorVO.H5ListVO>> floorList(PCMerchShopFloorQTO.H5QTO qto) {
         qto.setTerminal(TerminalEnum.BBB.getCode());
         return ResponseData.data(pCMerchShopFloorRpc.h5List(qto));
@@ -105,7 +97,6 @@ public class PCMerchDecorateB2bH5Controller {
 
     @ApiOperation("BbbH5楼层编辑")
     @PutMapping(value = "/floorEditor")
-    @Func(code="edit", name="改")
     public ResponseData<Void> floorEditor(@Valid @RequestBody PCMerchShopFloorDTO.H5ETO eto) {
         eto.setTerminal(TerminalEnum.BBB.getCode());
         pCMerchShopFloorRpc.h5Editor(eto);

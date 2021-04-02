@@ -96,4 +96,7 @@ public interface IShopRpc {
      */
 
     List<ShopVO.InnerSimpleVO> innerlistShopIdName(BaseDTO dto,Integer shopType,Integer terminal);
+
+
+    ShopVO.DetailVO innerByIdGetPosShopId(String shopId);
 }

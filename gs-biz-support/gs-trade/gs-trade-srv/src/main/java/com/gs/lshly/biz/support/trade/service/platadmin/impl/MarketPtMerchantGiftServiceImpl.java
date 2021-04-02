@@ -2,15 +2,15 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.trade.entity.MarketMerchantGift;
-import com.gs.lshly.biz.support.trade.entity.MarketMerchantGiftGoods;
-import com.gs.lshly.biz.support.trade.entity.MarketMerchantGiftGoodsGive;
+import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
+import com.gs.lshly.biz.support.trade.repository.IMarketCheckRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsGiveRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtMerchantGiftService;
 import com.gs.lshly.common.enums.ActivitySignEnum;
+import com.gs.lshly.common.enums.MarketCheckTypeEnum;
 import com.gs.lshly.common.enums.PlatformCardStatusEnum;
 import com.gs.lshly.common.enums.ShopTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -20,12 +20,14 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchMarketMerchantGiftDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchMarketMerchantDiscountQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantCardVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantGiftVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
@@ -37,6 +39,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftService {
@@ -46,6 +49,8 @@ public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftSer
     private IMarketMerchantGiftGoodsRepository iMarketMerchantGiftGoodsRepository;
     @Autowired
     private IMarketMerchantGiftGoodsGiveRepository iMarketMerchantGiftGoodsGiveRepository;
+    @Autowired
+    private IMarketCheckRepository iMarketCheckRepository;
     @DubboReference
     private IPCMerchAdminGoodsInfoRpc ipcMerchAdminGoodsInfoRpc;
     @DubboReference
@@ -59,6 +64,7 @@ public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftSer
         if (qto.getStatus()!=null){
             wrapper.eq("state",qto.getStatus());
         }
+        wrapper.orderByDesc("cdate");
         List<MarketMerchantGift> list = repository.list(wrapper);
         if (ObjectUtils.isEmpty(list)){
             return new PageData<>();
@@ -118,6 +124,18 @@ public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftSer
         if (ObjectUtils.isNotEmpty(detailVO)) {
             platformView.setShopName(detailVO.getShopName() + ShopTypeEnum.findRemark(detailVO.getShopType()));
         }
+        QueryWrapper<MarketCheck> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("activity_id",platformView.getId()));
+        query.and(i->i.eq("check_type",MarketCheckTypeEnum.满赠.getCode()));
+        List<MarketCheck> list1 = iMarketCheckRepository.list(query);
+        if (ObjectUtils.isNotEmpty(list1)){
+            List<PCMerchMarketMerchantCardVO.PlatformView.CheckVO> checkVOS =list1.stream().map(e ->{
+                PCMerchMarketMerchantCardVO.PlatformView.CheckVO checkVO = new PCMerchMarketMerchantCardVO.PlatformView.CheckVO();
+                checkVO.setCheckDate(e.getCdate()).setCheckState(e.getCheckState()).setRemark(e.getRemark());
+                return checkVO;
+            }).collect(Collectors.toList());
+            platformView.setCheckInfo(checkVOS);
+        }
         List<PCMerchMarketMerchantGiftVO.GoodsInfo>  goodsInfos=new ArrayList<>();
         List<MarketMerchantGiftGoods> marketMerchantGiftGoods = SelectCartGoods(id.getId(), platformView.getMerchantId(), platformView.getShopId());
         if (ObjectUtils.isNotEmpty(marketMerchantGiftGoods)) {
@@ -134,22 +152,7 @@ public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftSer
                     innerServiceGoodsInfoVO = innerServiceGoodsInfoVOS.get(0);
                 }
                 if (ObjectUtils.isNotEmpty(innerServiceGoodsInfoVO)) {
-                    goodsInfo.setGoodsName(innerServiceGoodsInfoVO.getGoodsName());
-                            List<SkuGoodsInfoVO.ListVO> skuList = innerServiceGoodsInfoVO.getSkuList();
-                    if (ObjectUtils.isNotEmpty(goods.getSkuIds())) {
-                        List<String> arrSkuIdList = Arrays.asList(goods.getSkuIds().split(","));
-                        for (int i = 0; i < skuList.size(); i++) {
-                            if (!arrSkuIdList.contains(skuList.get(i).getId())) {
-                                skuList.remove(i);
-                            }
-                        }
-                    }
-                    for (SkuGoodsInfoVO.ListVO goodsName : skuList) {
-                        goodsInfo.setGoodsName(innerServiceGoodsInfoVO.getGoodsName() + " " + goodsName.getSpecsValue()).
-                                setId(goodsName.getId()).
-                                setSalePrice(goodsName.getSalePrice());
-
-                    }
+                    goodsInfo.setGoodsName(innerServiceGoodsInfoVO.getGoodsName()).setSalePrice(innerServiceGoodsInfoVO.getSalePrice());
                 }
                 goodsInfos.add(goodsInfo);
             }
@@ -180,9 +183,9 @@ public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftSer
                    innerServiceGoodsVO1 = innerServiceGoodsVO.get(0);
                 }
                 if (ObjectUtils.isNotEmpty(innerServiceGoodsVO1)){
-                    view2.setGoodsGiveName(innerServiceGoodsVO1.getGoodsName() + " " + skuInfo.getSpecsValue()).setId(innerServiceGoodsVO1.getId());
+                    view2.setGoodsGiveName(innerServiceGoodsVO1.getGoodsName() ).setId(innerServiceGoodsVO1.getId()).setTotal(skuIds.get(skuListInfo));
+                    view2 .setId(innerServiceGoodsVO1.getId());
                 }
-                view2 .setId(innerServiceGoodsVO1.getId());
                 goodsGiveInfos.add(view2);
             }
         }
@@ -196,12 +199,21 @@ public class MarketPtMerchantGiftServiceImpl implements IMarketPtMerchantGiftSer
         MarketMerchantGift marketMerchantGift = repository.getById(dto.getId());
         if (dto.getPattern().equals(ActivitySignEnum.已审核.getCode()) && marketMerchantGift.getIsCommit()){
             marketMerchantGift.setState(PlatformCardCheckStatusEnum.通过.getCode());
+            saveCheck(marketMerchantGift,dto);
         }
         if (dto.getPattern().equals(ActivitySignEnum.审核驳回.getCode() )&& marketMerchantGift.getIsCommit()){
-            marketMerchantGift.setState(PlatformCardCheckStatusEnum.待审.getCode()).
+            marketMerchantGift.setState(PlatformCardCheckStatusEnum.拒审.getCode()).setIsCommit(false).
                     setRevokeWhy(dto.getRevokeWhy());
+            saveCheck(marketMerchantGift,dto);
         }
         repository.updateById(marketMerchantGift);
+    }
+    private void saveCheck(MarketMerchantGift marketMerchantGift,PCMerchMarketMerchantGiftDTO.Check dto) {
+        MarketCheck marketCheck = new MarketCheck();
+        marketCheck.setCheckType(MarketCheckTypeEnum.满赠.getCode()).
+                setCheckState(marketMerchantGift.getState()).
+                setActivityId(marketMerchantGift.getId()).setRemark(ObjectUtils.isNotEmpty(dto.getRevokeWhy())?dto.getRevokeWhy():"");
+        iMarketCheckRepository.save(marketCheck);
     }
     private List<MarketMerchantGiftGoods> SelectCartGoods(String id, String jwtMerchantId, String jwtShopId) {
         QueryWrapper<MarketMerchantGiftGoods> wrapper = new QueryWrapper<>();

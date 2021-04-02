@@ -20,11 +20,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MerchantArticleMapper extends BaseMapper<MerchantArticle> {
 
-    @Select("SELECT art.*,ctg.name category_name,shop.shop_name " +
+    @Select("SELECT art.*,ctg.name categoryName,shop.shop_name " +
             "FROM gs_merchant_article art " +
             "LEFT JOIN gs_merchant_article_category ctg ON art.`category_id` = ctg.`id` " +
             "LEFT JOIN gs_shop shop on art.shop_id = shop.id " +
-            "where art.flag=0 and ctg.flag =0 and ${ew.sqlSegment}")
+            "where art.flag=0  and ${ew.sqlSegment}")
     IPage<MerchantArticleView> mapperPageList(IPage pager, @Param(value = "ew") QueryWrapper<MerchantArticleView> ew);
 
 

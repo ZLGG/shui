@@ -1,7 +1,6 @@
 package com.gs.lshly.biz.support.user.rpc.bbb.pc;
 
 import com.gs.lshly.biz.support.user.service.bbb.pc.IBbbUserAuthService;
-import com.gs.lshly.common.enums.UserStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
@@ -55,11 +54,11 @@ public class BbbUserAuthRpc implements IBbbUserAuthRpc {
     }
 
     @Override
-    public BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey) {
+    public BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid) {
         if (StringUtils.isBlank(openid)) {
             return null;
         }
-        return userAuthService.loadUserByWxOpenid(appid, openid, sessionKey);
+        return userAuthService.loadUserByWxOpenid(appid, openid, sessionKey, unionid);
     }
 
     @Override
@@ -119,5 +118,10 @@ public class BbbUserAuthRpc implements IBbbUserAuthRpc {
     @Override
     public String test() {
         return userAuthService.test();
+    }
+
+    @Override
+    public void forgetByEmail(BbbUserDTO.ForgetByEmailETO dto) {
+        userAuthService.forgetByEmail(dto);
     }
 }

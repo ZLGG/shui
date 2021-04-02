@@ -46,6 +46,7 @@ public class PCBbbMerchantUserTypeServiceImpl implements IPCBbbMerchantUserTypeS
 
         QueryWrapper<MerchantUserTypeRatio> wrapper = MybatisPlusUtil.query();
         wrapper.eq("user_type_id",id);
+        wrapper.orderByDesc("cdate");
         List<MerchantUserTypeRatio> ratioList = userTypeRatioRepository.list(wrapper);
         if (ObjectUtils.isNotEmpty(ratioList)){
             List<PCBbbMerchantUserTypeVO.RatioGoodsVO> ratioGoodsVOS = ListUtil.listCover(PCBbbMerchantUserTypeVO.RatioGoodsVO.class,ratioList);

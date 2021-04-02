@@ -32,6 +32,7 @@ public class H5MerchTradePayServiceImpl implements IH5MerchTradePayService {
     @Override
     public PageData<H5MerchTradePayVO.ListVO> pageData(H5MerchTradePayQTO.QTO qto) {
         QueryWrapper<TradePay> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradePay> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, H5MerchTradePayVO.ListVO.class, page);

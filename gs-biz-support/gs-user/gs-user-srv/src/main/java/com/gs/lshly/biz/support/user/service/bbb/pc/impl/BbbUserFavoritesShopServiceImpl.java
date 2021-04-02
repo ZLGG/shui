@@ -60,6 +60,7 @@ public class BbbUserFavoritesShopServiceImpl implements IBbbUserFavoritesShopSer
         QueryWrapper<UserFavoritesShop> queryWrapper = MybatisPlusUtil.query();
         IPage<UserFavoritesShop> pager = MybatisPlusUtil.pager(qto);
         queryWrapper.eq("user_id", qto.getJwtUserId());
+        queryWrapper.orderByDesc("cdate");
         List<BbbUserFavoritesShopVO.ListVO> voList = new ArrayList<>();
         repository.page(pager,queryWrapper);
         if(ObjectUtils.isEmpty(pager.getRecords())){

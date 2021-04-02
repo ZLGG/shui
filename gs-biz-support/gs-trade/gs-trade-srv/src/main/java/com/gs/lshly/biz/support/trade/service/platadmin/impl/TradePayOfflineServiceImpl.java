@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradePay;
 import com.gs.lshly.biz.support.trade.entity.TradePayOffline;
+import com.gs.lshly.biz.support.trade.entity.TradePayOfflineImg;
+import com.gs.lshly.biz.support.trade.repository.ITradePayOfflineImgRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradePayOfflineRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
@@ -19,6 +21,7 @@ import com.gs.lshly.common.struct.platadmin.trade.dto.TradePayOfflineDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayOfflineQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradePayOfflineVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.pc.stock.IBbbPcStockAddressRpc;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,9 @@ public class TradePayOfflineServiceImpl implements ITradePayOfflineService {
 
     @Autowired
     private ITradePayOfflineRepository iTradePayOfflineRepository;
+
+    @Autowired
+    private ITradePayOfflineImgRepository iTradePayOfflineImgRepository;
 
     @Autowired
     private ITradeRepository iTradeRepository;
@@ -132,10 +138,21 @@ public class TradePayOfflineServiceImpl implements ITradePayOfflineService {
     public TradePayOfflineVO.DetailVO showDetail(String id) {
         TradePayOfflineVO.DetailVO detailVO=new  TradePayOfflineVO.DetailVO();
         TradePayOfflineVO.Transfer transfer=new  TradePayOfflineVO.Transfer();
+        List <String> img = new ArrayList<>();
         TradePayOffline tradePayOffline = iTradePayOfflineRepository.getById(id);
         if(ObjectUtils.isNotEmpty(tradePayOffline)){
             BeanCopyUtils.copyProperties(tradePayOffline,transfer);
+            QueryWrapper wrapper = new QueryWrapper();
+            wrapper.eq("offline_id",tradePayOffline.getId());
+            List<TradePayOfflineImg> list= iTradePayOfflineImgRepository.list(wrapper);
+            if(ObjectUtils.isNotEmpty(list)){
+                for (TradePayOfflineImg tradePayOfflineImg:list) {
+                    img.add(tradePayOfflineImg.getOfflineImg());
+                }
+                transfer.setCertificatePicture(img);
+            }
             detailVO.setTransfer(transfer);
+
             TradePayOfflineVO.Order order = new  TradePayOfflineVO.Order();
             Trade trade = iTradeRepository.getById(tradePayOffline.getTradeId());
             if(ObjectUtils.isNotEmpty(trade)){
@@ -204,7 +221,7 @@ public class TradePayOfflineServiceImpl implements ITradePayOfflineService {
     }
 
     @Override
-    public List<TradePayOfflineVO.ListVO> exportPayOfficeData(TradePayOfflineQTO.IdListQTO qto) {
+    public List<TradePayOfflineVO.ListVOExport> exportPayOfficeData(TradePayOfflineQTO.IdListQTO qto) {
         if (ObjectUtils.isEmpty(qto)){
             throw new BusinessException("参数不能为空");
         }
@@ -212,10 +229,10 @@ public class TradePayOfflineServiceImpl implements ITradePayOfflineService {
         if(ObjectUtils.isEmpty(marginDetailList)){
             throw new BusinessException("查询异常");
         }
-        List<TradePayOfflineVO.ListVO> excelPayOfficeVOS = new ArrayList<>();
+        List<TradePayOfflineVO.ListVOExport> excelPayOfficeVOS = new ArrayList<>();
 
         for (TradePayOffline tradePayOffline:marginDetailList) {
-            TradePayOfflineVO.ListVO payOfficeVO = new TradePayOfflineVO.ListVO();
+            TradePayOfflineVO.ListVOExport payOfficeVO = new TradePayOfflineVO.ListVOExport();
             BeanUtils.copyProperties(tradePayOffline,payOfficeVO);
             if(ObjectUtils.isEmpty(tradePayOffline.getTradeId())){
                 throw new BusinessException("数据异常");
@@ -228,12 +245,12 @@ public class TradePayOfflineServiceImpl implements ITradePayOfflineService {
     }
 
     private void packMargindetailDate(TradePayOffline tradePayOffline){
-        TradePayOfflineVO.ListVO payOfficeVO = new TradePayOfflineVO.ListVO();
+        TradePayOfflineVO.ListVOExport payOfficeVO = new TradePayOfflineVO.ListVOExport();
         payOfficeVO.setUserName(tradePayOffline.getUserName());
         payOfficeVO.setPayAmount(tradePayOffline.getPayAmount());
         payOfficeVO.setVerifyRemark(tradePayOffline.getVerifyRemark());
         payOfficeVO.setPayRemark(tradePayOffline.getPayRemark());
-        payOfficeVO.setVerifyState(tradePayOffline.getVerifyState());
+        payOfficeVO.setVerifyState(EnumUtil.getText(tradePayOffline.getVerifyState(),TradePayOfficeEnum.class));
         payOfficeVO.setAccountName(tradePayOffline.getAccountName());
         payOfficeVO.setBankName(tradePayOffline.getBankName());
         payOfficeVO.setAccountNumber(tradePayOffline.getAccountNumber());

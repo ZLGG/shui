@@ -45,6 +45,7 @@ public class TradeSettlementDetailServiceImpl implements ITradeSettlementDetailS
         if (ObjectUtils.isNotEmpty(qto.getTradeCode())){
             wrapper.eq("trade_code", qto.getTradeCode());
         }
+        wrapper.orderByDesc("cdate");
         IPage<TradeSettlementDetail> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, TradeSettlementDetailVO.ListVO.class, page);

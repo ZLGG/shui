@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: hlyprod
+  application:
+    name: biz-support-user
+  cloud:
+    nacos:
+      config:
+        group: biz-support
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        namespace: 8a16d313-0d74-45f8-9d9e-81df380a8dd8

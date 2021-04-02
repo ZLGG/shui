@@ -9,7 +9,6 @@ import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.bbb.h5.IBbbH5MarketActivityService;
-import com.gs.lshly.biz.support.trade.service.bbb.pc.IPCBbbMarketActivityService;
 import com.gs.lshly.common.enums.ActivitySignEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -20,15 +19,10 @@ import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5MarketActivityDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5MarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5MarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.pc.merchant.vo.BbbShopVO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketActivityDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketMerchantActivityDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
-import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -44,6 +38,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 /**
@@ -88,6 +83,8 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
     private IMarketMerchantCardRepository iMarketMerchantCardRepository;
     @Autowired
     private IMarketMerchantCardUsersRepository iMarketMerchantCardUsersRepository;
+    @Autowired
+    private IMarketPtActivityJurisdictionRepository iMarketPtActivityJurisdictionRepository;
     @DubboReference
     private IBbbH5GoodsInfoRpc iBbbH5GoodsInfoRpc;
     @DubboReference
@@ -116,6 +113,9 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
         IPage<BbbH5MarketActivityVO.cutVO> pager = MybatisPlusUtil.pager(qto);
         QueryWrapper<BbbH5MarketActivityQTO.QTO> query = MybatisPlusUtil.query();
         query.and(i->i.likeRight("cut.`terminal`",10));
+        if (ObjectUtils.isNotEmpty(qto.getShopId())) {
+            query.and(i -> i.eq("cut.shop_id",qto.getShopId() ));
+        }
         query.and(i->i.le("cut.`valid_start_time`",LocalDateTime.now()).ge("cut.`valid_end_time`",LocalDateTime.now()));
         iMarketMerchantCutRepository.selectCutH5ListPage(pager, query);
         List<BbbH5MarketActivityVO.cutVO> listVOS=new ArrayList<>();
@@ -180,6 +180,9 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
         IPage<BbbH5MarketActivityVO.discountVO> pager = MybatisPlusUtil.pager(new BbbH5MarketActivityQTO.QTO());
         QueryWrapper<BbbH5MarketActivityQTO.QTO> query = MybatisPlusUtil.query();
         query.and(i->i.likeRight("discount.`terminal`","10"));
+        if (ObjectUtils.isNotEmpty(qto.getShopId())) {
+            query.and(i -> i.eq("discount.shop_id",qto.getShopId() ));
+        }
         query.and(i->i.le("discount.`valid_start_time`",LocalDateTime.now()).ge("discount.`valid_end_time`",LocalDateTime.now()));
         iMarketMerchantDiscountRepository.selectDiscountH5ListPage(pager,query);
         List<BbbH5MarketActivityVO.discountVO> listVOS=new ArrayList<>();
@@ -244,6 +247,9 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
         IPage<BbbH5MarketActivityVO.giftVO> pager = MybatisPlusUtil.pager(new BbbH5MarketActivityQTO.QTO());
         QueryWrapper<BbbH5MarketActivityQTO.QTO> query = MybatisPlusUtil.query();
         query.and(i->i.likeRight("gift.`terminal`","10"));
+        if (ObjectUtils.isNotEmpty(qto.getShopId())) {
+            query.and(i -> i.eq("gift.shop_id",qto.getShopId() ));
+        }
         query.and(i->i.le("gift.`valid_start_time`",LocalDateTime.now()).ge("gift.`valid_end_time`",LocalDateTime.now()));
         iMarketMerchantGiftRepository.selectGiftH5ListPage(pager,query);
         List<BbbH5MarketActivityVO.giftVO> listVOS=new ArrayList<>();
@@ -395,6 +401,9 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
         IPage<BbbH5MarketActivityVO.groupbuyVO> pager = MybatisPlusUtil.pager(qto);
         QueryWrapper<BbbH5MarketActivityQTO.QTO> query = MybatisPlusUtil.query();
         query.and(i->i.likeRight("groupbuy.`terminal`","10"));
+        if (ObjectUtils.isNotEmpty(qto.getShopId())) {
+            query.and(i -> i.eq("groupbuy.shop_id",qto.getShopId() ));
+        }
         query.and(i->i.le("groupbuy.`valid_start_time`",LocalDateTime.now()).ge("groupbuy.`valid_end_time`",LocalDateTime.now()));
         iMarketMerchantGroupbuyRepository.selectGroupbuyH5ListPage(pager,query);
         List<BbbH5MarketActivityVO.groupbuyVO> listVOS=new ArrayList<>();
@@ -465,7 +474,49 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
         listVO.setGiftActivity(GiftActivity(dto));
         //团购
         listVO.setGroupbuyActivity(GoupbuyActivity(dto));
+        //优惠卷
+        listVO.setCardActivity(Car(dto));
         return ResponseData.data(listVO);
+    }
+
+    private List<BbbH5MarketActivityVO.merchantCard> Car(BbbH5MarketMerchantActivityDTO.IdDTO dto) {
+        QueryWrapper<MarketMerchantCard> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("g.`goods_id`",dto.getId()));
+        List<MarketMerchantCard> marketMerchantCardList= iMarketMerchantCardRepository.getByGoodsId(query);
+        if (ObjectUtils.isNotEmpty(marketMerchantCardList)){
+            List<BbbH5MarketActivityVO.merchantCard> list=marketMerchantCardList.parallelStream().map(e ->{
+                BbbH5MarketActivityVO.merchantCard merchantCard = new BbbH5MarketActivityVO.merchantCard();
+                merchantCard.setId(e.getId()).setRule("满"+e.getToPrice()+"减"+e.getCutPrice()).setFaceValue(e.getCutPrice()).setName(e.getCardName());
+                if (ObjectUtils.isNotEmpty(e.getQuantity())
+                        &&ObjectUtils.isNotEmpty(e.getReceivedTotal())
+                        &&ObjectUtils.isNotEmpty(e.getGetStartTime())
+                        &&ObjectUtils.isNotEmpty(e.getGetEndTime())){
+                    if (LocalDateTime.now().isAfter(e.getGetEndTime())
+                            ||LocalDateTime.now().isBefore(e.getGetStartTime())){
+                        merchantCard.setIsReceive(20);
+                    }else if (e.getQuantity()<=e.getReceivedTotal()){
+                        merchantCard.setIsReceive(20);
+                    }else {
+                        merchantCard.setIsReceive(10);
+                    }
+                }
+                if (merchantCard.getIsReceive()==10){
+                    if (ObjectUtils.isNotEmpty(dto.getJwtUserId())){
+                        //用户登录了
+                        QueryWrapper<MarketMerchantCardUsers> query1 = MybatisPlusUtil.query();
+                        query1.and(i->i.eq("user_id",dto.getJwtUserId()));
+                        query1.and(i->i.eq("card_id",e.getId()));
+                        List<MarketMerchantCardUsers> list1 = iMarketMerchantCardUsersRepository.list(query1);
+                        if (list1.size()>=e.getUserGetMax()){
+                            merchantCard.setIsReceive(20);
+                        }
+                    }
+                }
+                return merchantCard;
+            }).collect(Collectors.toList());
+            return list;
+        }
+        return null;
     }
 
     @Override
@@ -557,20 +608,82 @@ public class BbbH5MarketActivityServiceImpl implements IBbbH5MarketActivityServi
 
     @Override
     public BbbH5MarketActivityVO.jurisdiction jurisdiction() {
-        BbbH5MarketActivityVO.jurisdiction jurisdiction = new BbbH5MarketActivityVO.jurisdiction();
-        List< BbbH5MarketActivityVO.jurisdiction.state> pc=new ArrayList<>();
-        List< BbbH5MarketActivityVO.jurisdiction.state> h5=new ArrayList<>();
-        pc.add( new BbbH5MarketActivityVO.jurisdiction.state(10,Integer.parseInt(pcGroupbuy)));
-        pc.add( new BbbH5MarketActivityVO.jurisdiction.state(20,Integer.parseInt(pcDiscount)));
-        pc.add( new BbbH5MarketActivityVO.jurisdiction.state(30,Integer.parseInt(pcCut)));
-        pc.add( new BbbH5MarketActivityVO.jurisdiction.state(40,Integer.parseInt(pcGift)));
-        h5.add( new BbbH5MarketActivityVO.jurisdiction.state(10,Integer.parseInt(h5Groupbuy)));
-        h5.add( new BbbH5MarketActivityVO.jurisdiction.state(20,Integer.parseInt(h5Discount)));
-        h5.add( new BbbH5MarketActivityVO.jurisdiction.state(30,Integer.parseInt(h5Cut)));
-        h5.add( new BbbH5MarketActivityVO.jurisdiction.state(40,Integer.parseInt(h5Gift)));
-        jurisdiction.setH5Activity(h5);
-        jurisdiction.setPcActivity(pc);
-        return jurisdiction;
+        MarketPtActivityJurisdiction one = iMarketPtActivityJurisdictionRepository.getOne(null);
+        if (ObjectUtils.isNotEmpty(one)) {
+            BbbH5MarketActivityVO.jurisdiction jurisdiction = new BbbH5MarketActivityVO.jurisdiction();
+            List<BbbH5MarketActivityVO.jurisdiction.state> pc = new ArrayList<>();
+            List<BbbH5MarketActivityVO.jurisdiction.state> h5 = new ArrayList<>();
+            pc.add(new BbbH5MarketActivityVO.jurisdiction.state(10, one.getPcGroupbuy()));
+            pc.add(new BbbH5MarketActivityVO.jurisdiction.state(20, one.getPcDiscount()));
+            pc.add(new BbbH5MarketActivityVO.jurisdiction.state(30, one.getPcCut()));
+            pc.add(new BbbH5MarketActivityVO.jurisdiction.state(40, one.getPcGift()));
+            h5.add(new BbbH5MarketActivityVO.jurisdiction.state(10, one.getH5Groupbuy()));
+            h5.add(new BbbH5MarketActivityVO.jurisdiction.state(20, one.getH5Discount()));
+            h5.add(new BbbH5MarketActivityVO.jurisdiction.state(30, one.getH5Cut()));
+            h5.add(new BbbH5MarketActivityVO.jurisdiction.state(40, one.getH5Gift()));
+            jurisdiction.setH5Activity(h5);
+            jurisdiction.setPcActivity(pc);
+            return jurisdiction;
+        }
+        return null;
+    }
+
+    @Override
+    public List<BbbH5MarketActivityVO.merchantCard> activityCardGoodsInfo(BbbH5MarketMerchantActivityDTO.MerchantIdDTO dto) {
+        QueryWrapper<MarketMerchantCard> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("c.`shop_id`",dto.getId()));
+        query.and(i->i.eq("g.`goods_id`",dto.getGoodsId()));
+        query.and(i->i.eq("c.`state`",20));
+        query.and(i->i.le("c.`valid_start_time`",LocalDateTime.now()).ge("c.`valid_end_time`",LocalDateTime.now()));
+        //是否可领取[10=可以 20=不可以]
+        List<MarketMerchantCard> list = iMarketMerchantCardRepository.selectCard(query);
+        if (ObjectUtils.isNotEmpty(list)){
+            List< BbbH5MarketActivityVO.merchantCard> cards=new ArrayList<>();
+            for (MarketMerchantCard marketMerchantCard : list) {
+                BbbH5MarketActivityVO.merchantCard merchantCard = new BbbH5MarketActivityVO.merchantCard();
+                merchantCard.setId(marketMerchantCard.getId()).
+                        setFaceValue(marketMerchantCard.getCutPrice()).
+                        setRule("满"+marketMerchantCard.getToPrice()+"减"+marketMerchantCard.getCutPrice()).
+                        setName(marketMerchantCard.getCardName());
+                //可领取[1.时间 2.领取数量 3.用户领取完了]
+                if (ObjectUtils.isNotEmpty(marketMerchantCard.getQuantity())
+                        &&ObjectUtils.isNotEmpty(marketMerchantCard.getReceivedTotal())
+                        &&ObjectUtils.isNotEmpty(marketMerchantCard.getGetStartTime())
+                        &&ObjectUtils.isNotEmpty(marketMerchantCard.getGetEndTime())){
+                    if (marketMerchantCard.getQuantity()<=marketMerchantCard.getReceivedTotal()){
+                        merchantCard.setIsReceive(20);
+                    }else {
+                        merchantCard.setIsReceive(10);
+                    }
+                }
+                if (merchantCard.getIsReceive()==10){
+                    if (ObjectUtils.isNotEmpty(dto.getJwtUserId())){
+                        //用户登录了
+                        QueryWrapper<MarketMerchantCardUsers> query1 = MybatisPlusUtil.query();
+                        query1.and(i->i.eq("user_id",dto.getJwtUserId()));
+                        query1.and(i->i.eq("card_id",marketMerchantCard.getId()));
+                        List<MarketMerchantCardUsers> list1 = iMarketMerchantCardUsersRepository.list(query1);
+                        if (list1.size()>=marketMerchantCard.getUserGetMax()){
+                            merchantCard.setIsReceive(20);
+                        }
+                    }
+                }
+                cards.add(merchantCard);
+            }
+            return cards;
+        }
+        return new ArrayList<>();
+
+    }
+
+    @Override
+    public PageData<BbbH5MarketActivityVO.activityListPageVO> activityListPage(BbbH5MarketActivityQTO.QTO qto) {
+        QueryWrapper<BbbH5MarketActivityQTO.QTO> query = MybatisPlusUtil.query();
+        query.and(i->i.le("online_start_time",LocalDateTime.now()));
+        query.and(i->i.ge("activity_end_time",LocalDateTime.now()));
+        IPage<BbbH5MarketActivityVO.activityListPageVO> pager = MybatisPlusUtil.pager(qto);
+        iMarketPtActivityRepository.activityListBbbh5Page(pager,query);
+        return MybatisPlusUtil.toPageData(qto,BbbH5MarketActivityVO.activityListPageVO.class,pager);
     }
 
     private List<BbbH5MarketActivityVO.GroupbuyActivity> GoupbuyActivity(BbbH5MarketMerchantActivityDTO.IdDTO dto) {

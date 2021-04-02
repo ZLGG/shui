@@ -23,6 +23,7 @@ public interface IPCBbbGoodsCategoryService {
     PCBbbGoodsCategoryVO.CategoryNavigationVO getCategoryNavigationVO(PCBbbGoodsCategoryQTO.CategoryNavigationQTO qto);
 
 
+    List<PCBbbGoodsCategoryVO.ListVO> getCategoryForBrandId(PCBbbGoodsCategoryQTO.CategoryForBrandQTO qto);
 
     //-------------------内部服务-----------------
 

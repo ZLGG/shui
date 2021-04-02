@@ -35,6 +35,9 @@ public abstract class PCMerchShopNavigationVO implements Serializable {
         @ApiModelProperty(value = "是否导航菜单",position = 4)
         private Integer isMenu;
 
+        @ApiModelProperty(value = "图片地址")
+        private String imgUrl;
+
         @ApiModelProperty(value = "创建时间",position = 5)
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
@@ -66,6 +69,9 @@ public abstract class PCMerchShopNavigationVO implements Serializable {
 
         @ApiModelProperty(value = "父层级ID",position = 4)
         private String parentId;
+
+        @ApiModelProperty(value = "图片地址")
+        private String imgUrl;
     }
 
 

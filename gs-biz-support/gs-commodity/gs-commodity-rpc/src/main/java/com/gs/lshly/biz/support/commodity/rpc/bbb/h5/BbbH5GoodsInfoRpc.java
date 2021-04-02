@@ -31,6 +31,11 @@ public class BbbH5GoodsInfoRpc implements IBbbH5GoodsInfoRpc {
         return bbbH5GoodsInfoService.pageGoodsListVO(qto);
     }
 
+    @Override
+    public PageData<BbbH5GoodsInfoVO.GoodsListVO> pageMerchantGoodsListVO(BbbH5GoodsInfoQTO.MerchantShopGoodsQTO qto) {
+        return bbbH5GoodsInfoService.pageMerchantGoodsListVO(qto);
+    }
+
 
     @Override
     public BbbH5GoodsInfoVO.DetailVO detailGoodsInfo(BbbH5GoodsInfoDTO.IdDTO dto){

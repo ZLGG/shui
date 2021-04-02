@@ -1,19 +1,24 @@
 package com.gs.lshly.biz.support.trade.rpc.bbb.pc;
 
-import java.util.List;
-
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.gs.lshly.biz.support.trade.service.bbb.pc.IPCBbbMarketActivityService;
+import com.gs.lshly.biz.support.trade.service.bbb.pc.IPCBbbMarketMerchantCardUsersService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketActivityDTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketMerchantActivityDTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.dto.PCBbbMarketMerchantCardUsersDTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketMerchantCardUsersQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
-import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO.FlashsaleVO;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketMerchantCardUsersVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketActivityRpc;
+import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
 *
@@ -91,8 +96,13 @@ public class PCBbbMarketActivityRpc implements IPCBbbMarketActivityRpc {
         return ipcBbbMarketActivityService.jurisdiction();
     }
 
-	@Override
-	public FlashsaleVO listFlashsale(BaseDTO dto) {
-		return ipcBbbMarketActivityService.listFlashsale(dto);
-	}
+    @Override
+    public PageData<PCBbbMarketActivityVO.activityListPageVO> activityListPage(PCBbbMarketActivityQTO.QTO qto) {
+        return ipcBbbMarketActivityService.activityListPage(qto);
+    }
+
+    @Override
+    public List<PCBbbMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto) {
+        return ipcBbbMarketActivityService.activityCardGoodsInfo(dto);
+    }
 }

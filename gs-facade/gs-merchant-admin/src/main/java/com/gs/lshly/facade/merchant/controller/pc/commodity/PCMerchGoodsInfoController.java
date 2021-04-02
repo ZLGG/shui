@@ -33,13 +33,13 @@ import java.util.List;
 */
 @RestController
 @RequestMapping("/merchant/pc/goodsInfo")
-@Api(tags = "商品信息管理-v1.1.0")
+@Api(tags = "商品信息管理")
 public class PCMerchGoodsInfoController {
 
     @DubboReference
     private IPCMerchAdminGoodsInfoRpc goodsInfoRpc;
 
-    @ApiOperation("商品信息管理列表-v1.1.0")
+    @ApiOperation("商品信息管理列表")
     @GetMapping("")
     public ResponseData<PageData<PCMerchGoodsInfoVO.SpuListVO>> list(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto) {
         return ResponseData.data(goodsInfoRpc.pageData(qto));
@@ -51,13 +51,13 @@ public class PCMerchGoodsInfoController {
         return ResponseData.data(goodsInfoRpc.pageStockAlarmGoods(qto));
     }
 
-    @ApiOperation("商品信息管理详情-v1.1.0")
+    @ApiOperation("商品信息管理详情")
     @GetMapping(value = "/getGoodsDetail")
     public ResponseData<PCMerchGoodsInfoVO.DetailVO> get(PCMerchGoodsInfoDTO.EditIdsDTO dto) {
         return ResponseData.data(goodsInfoRpc.detailGoodsInfo(dto));
     }
 
-    @ApiOperation("发布商品信息-v1.1.0")
+    @ApiOperation("发布商品信息")
     @PostMapping("")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchGoodsInfoDTO.AddGoodsETO dto) {
         goodsInfoRpc.addGoodsInfo(dto);
@@ -72,14 +72,14 @@ public class PCMerchGoodsInfoController {
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
 
-    @ApiOperation("获取商品信息管理编辑详情-v1.1.0")
+    @ApiOperation("获取商品信息管理编辑详情")
     @GetMapping(value = "/getEditDetail/{id}")
     public ResponseData<PCMerchGoodsInfoVO.EditDetailVO> getEditDetail(@PathVariable String id) {
         PCMerchGoodsInfoDTO.IdDTO dto = new PCMerchGoodsInfoDTO.IdDTO(id);
         return ResponseData.data(goodsInfoRpc.getEditDetailEto(dto));
     }
 
-    @ApiOperation("修改商品信息管理-v1.1.0")
+    @ApiOperation("修改商品信息管理")
     @PutMapping(value = "/{id}")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody PCMerchGoodsInfoDTO.AddGoodsETO eto) {
         eto.setId(id);
@@ -108,28 +108,28 @@ public class PCMerchGoodsInfoController {
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
 
-    @ApiOperation("导出商品相关数据到Excel表格-v1.1.0")
+    @ApiOperation("导出商品相关数据到Excel表格")
     @GetMapping(value = "/exportData")
     public void export(@ApiIgnore HttpServletResponse response, PCMerchGoodsInfoQTO.IdListQTO qto) throws Exception {
         ExportDataDTO exportData = goodsInfoRpc.export(qto);
         ExcelUtil.export(exportData, response);
     }
 
-    @ApiOperation("下载模板-v1.1.0")
+    @ApiOperation("下载模板")
     @GetMapping(value = "/downExcel")
     public void downExcel(@ApiIgnore HttpServletResponse response) throws Exception{
         ExportDataDTO exportData = goodsInfoRpc.downExcelMode();
         ExcelUtil.export(exportData, response);
     }
 
-    @ApiOperation("从Excel表格导入商品相关数据-v1.1.0")
+    @ApiOperation("从Excel表格导入商品相关数据")
     @PostMapping(value = "/importData")
     public void importData( @RequestParam MultipartFile file,BaseDTO dto) throws Exception {
         List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO> dataVOS = HuToolExcelUtil.importData(PCMerchGoodsInfoDTO.ExcelGoodsDataETO.class,file);
         goodsInfoRpc.addGoodsBatch(dataVOS,dto);
     }
 
-    @ApiOperation("提供店铺楼层选择的商品列表-v1.1.0")
+    @ApiOperation("提供店铺楼层选择的商品列表")
     @GetMapping("listShopFloorCommodityVO")
     public ResponseData<PageData<PCMerchGoodsInfoVO.ShopFloorCommodityVO>> listShopFloorCommodityVO(PCMerchGoodsInfoQTO.ShopFloorQTO qto) {
         return ResponseData.data(goodsInfoRpc.getShopFloorCommodityVO(qto));

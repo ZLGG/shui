@@ -20,20 +20,17 @@ public abstract class PCMerchPictureGroupVO implements Serializable {
         @ApiModelProperty("图片分组id")
         private String id;
 
+        @ApiModelProperty("父id")
+        private String parentId;
+
+        @ApiModelProperty("级别")
+        private Integer level;
 
         @ApiModelProperty("所属id（店铺id,-1为平台）")
         private String belongId;
 
-
         @ApiModelProperty("分组名称")
         private String groupValue;
-
-
-        @ApiModelProperty("操作人")
-        private String operator;
-
-
-
 
     }
 

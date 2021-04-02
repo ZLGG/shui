@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.platadmin.trade.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -118,9 +119,11 @@ public abstract class TradeDTO implements Serializable {
         private String id;
 
         @ApiModelProperty("开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime startTime;
 
         @ApiModelProperty("结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime endTime;
 
         @ApiModelProperty("时间选择[10昨天 20前天 30一周 40一月]")
@@ -139,9 +142,11 @@ public abstract class TradeDTO implements Serializable {
         private String id;
 
         @ApiModelProperty("开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime startTime;
 
         @ApiModelProperty("结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime endTime;
 
         @ApiModelProperty("时间选择[10昨天 20前天 30一周 40一月]")

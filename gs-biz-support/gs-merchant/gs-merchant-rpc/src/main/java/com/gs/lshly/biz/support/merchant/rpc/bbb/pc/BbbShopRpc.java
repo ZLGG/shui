@@ -68,6 +68,11 @@ public class BbbShopRpc implements IBbbShopRpc{
     }
 
     @Override
+    public BbbShopVO.ComplexDetailVO innerSimple(String shopId) {
+        return bbbShopService.innerSimple(shopId);
+    }
+
+    @Override
     public BbbShopVO.ShopScoreDetailVO innerShopScoreDetailVO(String shopId, BaseDTO dto) {
         return bbbShopService.innerShopScoreDetailVO(shopId,dto);
     }
@@ -85,6 +90,11 @@ public class BbbShopRpc implements IBbbShopRpc{
     @Override
     public List<BbbShopVO.ShopNavigationIdName> innerListShopNavigation(ShopDTO.IdDTO dto) {
         return bbbShopService.innerListShopNavigation(dto);
+    }
+
+    @Override
+    public List<String> innerGetNavigationList(String shopNavigationId) {
+        return bbbShopService.innerGetNavigationList(shopNavigationId);
     }
 
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -133,6 +134,9 @@ public abstract class BbcShopVO implements Serializable {
         @ApiModelProperty("店铺评分")
         private BigDecimal shopScore;
 
+        @ApiModelProperty("POS店铺ID")
+        private String posShopId;
+
     }
 
     @Data
@@ -239,7 +243,10 @@ public abstract class BbcShopVO implements Serializable {
         private String shopFullAddres;
 
         public String getShopFullAddres(){
-            return shopProvinceText + shopCityText+ shopCountyText + shopAddress;
+            String shopProvinceTextO=StringUtils.isEmpty(shopProvinceText)?"":shopProvinceText;
+            String shopCityTextO=StringUtils.isEmpty(shopCityText)?"":shopCityText;
+            String shopCountyTextO=StringUtils.isEmpty(shopCountyText)?"":shopCountyText;
+            return shopProvinceTextO + shopCityTextO+ shopCountyTextO + shopAddress;
         }
 
     }

@@ -40,6 +40,15 @@ public abstract class PCMerchTradeCancelQTO implements Serializable {
         @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
         private Integer sourceType;
 
+        @ApiModelProperty("买家手机号")
+        private String phone;
+
+        @ApiModelProperty("收货人地址")
+        private String address;
+
+        @ApiModelProperty("申请类型")
+        private String applyType;
+
 
     }
 }

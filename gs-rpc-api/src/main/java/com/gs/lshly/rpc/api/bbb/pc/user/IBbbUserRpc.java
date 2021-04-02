@@ -56,4 +56,6 @@ public interface IBbbUserRpc {
     BbbUserVO.UserIntegralStatusVO signInIntegralLogState(BaseDTO dto);
 
     BbbUserVO.InnerUserInfoVO innerUserVo(BaseDTO dto);
+
+    void getEmailNum(BbbUserDTO.BandEmailDTO qto);
 }

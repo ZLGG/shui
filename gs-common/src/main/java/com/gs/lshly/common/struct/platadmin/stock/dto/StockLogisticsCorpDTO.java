@@ -46,5 +46,12 @@ public abstract class StockLogisticsCorpDTO implements Serializable {
         private String id;
     }
 
+    @Data
+    @ApiModel("StockLogisticsCorpDTO.QTO")
+    @AllArgsConstructor
+    public static class QTO extends BaseDTO {
+
+    }
+
 
 }

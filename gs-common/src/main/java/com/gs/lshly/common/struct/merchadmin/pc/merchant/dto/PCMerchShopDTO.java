@@ -39,6 +39,10 @@ public abstract class PCMerchShopDTO implements Serializable {
         private String shopManPhone;
 
 
+        @ApiModelProperty("拉卡拉商户号")
+        private String lakalaNo;
+
+
 
     }
 

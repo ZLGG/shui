@@ -48,6 +48,7 @@ public class H5MerchShopNavigationServiceImpl implements IH5MerchShopNavigationS
         QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal",qto.getTerminal());
         wrapper.eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         List<ShopNavigation> dataList =  repository.list(wrapper);
         Map<String,H5MerchShopNavigationVO.ListVO> utilMap = new HashMap<>();
         for(ShopNavigation item:dataList){
@@ -97,17 +98,18 @@ public class H5MerchShopNavigationServiceImpl implements IH5MerchShopNavigationS
     @Override
     public H5MerchMerchantAccountVO.checkShopByShopId checkShopByShopId(H5MerchShopQTO.CutShopQTO qto) {
         H5MerchMerchantAccountVO.checkShopByShopId checkShopVO = new H5MerchMerchantAccountVO.checkShopByShopId();
-
-        if(ObjectUtils.isEmpty(qto.getShopId())){
-          throw new BusinessException("店铺ID为空");
-        }
         QueryWrapper<Shop> wrapper = new QueryWrapper<>();
-        Shop shop = iShopRepository.getOne(wrapper.eq("id",qto.getShopId()));
-
-        checkShopVO.setShopId(shop.getId())
-                .setJwtMerchantId(shop.getMerchantId())
-                .setShopSimpleVO(packShopDate(shop));
-
+        if(ObjectUtils.isEmpty(qto.getShopId())){
+            Shop shop = iShopRepository.getOne(wrapper.eq("id",qto.getJwtShopId()));
+            checkShopVO.setShopId(shop.getId())
+                    .setJwtMerchantId(shop.getMerchantId())
+                    .setShopSimpleVO(packShopDate(shop));
+        }else {
+            Shop shop = iShopRepository.getOne(wrapper.eq("id",qto.getShopId()));
+            checkShopVO.setShopId(shop.getId())
+                    .setJwtMerchantId(shop.getMerchantId())
+                    .setShopSimpleVO(packShopDate(shop));
+        }
         return checkShopVO;
     }
 

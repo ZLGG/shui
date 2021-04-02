@@ -87,11 +87,13 @@ public class BbbShopServiceImpl implements IBbbShopService {
     @Override
     public PageData<PCBbbShopListVO.ShopInfoVo> pageData(BbbShopQTO.SearchQTO qto) {
         QueryWrapper<ShopSearchView> shopQueryWrapper = MybatisPlusUtil.query();
-        shopQueryWrapper.and(wrapper -> {
-            if(ObjectUtils.isNotEmpty(qto.getLevel3CategoryId())){
-                wrapper.or().in("gory.category_id",qto.getLevel3CategoryId());
-            }
-        });
+        if (ObjectUtils.isNotEmpty(qto.getLevel3CategoryId())) {
+            shopQueryWrapper.and(wrapper -> {
+                if (ObjectUtils.isNotEmpty(qto.getLevel3CategoryId())) {
+                    wrapper.or().in("gory.category_id", qto.getLevel3CategoryId());
+                }
+            });
+        }
         if(ObjectUtils.isNotEmpty(qto.getBrandId())){
             shopQueryWrapper.and(wrapper -> wrapper.in("shop.brand_id", qto.getBrandId()));
         }
@@ -101,6 +103,7 @@ public class BbbShopServiceImpl implements IBbbShopService {
         if(ShopSearchSortEnum.星级.getCode().equals(qto.getOrderByProperties())){
             shopQueryWrapper.orderByAsc("feature.score");
         }
+        shopQueryWrapper.orderByDesc("shop.cdate");
         IPage<ShopSearchView> pager = MybatisPlusUtil.pager(qto);
         shopMapper.bbbPcShopSearch(pager,shopQueryWrapper);
         //登录用户,取店铺收藏状态,没有登录全部返回 收藏状态否
@@ -216,14 +219,15 @@ public class BbbShopServiceImpl implements IBbbShopService {
                     }
                     for(PCBbbShopHomeVO.ShopMenuVo menuVo:shopHomeVO.getMenuList()){
                         if(menuVo.getId().equals(navigation.getParentId())){
-                            if(TrueFalseEnum.是.getCode().equals(navigation.getIsMenu())){
+                            if(TrueFalseEnum.是.getCode().equals(navigation.getIsMenu())) {
                                 PCBbbShopHomeVO.ShopChildMenuVo childMenuVo = new PCBbbShopHomeVO.ShopChildMenuVo();
                                 childMenuVo.setId(navigation.getId());
                                 childMenuVo.setMenuName(navigation.getNavName());
                                 childMenuVo.setMenuType(ShopNavigationMenuTypeEnum.店铺分类.getCode());
+                                menuVo.getChildMenu().add(childMenuVo);
                             }
-                            break;
                         }
+
                     }
                 }
             }
@@ -375,14 +379,16 @@ public class BbbShopServiceImpl implements IBbbShopService {
 
         if (ObjectUtils.isNotEmpty(qto.getJwtUserId())){
             List<String> favoritesShopIdList =  bbbUserFavoritesShopRpc.innerFavoritesListState(qto,checkShopIdList,qto.getJwtUserId());
+            System.out.println("收藏的店铺："+favoritesShopIdList);
             for(PCBbbHomeVO.ShopSearchInfo shopInfoVo:voList){
                 if(favoritesShopIdList.contains(shopInfoVo.getId())){
+                    System.out.println("设置：进去了。。。。。。");
                     shopInfoVo.setFavoriteState(TrueFalseEnum.是.getCode());
                     break;
                 }
             }
         }
-        return MybatisPlusUtil.toPageData(qto,PCBbbHomeVO.ShopSearchInfo.class,pager);
+        return new PageData<>(voList,qto.getPageNum(),qto.getPageSize(),shopSearchViewIPage.getTotal());
     }
 
     @Override
@@ -518,6 +524,47 @@ public class BbbShopServiceImpl implements IBbbShopService {
             }
         }
         return new ArrayList<>(utilMap.values());
+    }
+
+    @Override
+    public List<String> innerGetNavigationList(String shopNavigationId) {
+        QueryWrapper<ShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("id",shopNavigationId);
+        ShopNavigation shopNavigation = shopNavigationRepository.getOne(wrapper);
+        if (ObjectUtils.isEmpty(shopNavigation)){
+            throw new BusinessException("店铺类目不存在！");
+        }
+        List<String> navigationIdList = new ArrayList<>();
+        if (shopNavigation.getLeve().equals(MerchShopNavigationEnum.一级分类.getCode())){
+            QueryWrapper<ShopNavigation> navigationQueryWrapper = MybatisPlusUtil.query();
+            navigationQueryWrapper.eq("parent_id",shopNavigationId);
+            List<ShopNavigation> shopNavigations = shopNavigationRepository.list(navigationQueryWrapper);
+            if (ObjectUtils.isNotEmpty(shopNavigations)){
+                List<String> list = ListUtil.getIdList(ShopNavigation.class,shopNavigations);
+                navigationIdList.addAll(list);
+            }
+        }
+        if (shopNavigation.getLeve().equals(MerchShopNavigationEnum.二级分类.getCode())){
+            navigationIdList.add(shopNavigationId);
+        }
+        return navigationIdList;
+    }
+
+    @Override
+    public BbbShopVO.ComplexDetailVO innerSimple(String shopId) {
+        if(StringUtils.isBlank(shopId)){
+            return null;
+        }
+        Shop shop = repository.getById(shopId);
+        if(null == shop){
+            return null;
+        }
+        BbbShopVO.ComplexDetailVO complexDetailVO = new BbbShopVO.ComplexDetailVO();
+        if (ObjectUtils.isNotEmpty(complexDetailVO)){
+            BeanUtils.copyProperties(shop,complexDetailVO);
+            return complexDetailVO;
+        }
+        return null;
     }
 
     @Override

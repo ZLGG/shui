@@ -1,46 +1,19 @@
 package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
-import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
-import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
-import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
-import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
+import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
-import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
-import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
-import com.gs.lshly.common.enums.OrderByConditionEnum;
-import com.gs.lshly.common.enums.OrderByTypeEnum;
-import com.gs.lshly.common.enums.SingleStateEnum;
-import com.gs.lshly.common.enums.StockAddressTypeEnum;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -60,7 +33,6 @@ import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.AesCbcUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
@@ -68,9 +40,18 @@ import com.gs.lshly.rpc.api.bbc.user.IBbcUserFavoritesGoodsRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
-
-import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
 * <p>
@@ -128,10 +109,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @DubboReference
     private ICommonShopRpc commonShopRpc;
-    
-    
-    @DubboReference
-    private IBbcSiteTopicRpc bbcSiteTopicRpc;
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
@@ -589,6 +566,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                         homeAndShopInnerServiceVO.setSingleSkuStock(getSkuStockNum(e.getShopId(),skuVO.getSkuId()));
                     }
                     homeAndShopInnerServiceVO.setLabelVOS(getGoodsLabelVO(e.getId()));
+                    homeAndShopInnerServiceVO.setOldPrice(e.getOldPrice());
                     return homeAndShopInnerServiceVO;
                 }).collect(toList());
         return shopInnerServiceVOS;
@@ -644,6 +622,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             if (goodsInfo == null){
                 return new BbcGoodsInfoVO.InnerServiceVO();
             }
+            skuGoodInfo.setPosSpuId(goodsInfo.getPosSpuId());
             //判断是否是单品
             if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()){
                 BeanUtils.copyProperties(goodsInfo,serviceVO);
@@ -744,6 +723,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 skuVO.setSkuStock(getSkuStockNum(goodsInfo.getShopId(),skuGoodInfo.getId()));
                 skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
                 skuVO.setSpecValue(StringUtils.isEmpty(skuGoodInfo.getSpecsValue())?"":skuGoodInfo.getSpecsValue());
+                skuVO.setImage(StringUtils.isBlank(skuGoodInfo.getImage())?"":skuGoodInfo.getImage());
             }
             skuVOS.add(skuVO);
         }
@@ -837,24 +817,33 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         wrapper.eq("id",categoryId);
         GoodsCategory category = categoryRepository.getOne(wrapper);
         List<String> categoryList = new ArrayList<>();
-        if (category.getGsCategoryLevel().equals(GoodsCategoryLevelEnum.ONE.getCode())){
-            List<String> categories = categoryMapper.selectLevel3CategoryList(categoryId);
-            if (ObjectUtils.isNotEmpty(categories)){
-                categoryList.addAll(categories);
+        if (ObjectUtils.isNotEmpty(category)) {
+            if (category.getGsCategoryLevel().equals(GoodsCategoryLevelEnum.ONE.getCode())) {
+                List<String> categories = categoryMapper.selectLevel3CategoryList(categoryId);
+                if (ObjectUtils.isNotEmpty(categories)) {
+                    categoryList.addAll(categories);
+                }
             }
-        }
-        if (category.getGsCategoryLevel().equals(GoodsCategoryLevelEnum.TWO.getCode())){
-            QueryWrapper<GoodsCategory> queryWrapper = MybatisPlusUtil.query();
-            queryWrapper.eq("parent_id",categoryId);
-            List<GoodsCategory> categories = categoryRepository.list(queryWrapper);
-            if (ObjectUtils.isNotEmpty(categories)){
-                List<String> idList = ListUtil.getIdList(GoodsCategory.class,categories);
-                categoryList.addAll(idList);
+            if (category.getGsCategoryLevel().equals(GoodsCategoryLevelEnum.TWO.getCode())) {
+                QueryWrapper<GoodsCategory> queryWrapper = MybatisPlusUtil.query();
+                queryWrapper.eq("parent_id", categoryId);
+                List<GoodsCategory> categories = categoryRepository.list(queryWrapper);
+                if (ObjectUtils.isNotEmpty(categories)) {
+                    List<String> idList = ListUtil.getIdList(GoodsCategory.class, categories);
+                    categoryList.addAll(idList);
+                }
             }
-        }
-        if (category.getGsCategoryLevel().equals(GoodsCategoryLevelEnum.THREE.getCode())){
-            categoryList.add(categoryId);
+            if (category.getGsCategoryLevel().equals(GoodsCategoryLevelEnum.THREE.getCode())) {
+                categoryList.add(categoryId);
+            }
         }
         return categoryList;
     }
+
+    private List<String> listShopNavigationIds(String navigationId){
+        List<String> shopNavigationIds = bbcShopRpc.innerGetNavigationList(navigationId);
+        return shopNavigationIds;
+    }
+
+
 }

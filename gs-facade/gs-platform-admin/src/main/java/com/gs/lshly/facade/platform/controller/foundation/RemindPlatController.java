@@ -28,13 +28,13 @@ public class RemindPlatController {
     @DubboReference
     private IRemindPlatRpc RemindPlatRpc;
 
-    @ApiOperation("平台消息提醒列表")
+    @ApiOperation("平台消息提醒列表（只会查询未读状态的消息）")
     @GetMapping("")
     public ResponseData<PageData<RemindPlatVO.ListVO>> list(RemindPlatQTO.QTO qto) {
         return ResponseData.data(RemindPlatRpc.pageData(qto));
     }
 
-    @ApiOperation("平台消息提醒详情")
+    @ApiOperation("平台消息提醒详情（接口会置消息状态为已读）")
     @GetMapping(value = "/{id}")
     public ResponseData<RemindPlatVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(RemindPlatRpc.detailRemindPlat(new RemindPlatDTO.IdDTO(id)));

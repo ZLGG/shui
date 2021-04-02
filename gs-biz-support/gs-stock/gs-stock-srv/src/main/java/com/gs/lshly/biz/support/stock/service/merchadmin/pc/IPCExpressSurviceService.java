@@ -10,6 +10,6 @@ public interface IPCExpressSurviceService {
 
     LogisticsInformationVO.ListVO orderLogisticsInformation(StockKdniaoDTO.TradeTailDTO dto);
 
-    LogisticsInformationVO.ListVO queryUPS(StockKdniaoDTO.TradeTailDTO dto);
+    LogisticsInformationVO.ListVO onLineMonitoring(StockKdniaoDTO.TradeTailDTO dto);
 
 }

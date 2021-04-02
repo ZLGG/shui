@@ -1,12 +1,14 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
 import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.biz.support.user.service.bbc.IBbcUserIntegralService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserService;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -17,6 +19,7 @@ import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +44,14 @@ public class BbcUserServiceImpl implements IBbcUserService {
     @Autowired
     private IUserIntegralRepository userIntegralRepository;
 
+    @Autowired
+    private IBbcUserIntegralService iBbcUserIntegralService;
+
     @DubboReference
     private IBbcTradeRpc bbcTradeRpc;
+
+    @DubboReference
+    private IBbcUserAuthRpc iBbcUserAuthRpc;
 
     @Override
     public BbcUserVO.DetailVO getUserInfo(BbcUserQTO.QTO qto) {
@@ -55,10 +64,18 @@ public class BbcUserServiceImpl implements IBbcUserService {
         detailVO.setUserName(user.getUserName());
         detailVO.setHeadImg(user.getHeadImg());
         detailVO.setPhone(user.getPhone());
-        detailVO.setCountCard(10);
+        detailVO.setCountCard(bbcTradeRpc.myMerchantCard(qto));
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(qto.getJwtUserId());
         detailVO.setTradeStateList( bbcTradeRpc.tradeStateCount(idDTO));
+        BbcUserVO.UserIntegralVO integral = iBbcUserIntegralService.integral(qto);
+        if (ObjectUtils.isNotEmpty(integral)){
+            detailVO.setIntegral(integral.getOkIntegral());
+        }
+        BbcUserVO.ThirdVO thirdVO = iBbcUserAuthRpc.innerGetWXNickName(qto.getJwtUserId());
+        if (ObjectUtils.isNotEmpty(thirdVO)){
+            detailVO.setNickName(thirdVO.getNickName());
+        }
         return detailVO;
     }
 

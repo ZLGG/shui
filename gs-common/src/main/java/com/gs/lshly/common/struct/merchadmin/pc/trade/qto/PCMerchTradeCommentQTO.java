@@ -21,7 +21,7 @@ public abstract class PCMerchTradeCommentQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty("状态[20=有回复 30=有内容]")
+        @ApiModelProperty("状态[10=有晒图 20=有回复 30=有内容]")
         private Integer state;
 
         @ApiModelProperty("评价开始时间")

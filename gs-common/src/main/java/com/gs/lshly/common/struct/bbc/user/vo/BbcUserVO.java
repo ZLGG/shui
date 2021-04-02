@@ -30,6 +30,9 @@ public abstract class BbcUserVO implements Serializable {
         @ApiModelProperty("手机号码")
         private String phone;
 
+        @ApiModelProperty("微信名字")
+        private String nickName;
+
         @ApiModelProperty("积分")
         private Integer integral;
 
@@ -41,6 +44,18 @@ public abstract class BbcUserVO implements Serializable {
 
         @ApiModelProperty("微信openid")
         private String wxOpenid;
+
+    }
+
+    @Data
+    @ApiModel("BbcUserVO.UserIntegralVO")
+    public static class UserIntegralVO implements Serializable {
+
+        @ApiModelProperty("可用积分")
+        private Integer okIntegral = 0;
+
+        @ApiModelProperty("将要过期")
+        private Integer jpassIntegral = 0;
 
     }
 
@@ -64,6 +79,14 @@ public abstract class BbcUserVO implements Serializable {
         public String fromShopId;
 
     }
+
+    @Data
+    @ApiModel("BbcUserVO.ThirdVO")
+    public static class ThirdVO implements Serializable {
+        @ApiModelProperty("微信名字")
+        private String nickName;
+    }
+
 
 
     @Data
@@ -116,16 +139,6 @@ public abstract class BbcUserVO implements Serializable {
 
         @ApiModelProperty("电话")
         private String phone;
-
-    }
-
-    @Data
-    @ApiModel("BbcUserVO.UserIntegralVO")
-    public static class UserIntegralVO implements Serializable {
-
-        @ApiModelProperty("可用积分")
-        private Integer okIntegral = 0;
-
 
     }
     @Data

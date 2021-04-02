@@ -70,6 +70,11 @@ public class BbbPcTradeRpc implements IBbbPcTradeRpc {
     }
 
     @Override
+    public BbbTradeListVO.InnerGoodsScore innerShopScore(String shopId, String id) {
+        return iBbbPcTradeService.innerShopScore(shopId,id);
+    }
+
+    @Override
     public boolean isFinishedPay(String tradeId,String userCard) {
         return iBbbPcTradeService.isFinishedPay(tradeId,userCard);
     }

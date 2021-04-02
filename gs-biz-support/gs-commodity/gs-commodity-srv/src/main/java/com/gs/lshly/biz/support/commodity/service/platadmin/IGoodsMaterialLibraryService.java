@@ -46,8 +46,8 @@ public interface IGoodsMaterialLibraryService {
     /**
      *
      * 素材库数据导出
-     * @param qto
+     * @param dto
      * @return
      */
-    List<GoodsMaterialLibraryVO.exportDataVO> exportData(BaseQTO qto);
+    List<GoodsMaterialLibraryVO.exportDataVO> exportData(GoodsMaterialLibraryDTO.IdListDTO dto);
 }

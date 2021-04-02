@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -132,6 +133,20 @@ public abstract class GoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "商品id")
         private String id;
+
+        @ApiModelProperty(value = "审核状态")
+        private Integer state;
+
+        @ApiModelProperty(value = "审核拒绝原因")
+        private String refuseRemark;
+    }
+
+    @Data
+    @ApiModel("GoodsInfoDTO.CheckGoodsBatchesDTO")
+    public static class CheckGoodsBatchesDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "商品id列表")
+        private List<String> idList = new ArrayList<>();
 
         @ApiModelProperty(value = "审核状态")
         private Integer state;

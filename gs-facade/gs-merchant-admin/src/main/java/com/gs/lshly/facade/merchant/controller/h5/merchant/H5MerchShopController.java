@@ -53,9 +53,9 @@ public class H5MerchShopController {
     }
 
     @ApiOperation("店铺详情")
-    @GetMapping(value = "/details")
-    public ResponseData<H5MerchShopVO.DetailVO> details() {
-        return ResponseData.data(h5MerchShopRpc.detailShop(new BaseDTO()));
+    @GetMapping(value = "/{id}")
+    public ResponseData<H5MerchShopVO.DetailVO> details(@PathVariable String id) {
+        return ResponseData.data(h5MerchShopRpc.detailShop(new H5MerchShopDTO.IdDTO(id)));
     }
 
     @ApiOperation("店铺编辑信息")

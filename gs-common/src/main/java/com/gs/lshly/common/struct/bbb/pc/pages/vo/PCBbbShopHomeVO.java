@@ -71,6 +71,9 @@ public abstract class PCBbbShopHomeVO implements Serializable {
         @ApiModelProperty("评分")
         private Integer sales;
 
+        @ApiModelProperty("联系电话")
+        private String shopManPhone;
+
         @ApiModelProperty("是否收藏[0=否 1=是]")
         private Integer favoriteState = TrueFalseEnum.否.getCode();
     }

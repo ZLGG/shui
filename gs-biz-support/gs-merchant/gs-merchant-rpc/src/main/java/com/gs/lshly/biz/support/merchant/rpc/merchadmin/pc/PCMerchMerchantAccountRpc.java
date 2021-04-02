@@ -71,5 +71,26 @@ public class PCMerchMerchantAccountRpc implements IPCMerchMerchantAccountRpc{
         return pCMerchMerchantAccountService.innnerDetailMerchantAccount(phoneNum);
     }
 
+    @Override
+    public void getPhoneValidCode(String phone) {
+        pCMerchMerchantAccountService.getPhoneValidCode(phone);
+
+    }
+
+    @Override
+    public String forgetPasswordByPhone(PCMerchMerchantAccountDTO.ForgetByPhoneETO dto) {
+        return pCMerchMerchantAccountService.forgetPasswordByPhone(dto);
+    }
+
+    @Override
+    public String forgetByEmail(PCMerchMerchantAccountDTO.ForgetByEmailETO dto) {
+        return pCMerchMerchantAccountService.forgetByEmail(dto);
+    }
+
+    @Override
+    public void getEmailNum(String email) {
+        pCMerchMerchantAccountService.getEmailNum(email);
+    }
+
 
 }

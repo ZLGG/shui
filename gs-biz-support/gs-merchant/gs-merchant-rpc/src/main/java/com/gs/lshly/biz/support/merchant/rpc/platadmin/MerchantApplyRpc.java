@@ -42,6 +42,11 @@ public class MerchantApplyRpc implements IMerchantApplyRpc{
     }
 
     @Override
+    public void checkEditApply(MerchantApplyDTO.CheckApplyDTO dto) {
+        merchantApplyService.checkEditApply(dto);
+    }
+
+    @Override
     public void openShop(MerchantApplyDTO.IdDTO dto) {
         merchantApplyService.openShop(dto);
     }

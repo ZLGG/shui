@@ -33,6 +33,7 @@ public class PCMerchTradeRightsRefundServiceImpl implements IPCMerchTradeRightsR
     @Override
     public PageData<PCMerchTradeRightsRefundVO.ListVO> pageData(PCMerchTradeRightsRefundQTO.QTO qto) {
         QueryWrapper<TradeRightsRefund> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<TradeRightsRefund> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchTradeRightsRefundVO.ListVO.class, page);

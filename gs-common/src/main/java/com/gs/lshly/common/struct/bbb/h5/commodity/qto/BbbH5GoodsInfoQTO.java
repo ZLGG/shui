@@ -62,9 +62,6 @@ public abstract class BbbH5GoodsInfoQTO implements Serializable {
     @Accessors(chain = true)
     public static class MerchantShopGoodsQTO extends GoodsListQTO {
 
-        @ApiModelProperty("商家id")
-        private String merchantId;
-
         @ApiModelProperty(value = "店铺id")
         private String shopId;
 

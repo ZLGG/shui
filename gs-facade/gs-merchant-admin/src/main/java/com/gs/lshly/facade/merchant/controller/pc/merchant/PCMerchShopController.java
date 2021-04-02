@@ -2,12 +2,15 @@ package com.gs.lshly.facade.merchant.controller.pc.merchant;
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.common.LegalDictDTO;
+import com.gs.lshly.common.struct.common.LegalDictVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchShopDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchShopNavigationQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchShopQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopNavigationVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 import com.gs.lshly.middleware.auth.rbac.Module;
+import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopNavigationRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountAuthRpc;
@@ -39,6 +42,9 @@ public class PCMerchShopController {
 
     @DubboReference
     private IPCMerchMerchantAccountAuthRpc pcMerchMerchantAccountAuthRpc;
+
+    @DubboReference
+    private ILegalDictRpc legalDictRpc;
 
     @ApiOperation("店铺列表(右上角可切换店铺列表)")
     @GetMapping("")
@@ -76,5 +82,19 @@ public class PCMerchShopController {
     @GetMapping("/navigationList001")
     public ResponseData<List<PCMerchShopNavigationVO.NavigationVO>> listLevel001() {
         return ResponseData.data(pcMerchShopNavigationRpc.listLevel001(new BaseDTO()));
+    }
+
+    @ApiOperation("商家入驻信息")
+    @GetMapping("/SettledInfo")
+    public ResponseData<LegalDictVO.SettledInfoVO> SettledInfo() {
+        return ResponseData.data(legalDictRpc.getSettledInfo(new BaseDTO()));
+    }
+
+    @ApiOperation("编辑商家入驻信息")
+    @PutMapping("/saveSettledInfo/{legalId}")
+    public ResponseData<LegalDictVO.MerchantApplyIdVO> saveSettledInfo(@PathVariable String legalId, @RequestBody LegalDictDTO.SettledInfoETO eto) {
+        eto.setId(legalId);
+        return ResponseData.data(legalDictRpc.editSettledInfo(eto));
+
     }
 }

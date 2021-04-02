@@ -32,6 +32,7 @@ public class StockShopLogisticsCorpServiceImpl implements IStockShopLogisticsCor
     @Override
     public PageData<StockShopLogisticsCorpVO.ListVO> pageData(StockShopLogisticsCorpQTO.QTO qto) {
         QueryWrapper<StockShopLogisticsCorp> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<StockShopLogisticsCorp> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, StockShopLogisticsCorpVO.ListVO.class, page);

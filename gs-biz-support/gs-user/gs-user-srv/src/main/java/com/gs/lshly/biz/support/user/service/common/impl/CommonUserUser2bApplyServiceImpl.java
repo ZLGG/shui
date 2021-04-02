@@ -20,11 +20,13 @@ import com.gs.lshly.common.struct.bbb.pc.user.vo.PCBbbUserUser2bApplyLogVO;
 import com.gs.lshly.common.struct.common.LegalDictDTO;
 import com.gs.lshly.common.struct.common.LegalDictVO;
 import com.gs.lshly.common.struct.common.dto.CommonUserUser2bApplyDTO;
+import com.gs.lshly.common.struct.common.dto.RemindPlatDTO;
 import com.gs.lshly.common.struct.common.vo.CommonUserUser2bApplyVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
+import com.gs.lshly.rpc.api.common.IRemindPlatRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -68,6 +70,9 @@ public class CommonUserUser2bApplyServiceImpl implements ICommonUserUser2bApplyS
 
     @DubboReference
     private ILegalDictRpc legalDictRpc;
+
+    @DubboReference
+    private IRemindPlatRpc iRemindPlatRpc;
 
     @Override
     public void editUserUser2bApply(CommonUserUser2bApplyDTO.ETO dto) {
@@ -139,6 +144,8 @@ public class CommonUserUser2bApplyServiceImpl implements ICommonUserUser2bApplyS
             }
             userUser2bApplyCertRepository.saveBatch(applyCertList);
         }
+        //触发消息
+        iRemindPlatRpc.addRemindPlatForUser2bApply(new RemindPlatDTO.JustDTO(dto.getJwtUserId(),userUser2bApply.getId()));
     }
 
     @Override

@@ -21,6 +21,9 @@ public abstract class RemindUserQTO implements Serializable {
         @ApiModelProperty("消息提醒业务类型(具体枚举查看外部文档)")
         private Integer cType;
 
+        @ApiModelProperty("10=待读 20=已读,不传或0=全部")
+        private Integer state;
+
     }
 
 }

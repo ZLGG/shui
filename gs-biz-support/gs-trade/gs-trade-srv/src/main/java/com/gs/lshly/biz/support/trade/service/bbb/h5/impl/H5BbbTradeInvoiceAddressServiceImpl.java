@@ -38,6 +38,7 @@ public class H5BbbTradeInvoiceAddressServiceImpl implements IH5BbbTradeInvoiceAd
     public PageData<H5BbbTradeInvoiceAddressVO.ListVO> pageData(H5BbbTradeInvoiceAddressQTO.IdQTO qto) {
         QueryWrapper<TradeInvoiceAddress> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id",qto.getJwtUserId());
+        wrapper.orderByDesc("cdate");
         IPage<TradeInvoiceAddress> page = MybatisPlusUtil.pager(qto);
         IPage<TradeInvoiceAddress> invoiceAddressIPage = repository.page(page, wrapper);
         if(ObjectUtils.isEmpty(invoiceAddressIPage) && ObjectUtils.isEmpty(invoiceAddressIPage.getRecords())){
@@ -75,7 +76,7 @@ public class H5BbbTradeInvoiceAddressServiceImpl implements IH5BbbTradeInvoiceAd
         TradeInvoiceAddress tradeInvoiceAddress = repository.getById(dto.getId());
         H5BbbTradeInvoiceAddressVO.DetailVO detailVo = new H5BbbTradeInvoiceAddressVO.DetailVO();
         if(ObjectUtils.isEmpty(tradeInvoiceAddress)){
-            throw new BusinessException("没有数据");
+            return detailVo;
         }
         BeanUtils.copyProperties(tradeInvoiceAddress, detailVo);
         return detailVo;

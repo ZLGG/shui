@@ -35,6 +35,7 @@ public class BbcTradeInvoiceServiceImpl implements IBbcTradeInvoiceService {
     public PageData<BbcTradeInvoiceVO.BbcListVO> pageData(BbcTradeInvoiceQTO.Ids qto) {
         QueryWrapper<TradeInvoice> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id",qto.getJwtUserId());
+        wrapper.orderByDesc("cdate");
         IPage<TradeInvoice> page = MybatisPlusUtil.pager(qto);
         IPage<TradeInvoice> invoiceIPage = repository.page(page, wrapper);
         if(ObjectUtils.isEmpty(invoiceIPage) && ObjectUtils.isEmpty(invoiceIPage.getRecords())){
@@ -45,22 +46,22 @@ public class BbcTradeInvoiceServiceImpl implements IBbcTradeInvoiceService {
 
     @Override
     public void addTradeInvoice(BbcTradeInvoiceDTO.AddETO eto) {
-        QueryWrapper<TradeInvoice> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id",eto.getJwtUserId());
-        if(ObjectUtils.isNotEmpty(eto.getTaxNumber())){
-            wrapper.eq("tax_number",eto.getTaxNumber());
-        }
-        TradeInvoice repositoryOne = repository.getOne(wrapper);
-        if(ObjectUtils.isNotEmpty(repositoryOne)){
-            throw new BootstrapMethodError("税务人识别号已存在,请输入正确税号");
-        }
-        TradeInvoice tradeInvoice = new TradeInvoice();
-        tradeInvoice.setUserId(eto.getJwtUserId());
-        tradeInvoice.setUserName(eto.getJwtUserName());
-        tradeInvoice.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
-        tradeInvoice.setInvoiceStatus(TradeInvoiceEnum.待开具.getCode());
-        BeanUtils.copyProperties(eto, tradeInvoice);
-        repository.save(tradeInvoice);
+//        QueryWrapper<TradeInvoice> wrapper = new QueryWrapper<>();
+//        wrapper.eq("user_id",eto.getJwtUserId());
+//        if(ObjectUtils.isNotEmpty(eto.getTaxNumber())){
+//            wrapper.eq("tax_number",eto.getTaxNumber());
+//        }
+//        TradeInvoice repositoryOne = repository.getOne(wrapper);
+//        if(ObjectUtils.isNotEmpty(repositoryOne)){
+//            throw new BootstrapMethodError("税务人识别号已存在,请输入正确税号");
+//        }
+//        TradeInvoice tradeInvoice = new TradeInvoice();
+//        tradeInvoice.setUserId(eto.getJwtUserId());
+//        tradeInvoice.setUserName(eto.getJwtUserName());
+//        tradeInvoice.setIsDefault(TradeInvoiceEnum.普通发票.getCode());
+//        tradeInvoice.setInvoiceStatus(TradeInvoiceEnum.待开具.getCode());
+//        BeanUtils.copyProperties(eto, tradeInvoice);
+//        repository.save(tradeInvoice);
     }
 
 

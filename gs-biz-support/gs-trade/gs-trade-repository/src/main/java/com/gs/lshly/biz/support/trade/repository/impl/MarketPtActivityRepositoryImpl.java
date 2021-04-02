@@ -7,10 +7,13 @@ import com.gs.lshly.biz.support.trade.entity.MarketPtActivity;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtActivityMapper;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityRepository;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5MarketActivityDTO;
+import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5MarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
 import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketActivityDTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +45,20 @@ public class MarketPtActivityRepositoryImpl extends ServiceImpl<MarketPtActivity
     @Override
     public IPage<BbcMarketActivityVO.activityGoodsVO> selectActivityPageDataBbcH5(IPage<BbcMarketActivityVO.activityGoodsVO> pager, QueryWrapper<BbcMarketActivityDTO.IdDTO> qw) {
         return marketPtActivityMapper.selectActivityPageDataBbcH5(pager,qw);
+    }
+
+    @Override
+    public IPage<PCBbbMarketActivityVO.activityListPageVO> activityListPage(IPage<PCBbbMarketActivityVO.activityListPageVO> pager, QueryWrapper<PCBbbMarketActivityQTO.QTO> qw) {
+        return marketPtActivityMapper.activityListPage(pager,qw);
+    }
+
+    @Override
+    public IPage<BbbH5MarketActivityVO.activityListPageVO> activityListBbbh5Page(IPage<BbbH5MarketActivityVO.activityListPageVO> pager, QueryWrapper<BbbH5MarketActivityQTO.QTO> qw) {
+        return marketPtActivityMapper.activityListBbbh5Page(pager,qw);
+    }
+
+    @Override
+    public IPage<BbcMarketActivityVO.activityListPageVO> activityListBbcPage(IPage<BbcMarketActivityVO.activityListPageVO> pager, QueryWrapper<BbcMarketActivityQTO.QTO> query) {
+        return marketPtActivityMapper.activityListBbcPage(pager,query);
     }
 }

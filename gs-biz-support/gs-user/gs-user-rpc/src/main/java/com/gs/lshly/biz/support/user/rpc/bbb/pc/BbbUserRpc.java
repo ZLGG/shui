@@ -111,5 +111,10 @@ public class BbbUserRpc implements IBbbUserRpc {
         return bbbUserService.innerUserVo(dto);
     }
 
+    @Override
+    public void getEmailNum(BbbUserDTO.BandEmailDTO qto) {
+        bbbUserService.getEmailNum(qto);
+    }
+
 
 }

@@ -104,5 +104,67 @@ public abstract class MarketPtActivityDTO implements Serializable {
         private List<String> idList;
     }
 
+    @Data
+    @ApiModel("MarketPtActivityDTO.updateDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class updateDTO extends BaseDTO {
+        /**
+         * 配置活动表id
+         */
+        @ApiModelProperty(value = "配置活动表id")
+        private String id;
+
+        /**
+         * pc端满减
+         */
+        @ApiModelProperty(value = "pc端满减")
+        private Integer pcCut;
+
+        /**
+         * pc端满赠
+         */
+        @ApiModelProperty(value = "pc端满赠")
+        private Integer pcGift;
+
+        /**
+         * pc端团购
+         */
+        @ApiModelProperty(value = "pc端团购")
+        private Integer pcGroupbuy;
+
+        /**
+         * pc端满折
+         */
+        @ApiModelProperty(value = "pc端满折")
+        private Integer pcDiscount;
+
+        /**
+         * h5端满减
+         */
+        @ApiModelProperty(value = "h5端满减")
+        private Integer h5Cut;
+
+        /**
+         * h5端满赠
+         */
+        @ApiModelProperty(value = "h5端满赠")
+        private Integer h5Gift;
+
+        /**
+         * h5端团购
+         */
+        @ApiModelProperty(value = "h5端团购")
+        private Integer h5Groupbuy;
+
+        /**
+         * h5端满折
+         */
+        @ApiModelProperty(value = "h5端满折")
+        private Integer h5Discount;
+
+    }
+
+
 
 }

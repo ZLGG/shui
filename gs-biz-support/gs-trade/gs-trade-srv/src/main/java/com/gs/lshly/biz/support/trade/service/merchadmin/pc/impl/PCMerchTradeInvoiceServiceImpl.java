@@ -47,6 +47,7 @@ public class PCMerchTradeInvoiceServiceImpl implements IPCMerchTradeInvoiceServi
             wrapper.eq("invoice_status",qto.getInvoiceStatus());
         }
         wrapper.eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         IPage<TradeInvoice> page = MybatisPlusUtil.pager(qto);
         IPage<TradeInvoice> invoiceIPage = iTradeInvoiceRepository.page(page,wrapper);
         if(ObjectUtils.isEmpty(invoiceIPage) && ObjectUtils.isEmpty(invoiceIPage.getRecords())){

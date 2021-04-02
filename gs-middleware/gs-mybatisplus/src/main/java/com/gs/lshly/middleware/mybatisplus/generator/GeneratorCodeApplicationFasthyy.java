@@ -22,14 +22,14 @@ public class GeneratorCodeApplicationFasthyy {
          * ************************************************
          */
 
-        GeneratorConifg.projectPath = "C:\\Users\\cqqi\\Desktop\\gongzuo";
+        GeneratorConifg.projectPath = "/Users/emmmmmm/Desktop/工作";
 
         GeneratorConifg.globalConfig.setAuthor("zdf");
 
         //数据为表格
-        GeneratorConifg.strategy.setInclude("gs_market_merchant_groupbuy_goods_sku");
+        GeneratorConifg.strategy.setInclude("gs_trade_invoice_template");
         //表格说明
-        GeneratorConifg.setConfigIncludeDesc("商家团购促销关联商品(sku)");
+        GeneratorConifg.setConfigIncludeDesc("发票模版");
 
         // foundation ,merchant,commodity,stock,trade,user
         GeneratorConifg.modelName = "trade";

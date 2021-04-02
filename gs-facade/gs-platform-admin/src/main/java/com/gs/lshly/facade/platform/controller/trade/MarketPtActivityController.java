@@ -73,4 +73,18 @@ public class MarketPtActivityController {
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
+    @ApiOperation("配置活动权限")
+    @PutMapping(value = "/updateActivity")
+    @Func(code = "edit",name = "改")
+    public ResponseData<Void> updateActivity( @Valid @RequestBody MarketPtActivityDTO.updateDTO eto) {
+        MarketPtActivityRpc.updateActivity(eto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+    @ApiOperation("获取活动权限")
+    @PutMapping(value = "/getActivity")
+    @Func(code = "edit",name = "改")
+    public ResponseData<MarketPtActivityVO.updateDTO> getActivity() {
+        return ResponseData.data(MarketPtActivityRpc.getActivity());
+    }
+
 }

@@ -72,6 +72,8 @@ public class DataArticleServiceImpl implements IDataArticleService {
             queryWrapper.like("title",qto.getTitle());
         }
         queryWrapper.eq("terminal",qto.getTerminal());
+        queryWrapper.select("id","title","logo","is_default","read_count","pc_show","idx","send_time");
+        queryWrapper.orderByDesc("cdate");
         IPage<DataArticle> page = MybatisPlusUtil.pager(qto);
         repository.page(page, queryWrapper);
         Map<String, DataArticleVO.ListVO> voMap = new HashMap<>();

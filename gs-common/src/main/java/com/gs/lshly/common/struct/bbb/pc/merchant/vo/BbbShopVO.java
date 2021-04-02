@@ -145,6 +145,7 @@ public abstract class BbbShopVO implements Serializable {
 
     @Data
     @ApiModel("BbbShopVO.ShopScoreDetailVO")
+    @Accessors(chain = true)
     public static class ShopScoreDetailVO implements Serializable {
 
         @ApiModelProperty("店铺ID")
@@ -169,7 +170,7 @@ public abstract class BbbShopVO implements Serializable {
         private BigDecimal goodsScore;
 
         @ApiModelProperty("商品评分人数")
-        private BigDecimal goodsScoreNum;
+        private Integer goodsScoreNum;
 
         @ApiModelProperty("服务评分")
         private BigDecimal serviceScore;
@@ -187,6 +188,9 @@ public abstract class BbbShopVO implements Serializable {
 
         @ApiModelProperty("店铺ID")
         private String id;
+
+        @ApiModelProperty("POS门店ID")
+        private String posShopId;
 
         @ApiModelProperty("店铺Logo")
         private String shopLogo;

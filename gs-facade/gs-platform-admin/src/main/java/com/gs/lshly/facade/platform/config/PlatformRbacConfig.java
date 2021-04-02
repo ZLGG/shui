@@ -29,23 +29,19 @@ public class PlatformRbacConfig implements CommandLineRunner {
     @Autowired
     private PermissionInterceptor permissionInterceptor;
 
-	@Override
-	public void run(String... args) {
-		new Thread() {
-			public void run() {
-				while (true) {
-					try {
-						PermitNode allPermitNode = funcRpc.initFuncTree2DB(permissionInterceptor.getAllPermitNode());
-						log.info("完成权限数持久化");
-						permissionInterceptor.updateAllPermitNode(allPermitNode);
-						log.info("更新缓存");
-						return;
-					} catch (RpcException rpcException) {
-						log.info("等待远程服务10秒");
-						ThreadUtil.sleep(1000 * 10);
-					}
-				}
-			}
-		}.start();
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        while (true) {
+            try {
+                PermitNode allPermitNode = funcRpc.initFuncTree2DB(permissionInterceptor.getAllPermitNode());
+                log.info("完成权限数持久化");
+                permissionInterceptor.updateAllPermitNode(allPermitNode);
+                log.info("更新缓存");
+                return;
+            } catch (RpcException rpcException){
+                log.info("等待远程服务10秒");
+                ThreadUtil.sleep(1000 * 10);
+            }
+        }
+    }
 }

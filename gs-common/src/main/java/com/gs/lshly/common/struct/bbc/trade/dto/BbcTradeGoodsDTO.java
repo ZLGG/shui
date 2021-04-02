@@ -68,9 +68,6 @@ public abstract class BbcTradeGoodsDTO implements Serializable {
         @ApiModelProperty("销售价")
         private BigDecimal salePrice;
 
-        @ApiModelProperty("积分价格")
-        private BigDecimal pointPrice;
-
         @ApiModelProperty("优惠金额")
         private BigDecimal discountAmount;
 

@@ -38,6 +38,7 @@ public class PCMerchStockServiceImpl implements IPCMerchStockService {
     public PCMerchStockVO.StockAlarmGoodsIdListVO storeCall(String shopId, Integer changeQuantity) {
         QueryWrapper<Stock> stockWrap = MybatisPlusUtil.query();
         stockWrap.eq("shop_id",shopId);
+        stockWrap.orderByDesc("cdate");
         List<Stock> listStock = repository.list(stockWrap);
 
         PCMerchStockVO.StockAlarmGoodsIdListVO   ListShopVoList = new PCMerchStockVO.StockAlarmGoodsIdListVO();

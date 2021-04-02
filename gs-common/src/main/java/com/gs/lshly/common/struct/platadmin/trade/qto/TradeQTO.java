@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.platadmin.trade.qto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -108,6 +109,15 @@ public abstract class TradeQTO implements Serializable {
     }
 
     @Data
+    @ApiModel("TradeQTO.IdDateQTO")
+    public static class IdDateQTO extends BaseQTO{
+
+        @ApiModelProperty("订单ID列表")
+        private List<String> idList;
+
+    }
+
+    @Data
     @ApiModel("TradeQTO.TradeList")
     @Accessors(chain = true)
     public static class TradeList extends BaseQTO {
@@ -136,5 +146,53 @@ public abstract class TradeQTO implements Serializable {
 
         @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
         private Integer sourceType;
+    }
+
+
+    @Data
+    @ApiModel("TradeQTO.OperationList")
+    @Accessors(chain = true)
+    public static class OperationList extends BaseQTO {
+
+        @ApiModelProperty(value = "交易商品ID",hidden = true)
+        private String id;
+
+        @ApiModelProperty("开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        private LocalDateTime startTime;
+
+        @ApiModelProperty("结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        private LocalDateTime endTime;
+
+        @ApiModelProperty("时间选择[10昨天 20前天 30一周 40一月]")
+        private Integer queryTimes;
+
+        @ApiModelProperty("查询选择[10新增订单金额 20新增订单数量 30平均单价 40付款订单金额 50已完成订单数 60已取消数量]")
+        private Integer queryStates;
+    }
+
+
+    @Data
+    @ApiModel("TradeQTO.PayDateList")
+    @Accessors(chain = true)
+    public static class PayDateList extends BaseDTO {
+
+        @ApiModelProperty(value = "交易商品ID",hidden = true)
+        private String id;
+
+        @ApiModelProperty("开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        private LocalDateTime startTime;
+
+        @ApiModelProperty("结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        private LocalDateTime endTime;
+
+        @ApiModelProperty("时间选择[10昨天 20前天 30一周 40一月]")
+        private Integer queryTimes;
+
+        @ApiModelProperty("查询选择[10新增订单金额 20新增订单数量 30平均单价 40已取消金额 50已取消数量]")
+        private Integer queryStates;
     }
 }

@@ -1,10 +1,5 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbb.pc;
 
-import java.util.List;
-
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.service.bbb.IPCBbbGoodsFupinService;
 import com.gs.lshly.biz.support.commodity.service.bbb.pc.IPCBbbGoodsInfoService;
@@ -15,9 +10,14 @@ import com.gs.lshly.common.struct.bbb.pc.commodity.dto.PCBbbGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.pc.commodityfupin.vo.PCBbbGoodsFupinVO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.TopicQTO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsInfoRpc;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
 *

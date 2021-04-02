@@ -5,7 +5,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.TradeGoodsDTO;
+import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 
 import java.util.List;
@@ -26,4 +26,8 @@ public interface IPCMerchTradeService {
     TradeVO.PayDatelistVO payDateList(TradeDTO.PayDateList dto);
 
     TradeVO.OperationlistVO operationList(TradeDTO.OperationList dto);
+
+    List<PCMerchTradeListVO.tradeVOExport> export(PCMerchTradeQTO.IdListQTO qo);
+
+
 }

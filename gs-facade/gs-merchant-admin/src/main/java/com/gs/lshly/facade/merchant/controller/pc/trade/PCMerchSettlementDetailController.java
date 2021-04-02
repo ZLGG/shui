@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/merchadmin/pc/tradeSettlementDetail")
 @Api(tags = "商家结算明细表管理")
-@Module(code = "merchantBillingDetails",parent = "settlement",name = "商家结算明细" ,index = 2)
 public class PCMerchSettlementDetailController {
 
     @DubboReference
@@ -38,14 +37,12 @@ public class PCMerchSettlementDetailController {
 
     @ApiOperation("结算明细表列表")
     @PostMapping("list")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<PageData<TradeSettlementDetailVO.ListVO>> list(@RequestBody TradeSettlementDetailQTO.ListQTO qto) {
         return ResponseData.data(ipcMarketSettlementDetailRpc.pageData(qto));
     }
 
     @ApiOperation("结算明细表详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view" ,name = "查看")
     public ResponseData<TradeSettlementDetailVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(ipcMarketSettlementDetailRpc.detailTradeSettlementDetail(new TradeSettlementDetailDTO.IdDTO(id)));
     }
@@ -53,7 +50,6 @@ public class PCMerchSettlementDetailController {
     @ApiOperation("导出结算明细表")
     @Log(module = "导出结算明细表", func = "导出结算明细表")
     @GetMapping(value = "/export")
-    @Func(code = "export" ,name = "导出")
     public void export(TradeSettlementDetailQTO.ListQTO qo, @ApiIgnore HttpServletResponse response) throws Exception {
         ExportDataDTO exportData = ipcMarketSettlementDetailRpc.export(qo);
         ExcelUtil.export(exportData, response);

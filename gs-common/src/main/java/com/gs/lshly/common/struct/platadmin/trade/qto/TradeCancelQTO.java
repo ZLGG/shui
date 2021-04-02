@@ -26,7 +26,10 @@ public abstract class TradeCancelQTO implements Serializable {
         private Integer sourceType;
 
         @ApiModelProperty("订单号(模糊查询)")
-        private String tradeId;
+        private String tradeCode;
+
+        @ApiModelProperty("会员名字")
+        private String userName;
     }
     @Data
     @ApiModel("TradeCancelQTO.IdListQTO")

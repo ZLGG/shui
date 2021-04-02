@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author xxfc
 * @since 2021-02-05
@@ -59,4 +61,56 @@ public abstract class RemindMerchantDTO implements Serializable {
     }
 
 
+    @Data
+    @ApiModel("RemindMerchantDTO.JustDTO")
+    @AllArgsConstructor
+    public static class JustDTO extends BaseDTO {
+
+        @ApiModelProperty("接受者ID....[店铺ID]")
+        private String accetId;
+
+        @ApiModelProperty("触发者ID....[触发者会员ID]")
+        private String triggerId;
+
+        @ApiModelProperty("触发业务ID....[相应业务ID，如订单待审=订单ID,商家入驻待审 = 商家入驻ID]")
+        private String triggerSid;
+
+    }
+
+    @Data
+    @ApiModel("RemindMerchantDTO.NoticAcctAllDTO")
+    @AllArgsConstructor
+    public static class NoticAcctAllDTO extends BaseDTO {
+
+        @ApiModelProperty("接受者ID....店铺ID")
+        private String accetId;
+
+        @ApiModelProperty("触发者ID....[触发者会员ID]")
+        private String triggerId;
+
+        @ApiModelProperty("触发业务ID....[相应业务ID，如订单待审=订单ID,商家入驻待审 = 商家入驻ID]")
+        private String triggerSid;
+
+        @ApiModelProperty("消息内容")
+        private String content;
+
+    }
+
+    @Data
+    @ApiModel("RemindMerchantDTO.NoticAcctDTO")
+    @AllArgsConstructor
+    public static class NoticAcctDTO extends BaseDTO {
+
+        @ApiModelProperty("接受者ID....[店铺ID]")
+        private List<String> accetIdList;
+
+        @ApiModelProperty("触发者ID....[触发者会员ID]")
+        private String triggerId;
+
+        @ApiModelProperty("触发业务ID....[相应业务ID，如订单待审=订单ID,商家入驻待审 = 商家入驻ID]")
+        private String triggerSid;
+
+        @ApiModelProperty("消息内容")
+        private String content;
+    }
 }

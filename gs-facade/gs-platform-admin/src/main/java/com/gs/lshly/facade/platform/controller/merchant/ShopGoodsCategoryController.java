@@ -31,9 +31,9 @@ public class ShopGoodsCategoryController {
     private IShopGoodsCategoryRpc shopGoodsCategoryRpc;
 
     @ApiOperation("店铺商品类目列表")
-    @GetMapping("/{shopId}")
-    public ResponseData<List<ShopGoodsCategoryVO.GoodsCategoryOneVO>> list(@PathVariable String shopId) {
-        return ResponseData.data(shopGoodsCategoryRpc.list(new ShopGoodsCategoryQTO.ShopIdQTO(shopId)));
+    @PostMapping("")
+    public ResponseData<List<ShopGoodsCategoryVO.GoodsCategoryOneVO>> list(@RequestBody ShopGoodsCategoryQTO.ShopIdQTO qto) {
+        return ResponseData.data(shopGoodsCategoryRpc.list(qto));
     }
 
     @ApiOperation("编辑商品类目费用")

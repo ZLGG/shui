@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.stock.service.bbc.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.stock.entity.StockAddress;
 import com.gs.lshly.biz.support.stock.entity.StockAddressChild;
 import com.gs.lshly.biz.support.stock.enums.StockAddressOwnerTypeEnum;
@@ -59,12 +60,19 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         queryWrapper.eq("child.address_type",addressType);
         queryWrapper.eq("ad.owner_type",StockAddressOwnerTypeEnum.会员.getCode());
         queryWrapper.eq("ad.owner_id",qto.getJwtUserId());
+        queryWrapper.orderByDesc("ad.cdate");
         List<StockAddressView> viewList = stockAddressMapper.mapperList(queryWrapper);
         //没有默认 取第一个为默认
         if(ObjectUtils.isNotEmpty(viewList)){
             StockAddressView defaultView = null;
             int hasDefault = 0;
             for(int i=0;i<viewList.size();i++){
+                if (StringUtils.isBlank(viewList.get(i).getStreet())){
+                    viewList.get(i).setStreet("");
+                }
+                if (StringUtils.isBlank(viewList.get(i).getReals())){
+                    viewList.get(i).setReals("");
+                }
                 StockAddressView view = viewList.get(i);
                 if(i==0){
                     defaultView = view;

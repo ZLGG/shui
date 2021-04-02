@@ -43,7 +43,6 @@ import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsRpc;
-import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -138,14 +137,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (StringUtils.isNotEmpty(qto.getTemplateId())){
             wrapperBoost.eq("gt.template_id",qto.getTemplateId());
         }
-        if (ObjectUtils.isNotEmpty(qto.getUsePlatform())){
-            wrapperBoost.eq("gs.use_platform",qto.getUsePlatform());
+        if (ObjectUtils.isNotEmpty(qto.getUsePlatform()) && !qto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城和C商城.getCode())){
+            wrapperBoost.in("gs.use_platform",GoodsUsePlatformEnums.B商城和C商城.getCode(),qto.getUsePlatform());
         }
         if (ObjectUtils.isNotEmpty(qto.getSalePrice1())){
-            wrapperBoost.gt("gs.sale_price",qto.getSalePrice1());
+            wrapperBoost.ge("gs.sale_price",qto.getSalePrice1());
         }
         if (ObjectUtils.isNotEmpty(qto.getSalePrice2())){
-            wrapperBoost.lt("gs.sale_price",qto.getSalePrice2());
+            wrapperBoost.le("gs.sale_price",qto.getSalePrice2());
         }
         if (StringUtils.isNotEmpty(qto.getGoodsNo())){
             wrapperBoost.likeRight("gs.goods_no",qto.getGoodsNo());
@@ -159,16 +158,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if(StringUtils.isNotBlank(qto.getShopNavigation())){
             wrapperBoost.eq("gsn.shop_navigation",getShopNavigation(qto.getShopNavigation()).getNavigationTowId());
         }
-        if(qto.getIsPointGood()!=null){
-            wrapperBoost.eq("gs.is_point_good",qto.getIsPointGood());
-        }
-        if(qto.getIsInMemberGift()!=null){
-            wrapperBoost.eq("gs.is_in_member_gift",qto.getIsInMemberGift());
-        }
-        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() !=-1){
-            wrapperBoost.eq("gs.sale_type",qto.getSaleType());
-        }
-
         IPage<PCMerchGoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
         IPage<PCMerchGoodsInfoVO.SpuListVO> spuListVOIPage = goodsInfoMapper.getMerchantGoodsInfo(page,wrapperBoost);
         if (ObjectUtils.isEmpty(spuListVOIPage)){
@@ -248,7 +237,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         goodsInfo.setIsShowOldPrice(ObjectUtils.isEmpty(goodsInfo.getIsShowOldPrice())? ShowOldPriceEnum.不显示原价.getCode():goodsInfo.getIsShowOldPrice());
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId())?eto.getJwtShopId():eto.getShopId());
         goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId())?eto.getJwtMerchantId():eto.getMerchantId());
-        goodsInfo.setGoodsPriceUnit(GoodsPriceUnitEnum.千克.getRemark());
+        goodsInfo.setGoodsState(GoodsStateEnum.未上架.getCode());
         boolean flag = repository.save(goodsInfo);
         if (!flag){
             throw new BusinessException("添加商品失败");
@@ -308,10 +297,12 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 BeanUtils.copyProperties(skuInfo, skuGoodInfo);
                 skuGoodInfo.setGoodId(goodsInfo.getId());
                 skuGoodInfo.setSkuGoodsNo(StringUtils.isBlank(skuInfo.getSkuGoodsNo())?GoodsNoUtil.getGoodsNo():skuInfo.getSkuGoodsNo());
-                skuGoodInfo.setState(eto.getGoodsState());
+                skuGoodInfo.setState(GoodsStateEnum.未上架.getCode());
                 skuGoodInfo.setShopId(StringUtils.isBlank(eto.getShopId())?eto.getJwtShopId():eto.getShopId());
                 skuGoodInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId())?eto.getJwtMerchantId():eto.getMerchantId());
                 skuGoodInfo.setId("");
+                skuGoodInfo.setCategoryId(eto.getCategoryId());
+                skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
                 skuGoodInfos.add(skuGoodInfo);
 
                 //添加sku商品信息
@@ -337,6 +328,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
             SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
             skuGoodInfo.setGoodId(goodsInfo.getId());
+            skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
             skuGoodInfo.setId("");
             skuGoodInfoRepository.save(skuGoodInfo);
 
@@ -407,7 +399,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         goodsInfo.setIsShowOldPrice(goodsInfo.getIsShowOldPrice().intValue() ==  0? ShowOldPriceEnum.不显示原价.getCode():goodsInfo.getIsShowOldPrice());
         goodsInfo.setShopId(eto.getJwtShopId());
         goodsInfo.setMerchantId(eto.getJwtMerchantId());
-        goodsInfo.setGoodsPriceUnit(GoodsPriceUnitEnum.千克.getRemark());
         boolean flag = repository.update(goodsInfo,goodsBoost);
 
         if (!flag){
@@ -609,11 +600,15 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
         //建立商品与店铺自定义类目的关联关系
 
+        QueryWrapper<GoodsShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("goods_id",goodsInfo.getId());
+        shopNavigationRepository.remove(wrapper);
+
         if (StringUtils.isNotBlank(eto.getShopNavigationId())){
-            updateShopNavigationBind(eto.getJwtShopId(),eto.getJwtMerchantId(),goodsInfo.getId(),TerminalEnum.BBB.getCode(),eto.getShopNavigationId());
+            createGoodsShopNaigationBind(eto.getJwtMerchantId(),eto.getJwtShopId(),goodsInfo.getId(),eto.getShopNavigationId(),TerminalEnum.BBB.getCode());
         }
         if (StringUtils.isNotBlank(eto.getShop2cNavigationId())){
-            updateShopNavigationBind(eto.getJwtShopId(),eto.getJwtMerchantId(),goodsInfo.getId(),TerminalEnum.BBC.getCode(),eto.getShop2cNavigationId());
+            createGoodsShopNaigationBind(eto.getJwtMerchantId(),eto.getJwtShopId(),goodsInfo.getId(),eto.getShop2cNavigationId(),TerminalEnum.BBC.getCode());
         }
 
 
@@ -843,13 +838,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         importGoodsDataVO.setShopNavigation2cName("2c店铺分类名称");
         importGoodsDataVO.setStockSubtractType("10");
         importGoodsDataVO.setStockNum("10");
-        importGoodsDataVO.setIsPointGood("false");
-        importGoodsDataVO.setPointPrice("0");
-        importGoodsDataVO.setRemarks("办理备注");
-        importGoodsDataVO.setIsInMemberGift("false");
-        importGoodsDataVO.setInMemberPointPrice("0");
-        importGoodsDataVO.setSaleType("0");
-        importGoodsDataVO.setThirdProductId("信天游产品号");
         importGoodsDataVOS.add(importGoodsDataVO);
         return importGoodsDataVOS;
     }
@@ -1372,6 +1360,36 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return null;
     }
 
+    @Override
+    public PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69) {
+        //判断是不是单规格，如果是直接在goodsInfo表里去找
+        QueryWrapper<GoodsInfo> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("goods_no",posSku69));
+        query.last("limit 0,1");
+        GoodsInfo one = repository.getOne(query);
+        if (ObjectUtils.isNotEmpty(one)){
+            PCMerchGoodsInfoVO.SkuIdByGoodsNoVO skuIdByGoodsNoVO = new PCMerchGoodsInfoVO.SkuIdByGoodsNoVO();
+            skuIdByGoodsNoVO.setGoodsId(one.getId());
+            QueryWrapper<SkuGoodInfo> query1 = MybatisPlusUtil.query();
+            query1.and(i->i.eq("good_id",one.getId()));
+            SkuGoodInfo one1 = skuGoodInfoRepository.getOne(query1);
+            if (ObjectUtils.isNotEmpty(one1)){
+                skuIdByGoodsNoVO.setSkuId(one1.getId());
+            }
+            return skuIdByGoodsNoVO;
+        }else {
+            //是多规格
+            QueryWrapper<SkuGoodInfo> query1 = MybatisPlusUtil.query();
+            query1.and(i->i.eq("sku_goods_no",posSku69));
+            SkuGoodInfo list = skuGoodInfoRepository.getOne(query1);
+            if (ObjectUtils.isNotEmpty(list)){
+                PCMerchGoodsInfoVO.SkuIdByGoodsNoVO skuIdByGoodsNoVO = new PCMerchGoodsInfoVO.SkuIdByGoodsNoVO();
+                skuIdByGoodsNoVO.setSkuId(list.getId()).setGoodsId(list.getGoodId());
+            }
+        }
+        return null;
+    }
+
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos){
         List<String> stringList = Arrays.asList(attributeInfos.split(",")).stream().distinct().collect(toList());
         List<PCMerchGoodsAttributeInfoDTO.ETO> etoList = stringList.parallelStream()
@@ -1588,11 +1606,17 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     private void deleteSurplusAttribute(List<PCMerchGoodsAttributeInfoVO.ListVO> beforeEto,List<PCMerchGoodsAttributeInfoDTO.ETO> afterEto){
-        List<String> beforeIdList = ListUtil.getIdList(PCMerchGoodsAttributeInfoVO.ListVO.class,beforeEto);
-        List<String> afterIdList = ListUtil.getIdList(PCMerchGoodsAttributeInfoDTO.ETO.class,afterEto);
-
+        List<String> beforeIdList = new ArrayList<>();
+        List<String> afterIdList = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(beforeEto)){
+            beforeIdList =  ListUtil.getIdList(PCMerchGoodsAttributeInfoVO.ListVO.class,beforeEto);
+        }
+        if (ObjectUtils.isNotEmpty(afterEto)){
+            afterIdList = ListUtil.getIdList(PCMerchGoodsAttributeInfoDTO.ETO.class,afterEto);
+        }
+        List<String> finalAfterIdList = afterIdList;
         List<String> reduceIdList = beforeIdList.stream()
-                .filter(item -> !afterIdList.contains(item))
+                .filter(item -> !finalAfterIdList.contains(item))
                 .collect(toList());
         if (ObjectUtils.isEmpty(reduceIdList)){
             return;
@@ -1872,30 +1896,5 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         shopNavigation.setShopNavigation(navigationId);
         shopNavigation.setTerminal(terminal);
         shopNavigationRepository.save(shopNavigation);
-    }
-
-    private void updateShopNavigationBind(String shopId,String merchantId,String goodsId,Integer terminal,String navigationId){
-        QueryWrapper<GoodsShopNavigation> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("goods_id",goodsId);
-        wrapper.eq("terminal",terminal);
-        wrapper.eq("shop_navigation",navigationId);
-        GoodsShopNavigation goodsShopNavigation = shopNavigationRepository.getOne(wrapper);
-        if (ObjectUtils.isEmpty(goodsShopNavigation)){
-            GoodsShopNavigation shopNavigation = new GoodsShopNavigation();
-            shopNavigation.setMerchantId(merchantId);
-            shopNavigation.setShopId(shopId);
-            shopNavigation.setGoodsId(goodsId);
-            shopNavigation.setShopNavigation(navigationId);
-            shopNavigation.setTerminal(terminal);
-            shopNavigationRepository.save(shopNavigation);
-        }else {
-            UpdateWrapper<GoodsShopNavigation> updateWrapper = MybatisPlusUtil.update();
-            wrapper.eq("goods_id",goodsId);
-            wrapper.eq("terminal",terminal);
-            GoodsShopNavigation shopNavigation = new GoodsShopNavigation();
-            shopNavigation.setShopNavigation(navigationId);
-            shopNavigationRepository.update(shopNavigation,updateWrapper);
-        }
-
     }
 }

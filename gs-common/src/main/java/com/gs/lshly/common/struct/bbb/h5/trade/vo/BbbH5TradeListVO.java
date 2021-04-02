@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.bbb.h5.trade.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeListVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -92,6 +93,11 @@ public abstract class BbbH5TradeListVO implements Serializable {
         @ApiModelProperty("支付类型")
         private Integer payType;
 
+        @ApiModelProperty("线下支付状态[10=待确认 20=驳回 30=已确认]")
+        private Integer offlineState;
+
+        @ApiModelProperty("线下支付驳回拒绝原因")
+        private String verifyRemark;
 
         @ApiModelProperty("配送类型")
         private Integer deliveryType;
@@ -136,12 +142,37 @@ public abstract class BbbH5TradeListVO implements Serializable {
         @ApiModelProperty("买家留言")
         private String buyerRemark;
 
+        @ApiModelProperty("发票id")
+        private String invoiceId;
+
+        @ApiModelProperty("发票id")
+        private String invoiceAddressId;
 
         @ApiModelProperty("发货备注")
         private String deliveryRemark;
 
+        @ApiModelProperty("退款状态")
+        private Integer rightsState;
+
         @ApiModelProperty("交易商品集合")
         List<TradeGoodsVO> tradeGoodsVOS;
+
+        @ApiModelProperty("发票信息")
+        private BbbH5TradeListVO.tradeVO.Invoice invoiceInfo;
+
+        @Data
+        @ApiModel("BbbH5TradeListVO.tradeVO.Invoice")
+        @Accessors(chain = true)
+        public static class Invoice implements Serializable{
+            @ApiModelProperty("发票ID")
+            private String invoiceId;
+            @ApiModelProperty("发票类型[10增值税普通发票 20增值税专用发票]")
+            private Integer invoiceType;
+            @ApiModelProperty("公司名称")
+            private String firmName;
+            @ApiModelProperty("税务识别码")
+            private String taxNumber;
+        }
 
     }
 
@@ -238,6 +269,58 @@ public abstract class BbbH5TradeListVO implements Serializable {
         @ApiModelProperty("交易数量")
         private Integer tradeCount;
 
+    }
+
+    @Data
+    @ApiModel("BbbH5TradeListVO.OfflinePayVO")
+    @Accessors(chain = true)
+    public static class OfflinePayVO implements Serializable{
+        @ApiModelProperty("转账人信息")
+        private OfflinePayVOPl offlinePayVOPl;
+
+        @ApiModelProperty("转账信息")
+        private OfflinePayVOPp offlinePayVOPp;
+
+        @Data
+        @ApiModel("BbbH5TradeListVO.OfflinePayVO.OfflinePayVOPl")
+        @Accessors(chain = true)
+        public static class OfflinePayVOPl implements Serializable{
+            @ApiModelProperty("账户名")
+            private String name;
+
+            @ApiModelProperty("银行账号")
+            private String number;
+
+            @ApiModelProperty("开户银行")
+            private String bank;
+
+            @ApiModelProperty("银联号")
+            private String unionpay;
+
+            @ApiModelProperty("订单号")
+            private String tradeId;
+
+            @ApiModelProperty("转账金额")
+            private BigDecimal tradeAmount;
+        }
+
+        @Data
+        @ApiModel("BbbH5TradeListVO.OfflinePayVO.OfflinePayVOPp")
+        @Accessors(chain = true)
+        public static class OfflinePayVOPp implements Serializable{
+            @ApiModelProperty(value = "付款用户名")
+            private String payName;
+            @ApiModelProperty(value = "付款卡号")
+            private String payCardNum;
+            @ApiModelProperty(value = "付款银行")
+            private String payBlank;
+            @ApiModelProperty(value = "转账金额")
+            private BigDecimal transferAmount;
+            @ApiModelProperty(value = "转账备注")
+            private String transferRemarks;
+            @ApiModelProperty(value = "凭证图片")
+            private List<String> transImage;
+        }
     }
 
     @Data

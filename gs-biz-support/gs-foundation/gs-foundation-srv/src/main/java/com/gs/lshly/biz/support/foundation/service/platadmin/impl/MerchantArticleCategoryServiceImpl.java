@@ -32,6 +32,7 @@ public class MerchantArticleCategoryServiceImpl implements IMerchantArticleCateg
     @Override
     public PageData<MerchantArticleCategoryVO.ListVO> pageData(MerchantArticleCategoryQTO.QTO qto) {
         QueryWrapper<MerchantArticleCategory> wrapper =  MybatisPlusUtil.query();
+        wrapper.orderByDesc("cdate");
         IPage<MerchantArticleCategory> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, MerchantArticleCategoryVO.ListVO.class, page);

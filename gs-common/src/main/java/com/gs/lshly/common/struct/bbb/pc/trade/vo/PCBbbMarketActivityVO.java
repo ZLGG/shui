@@ -1,13 +1,7 @@
 package com.gs.lshly.common.struct.bbb.pc.trade.vo;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.response.PageData;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,55 +9,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author zdf
 * @since 2021-01-08
 */
 public abstract class PCBbbMarketActivityVO implements Serializable {
 
-	@Data
-    @ApiModel("PCBbbMarketActivityVO.FlashsaleVO")
-    @Accessors(chain = true)
-    public static class FlashsaleVO implements Serializable{
-    	
-		@ApiModelProperty("id")
-    	private String id;
-		
-		@ApiModelProperty("是否有秒杀活动 0：否  1：是")
-    	private Integer status;
-		
-    	@ApiModelProperty("秒杀标题")
-    	private String name;
-    	
-    	@ApiModelProperty("产品列表")
-    	private PageData<PCBbbMarketActivityVO.activityGoodsVO> list;
-    	
-    	@ApiModelProperty("活动开始时间")
-    	private LocalDateTime activityStartTime;
-    }
-    
-    @Data
-    @ApiModel("PCBbbMarketActivityVO.FlashsaleGoodsVO")
-    @Accessors(chain = true)
-    public static class FlashsaleGoodsVO implements Serializable{
-    	
-    	@ApiModelProperty("id")
-    	private String id;
-    	
-    	@ApiModelProperty("商品名称")
-    	private String goodsName;
-    	
-    	@ApiModelProperty("秒杀价")
-    	private BigDecimal salePrice;
-    	
-    	@ApiModelProperty("原价")
-    	private BigDecimal oldPrice;
-    	
-    	@ApiModelProperty("商品图片")
-    	private String goodsImage;
-
-    }
-    
     @Data
     @ApiModel("PCBbbMarketActivityVO.ListVO")
     @Accessors(chain = true)
@@ -182,6 +138,34 @@ public abstract class PCBbbMarketActivityVO implements Serializable {
 
     }
     @Data
+    @ApiModel("PCBbbMarketActivityVO.activityListPageVO")
+    @Accessors(chain = true)
+    public static class activityListPageVO implements Serializable{
+        @ApiModelProperty("活动id")
+        private String id;
+
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("标签")
+        private String label;
+
+        @ApiModelProperty("宣传图")
+        private String coverImage;
+
+        @ApiModelProperty("优惠折扣范围")
+        private String discountRange;
+
+        @ApiModelProperty("活动开始时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime activityStartTime;
+
+        @ApiModelProperty("活动结束时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime activityEndTime;
+
+    }
+    @Data
     @ApiModel("PCBbbMarketActivityVO.activityGoodsVO")
     @Accessors(chain = true)
     public static class activityGoodsVO extends ListVO{
@@ -238,6 +222,9 @@ public abstract class PCBbbMarketActivityVO implements Serializable {
         private List<GiftActivity> giftActivity;
         @ApiModelProperty("商家团购活动")
         private List<GroupbuyActivity> groupbuyActivity;
+        @ApiModelProperty("商家优惠卷")
+        private List<merchantCard> cardActivity;
+
     }
     @Data
     @ApiModel("PCBbbMarketActivityVO.merchantCard")
@@ -251,6 +238,9 @@ public abstract class PCBbbMarketActivityVO implements Serializable {
 
         @ApiModelProperty("规则")
         private String rule;
+
+        @ApiModelProperty("优惠卷名字")
+        private String name;
 
         @ApiModelProperty("是否可领取[10=可以 20=不可以]")
         private Integer isReceive;

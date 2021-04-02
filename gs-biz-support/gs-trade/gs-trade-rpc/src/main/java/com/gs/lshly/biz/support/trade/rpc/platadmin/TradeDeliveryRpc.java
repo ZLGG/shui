@@ -2,9 +2,12 @@ package com.gs.lshly.biz.support.trade.rpc.platadmin;
 
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeDeliveryService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDeliveryDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeDeliveryQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeDeliveryVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradePayVO;
+import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeDeliveryRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,11 @@ public class TradeDeliveryRpc implements ITradeDeliveryRpc{
     @Override
     public TradeDeliveryVO.DetailVO detailTradeDelivery(TradeDeliveryDTO.IdDTO dto){
         return  TradeDeliveryService.detailTradeDelivery(dto);
+    }
+
+    @Override
+    public ExportDataDTO deliveryExport(TradeDeliveryQTO.IdListQTO qo) throws Exception{
+        return  ExcelUtil.treatmentBean(TradeDeliveryService.deliveryExport(qo), TradeDeliveryVO.ListExportVO.class);
     }
 
 }

@@ -8,10 +8,10 @@ import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.IUserThirdLoginRepository;
 import com.gs.lshly.biz.support.user.service.bbb.pc.IBbbUserAuthService;
 import com.gs.lshly.common.enums.GenderEnum;
-import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.UserStateEnum;
 import com.gs.lshly.common.enums.UserTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
@@ -29,8 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
 * <p>
 *  服务实现类
@@ -43,10 +41,13 @@ import java.util.List;
 public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
 
     private static final String PhoneValidCodeGroup = "PhoneValidCode_";
-    private static final String H5PhoneUser = "h5Phone_User_";
+    private static final String BbbPhoneUser = "BbbPhone_User_";
     private static final String WxOpenidUser = "wxOpenid_User_";
+    private static final String WxSceneIdUser = "wxSceneId_User_";
+    private static final String WxSceneIdWxUser = "wxSceneId_WxUser_";
     private static final String WxOpenidSessionKey = "wxOpenid_SessionKey_";
     private static final String WxSessionKeyOpenid = "wxSessionKey_Openid_";
+    private static final String EmailValidCodeGroup = "EmailValidCode_";
 
     @Autowired
     private IUserRepository repository;
@@ -161,17 +162,16 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
     public BbbUserVO.LoginVO login(BbbUserDTO.LoginETO dto) {
 
         //校验验证码
-//        Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
-//        String validCode = code != null ? code + "" : "";
-//        log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
-//        if (!StringUtils.equals(validCode, dto.getValidCode())) {
-//            throw new BusinessException("验证码不匹配");
-//        }
-//        BbbUserVO.LoginVO vo = (BbbUserVO.LoginVO) redisUtil.get(H5PhoneUser + dto.getPhone());
-//        if (vo != null) {
-//            return vo;
-//        }
-        BbbUserVO.LoginVO vo = null;
+        Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
+        String validCode = code != null ? code + "" : "";
+        log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
+        if (!StringUtils.equals(validCode, dto.getValidCode())) {
+            throw new BusinessException("验证码不匹配");
+        }
+        BbbUserVO.LoginVO vo = (BbbUserVO.LoginVO) redisUtil.get(BbbPhoneUser + dto.getPhone());
+        if (vo != null && JwtUtil.getJwtUser(vo.getAuthToken()) != null) {
+            return vo;
+        }
         User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
         if (user == null) {
             user = new User();
@@ -179,16 +179,16 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
             repository.save(user);
         }
         vo = userToLoginVO(user, null);
-        redisUtil.set(H5PhoneUser + dto.getPhone(), vo);
+        redisUtil.set(BbbPhoneUser + dto.getPhone(), vo, 60 * 60 * 5);
         return vo;
     }
 
     @Override
-    public BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey) {
+    public BbbUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid) {
 
         //数据库中并无该openid，缓存sessionKey，登录需要调用下一个login接口
         String oldSessionKey = (String)redisUtil.get(WxOpenidSessionKey + openid);
-        redisUtil.set(WxOpenidSessionKey + openid, sessionKey);
+        redisUtil.set(WxOpenidSessionKey + openid, sessionKey, 60 * 60 * 24);
         //用户获取手机时使用
         log.info("oldSessionKey:"+oldSessionKey+";newSessionKey:"+sessionKey);
         if (StringUtils.isNotBlank(oldSessionKey) && !oldSessionKey.equals(sessionKey)) {
@@ -200,14 +200,14 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
         if (vo != null) {
             return vo;
         }
-        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", appid).eq("openid", openid));
+        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("unionid", unionid).isNotNull("user_id").last(" limit 1"));
         User user = null;
         if (thirdLogin!=null && StringUtils.isNotBlank(thirdLogin.getUserId())) {
             user = repository.getById(thirdLogin.getUserId());
             if (user != null) {
                 vo = userToLoginVO(user, openid);
                 //缓存user
-                redisUtil.set(WxOpenidUser + openid, vo);
+                redisUtil.set(WxOpenidUser + openid, vo, 60 * 60 * 5);
             }
         }
         if (user == null && StringUtils.isNotEmpty(sessionKey)) {
@@ -229,27 +229,38 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
      */
     @Override
     public BbbUserVO.LoginVO addWxThirdLogin(BBcWxUserInfoDTO dto) {
-        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", dto.getAppId()).eq("openid", dto.getOpenId()));
+        BbbUserVO.LoginVO vo = (BbbUserVO.LoginVO)redisUtil.get(WxOpenidUser + dto.getOpenId());
+        if (vo != null) {
+            return vo;
+        }
+        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("unionid", dto.getUnionId()).isNotNull("user_id").last(" limit 1"));
+        User user = null;
+        if (thirdLogin != null) {
+            user = repository.getById(thirdLogin.getUserId());
+            if (user != null) {
+                vo = userToLoginVO(user, dto.getOpenId());
+                //缓存user
+                redisUtil.set(WxOpenidUser + dto.getOpenId(), vo, 60 * 60 * 5);
+            }
+        }
+        if (vo == null) {
+            vo = new BbbUserVO.LoginVO();
+            vo.setWxOpenid(dto.getOpenId());
+        }
+        thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", dto.getAppId()).eq("openid", dto.getOpenId()));
         if (thirdLogin != null) {
             thirdLogin.setHeadImg(dto.getAvatarUrl());
             thirdLogin.setSex("1".equals(dto.getGender()) ? GenderEnum.男.getCode() : ("2".equals(dto.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()));
-            thirdLogin.setNickname(dto.getNickName());
+            thirdLogin.setNickname(dto.getNickName()).setUnionid(dto.getUnionId()).setUserId(user!=null ? user.getId() : null);
             thirdLoginRepository.updateById(thirdLogin);
-            if (StringUtils.isNotBlank(thirdLogin.getUserId())) {
-                User user = repository.getById(thirdLogin.getUserId());
-                if (user != null) {
-                    return userToLoginVO(user, thirdLogin.getOpenid());
-                }
-            }
+
         } else {
             thirdLogin = new UserThirdLogin();
             thirdLogin.setNickname(dto.getNickName()).setHeadImg(dto.getAvatarUrl())
                     .setSex("1".equals(dto.getGender()) ? GenderEnum.男.getCode() : ("2".equals(dto.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()))
-                    .setOpenid(dto.getOpenId()).setAppId(dto.getAppId());
+                    .setOpenid(dto.getOpenId()).setUnionid(dto.getUnionId()).setAppId(dto.getAppId()).setUserId(user!=null ? user.getId() : null);
             thirdLoginRepository.save(thirdLogin);
         }
-        BbbUserVO.LoginVO vo = new BbbUserVO.LoginVO();
-        vo.setWxOpenid(dto.getOpenId());
         return vo;
     }
 
@@ -296,7 +307,7 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
     public void logout(String phone, String openid) {
         //H5退出
         if (StringUtils.isNotBlank(phone)) {
-            redisUtil.del(H5PhoneUser + phone);
+            redisUtil.del(BbbPhoneUser + phone);
         }
 
         //小程序退出
@@ -310,15 +321,154 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
         //校验验证码
         Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
         String validCode = code != null ? code + "" : "";
+        System.out.println("validCode:~~~~~~~~~~~~~"+validCode);
         if (!StringUtils.equals(validCode, dto.getValidCode())) {
             throw new BusinessException("验证码不匹配");
         }
+        if(null == dto.getPassword() || null == dto.getPasswordCfm() || null == dto.getValidCode() || null == dto.getPhone()){
+            throw new BusinessException("注册信息错误");
+        }
+        if(!dto.getPassword().equals(dto.getPasswordCfm())){
+            throw new BusinessException("确认密码输入错误");
+        }
+        //查询手机号对应的用户
+        QueryWrapper<User> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("phone",dto.getPhone()));
+        User one = repository.getOne(query);
+        if (ObjectUtils.isEmpty(one)){
+            throw new BusinessException("没有查询到对应的用户");
+        }
+        one.setUserPwd(PwdUtil.encode(dto.getPassword()));
+        repository.updateById(one);
 
 
     }
 
     @Override
     public String test() {
-        return smsService.sendSettlementFaildSMSCode("18628300710","13156464","dddd","dadad");
+        return smsService.sendPickUpSMSCode("18628300710","13156464","dddd","哈哈哈店铺");
+    }
+
+    @Override
+    public void forgetByEmail(BbbUserDTO.ForgetByEmailETO dto) {
+        //校验验证码
+        Object code = redisUtil.get( EmailValidCodeGroup+ dto.getEmailNum());
+        String validCode = code != null ? code + "" : "";
+        if (!StringUtils.equals(validCode, dto.getValidCode())) {
+            throw new BusinessException("验证码不匹配");
+        }
+        if(null == dto.getPassword() || null == dto.getPasswordCfm() || null == dto.getValidCode() || null == dto.getEmailNum()){
+            throw new BusinessException("注册信息错误");
+        }
+        if(!dto.getPassword().equals(dto.getPasswordCfm())){
+            throw new BusinessException("确认密码输入错误");
+        }
+        //查询邮箱对应的用户
+        QueryWrapper<User> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("email",dto.getEmailNum()));
+        User one=null;
+        try {
+            one = repository.getOne(query);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            throw new BusinessException("此邮箱重复注册了商家");
+        }
+        if (ObjectUtils.isEmpty(one)){
+            throw new BusinessException("没有查询到对应的用户");
+        }
+        one.setUserPwd(PwdUtil.encode(dto.getPassword()));
+        repository.updateById(one);
+    }
+
+    @Override
+    public ResponseData<BbbUserVO.LoginVO> loadUserBySceneId(long sceneId) {
+        //查缓存用户
+        BbbUserVO.LoginVO vo = (BbbUserVO.LoginVO) redisUtil.get(WxSceneIdUser + sceneId);
+        if (vo != null) {
+            ResponseData<BbbUserVO.LoginVO> data = ResponseData.data(vo);
+            data.setMessage("已登陆");
+            return data;
+        }
+        BBcWxUserInfoDTO wxUser  = (BBcWxUserInfoDTO)redisUtil.get(WxSceneIdWxUser + sceneId);
+        if (wxUser != null) {
+            return ResponseData.success("已扫码,待绑定手机");
+        }
+        return ResponseData.success("未扫码");
+    }
+
+    @Override
+    public void loadUserBySceneId(String sceneId, BBcWxUserInfoDTO dto) {
+        //1，通过unionid查询用户是否存在
+        BbbUserVO.LoginVO vo = (BbbUserVO.LoginVO) redisUtil.get(WxSceneIdUser + sceneId);
+        if (vo != null) {
+            return ;
+        }
+        UserThirdLogin thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("unionid", dto.getUnionId()).isNotNull("user_id").last(" limit 1"));
+        User user = null;
+        //1.1如果存在，将场景id的数据与用户对应，并生成token，用户放入缓存-标记登陆成功。
+        if (thirdLogin != null) {
+            user = repository.getById(thirdLogin.getUserId());
+            if (user != null) {
+                vo = userToLoginVO(user, dto.getOpenId());
+                //缓存user
+                redisUtil.set(WxSceneIdUser + sceneId, vo, 60 * 5);
+            }
+        }
+        //1.2如果不存在，则返回场景id，不生成token，微信用户放入缓存-标记待绑定手机
+        if (user == null) {
+            //持久化扫码记录
+            thirdLogin = thirdLoginRepository.getOne(new QueryWrapper<UserThirdLogin>().eq("app_id", dto.getAppId()).eq("openid", dto.getOpenId()));
+            if (thirdLogin == null) {
+                thirdLogin = new UserThirdLogin();
+                thirdLogin.setNickname(dto.getNickName()).setHeadImg(dto.getAvatarUrl())
+                        .setSex("1".equals(dto.getGender()) ? GenderEnum.男.getCode() : ("2".equals(dto.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()))
+                        .setOpenid(dto.getOpenId()).setUnionid(dto.getUnionId()).setAppId(dto.getAppId());
+                thirdLoginRepository.save(thirdLogin);
+            } else {
+                thirdLogin.setHeadImg(dto.getAvatarUrl());
+                thirdLogin.setSex("1".equals(dto.getGender()) ? GenderEnum.男.getCode() : ("2".equals(dto.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()));
+                thirdLogin.setNickname(dto.getNickName());
+                thirdLoginRepository.updateById(thirdLogin);
+            }
+            dto.setThirdLoginId(thirdLogin.getId());
+            //缓存wxuser
+            redisUtil.set(WxSceneIdWxUser + sceneId, dto, 60 * 5);
+        }
+
+    }
+
+    @Override
+    public BbbUserVO.LoginVO bindQRPhone(long sceneId, String validCodeVar, String phone) {
+        //校验验证码
+        Object code = redisUtil.get(PhoneValidCodeGroup + phone);
+        String validCode = code != null ? code + "" : "";
+        log.info("收到手机{}验证码{}，redis缓存中的验证码{},匹配{}", phone,validCodeVar, validCode, StringUtils.equals(validCode, validCodeVar));
+        if (!StringUtils.equals(validCode, validCodeVar)) {
+            throw new BusinessException("验证码不匹配");
+        }
+        BBcWxUserInfoDTO wxUser = (BBcWxUserInfoDTO) redisUtil.get(WxSceneIdWxUser + sceneId);
+        if (wxUser == null) {
+            throw new BusinessException("扫码已过期，请重新扫码");
+        }
+        //会员入库
+        User user = repository.getOne(new QueryWrapper<User>().eq("phone", phone));
+        if (user == null) {
+            user = new User().setPhone(phone).setUserName(wxUser.getNickName()).setType(UserTypeEnum._2C用户.getCode()).setState(UserStateEnum.启用.getCode());
+        }
+        user.setSex("1".equals(wxUser.getGender()) ? GenderEnum.男.getCode() : ("2".equals(wxUser.getGender()) ? GenderEnum.女.getCode() : GenderEnum.未知.getCode()))
+                .setHeadImg(wxUser.getAvatarUrl());
+        if (StringUtils.isBlank(user.getUserName())) {
+            user.setUserName(wxUser.getNickName());
+        }
+        if (StringUtils.isBlank(user.getId())) {
+            repository.save(user);
+        } else {
+            repository.updateById(user);
+        }
+        thirdLoginRepository.updateById(new UserThirdLogin().setId(wxUser.getThirdLoginId()).setUserId(user.getId()));
+        BbbUserVO.LoginVO vo = userToLoginVO(user, wxUser.getOpenId());
+        //缓存user
+        redisUtil.set(WxSceneIdUser + sceneId, vo, 60 * 5);
+        return vo;
     }
 }

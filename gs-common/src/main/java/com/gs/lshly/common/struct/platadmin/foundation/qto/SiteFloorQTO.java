@@ -26,7 +26,7 @@ public abstract class SiteFloorQTO implements Serializable {
         @ApiModelProperty(value = "终端[10=2b 20=2c]",hidden = true)
         private Integer terminal;
 
-        @ApiModelProperty(value = "终端[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50积分专栏]",hidden=true)
+        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏]",hidden = true)
         private Integer subject;
     }
 

@@ -33,6 +33,7 @@ public class PCMerchMarketMerchantGiftGoodsServiceImpl implements IPCMerchMarket
     @Override
     public PageData<PCMerchMarketMerchantGiftGoodsVO.ListVO> pageData(PCMerchMarketMerchantGiftGoodsQTO.QTO qto) {
         QueryWrapper<MarketMerchantGiftGoods> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("cdate");
         IPage<MarketMerchantGiftGoods> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         return MybatisPlusUtil.toPageData(qto, PCMerchMarketMerchantGiftGoodsVO.ListVO.class, page);

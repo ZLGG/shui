@@ -68,6 +68,7 @@ public class BbbH5StockDeliveryStyleServiceImpl implements IBbbH5StockDeliverySt
                 }
             }
             BigDecimal totalCost = BigDecimal.ZERO;
+            BigDecimal totalWeight= BigDecimal.ZERO;
             for(CommonStockTemplateVO.TemplateIdAndSkuPriceVO skuPriceVO : templateSkuMap.values()) {
                 //通过发货地址，生成计算模板
                 CommonStockTemplateVO.ListDetailVO stockTemplateDetail = stockTemplateService.getDetail(skuPriceVO.getTemplateId());
@@ -77,8 +78,9 @@ public class BbbH5StockDeliveryStyleServiceImpl implements IBbbH5StockDeliverySt
                 //通过计价数量，及计算模板，计算运费
                 BigDecimal cost = calculator.calculate(mergedVO, calcParam);
                 totalCost = totalCost.add(cost);
+                totalWeight=totalWeight.add(mergedVO.getWeight());
             }
-            return BbbH5StockDeliveryVO.DeliveryAmountVO.of(totalCost, dto.getShopId());
+            return BbbH5StockDeliveryVO.DeliveryAmountVO.of(totalCost, dto.getShopId(),totalWeight);
         }
         throw new BusinessException("配送方式错误");
     }

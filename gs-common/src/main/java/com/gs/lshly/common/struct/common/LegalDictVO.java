@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +92,95 @@ public abstract class LegalDictVO implements Serializable {
     }
 
     @Data
+    @ApiModel("LegalDictVO.SettledCertInfoVO")
+    public static class SettledCertInfoVO extends DetailVO{
+        @ApiModelProperty(value = "需要证照信息数组")
+        private List<LegalDictVO.NeedCertVO> needCertListVO = new ArrayList<>();
+    }
+
+    @Data
+    @ApiModel("LegalDictVO.SettledInfoVO")
+    public static class SettledInfoVO extends DetailVO{
+        @ApiModelProperty("店主信息")
+        private ShopManVO shopManVO;
+
+        @ApiModelProperty("店铺信息")
+        private ShopVO shopVO;
+
+        @ApiModelProperty("入驻资料修改申请id")
+        private String editSettledApplyId;
+
+        @ApiModelProperty("10 =待审 20=通过 30 =拒绝 入驻资料修改状态")
+        private Integer editSettledState;
+
+    }
+
+    @Data
+    @ApiModel("LegalDictVO.MerchantApplyIdVO")
+    public static class MerchantApplyIdVO implements Serializable{
+        @ApiModelProperty("申请id")
+        private String merchantApplyId;
+
+
+    }
+
+    @Data
+    @ApiModel("LegalDictVO.ShopVO")
+    public static class ShopVO implements Serializable{
+        @ApiModelProperty("店铺名称")
+        private String shopName;
+
+        @ApiModelProperty("店铺描述")
+        private String shopDesc;
+
+        @ApiModelProperty("店铺logo")
+        private String shopLogo;
+
+        @ApiModelProperty("店铺类型")
+        private Integer shopType;
+
+        @ApiModelProperty("开通日期")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        private LocalDateTime openTime;
+
+        @ApiModelProperty("类目名称")
+        private String categoryName;
+
+        @ApiModelProperty("平台使用费")
+        private BigDecimal sharePrice;
+
+        @ApiModelProperty("开通状态[10=营业 20=关闭]")
+        private Integer shopState;
+
+        @ApiModelProperty("详细地址")
+        private String shopAddress;
+
+        @ApiModelProperty("电子邮箱")
+        private String shopManEmail;
+
+    }
+
+    @Data
+    @ApiModel("LegalDictVO.ShopManVO")
+    public static class ShopManVO implements Serializable{
+        @ApiModelProperty("店主姓名")
+        private String shopManName;
+
+        @ApiModelProperty("店主身份证复印件(正)")
+        private String shopManIdcardFront;
+
+        @ApiModelProperty("店主身份证复印件(反)")
+        private String shopManIdcardBack;
+
+        @ApiModelProperty("店主手机号")
+        private String shopManPhone;
+
+        @ApiModelProperty("经营品牌")
+        private String brandName;
+
+    }
+
+    @Data
     @ApiModel("LegalDictVO.CompanyVO")
     public static class CompanyVO implements Serializable{
 
@@ -112,8 +202,11 @@ public abstract class LegalDictVO implements Serializable {
         @ApiModelProperty("营业执照注册号")
         private String corpLicenseNum;
 
-        @ApiModelProperty("营业执照有效期")
+        @ApiModelProperty(value = "营业执照有效期开始日期")
         private String corpLicenseIndate;
+
+        @ApiModelProperty(value = "营业执照有效期截止日期")
+        private String corpLicenseEndDate;
 
         @ApiModelProperty("营业执照证件")
         private String corpLicenseCert;

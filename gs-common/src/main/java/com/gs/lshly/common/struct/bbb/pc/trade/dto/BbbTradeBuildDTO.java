@@ -45,6 +45,9 @@ public abstract class BbbTradeBuildDTO implements Serializable {
         @ApiModelProperty("是否需要发票")
         private Boolean isInvoice;
 
+        @ApiModelProperty("发票ID")
+        private String invoiceId;
+
         @ApiModelProperty(value = "运费金额")
         private BigDecimal deliveryAmount;
 

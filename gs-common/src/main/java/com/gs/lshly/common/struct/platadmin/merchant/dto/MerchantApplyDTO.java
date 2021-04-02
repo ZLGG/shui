@@ -219,6 +219,23 @@ public abstract class MerchantApplyDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("MerchantApplyDTO.CheckApplyDTO")
+    public static class CheckApplyDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "id",hidden = true)
+        private String id;
+
+        @ApiModelProperty(value = "拉卡拉商户号")
+        private String lakalaNo;
+
+        @ApiModelProperty(value = "审核状态[20=通过 30=拒审]")
+        private Integer state;
+
+        @ApiModelProperty(value = "拒审原因")
+        private String rejectWhy;
+    }
+
+    @Data
     @ApiModel("MerchantApplyDTO.HandBrandDTO")
     @AllArgsConstructor
     @NoArgsConstructor

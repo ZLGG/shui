@@ -1,18 +1,17 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbc;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 *
@@ -96,5 +95,6 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     public List<BbcGoodsInfoVO.HomeAndShopInnerServiceVO> getInnerSimpleServiceVO(List<String> goodsIds) {
         return bbcGoodsInfoService.getInnerSimpleServiceVO(goodsIds);
     }
+
 
 }

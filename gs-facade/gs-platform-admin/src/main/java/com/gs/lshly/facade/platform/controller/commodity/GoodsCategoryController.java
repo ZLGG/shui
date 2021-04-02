@@ -104,6 +104,14 @@ public class GoodsCategoryController {
         return ResponseData.data(categoryTree);
     }
 
+    @ApiOperation("分类二级列表")
+    @GetMapping(value = "/listleve2Category/{applyId}")
+    @Func(code="view", name = "查看")
+    public ResponseData<List<GoodsCategoryVO.ListVO>> listleve2Category(@PathVariable String applyId){
+        List<GoodsCategoryVO.ListVO> categoryTreeVOList = goodsCategoryRpc.level2Categories(new GoodsCategoryDTO.ApplyIdDTO(applyId));
+        return ResponseData.data(categoryTreeVOList);
+    }
+
     @ApiOperation("修改一级分类信息")
     @PutMapping(value = "/updateLevel1Category/{id}")
     @Func(code="edit", name = "修改")

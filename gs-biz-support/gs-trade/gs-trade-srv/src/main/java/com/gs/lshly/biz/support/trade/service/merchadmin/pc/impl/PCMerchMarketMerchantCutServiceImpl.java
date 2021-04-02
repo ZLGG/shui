@@ -57,6 +57,7 @@ public class PCMerchMarketMerchantCutServiceImpl implements IPCMerchMarketMercha
         IPage<MarketMerchantCut> pager = MybatisPlusUtil.pager(qto);
         wrapper.eq("merchant_id",qto.getJwtMerchantId()).
                 eq("shop_id",qto.getJwtShopId());
+        wrapper.orderByDesc("cdate");
         repository.page(pager, wrapper);
         if (ObjectUtils.isEmpty(wrapper) || ObjectUtils.isEmpty(pager)){
             throw new BusinessException("没有数据");
@@ -114,6 +115,10 @@ public class PCMerchMarketMerchantCutServiceImpl implements IPCMerchMarketMercha
     @Override
     @Transactional
     public void addMarketMerchantCut(PCMerchMarketMerchantCutDTO.AddDTO eto) {
+        checkETO(eto);
+        if (ObjectUtils.isEmpty(eto)){
+            throw new BusinessException("请填写活动信息");
+        }
         MarketMerchantCut marketMerchantCut = new MarketMerchantCut();
         BeanUtils.copyProperties(eto, marketMerchantCut);
         marketMerchantCut.setShopId(eto.getJwtShopId());
@@ -159,6 +164,42 @@ public class PCMerchMarketMerchantCutServiceImpl implements IPCMerchMarketMercha
                     setMerchantId(eto.getJwtMerchantId()).
                     setShopId(eto.getJwtShopId());
             iMarketMerchantCutGoodsRepository.save(marketMerchantCutGoods);
+        }
+    }
+
+    private void checkETO(PCMerchMarketMerchantCutDTO.AddDTO eto) {
+        if (ObjectUtils.isEmpty(eto.getCutName())){
+            throw new BusinessException("请填写名字");
+        }
+        if (ObjectUtils.isEmpty(eto.getCutDescribe())){
+            throw new BusinessException("请填写描述");
+        }
+        if (ObjectUtils.isEmpty(eto.getCutRule())){
+            throw new BusinessException("请填写规则");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidEndTime())){
+            throw new BusinessException("请填写结束时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getValidStartTime())){
+            throw new BusinessException("请填写优惠卷有效开始时间");
+        }
+        if (ObjectUtils.isEmpty(eto.getOnUserLeve())){
+            throw new BusinessException("请填写优惠卷适用会员等级(1,2,3,4,5,6)");
+        }
+        if (ObjectUtils.isEmpty(eto.getIsNotMax())){
+            throw new BusinessException("请填写封顶");
+        }
+        if (ObjectUtils.isEmpty(eto.getUserDoNumber())){
+            throw new BusinessException("请填写可参与次数");
+        }
+        if (ObjectUtils.isEmpty(eto.getTerminal())){
+            throw new BusinessException("请填写适用平台[10=pc端 20=wap端 30=app端]\"");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidEndTime())){
+            throw new BusinessException("请检查时间");
+        }
+        if (LocalDateTime.now().isAfter(eto.getValidStartTime())){
+            throw new BusinessException("请检查时间");
         }
     }
 

@@ -46,6 +46,11 @@ public class PCExpressSurviceServiceImpl implements IPCExpressSurviceService {
     private String ReqURL="https://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
     //http://sandboxapi.kdniao.com:8080/kdniaosandbox/gateway/exterfaceInvoke.json
 
+    //电商ID
+    private String onLineMonitoringEBusinessID="1703424";
+    //电商加密私钥，快递鸟提供，注意保管，不要泄漏
+    private String onLineMonitoringAppKey="0cc57067-459c-4915-9b89-75735a054d79";
+
     /**
      * 根据快递单号追踪信息
      * expressNumber 快递单号
@@ -67,7 +72,7 @@ public class PCExpressSurviceServiceImpl implements IPCExpressSurviceService {
                 String ShipperCode = jsonObject.getString("ShipperCode");
                 String LogisticCode = jsonObject.getString("LogisticCode");
                 JSONArray Traces = jsonObject.getJSONArray("Traces");
-//                System.out.print("Traces:"+Traces);
+                System.out.print("Traces:"+Traces);
                 listVO.setTraces(Traces);
                 System.out.println("快递名称"+ShipperCode);
                 System.out.println("快递单号"+LogisticCode);
@@ -297,11 +302,11 @@ public class PCExpressSurviceServiceImpl implements IPCExpressSurviceService {
 
 
     /**
-     * 根据快递单号追踪信息
+     * 在途监控
      * @return
      */
     @Override
-    public LogisticsInformationVO.ListVO queryUPS(StockKdniaoDTO.TradeTailDTO dto) {
+    public LogisticsInformationVO.ListVO onLineMonitoring(StockKdniaoDTO.TradeTailDTO dto) {
         if(ObjectUtils.isEmpty(dto.getExpressNumber())){
             throw new BusinessException("快递单号数据为空");
         }
@@ -309,8 +314,6 @@ public class PCExpressSurviceServiceImpl implements IPCExpressSurviceService {
         Map<String, Object> map = new HashMap<String, Object>();
 
         try {
-            //第一个参数是顺丰参数
-            //第二个参数是快递单号
             String result = this.getOrderTracesByJson2(dto);
             System.out.println(result);
             JSONObject jsonObject = JSONObject.parseObject(result);
@@ -352,7 +355,8 @@ public class PCExpressSurviceServiceImpl implements IPCExpressSurviceService {
         Map<String, String> params = new HashMap<String, String>();
         params.put("RequestData", urlEncoder(requestData, "UTF-8"));
         params.put("EBusinessID", stockKdniao.getEBusinessID());
-        params.put("RequestType", "8002");
+        //8001在途监控
+        params.put("RequestType", "8001");
         String dataSign=encrypt(requestData, stockKdniao.getAppKey(), "UTF-8");
         params.put("DataSign", urlEncoder(dataSign, "UTF-8"));
         params.put("DataType", "2");

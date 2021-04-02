@@ -25,8 +25,15 @@ public interface IPCMerchShopRpc {
 
     void setDeliveryStyle(PCMerchSettingsDTO.DeliveryStyleDTO dto);
 
-    /**查店铺状态 店铺状态[10=开通 20=关闭]**/
     Integer innerShopState(String shopId);
 
     PCMerchShopVO.ShopSimpleVO innerShopSimple(String shopId);
+
+    PCMerchShopVO.ShopIdVO innerLikeSimple(String shopId);
+
+    //店铺访问量
+    Integer innPV(String shopId);
+
+    //店铺UV
+    Integer innUV(String shopId);
 }

@@ -56,6 +56,7 @@ public class H5MerchTradeDeliveryServiceImpl implements IH5MerchTradeDeliverySer
         if(ObjectUtils.isNotEmpty(qto.getTradeCode())){
             wrapper.and(i -> i.eq("t.`trade_code`",qto.getTradeCode()));
         }
+        wrapper.orderByDesc("td.cdate");
         IPage<H5MerchTradeDeliveryVO.ListVO> page = MybatisPlusUtil.pager(qto);
         repository.selectH5ListPage(page,wrapper);
         return MybatisPlusUtil.toPageData(qto, H5MerchTradeDeliveryVO.ListVO.class, page);
@@ -66,7 +67,7 @@ public class H5MerchTradeDeliveryServiceImpl implements IH5MerchTradeDeliverySer
         TradeDelivery tradeDelivery = repository.getById(idDTO.getId());
         H5MerchTradeDeliveryVO.DetailVO detailVo = new H5MerchTradeDeliveryVO.DetailVO();
         if(ObjectUtils.isEmpty(tradeDelivery)){
-            throw new BusinessException("没有数据");
+            return detailVo;
         }
         BeanUtils.copyProperties(tradeDelivery, detailVo);
         return detailVo;

@@ -1,14 +1,14 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbb.pc;
 
-import java.util.List;
-
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.gs.lshly.biz.support.commodity.service.bbb.pc.IPCBbbGoodsCategoryService;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 
 /**
@@ -33,8 +33,12 @@ public class PCBbbGoodsCategoryRpc implements IPCBbbGoodsCategoryRpc {
     }
 
     @Override
+    public  List<PCBbbGoodsCategoryVO.ListVO> getCategoryForBrandId(PCBbbGoodsCategoryQTO.CategoryForBrandQTO qto) {
+        return categoryService.getCategoryForBrandId(qto);
+    }
+
+    @Override
     public List<String> innerServiceLevel1IdList(List<String> level3List) {
         return categoryService.innerServiceLevel1IdList(level3List);
     }
-
 }

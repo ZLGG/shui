@@ -6,6 +6,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.utils.JsonUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,6 +32,8 @@ public class CommonMarketDTO implements Serializable {
     @ToString
     public static class MarketSku extends BaseDTO {
 
+        @ApiModelProperty(value = "优惠券id")
+        private String cardId;
 
         private String skuTmpId;
 
@@ -55,7 +58,7 @@ public class CommonMarketDTO implements Serializable {
         }
 
         public static MarketSku pickBest(List<MarketSku> source, List<SkuId> skuIds) {
-            if (source == null || !source.isEmpty()) {
+            if (source == null || source.isEmpty()) {
                 return null;
             }
             BigDecimal tmpPrice = BigDecimal.ZERO;
@@ -68,8 +71,7 @@ public class CommonMarketDTO implements Serializable {
                         log.info("sku:{}:原价{},平台活动价{}",sku.getSkuId(), sku.getSkuSalePrice(), src.getSkuTmpPrice());
                         BigDecimal activePrice = sku.getSkuSalePrice().subtract(src.getSkuTmpPrice()).multiply(new BigDecimal("" + sku.getQuantity()));
                         if (activePrice.compareTo(tmpPrice) > 0) {
-                            sku.setSkuActivePrice(src.getSkuTmpPrice());
-                            log.info("优于原价");
+                            log.info("优于原价,总优惠：" + activePrice);
                             best = src;
                             tmpPrice = activePrice;
                             best.setCutPrice(activePrice);
@@ -96,20 +98,30 @@ public class CommonMarketDTO implements Serializable {
                                                    ToCutPrice cutPrice ){
 
             CommonMarketDTO.MarketSku marketSku = new CommonMarketDTO.MarketSku()
-                    .setSpuId(spuEntry.getKey())
+                    .setSpuId(spuEntry.getKey()).setCardId(cutPrice.getCardId())
                     .setMarketName(fullType + cutPrice.getToPrice() + type + cutPrice.getCutPrice())
                     .setToPrice(cutPrice.getToPrice()).setCutPrice(cutPrice.getCutPrice());
             //将优惠价格打散到spu商品分组内的各商品中.
             for(SkuId good : spuEntry.getValue()){
+                log.info("skuId:"+ JsonUtils.toJson(good));
                 //sku售价 * sku 数量 / spu组总额 = 百分比 * 匹配优惠金额 = sku所能优惠的金额 / sku数量 = sku优惠价格(存在小数点误差)
-                BigDecimal skuCutPrice = "折".equals(type)
-                        //折扣
-                        ? good.getSkuSalePrice().multiply(BigDecimal.TEN.subtract(cutPrice.getCutPrice())).divide(BigDecimal.TEN, 2, RoundingMode.HALF_UP)
-                        //直接扣减
-                        : good.getSkuSalePrice().multiply(new BigDecimal(good.getQuantity() + ""))
-                        .divide(totalSpuPrice, 2, RoundingMode.HALF_UP)
-                        .multiply(cutPrice.getCutPrice())
-                        .divide(new BigDecimal(good.getQuantity() + ""), 2, RoundingMode.HALF_UP);
+                BigDecimal skuCutPrice = BigDecimal.ZERO;
+                if("折".equals(type)) {
+                    //折扣
+                    skuCutPrice = good.getSkuActivePrice().multiply(BigDecimal.TEN.subtract(cutPrice.getCutPrice())).divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP);
+                    log.info("打折后单价-取3位小数:" + good.getSkuActivePrice() + " * (" + BigDecimal.TEN + "-" + (cutPrice.getCutPrice()) + ") / " + (BigDecimal.TEN) + " = " + skuCutPrice);
+                } else {
+                    //直接扣减
+                    skuCutPrice = good.getSkuActivePrice().multiply(new BigDecimal(good.getQuantity() + ""))
+                            .divide(totalSpuPrice, 3, RoundingMode.HALF_UP)
+                            .multiply(cutPrice.getCutPrice())
+                            .divide(new BigDecimal(good.getQuantity() + ""), 3, RoundingMode.HALF_UP);
+
+                    log.info("扣减后单价-取3位小数:" + good.getSkuActivePrice()+" * "+good.getQuantity()
+                            + " / " + totalSpuPrice + " * " + cutPrice.getCutPrice() + " / " + good.getQuantity() + " = " + skuCutPrice);
+
+                }
+
                 BigDecimal skuPrice = good.getSkuSalePrice().subtract(skuCutPrice);
                 log.info("skuId[" + good.getSkuId() + "]spuId[" + spuEntry.getKey() + "]使用优惠价格为:" + skuPrice);
                 marketSku.getSkuPrice().put(good.getSkuId(), skuPrice);
@@ -122,6 +134,8 @@ public class CommonMarketDTO implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class SkuCard extends BaseDTO {
+
+        private String cardId;
 
         @ApiModelProperty(value = "skuId")
         private String skuId;
@@ -163,9 +177,9 @@ public class CommonMarketDTO implements Serializable {
                 if (card.getToPrice().compareTo(BigDecimal.ZERO) <= 0) {
                     log.error("优惠券配置错误，满额小于0");
                 }
-                cards.add(new SkuCard().setSpuId(spuId).setCardName(card.getCardName())
-                        .setCutPrice(card.getCutPrice().setScale(0, BigDecimal.ROUND_HALF_DOWN))
-                        .setToPrice(card.getToPrice().setScale(0, BigDecimal.ROUND_HALF_DOWN)));
+                cards.add(new SkuCard().setCardId(card.getCardId()).setSpuId(spuId).setCardName(card.getCardName())
+                        .setCutPrice(card.getCutPrice().setScale(2, BigDecimal.ROUND_HALF_DOWN))
+                        .setToPrice(card.getToPrice().setScale(2, BigDecimal.ROUND_HALF_DOWN)));
 
             }
             return allSkuCuts;
@@ -174,7 +188,7 @@ public class CommonMarketDTO implements Serializable {
         public static ToCutPrice match(List<SkuCard> prices, BigDecimal totalPrice) {
             for (SkuCard price : prices) {
                 if (totalPrice.compareTo(price.getToPrice()) >= 0) {
-                    return new ToCutPrice().setToPrice(price.getToPrice()).setCutPrice(price.getCutPrice());
+                    return new ToCutPrice().setCardId(price.getCardId()).setToPrice(price.getToPrice()).setCutPrice(price.getCutPrice());
                 }
             }
             return null;
@@ -219,13 +233,13 @@ public class CommonMarketDTO implements Serializable {
         public static BigDecimal calcTotalSalePrice(List<SkuId> list) {
             BigDecimal totalSpuPrice = BigDecimal.ZERO;
             for (SkuId good : list) {
-                totalSpuPrice = totalSpuPrice.add(good.getSkuSalePrice().multiply(new BigDecimal(good.getQuantity() + "")));
+                totalSpuPrice = totalSpuPrice.add(good.getSkuActivePrice().multiply(new BigDecimal(good.getQuantity() + "")));
             }
             return totalSpuPrice;
         }
 
 
-        public static CommonMarketDTO.MarketSku calcBestMarketSku(List<CommonMarketDTO.MarketSku> marketSkus, List<SkuId> goods) {
+        public static CommonMarketDTO.MarketSku calcBestMarketSku(List<CommonMarketDTO.MarketSku> marketSkus, List<SkuId> goods, boolean updateSkuIdActivePrice) {
 
             BigDecimal bestTotalPrice = null;
             CommonMarketDTO.MarketSku bestMarkSku = null;
@@ -247,6 +261,12 @@ public class CommonMarketDTO implements Serializable {
                 if (bestTotalPrice == null || bestTotalPrice.compareTo(goodsTotalPrice) > 0) {
                     bestMarkSku = marketSku;
                     bestTotalPrice = goodsTotalPrice;
+                    if (updateSkuIdActivePrice) {
+                        for (SkuId good : goods) {
+                            good.setSkuActivePrice(bestMarkSku.getSkuPrice() != null && bestMarkSku.getSkuPrice().get(good.getSkuId()) != null ?
+                                    bestMarkSku.getSkuPrice().get(good.getSkuId()) : good.getSkuSalePrice());
+                        }
+                    }
                 }
             }
 
@@ -389,6 +409,8 @@ public class CommonMarketDTO implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class ToCutPrice implements Serializable {
+
+        private String cardId;
 
         @ApiModelProperty(value = "触发金额")
         private BigDecimal toPrice;

@@ -60,9 +60,10 @@ public class PCMerchantRoleDictServiceImpl implements IPCMerchantRoleDictService
 
     @Override
     public PageData<MerchantRoleDictVO.ListVO> pageData(MerchantRoleDictQTO.QTO qto) {
-        QueryWrapper<MerchantRoleDict> wq = MybatisPlusUtil.query();
+        QueryWrapper<MerchantRoleDict> queryWrapper = MybatisPlusUtil.queryContainShopId(qto);
+        queryWrapper.orderByDesc("cdate");
         IPage<MerchantRoleDict> page = MybatisPlusUtil.pager(qto);
-        repository.page(page, wq);
+        repository.page(page, queryWrapper);
         return MybatisPlusUtil.toPageData(qto, MerchantRoleDictVO.ListVO.class, page);
     }
 

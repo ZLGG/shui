@@ -1,7 +1,9 @@
 package com.gs.lshly.biz.support.trade.service.bbb.h5.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.openservices.ons.api.bean.ProducerBean;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -9,6 +11,7 @@ import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.bbb.h5.IBbbH5TradeService;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSettleService;
+import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
@@ -16,6 +19,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
+import com.gs.lshly.common.struct.bbb.h5.merchant.dto.BbbH5ShopDTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.qto.BbbH5ShopQTO;
 import com.gs.lshly.common.struct.bbb.h5.merchant.vo.BbbH5ShopVO;
 import com.gs.lshly.common.struct.bbb.h5.stock.dto.BbbH5StockAddressDTO;
@@ -32,11 +36,22 @@ import com.gs.lshly.common.struct.bbb.h5.user.dto.BbbH5UserIntegralDTO;
 import com.gs.lshly.common.struct.bbb.h5.user.dto.BbbH5UserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserShoppingCarVO;
 import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
+import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeSettlementVO;
+import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
+import com.gs.lshly.common.struct.pos.body.*;
+import com.gs.lshly.common.struct.pos.dto.PosTradeODeliverOrderRequestDTO;
 import com.gs.lshly.common.utils.Base64;
+import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.common.utils.IpUtil;
+import com.gs.lshly.common.utils.JsonUtils;
+import com.gs.lshly.middleware.mq.aliyun.producerService.ProducerService;
+import com.gs.lshly.middleware.mq.aliyun.utils.HttpProducerUtil;
+import com.gs.lshly.middleware.mq.aliyun.utils.ProducerUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.h5.merchant.IBbbH5ShopRpc;
@@ -46,8 +61,13 @@ import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserFrequentV2Rpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserIntegralRpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserRpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserShoppingCarRpc;
+import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsInfoRpc;
+import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
+import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReceiptRpc;
+import com.gs.lshly.rpc.api.pos.IPosTradeRpc;
 import com.lakala.boss.api.common.Common;
 import com.lakala.boss.api.config.MerchantBaseEnum;
 import com.lakala.boss.api.entity.notify.EntMergeOfflineResultNotify;
@@ -72,6 +92,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -98,6 +119,21 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
     private final ITradeCancelRepository tradeCancelRepository;
 
     @Autowired
+    private ITradeRightsRepository iTradeRightsRepository;
+
+    @Autowired
+    private ITradeRightsGoodsRepository iTradeRightsGoodsRepository;
+
+    @Autowired
+    private ITradePayRepository iTradePayRepository;
+
+    @Autowired
+    private ITradePayOfflineRepository iTradePayOfflineRepository;
+
+    @Autowired
+    private ITradePayOfflineImgRepository iTradePayOfflineImgRepository;
+
+    @Autowired
     private IMarketMerchantCardUsersRepository iMarketMerchantCardUsersRepository;
 
     @Autowired
@@ -105,11 +141,19 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
 
     @Autowired
     private  ITradeCommentRepository iTradeCommentRepository;
+    @Autowired
+    private IPosErrorInfoRepository iPosErrorInfoRepository;
 
-    @Value("${lakala.wxpay.notifyurl}")
+    @Autowired
+    private ITradeInvoiceRepository iTradeInvoiceRepository;
+
+    @Autowired
+    private ProducerService producerService;
+
+    @Value("${lakala.2bh5.notifyurl}")
     private String notifyUrl;
 
-    @Value("${lakala.wxpay.appid}")
+    @Value("${lakala.2bh5.appid}")
     private String appId;
 
     @DubboReference
@@ -142,8 +186,22 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
     @DubboReference
     private IBbbH5UserFrequentV2Rpc bbbH5UserFrequentV2Rpc;
 
+    @DubboReference
+    private IBbbUserRpc iBbbUserRpc;
+
+    @DubboReference
+    private IPCBbbGoodsInfoRpc ipcBbbGoodsInfoRpc;
+
+    @DubboReference
+    private ISettingsReceiptRpc iSettingsReceiptRpc;
+
+    @DubboReference
+    private IPosTradeRpc iPosTradeRpc;
+
     @Autowired
     private IBbcMarketSettleService marketSettleService;
+    @Autowired
+    private ICommonMarketCardServiceImpl commonMarketCardService;
 
     public BbbH5TradeServiceImpl(ITradeRepository tradeRepository, ITradeGoodsRepository tradeGoodsRepository,
                                  ITradePayRepository tradePayRepository, ITradePayOfflineRepository tradePayOfflineRepository, ITradeDeliveryRepository tradeDeliveryRepository, ITradeCancelRepository tradeCancelRepository) {
@@ -210,6 +268,12 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             if (ObjectUtils.isNotEmpty(innerSimpleItem.getSkuId())) {
                innerServiceGoodsVO = bbcGoodsInfoRpc.innerServiceVO(innerSimpleItem.getSkuId(), dto);
             }
+            log.info("结算-取价前：" + JsonUtils.toJson(goodsInfoVOS));
+            if(ObjectUtils.isEmpty(innerServiceGoodsVO) || innerServiceGoodsVO.getGoodsId() == null){
+                throw new BusinessException("无商品数据或已下架");
+            }else if(!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())){
+                throw new BusinessException("商品已下架");
+            }
             //获取批发价
             BigDecimal wholesalePrice = null;
             //计算阶梯价格
@@ -226,25 +290,29 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
                     goodsStepPrice = StepPriceCalculation(innerServiceGoodsVO.getStepPrice(), innerServiceGoodsVO.getSalePrice(), innerSimpleItem.getQuantity());
                 }
             }
-            System.out.println("批发价：--------------------------》"+wholesalePrice);
 
             //组装商品信息
             BbbH5TradeSettlementVO.ListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(innerSimpleItem.getId(),innerSimpleItem.getQuantity(), innerServiceGoodsVO);
-            BigDecimal productPrice=BigDecimal.ZERO;
-            if (wholesalePrice!=null){
-                productPrice  = wholesalePrice.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-            }else if (goodsStepPrice!=null){
-                productPrice = goodsStepPrice.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-            }else if (salePrice!=null){
-                productPrice = salePrice.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+            BigDecimal productTotalPrice=BigDecimal.ZERO;
+            BigDecimal productPrice = BigDecimal.ZERO;
+            if (wholesalePrice != null) {
+                productPrice = wholesalePrice;
+                productTotalPrice = wholesalePrice.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+            } else if (goodsStepPrice != null) {
+                productPrice = goodsStepPrice;
+                productTotalPrice = goodsStepPrice.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+            } else if (salePrice != null) {
+                productPrice = salePrice;
+                productTotalPrice = salePrice.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
             }
             goodsInfoVO.setSalePrice(productPrice);
+            log.info("H5结算-各价格：批发价格【" + wholesalePrice + "】，阶梯价【" + goodsStepPrice + "】，零售价【" + innerServiceGoodsVO.getSalePrice() + "】");
             goodsInfoVOS.add(goodsInfoVO);
-            goodsAmount = goodsAmount.add(productPrice);
+            goodsAmount = goodsAmount.add(productTotalPrice);
             goodsCount = goodsCount+goodsInfoVO.getQuantity();
         }
         settlementVO.setGoodsInfoVOS(goodsInfoVOS);
-
+        log.info("结算-取价后：" + JsonUtils.toJson(goodsInfoVOS));
         //组装收货地址信息
         fillAddress(dto, settlementVO);
 
@@ -252,13 +320,15 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         settlementVO.setGoodsCount(goodsCount);//商品总数
         //营销结算
         try {
+            log.info("开始结算:"+ JsonUtils.toJson(settlementVO));
             marketSettleService.settlementH5BBB(settlementVO, dto);
+            log.info("结算结果:"+ JsonUtils.toJson(settlementVO));
         } catch (Exception e) {
             log.error("bbb-h5营销结算异常:" + e.getMessage(), e);
         }
         //订单总额=商品总额+运费
         BigDecimal delivery = settlementVO.getDeliveryAmount() != null ? settlementVO.getDeliveryAmount() : BigDecimal.ZERO;
-        settlementVO.setTradeAmount(goodsAmount.add(delivery));
+        settlementVO.setTradeAmount(settlementVO.getGoodsAmount().add(delivery));
 
         //组装门店自提联系人信息
         fillContacts(dto, settlementVO);
@@ -309,8 +379,10 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
                         settlementVO.setRecvPhone(addressVO.getContactsPhone());
                         settlementVO.setRecvFullAddres(addressVO.getFullAddres());
                         //根据店铺的商品SKU ID获取快递配送运费模板，根据重量、件数计算运费.
-                        BigDecimal deliveryAmount = getDeliveryAmount(settlementVO);
-                        settlementVO.setDeliveryAmount(deliveryAmount);//运费
+                        BbbTradeSettlementVO.TotalVO deliveryAmount = getDeliveryAmount(settlementVO);
+                        if (ObjectUtils.isNotEmpty(deliveryAmount)) {
+                            settlementVO.setDeliveryAmount(deliveryAmount.getDeliveryAmount()).setTotalWeight(deliveryAmount.getTotalWeight());//运费
+                        }
                     }
                 }
             } else {
@@ -322,8 +394,10 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
                     settlementVO.setRecvPhone(addressVO.getContactsPhone());
                     settlementVO.setRecvFullAddres(addressVO.getFullAddres());
                     //根据店铺的商品SKU ID获取快递配送运费模板，根据重量、件数计算运费.
-                    BigDecimal deliveryAmount = getDeliveryAmount(settlementVO);
-                    settlementVO.setDeliveryAmount(deliveryAmount);//运费
+                    BbbTradeSettlementVO.TotalVO deliveryAmount = getDeliveryAmount(settlementVO);
+                    if (ObjectUtils.isNotEmpty(deliveryAmount)) {
+                        settlementVO.setDeliveryAmount(deliveryAmount.getDeliveryAmount()).setTotalWeight(deliveryAmount.getTotalWeight());//运费
+                    }
                 }
             }
 
@@ -331,8 +405,9 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
 
     }
 
-    private BigDecimal getDeliveryAmount(BbbH5TradeSettlementVO.ListVO settlementVO) {
+    private BbbTradeSettlementVO.TotalVO getDeliveryAmount(BbbH5TradeSettlementVO.ListVO settlementVO) {
         BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
+        BigDecimal totalWeight=BigDecimal.ZERO;
         BbbH5StockDeliveryDTO.DeliveryAmountDTO deliveryAmountDTO = new BbbH5StockDeliveryDTO.DeliveryAmountDTO();
         deliveryAmountDTO.setAddressId(settlementVO.getRecvAddresId());
         deliveryAmountDTO.setDeliveryType(TradeDeliveryTypeEnum.快递配送.getCode());
@@ -346,10 +421,14 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         }
         deliveryAmountDTO.setSkus(deliverySKUDTOS);
         BbbH5StockDeliveryVO.DeliveryAmountVO deliveryAmountVO = bbcStockDeliveryRpc.calculate(deliveryAmountDTO);
+        BbbTradeSettlementVO.TotalVO totalVO = new BbbTradeSettlementVO.TotalVO();
         if(ObjectUtils.isNotEmpty(deliveryAmountVO)){
-            deliveryAmount = deliveryAmountVO.getAmount();
+            deliveryAmount=deliveryAmount.add(ObjectUtils.isNotEmpty(totalVO.getDeliveryAmount())?totalVO.getDeliveryAmount():BigDecimal.ZERO);
+            totalWeight=totalWeight.add(ObjectUtils.isNotEmpty(totalVO.getTotalWeight())?totalVO.getTotalWeight():BigDecimal.ZERO);
+
         }
-        return deliveryAmount;
+        totalVO.setDeliveryAmount(deliveryAmount).setTotalWeight(totalWeight);
+        return totalVO;
     }
 
     /**
@@ -426,7 +505,7 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         idAndTypeDTO.setJwtUserId(dto.getJwtUserId());
         BbbH5StockAddressVO.ListVO addressVO = new BbbH5StockAddressVO.DetailVO();
         //根据id查询地址
-        addressVO = bbcStockAddressRpc.detailStockAddress(idAndTypeDTO);
+        addressVO = bbcStockAddressRpc.innerdetailStockAddress(idAndTypeDTO);
         if(ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null){
             throw new BusinessException("请重新添加收货地址");
         }
@@ -456,10 +535,9 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         }
         //店铺商品
         for(BbbH5TradeBuildDTO.DTO.ProductData productData : dto.getProductData()){
-            log.info("productData:"+productData.toString());
-            log.info("productData.getCartId():"+productData.getCartId());
             //查询商品、判断上下架)
             BbbH5GoodsInfoVO.InnerServiceVO innerServiceGoodsVO = bbcGoodsInfoRpc.innerServiceVO(productData.getGoodsSkuId(),dto);
+            log.info("H5支付-取价前：" + JsonUtils.toJson(innerServiceGoodsVO));
             if(ObjectUtils.isEmpty(innerServiceGoodsVO) || innerServiceGoodsVO.getGoodsId() == null){
                 throw new BusinessException("无商品数据或已下架");
             }else if(!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())){
@@ -471,20 +549,25 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             //获取批发价
             BigDecimal wholesalePrice = innerServiceGoodsVO.getWholesalePrice();
             //计算此商品的阶梯价
-            BigDecimal bigDecimal = null;
+            BigDecimal goodsStepPrice = null;
             if (ObjectUtils.isNotEmpty(innerServiceGoodsVO.getStepPrice())){
-                bigDecimal= StepPriceCalculation(innerServiceGoodsVO.getStepPrice(), innerServiceGoodsVO.getSalePrice(), productData.getQuantity());
+                goodsStepPrice= StepPriceCalculation(innerServiceGoodsVO.getStepPrice(), innerServiceGoodsVO.getSalePrice(), productData.getQuantity());
             }
             //单品小计金额
-            BigDecimal productPrice =null;//单品小计金额
-            if (wholesalePrice!=null){
-                productPrice  = wholesalePrice.multiply(new BigDecimal(productData.getQuantity()));
-            }else if ( bigDecimal!=null){
-                productPrice = bigDecimal.multiply(new BigDecimal(productData.getQuantity()));
-            }else if (innerServiceGoodsVO.getSalePrice()!=null){
-                productPrice = innerServiceGoodsVO.getSalePrice().multiply(new BigDecimal(productData.getQuantity()));
+            BigDecimal productPrice = BigDecimal.ZERO;//单品小计金额
+            BigDecimal productTotalPrice = BigDecimal.ZERO;
+            if (wholesalePrice != null) {
+                productPrice = wholesalePrice;
+                productTotalPrice = wholesalePrice.multiply(new BigDecimal(productData.getQuantity()));
+            } else if (goodsStepPrice != null) {
+                productPrice = goodsStepPrice;
+                productTotalPrice = goodsStepPrice.multiply(new BigDecimal(productData.getQuantity()));
+            } else if (innerServiceGoodsVO.getSalePrice() != null) {
+                productPrice = innerServiceGoodsVO.getSalePrice();
+                productTotalPrice = innerServiceGoodsVO.getSalePrice().multiply(new BigDecimal(productData.getQuantity()));
             }
-            shopProductAmount = shopProductAmount.add(productPrice);
+            log.info("支付-各价格：批发价格【" + wholesalePrice + "】，阶梯价【" + goodsStepPrice + "】，零售价【" + innerServiceGoodsVO.getSalePrice() + "】");
+            shopProductAmount = shopProductAmount.add(productTotalPrice);
             CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
             innerChangeStockItem.setSkuId(productData.getGoodsSkuId());
             innerChangeStockItem.setQuantity(productData.getQuantity());
@@ -492,7 +575,7 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
 
             //组装订单商品表信息
             BbbH5TradeGoodsDTO.ETO tradeGoodsDTO = fillTradeGoodsDTO(dto.getJwtUserId(),dto.getShopId(),productData.getQuantity(),innerServiceGoodsVO);
-
+            tradeGoodsDTO.setSalePrice(productPrice);
             tradeGoodsDTOSet.add(tradeGoodsDTO);
 
             //购物车ID
@@ -500,6 +583,7 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
                 cartIdList.add(productData.getCartId());
             }
         }
+        log.info("H5支付-取价后：" + JsonUtils.toJson(tradeGoodsDTOSet));
         dto.setShopProductAmount(shopProductAmount);
         //计算运费
         BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
@@ -510,13 +594,23 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         dto.setDeliveryAmount(deliveryAmount);
         //营销结算
         try {
+            log.info("结算前-提交订单：" + JsonUtils.toJson(dto) + "\n商品:" + JsonUtils.toJson(tradeGoodsDTOSet));
             marketSettleService.settlementH5BBB(tradeGoodsDTOSet, dto);
+            log.info("结算后-提交订单：" + JsonUtils.toJson(dto) + "\n商品:" + JsonUtils.toJson(tradeGoodsDTOSet));
         }catch (Exception e){
             log.error("bbb-h5营销结算异常:" + e.getMessage(), e);
         }
         //创建订单信息
-        Trade trade = saveTrade(dto, addressVO, dto.getShopProductAmount(), dto.getDeliveryAmount());
+        Trade trade = saveTrade(dto, addressVO, shopProductAmount.subtract(dto.getShopProductAmount()), dto.getDeliveryAmount());
 
+        try{
+            producerService.sendHttpMessage(trade.getId());
+            //HttpProducerUtil.sendMessage(trade.getId());
+            //producerService.sendTimeMsg("TradeTimeOutCancel",trade.getId().getBytes(),"5e10ac22eb5348dc928e425c1fbf2841",0);
+            log.info("发送成功：Bbbh5TradeServiceImpl");
+        }catch (Exception e){
+            log.info("推送队列失败：");
+        }
         //创建交易订单商品信息
         saveTradeGoods(trade.getId(),tradeGoodsDTOSet);
 
@@ -548,6 +642,10 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             }
         }
         return goodsStepPrice;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(UuidUtil.getUuid());
     }
 
     private BigDecimal getDeliveryAmount(String shopId,List<BbbH5TradeBuildDTO.DTO.ProductData> productDataList,Integer deliveryType, String addressId) {
@@ -601,8 +699,6 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         }
         if(ObjectUtils.isNotEmpty(tradeGoodsList)){
             tradeGoodsRepository.saveBatch(tradeGoodsList);
-            //模拟添加常购
-            this.addFrequent(tradeGoodsList,null);
         }
     }
 
@@ -610,11 +706,11 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
      * 创建订单
      * @param dto
      * @param addressVO
-     * @param shopProductAmount
+     * @param discountAmount
      * @param deliveryAmount
      * @return
      */
-    private Trade saveTrade(BbbH5TradeBuildDTO.DTO dto, BbbH5StockAddressVO.ListVO addressVO, BigDecimal shopProductAmount, BigDecimal deliveryAmount) {
+    private Trade saveTrade(BbbH5TradeBuildDTO.DTO dto, BbbH5StockAddressVO.ListVO addressVO, BigDecimal discountAmount, BigDecimal deliveryAmount) {
         Trade trade = new Trade();
         trade.setUserId(dto.getJwtUserId());
         trade.setShopId(dto.getShopId());
@@ -623,6 +719,12 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         trade.setCreateTime(LocalDateTime.now());
         trade.setPayType(dto.getPayType());
         trade.setDeliveryType(dto.getDeliveryType());
+        trade.setInvoiceId(dto.getInvoiceId());
+        trade.setInvoiceAddressId(dto.getInvoiceAddressId());
+        //优惠券id
+        if (dto.getUserCardVO() != null && StrUtil.isNotBlank(dto.getUserCardVO().getCardId())) {
+            trade.setUserCardId(dto.getUserCardVO().getCardId());
+        }
         if(dto.getDeliveryType() != null && dto.getDeliveryType().intValue() == TradeDeliveryTypeEnum.门店自提.getCode()){
             trade.setTakeGoodsCode(TradeUtils.getTakeGoodsCode());
         }
@@ -637,10 +739,12 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         }
 
         trade.setBuyerRemark(dto.getBuyerRemark());
-        trade.setGoodsAmount(shopProductAmount);
+        trade.setGoodsAmount(dto.getShopProductAmount());
         trade.setDeliveryAmount(deliveryAmount);
-        trade.setTradeAmount(shopProductAmount.add(deliveryAmount));
+        trade.setTradeAmount(dto.getShopProductAmount().add(deliveryAmount));
+        trade.setDiscountAmount(discountAmount);
         trade.setSourceType(TradeSourceTypeEnum._2B.getCode());
+        trade.setChildTradeId(UuidUtil.getUuid());
         tradeRepository.save(trade);
 
         return trade;
@@ -831,20 +935,39 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
                     eq("tg.`goods_no`",qto.getKeyword()).or().
                     eq("t.`trade_code`",qto.getKeyword()));
         }
-        if(ObjectUtils.isNotEmpty(qto.getTradeState())){
-            wrapper.and(i -> i.eq("trade_state",qto.getTradeState()));//交易状态,不传则查所有状态数据
-        }
         //查询2b的订单列表
         wrapper.and(i->i.eq("t.`source_type`",TradeSourceTypeEnum._2B.getCode()));
+        if(ObjectUtils.isNotEmpty(qto.getTradeState())){
+            if(qto.getTradeState()==60){
+                wrapper.and(i->i.eq("t.`trade_state`",40));
+                wrapper.groupBy("t.`id`");
+                wrapper.having("bc > cc");
+            }else if (qto.getTradeState()==70){
+                wrapper.and(i->i.eq("t.`trade_state`",40));
+                wrapper.having("rightsId is null");
+            }
+            else {
+                wrapper.and(i -> i.eq("t.`trade_state`", qto.getTradeState()));//交易状态,不传则查所有状态数据
+            }
+        }
+        wrapper.groupBy("t.`id`");
         wrapper.orderByDesc("cdate");
-
-        IPage<BbbH5TradeListVO.tradeVO> page = MybatisPlusUtil.pager(qto);
+        IPage<BbbH5TradeListVO.tradeVO> pager = MybatisPlusUtil.pager(qto);
+        wrapper.last("limit "+pager.offset()+","+pager.getSize());
 
         //todo 欧阳
-        tradeRepository.BbbH5selectTradeListPage(page,wrapper);
+        List<BbbH5TradeListVO.tradeVO> tradeVOList=tradeRepository.BbbH5selectTradeListPage(wrapper);
 
         List<BbbH5TradeListVO.tradeVO> voList = new ArrayList<>();
-        for(BbbH5TradeListVO.tradeVO tradeVO : page.getRecords()){
+        for(BbbH5TradeListVO.tradeVO tradeVO : tradeVOList){
+            //查询退款表
+            QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
+            query.and(i->i.eq("trade_id",tradeVO.getId()));
+            query.last("limit 0,1");
+            TradeRights one = iTradeRightsRepository.getOne(query);
+            if (ObjectUtils.isNotEmpty(one)){
+                tradeVO.setRightsState(one.getState());
+            }
             //查询店铺信息
             BbbH5ShopQTO.InnerShopQTO innerShopQTO = new BbbH5ShopQTO.InnerShopQTO();
             innerShopQTO.setShopId(tradeVO.getShopId());
@@ -854,24 +977,19 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             }
             //根据交易ID查询交易商品集合
             fillTradeVO(tradeVO);
-            if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
-                tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
-                if (LocalDateTime.now().isAfter(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT))){
-                    tradeVO.setTradeState(TradeStateEnum.已取消.getCode());
-                    if (!tradeVO.getTradeState().equals(tradeVO.setTradeState(TradeStateEnum.已取消.getCode()))){
-                        Trade trade = tradeRepository.getById(tradeVO.getId());
-                       if (ObjectUtils.isNotEmpty(trade)){
-                           trade.setTradeState(TradeStateEnum.已取消.getCode());
-                           trade.setTimeoutCancel(TradeTimeOutCancelEnum.超时取消.getCode());
-                           tradeRepository.updateById(trade);
-                       }
-                    }
+            if (tradeVO.getPayType().equals(TradePayTypeEnum.线下支付.getCode())){
+                //获取线下支付表
+                QueryWrapper<TradePayOffline> query2 = MybatisPlusUtil.query();
+                query2.and(i->i.eq("trade_id",tradeVO.getId()));
+                TradePayOffline one2 = tradePayOfflineRepository.getOne(query2);
+                if (ObjectUtils.isNotEmpty(one2)){
+                    tradeVO.setOfflineState(one2.getVerifyState()).setVerifyRemark(one2.getVerifyRemark());
                 }
             }
             voList.add(tradeVO);
         }
 
-        return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
+        return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(),voList.size());
     }
 
     @Override
@@ -882,12 +1000,33 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             throw new BusinessException("无订单数据");
         }
         BeanUtils.copyProperties(trade,tradeVO);
+        //填充发票信息
+        if (StringUtils.isNotEmpty(tradeVO.getInvoiceId())){
+            SetInvoice(tradeVO);
+        }
         //填充商家信息
         fillShop(tradeVO);
         //填充商品集合
         fillTradeVO(tradeVO);
         if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
             tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
+        }
+        if (tradeVO.getPayType().equals(TradePayTypeEnum.线下支付.getCode())){
+            //获取线下支付表
+            QueryWrapper<TradePayOffline> query2 = MybatisPlusUtil.query();
+            query2.and(i->i.eq("trade_id",tradeVO.getId()));
+            TradePayOffline one2 = tradePayOfflineRepository.getOne(query2);
+            if (ObjectUtils.isNotEmpty(one2)){
+                tradeVO.setOfflineState(one2.getVerifyState()).setVerifyRemark(one2.getVerifyRemark());
+            }
+        }
+        //查询退款表
+        QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",tradeVO.getId()));
+        query.last("limit 0,1");
+        TradeRights one = iTradeRightsRepository.getOne(query);
+        if (ObjectUtils.isNotEmpty(one)){
+            tradeVO.setRightsState(one.getState());
         }
         //查询物流信息
         if(tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
@@ -902,6 +1041,17 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         return ResponseData.data(tradeVO);
     }
 
+    private void SetInvoice(BbbH5TradeListVO.tradeVO tradeVO) {
+        TradeInvoice byId = iTradeInvoiceRepository.getById(tradeVO.getInvoiceId());
+        if (ObjectUtils.isNotEmpty(byId)){
+            BbbH5TradeListVO.tradeVO.Invoice invoice = new BbbH5TradeListVO.tradeVO.Invoice();
+            invoice.setInvoiceId(byId.getId()).
+                    setInvoiceType(byId.getInvoiceType()).
+                    setFirmName(byId.getFirmName()).
+                    setTaxNumber(byId.getTaxNumber());
+            tradeVO.setInvoiceInfo(invoice);
+        }
+    }
     private void fillUserInfo(BbbH5TradeListVO.tradeVO tradeVO) {
         BbbH5UserVO.InnerUserInfoVO innerUserInfoVO = bbcUserRpc.innerGetUserInfo(tradeVO.getUserId());
         if(ObjectUtils.isNotEmpty(innerUserInfoVO)){
@@ -923,9 +1073,9 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         tradeDeliveryQueryWrapper.eq("trade_id", tradeVO.getId());
         TradeDelivery tradeDelivery = tradeDeliveryRepository.getOne(tradeDeliveryQueryWrapper);
         if(ObjectUtils.isNotEmpty(tradeDelivery)){
+            tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
             CommonLogisticsCompanyVO.DetailVO logisticsDetailVO = commonLogisticsCompanyRpc.getLogisticsCompany(tradeDelivery.getLogisticsId());
             if(ObjectUtils.isNotEmpty(logisticsDetailVO)){
-                tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
                 tradeVO.setLogisticsCompanyCode(logisticsDetailVO.getCode());
                 tradeVO.setLogisticsCompanyName(logisticsDetailVO.getName());
             }
@@ -996,14 +1146,8 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         if(notifyVO.getFailMsg() != null){
             resultNotify.setFailMsg(new String(Base64.decode(notifyVO.getFailMsg())));
         }
-
         try {
-            BossClient client = new BossClient(MerchantBaseEnum.merchant_hly_CertPath.getValue(),
-                    MerchantBaseEnum.merchant_hly_CertPass.getValue(), MerchantBaseEnum.serverUrl.getValue());
-
             JSONObject responseJson = new JSONObject();
-
-            if (client.verify(resultNotify)) {
                 System.out.println("验签成功，开始处理业务逻辑");
                 //判断支付结果
                 if(!resultNotify.getStatus().equals(TradePayResultStateEnum.SUCCESS.getRemark())){
@@ -1013,9 +1157,6 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
                 }
                 //根据交易订单编号修改订单状态
                 return paySuccess(resultNotify.getOrderId());
-            } else {
-                System.out.println("验签失败");
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1065,14 +1206,102 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             tradePayRepository.saveOrUpdate(tradePay);
             //添加常购商品（生产环境,测试环境在提交订单的位置做了一个副本，以便测通功能）
             this.addFrequent(null,trade.getId());
-
+            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
             responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
+            //推送POS
+            try{
+                PosTradeODeliverOrderRequestDTO.DTO dto1=getPOSDTO(trade,tradePay);
+                iPosTradeRpc.addTrade(dto1);
+            }catch (Exception e){
+                log.info("订单推送POS发生异常："+e.getMessage(),e);
+                PosErrorInfo posErrorInfo = new PosErrorInfo();
+                posErrorInfo.setMessage("失败").setTarget("BbbPcTradeServiceImpl.paySuccess：创建线上订单推送失败");
+                iPosErrorInfoRepository.save(posErrorInfo);
+            }
             return responseJson.toString();
         }
         responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
         return responseJson.toString();
     }
+    private PosTradeODeliverOrderRequestDTO.DTO getPOSDTO(Trade trade,TradePay tradePay) {
+        PosTradeODeliverOrderRequestDTO.DTO dto = new PosTradeODeliverOrderRequestDTO.DTO();
+        BbbH5ShopVO.DetailVO detailVO = iBbbH5ShopRpc.detailShop(new BbbH5ShopDTO.IdDTO(trade.getShopId()));
+        if (ObjectUtils.isNotEmpty(detailVO)){
+            dto. setPlatformId(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"").setShop(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"");
+        }
+        dto.setFreight(trade.getDeliveryAmount()).
+                setPickUpCode(trade.getTakeGoodsCode()).
+                setNumber(trade.getId()).setState("ORDERED").
+                setOrderTime(Date.from(trade.getCdate().atZone( ZoneId.systemDefault()).toInstant())).
+                setAmount(trade.getGoodsAmount()).
+                setDiscountAmount(BigDecimal.ZERO).
+                setCustomerRemark(trade.getBuyerRemark()).
+                setRemark(trade.getDeliveryRemark());
+        OReceiverInfo oReceiverInfo = new OReceiverInfo();
+        oReceiverInfo.setAddress(trade.getRecvFullAddres()).setName(trade.getRecvPersonName()).setPhone(trade.getRecvPhone());
+        dto.setReceiverInfo(oReceiverInfo);
+        OCustomer oCustomer = new OCustomer();
+        BbbUserVO.InnerUserInfoVO innerUserInfoVO = iBbbUserRpc.innerGetUserInfo(trade.getUserId());
+        if (ObjectUtils.isNotEmpty(innerUserInfoVO)){
+            oCustomer.setName(innerUserInfoVO.getUserName()).setUuid(trade.getUserId()).setMobile(innerUserInfoVO.getPhone());
+        }
+        dto.setCustomer(oCustomer);
+        if (ObjectUtils.isNotEmpty(trade.getDeliveryType())){
+            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+                dto.setOrderType("PickUpInStoreOrder");
+            }else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode())){
+                dto.setOrderType("ExpressDeliverOrder");
+            }else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())){
+                dto.setOrderType("ShopDeliverOrder");
+            }
+        }
+        QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",trade.getId()));
+        List<TradeGoods> list = tradeGoodsRepository.list(query);
+        int qty=0;
+        if (ObjectUtils.isNotEmpty(list)){
+            List<OOnlineOrderLine> oOnlineOrderLine = new ArrayList<>();
+            for (TradeGoods goods: list) {
+                qty=qty+goods.getQuantity();
+                OOnlineOrderLine oOnlineOrderLine1 = new OOnlineOrderLine();
+                RSThinSku2 rsThinSku2 = new RSThinSku2();
+                PCBbbGoodsInfoVO.InnerServiceVO innerServiceVO = ipcBbbGoodsInfoRpc.innerSimpleServiceVO(goods.getSkuId());
+                if (ObjectUtils.isNotEmpty(innerServiceVO)){
+                    rsThinSku2.setBarcode(innerServiceVO.getBarcode()).
+                            setName(innerServiceVO.getGoodsName()).
+                            setSpec(innerServiceVO.getSkuSpecValue());
+                }
+                rsThinSku2.setId(ObjectUtils.isNotEmpty(innerServiceVO.getPosSpuId())?innerServiceVO.getPosSpuId():"");
+                oOnlineOrderLine1.setQty(goods.getQuantity()).
+                        setPrice(goods.getSalePrice()).setAmount(goods.getPayAmount()).setSku(rsThinSku2);
+                oOnlineOrderLine.add(oOnlineOrderLine1);
+            }
+            dto.setLines(oOnlineOrderLine);
+        }
+        dto.setQty(qty);
+        List<OOnlineOrderPayment> payments=new ArrayList<>();
+        OOnlineOrderPayment oOnlineOrderPayment = new OOnlineOrderPayment();
+        oOnlineOrderPayment.setPayTime(Date.from(tradePay.getCdate().atZone( ZoneId.systemDefault()).toInstant())).
+                setAmount(tradePay.getTotalAmount());
+        SetPayMethodNameAndName(oOnlineOrderPayment,tradePay);
+        payments.add(oOnlineOrderPayment);
+        dto.setPayments(payments);
+        return dto;
+    }
+    private void SetPayMethodNameAndName(OOnlineOrderPayment oOnlineOrderPayment,TradePay tradePay) {
+        if (
+                tradePay.getPayType()==TradePayTypeEnum.微信APP支付.getCode() ||
+                        tradePay.getPayType()==TradePayTypeEnum.微信公众号.getCode() ||
+                        tradePay.getPayType()==TradePayTypeEnum.微信扫码.getCode()){
+            oOnlineOrderPayment.setPayMethodCode("weiXinAccount").setPayMethodName("微信记账");
+        }else if (tradePay.getPayType()==TradePayTypeEnum.微信小程序支付.getCode() ){
+            oOnlineOrderPayment.setPayMethodCode("weiXinXcx").setPayMethodName("微信小程序");
+        }else if (tradePay.getPayType()==TradePayTypeEnum.支付宝APP.getCode() ||
+                tradePay.getPayType()==TradePayTypeEnum.支付扫码.getCode()){
+            oOnlineOrderPayment.setPayMethodCode("weiXinAccountAliPay").setPayMethodName("扫码支付");
+        }
 
+    }
     private void addFrequent(List<TradeGoods> tradeGoodsList,String tradeId){
         //支付成功-把成功的订单商品信息->常购清单
         if(null == tradeGoodsList){
@@ -1124,6 +1353,9 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<Void> orderCancel(BbbH5TradeCancelDTO.CancelDTO dto) {
+        if (ObjectUtils.isEmpty(dto.getRemark())){
+            throw new BusinessException("请输入原因");
+        }
         TradeCancel tradeCancel = new TradeCancel();
         Trade trade = tradeRepository.getById(dto.getTradeId());
         if(ObjectUtils.isEmpty(trade)){
@@ -1133,24 +1365,13 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             trade.setTradeState(TradeStateEnum.已取消.getCode());
             trade.setTimeoutCancel(TradeTimeOutCancelEnum.买家取消.getCode());
 
-            fillTradeCancel(dto,tradeCancel,trade,null,TradeCancelStateEnum.完成.getCode(),null);
+            fillTradeCancel(dto,tradeCancel,trade,null,TradeCancelStateEnum.完成.getCode(),TradeCancelRefundStateEnum.无需退款.getCode());
 
         }else if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode())){
-            //1.判断是否正在审核
-            QueryWrapper<TradeCancel> tradeCancelQueryWrapper = new QueryWrapper<>();
-            tradeCancelQueryWrapper.eq("trade_id",trade.getId());
-            int tradeCancelCount = tradeCancelRepository.count(tradeCancelQueryWrapper);
-            if(tradeCancelCount > 0){
-                throw new BusinessException("已申请取消订单");
-            }
-            QueryWrapper<TradePay> tradePayQueryWrapper = new QueryWrapper<>();
-            tradePayQueryWrapper.eq("trade_id",trade.getId());
-            TradePay tradePay = tradePayRepository.getOne(tradePayQueryWrapper);
-            //2.提交申请取消订单
+            //添加售后表，状态为
+            trade.setTradeState(TradeStateEnum.已取消.getCode());
             trade.setTimeoutCancel(TradeTimeOutCancelEnum.买家取消.getCode());
-
-            fillTradeCancel(dto, tradeCancel, trade, tradePay.getId(),TradeCancelStateEnum.提交申请.getCode(),
-                    TradeCancelRefundStateEnum.等待审核.getCode());
+            inset(trade,dto,tradeCancel);
 
 
         }else{
@@ -1159,9 +1380,59 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         tradeCancelRepository.save(tradeCancel);
         tradeRepository.saveOrUpdate(trade);
         //回库存
-//        cancelTradeReturnStock(trade.getId());
+        cancelTradeReturnStock(trade.getId());
 
         return ResponseData.success();
+    }
+    private TradeRights inset(Trade trade, BbbH5TradeCancelDTO.CancelDTO dto, TradeCancel tradeCancel) {
+        TradeRights tradeRights = new TradeRights();
+        tradeRights.setTradeId(trade.getId()).
+                setShopId(trade.getShopId()).
+                setUserId(trade.getUserId()).
+                setMerchantId(trade.getMerchantId()).
+                setOrderCode(trade.getTradeCode()).
+                setRefundRemarks(dto.getRemark()).
+                setRefundAmount(trade.getTradeAmount()).
+                setState(TradeRightsStateEnum.申请.getCode()).
+                setRightsType(TradeRightsTypeEnum.仅退款.getCode()).
+                setRightsReasonType(TradeRightsReasonTypeEnum.取消订单.getCode()).
+                setRightsRemark(dto.getRemark()).
+                setRefundRemarks(dto.getRemark()).
+                setApplyTime(LocalDateTime.now());
+        iTradeRightsRepository.save(tradeRights);
+        QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",tradeRights.getTradeId()));
+        List<TradeGoods> list = tradeGoodsRepository.list(query);
+        if (ObjectUtils.isNotEmpty(list)){
+            for (TradeGoods tradeGoods:list){
+                TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
+                tradeRightsGoods.setRightsId(tradeRights.getId()).
+                        setTradeId(tradeRights.getTradeId()).
+                        setTradeGoodsId(tradeGoods.getId()).
+                        setUserId(tradeRights.getUserId()).
+                        setShopId(tradeRights.getShopId()).
+                        setMerchantId(tradeRights.getMerchantId()).
+                        setOrderCode(tradeRights.getOrderCode()).
+                        setGoodsName(tradeGoods.getGoodsName()).
+                        setSkuId(tradeGoods.getSkuId()).
+                        setSkuSpecValue(tradeGoods.getSkuSpecValue()).
+                        setQuantity(tradeGoods.getQuantity()).
+                        setSalePrice(tradeGoods.getSalePrice()).
+                        setRefundAmount(tradeGoods.getPayAmount());
+                iTradeRightsGoodsRepository.save(tradeRightsGoods);
+            }
+
+        }
+        QueryWrapper<TradePay> query1 = MybatisPlusUtil.query();
+        query1.and(i->i.eq(StringUtils.isNotEmpty(trade.getId()),"trade_id",trade.getId()));
+        TradePay one = iTradePayRepository.getOne(query1);
+        String payId=null;
+        if (ObjectUtils.isNotEmpty(one)){
+            payId=one.getId();
+        }
+        fillTradeCancel(dto,tradeCancel,trade,payId,TradeCancelStateEnum.提交申请.getCode(),TradeCancelRefundStateEnum.等待审核.getCode());
+
+        return tradeRights;
     }
 
     private void fillTradeCancel(BbbH5TradeCancelDTO.CancelDTO dto, TradeCancel tradeCancel, Trade trade, String tradePayId,Integer cancelState,Integer cancelRefundState) {
@@ -1195,6 +1466,7 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
 
         QueryWrapper<BbbH5TradeQTO> tradeWrapper = new QueryWrapper<>();
         tradeWrapper.and(i -> i.eq("t.`user_id`",dto.getJwtUserId()));
+        tradeWrapper.and(i->i.eq("t.`source_type`",20));
         tradeWrapper.in("trade_state",Arrays.asList(TradeStateEnum.待支付.getCode(),TradeStateEnum.待收货.getCode(),TradeStateEnum.待发货.getCode()));
         tradeWrapper.groupBy("trade_state");
         //todo 欧阳
@@ -1403,6 +1675,129 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         return count;
     }
 
+    @Override
+    public void offlinePay(BbbH5TradeDTO.OfflinePayDTO dto) {
+        //根据订单ID查询数据
+        Trade trade = tradeRepository.getById(dto.getId());
+        if(ObjectUtils.isEmpty(trade)){
+            throw new BusinessException("无订单数据");
+        }else if(trade.getTradeState().intValue() == TradeStateEnum.待发货.getCode()){
+            throw new BusinessException("订单已支付");
+        }else if(trade.getTradeState().intValue() != TradeStateEnum.待支付.getCode()){
+            throw new BusinessException("请退出登录后重试");
+        }
+        QueryWrapper<TradePayOffline> query1 = MybatisPlusUtil.query();
+        query1.and(i->i.eq("trade_id",trade.getId()));
+        List<TradePayOffline> list = tradePayOfflineRepository.list(query1);
+        //阻止重复提交
+        if (list.size()>0){
+            //修改表
+            TradePayOffline tradePayOffline = list.get(0);
+            if (ObjectUtils.isNotEmpty(tradePayOffline)){
+                if (tradePayOffline.getVerifyState()==20){
+                    //删除图片
+                    QueryWrapper<TradePayOfflineImg> query = MybatisPlusUtil.query();
+                    query.and(i->i.eq("offline_id",tradePayOffline.getId()));
+                    iTradePayOfflineImgRepository.remove(query);
+                    //修改信息
+                    updateTradeOffline(dto,tradePayOffline);
+                }
+            }
+        }else {
+            //修改支付主表
+            QueryWrapper<TradePay> query = MybatisPlusUtil.query();
+            query.and(i -> i.eq("trade_id", trade.getId()));
+            TradePay tradePay = tradePayRepository.getOne(query);
+            if (ObjectUtils.isNotEmpty(tradePay)) {
+                tradePay.setPayState(TradePayStateEnum.待确认.getCode());
+            }
+            //存线下付款表
+            saveTradeOffline(dto, trade, tradePay);
+        }
+
+    }
+    private void updateTradeOffline(BbbH5TradeDTO.OfflinePayDTO dto, TradePayOffline tradePayOffline) {
+        tradePayOffline. setUserName(dto.getJwtUserName()).
+                setPayAmount(dto.getTransferAmount()).
+                setPayRemark(dto.getTransferRemarks()).
+                setVerifyState(TradePayOfficeEnum.待确认.getCode());
+        iTradePayOfflineRepository.updateById(tradePayOffline);
+        for (String img : dto.getTransImage()){
+            TradePayOfflineImg tradePayOfflineImg = new TradePayOfflineImg();
+            tradePayOfflineImg.setOfflineId(tradePayOffline.getId()).setOfflineImg(img);
+            iTradePayOfflineImgRepository.save(tradePayOfflineImg);
+        }
+
+    }
+
+    @Override
+    public ResponseData<BbbH5TradeListVO.OfflinePayVO> offlineDetail(BbbH5TradeDTO.IdDTO dto) {
+        BbbH5TradeListVO.OfflinePayVO offlinePayVO = new BbbH5TradeListVO.OfflinePayVO();
+        SettingsReceiptVO.DetailVO detailVO = iSettingsReceiptRpc.detailSettingsReceipt(dto);
+        BbbH5TradeListVO.OfflinePayVO.OfflinePayVOPl offlinePayVOPl = new BbbH5TradeListVO.OfflinePayVO.OfflinePayVOPl();
+        if (ObjectUtils.isNotEmpty(offlinePayVO)){
+            BeanUtils.copyProperties(detailVO,offlinePayVOPl);
+        }
+        if (StringUtils.isNotEmpty(dto.getId())){
+            Trade trade = tradeRepository.getById(dto.getId());
+            if (ObjectUtils.isNotEmpty(trade)){
+                offlinePayVOPl.setTradeId(dto.getId()).setTradeAmount(trade.getTradeAmount());
+            }
+        }
+        offlinePayVO.setOfflinePayVOPl(offlinePayVOPl);
+        //获取线下支付表
+        QueryWrapper<TradePayOffline> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",dto.getId()));
+        TradePayOffline one2 = tradePayOfflineRepository.getOne(query);
+        if (ObjectUtils.isNotEmpty(one2)){
+            BbbH5TradeListVO.OfflinePayVO.OfflinePayVOPp offlinePayVOPp = new BbbH5TradeListVO.OfflinePayVO.OfflinePayVOPp();
+            offlinePayVOPp.setPayName(one2.getAccountName()).
+                    setPayCardNum(one2.getAccountNumber()).
+                    setPayBlank(one2.getBankName()).
+                    setTransferAmount(one2.getPayAmount()).setTransferRemarks(one2.getPayRemark());
+            QueryWrapper<TradePayOfflineImg> query1 = MybatisPlusUtil.query();
+            query1.and(i->i.eq("offline_id",one2.getId()));
+            List<TradePayOfflineImg> list = iTradePayOfflineImgRepository.list(query1);
+            List<String> strings = new ArrayList<>();
+            if (ObjectUtils.isNotEmpty(list)){
+                for (TradePayOfflineImg tradePayOfflineImg : list) {
+                    strings.add(tradePayOfflineImg.getOfflineImg());
+                }
+            }
+            offlinePayVOPp.setTransImage(strings);
+            offlinePayVO.setOfflinePayVOPp(offlinePayVOPp);
+        }
+
+        return ResponseData.data(offlinePayVO);
+    }
+
+    private TradePayOffline saveTradeOffline(BbbH5TradeDTO.OfflinePayDTO dto, Trade trade, TradePay tradePay) {
+        QueryWrapper<TradePayOffline> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("trade_id",trade.getId()));
+        List<TradePayOffline> list = tradePayOfflineRepository.list(query);
+        if (list.size()>0){
+            throw new BusinessException("此订单正在线下支付，等待审核");
+        }
+        TradePayOffline tradePayOffline = new TradePayOffline();
+        SettingsReceiptVO.DetailVO detailVO = iSettingsReceiptRpc.detailSettingsReceipt(dto);
+        tradePayOffline.setTradeId(trade.getId()).
+                setUserName(dto.getJwtUserName()).
+                setPayId(tradePay.getId()).setPayOrder(null).
+                setPayAmount(dto.getTransferAmount()).
+                setAccountName(detailVO.getName()).
+                setAccountNumber(detailVO.getNumber()).
+                setBankName(detailVO.getBank()).
+                setPayRemark(dto.getTransferRemarks()).
+                setVerifyState(TradePayOfficeEnum.待确认.getCode());
+        tradePayOfflineRepository.save(tradePayOffline);
+        for (String img : dto.getTransImage()){
+            TradePayOfflineImg tradePayOfflineImg = new TradePayOfflineImg();
+            tradePayOfflineImg.setOfflineId(tradePayOffline.getId()).setOfflineImg(img);
+            iTradePayOfflineImgRepository.save(tradePayOfflineImg);
+        }
+        return tradePayOffline;
+    }
+
     /**
      * 填充skuId/购买数量
      * @param tradeId
@@ -1434,16 +1829,25 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             BbbH5TradeListVO.TradeGoodsVO tradeGoodsVO = new BbbH5TradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             tradeGoodsVO.setShopName(tradeVO.getShopName());
+            QueryWrapper<TradeComment> query = MybatisPlusUtil.query();
+            query.and(i->i.eq("trade_goods_id",tradeGoods.getId()));
+            List<TradeComment> list = iTradeCommentRepository.list(query);
+            if (ObjectUtils.isNotEmpty(list)){
+                tradeGoodsVO.setCommentFlag(20);
+            }else {
+                tradeGoodsVO.setCommentFlag(10);
+            }
             tradeGoodsVOS.add(tradeGoodsVO);
         }
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
     }
 
+    @DubboReference
+    private ICommonShopRpc iCommonShopRpc;
     public EntOffLinePaymentResponse doPreOrder(BossClient client,Trade trade) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String orderTime = sdf.format(new Date());
         String merchantId = MerchantBaseEnum.merchant_hly_Id.getValue();
-
         EntOffLinePaymentRequest request = new EntOffLinePaymentRequest();
         request.setCharset("00");
         request.setVersion("1.0");
@@ -1463,8 +1867,8 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         log.info("trade.getTradeCode():"+trade.getTradeCode());
         request.setOrderTime(orderTime);
         //TODO 测试1分钱
-        request.setTotalAmount("1");
-        //request.setTotalAmount(""+trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());
+        //request.setTotalAmount("1");
+        request.setTotalAmount(""+trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());
         request.setCurrency("CNY");
         request.setBackParam("保留数据1");
         request.setSplitType("1");
@@ -1472,23 +1876,23 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         request.setValidNum("15");
         //WECHATAPP:微信APP支付ALIPAYAPP 支付宝app支付
         //request.setTradeType("WECHATAPP");
-
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setOrderSeqNo("001");//订单序号 订单顺序号,只能上送数字
-        orderDetail.setDetailOrderId(UuidUtil.getUuid());//子订单号 商户的子订单号，保证全局唯一，不能与订单号重复
-        orderDetail.setOrderAmt("1");
-        //orderDetail.setOrderAmt(""+trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());//子订单金额，以分为单位，等于子订单支付金额与子订单手续费金额和,如果是按比例分账，此信息域上送分账比例，如40.75%上送为4075，我方收到后做相应缩小
+        //orderDetail.setOrderAmt("1");
+        orderDetail.setOrderAmt(""+trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());//子订单金额，以分为单位，等于子订单支付金额与子订单手续费金额和,如果是按比例分账，此信息域上送分账比例，如40.75%上送为4075，我方收到后做相应缩小
         orderDetail.setShareFee("0");//分账手续费，如果上送，将按照此手续费计算，商户平台不需要指定手续费时，默认为0
-        orderDetail.setRcvMerchantId(merchantId);//收款方商户编号-子商户
+        orderDetail.setDetailOrderId(trade.getChildTradeId());//子订单号 商户的子订单号，保证全局唯一，不能与订单号重复
+        String childMerchantId = iCommonShopRpc.lakalaNoByShopId(trade.getShopId());
+        if (com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotBlank(childMerchantId)){
+            orderDetail.setRcvMerchantId(childMerchantId);//收款方商户编号-子商户
+        }
         orderDetail.setRcvMerchantIdName("收款方商户名称");//收款方商户名称-子商户
         orderDetail.setShowUrl("http://www.test.com/test/callback.jsp");//商品展示的url
         orderDetail.setProductId("编号01");//所购买商品的编号，只能是数字与字母
         orderDetail.setProductName("测试商品01");//所购买商品的名称
         orderDetail.setProductDesc("商品描述01");//所购买商品的描述
-
         List<OrderDetail> list = new ArrayList<OrderDetail>();
         list.add(orderDetail);
-
         request.setOrderDetail(list);
         log.info("doPreOrder end");
         return client.execute(request);

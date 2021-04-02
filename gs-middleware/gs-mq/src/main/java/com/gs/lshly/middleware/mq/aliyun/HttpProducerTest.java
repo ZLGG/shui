@@ -19,7 +19,7 @@ public class HttpProducerTest {
         );
 
         // 所属的 Topic
-        final String topic = "pull-topic";
+        final String topic = "wait-pay-order";
         // Topic所属实例ID，默认实例为空
         final String instanceId = "MQ_INST_1145295983493139_BXQQmeVp";
 
@@ -33,7 +33,6 @@ public class HttpProducerTest {
 
         try {
             // 循环发送100条消息
-            for (int i = 0; i < 100; i++) {
                 TopicMessage pubMsg = new TopicMessage(
                         // 消息内容
                         "hello mq!".getBytes(),
@@ -41,13 +40,14 @@ public class HttpProducerTest {
                         "A"
                 );
                 pubMsg.getProperties();
+                pubMsg.setStartDeliverTime(System.currentTimeMillis()+10*1000);
                 // 同步发送消息，只要不抛异常就是成功
                 TopicMessage pubResultMsg = producer.publishMessage(pubMsg);
 
                 // 同步发送消息，只要不抛异常就是成功
                 System.out.println(new Date() + " Send mq message data. Topic is:" + topic + ", msgId is: " + pubResultMsg.getMessageId()
                         + ", bodyMD5 is: " + pubResultMsg.getMessageBodyMD5());
-            }
+
         } catch (Throwable e) {
             // 消息发送失败，需要进行重试处理，可重新发送这条消息或持久化这条数据进行补偿处理
             System.out.println(new Date() + " Send mq message failed. Topic is:" + topic);

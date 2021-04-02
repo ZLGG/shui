@@ -49,11 +49,11 @@ public class BbcUserAuthRpc implements IBbcUserAuthRpc {
     }
 
     @Override
-    public BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey) {
-        if (StringUtils.isBlank(openid)) {
+    public BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid) {
+        if (StringUtils.isBlank(openid) || StringUtils.isBlank(unionid)) {
             return null;
         }
-        return userAuthService.loadUserByWxOpenid(appid, openid, sessionKey);
+        return userAuthService.loadUserByWxOpenid(appid, openid, sessionKey, unionid);
     }
 
     @Override
@@ -103,5 +103,10 @@ public class BbcUserAuthRpc implements IBbcUserAuthRpc {
     @Override
     public void logout(String phone, String openid) {
         userAuthService.logout(phone, openid);
+    }
+
+    @Override
+    public BbcUserVO.ThirdVO innerGetWXNickName(String userId) {
+        return userAuthService.innerGetWXNickName(userId);
     }
 }

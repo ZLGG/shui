@@ -24,8 +24,7 @@ public class TradeUtils implements Serializable {
         int  maxNum = 32;
         int i;
         int count = 0;
-        char[] str = { 'A','2','B','3','C','4','D','5','F','6','G','7','H','8', 'I','9','J', 'K',
-                'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W','X', 'Y', 'Z'};
+        char[] str = { '0','1','2','3','4','5','6','7','8','9'};
         StringBuffer pwd = new StringBuffer("");
         Random r = new Random();
         while(count < 6){

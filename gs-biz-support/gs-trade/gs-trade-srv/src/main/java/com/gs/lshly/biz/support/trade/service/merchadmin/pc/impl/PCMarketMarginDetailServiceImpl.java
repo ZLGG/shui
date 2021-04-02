@@ -50,6 +50,7 @@ public class PCMarketMarginDetailServiceImpl implements IPCMarketMarginDetailSer
         if(ObjectUtils.isNotEmpty(qto.getPayType())){
             wrapper.eq("pay_type",qto.getPayType());
         }
+        wrapper.orderByDesc("cdate");
         IPage<TradeMarginDetail> page = MybatisPlusUtil.pager(qto);
         IPage<TradeMarginDetail> detailIPage =  tradeMarginDetailRepository.page(page, wrapper);
         if(ObjectUtils.isEmpty(detailIPage) && ObjectUtils.isEmpty(detailIPage.getRecords())){
@@ -78,7 +79,7 @@ public class PCMarketMarginDetailServiceImpl implements IPCMarketMarginDetailSer
         queryWrapper.eq("shop_id",qto.getJwtShopId());
         TradeMargin tradeMargin=tradeMarginRepository.getOne(queryWrapper);
         if(ObjectUtils.isEmpty(tradeMargin)){
-            throw new BusinessException("没有数据");
+            return null;
         }
         TradeMarginVO.ListVO detailVo = new TradeMarginVO.ListVO();
         BeanUtils.copyProperties(tradeMargin, detailVo);
