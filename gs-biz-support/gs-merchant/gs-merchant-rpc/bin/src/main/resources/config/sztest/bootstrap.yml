@@ -9,4 +9,4 @@ spring:
         group: biz-support
         server-addr: 127.0.0.1:8848
         file-extension: yml
-        namespace: 9ea3eab6-bf44-480b-8975-a03006fb8f84
+        namespace: cdb38a42-7128-46ee-8b5d-8e7a543df100
