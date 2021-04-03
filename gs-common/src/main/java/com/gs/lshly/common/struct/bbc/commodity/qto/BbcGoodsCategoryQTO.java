@@ -47,4 +47,17 @@ public abstract class BbcGoodsCategoryQTO implements Serializable {
         private Integer idx;
 
     }
+
+    @Data
+    @ApiModel("BbcGoodsCategoryQTO.ListQTO")
+    @Accessors(chain = true)
+    public static class ListQTO extends BaseQTO {
+        @ApiModelProperty("商品类别父id")
+        private String parentId;
+        @ApiModelProperty("查询所有子节点")
+        private Boolean showAll = false;
+        @ApiModelProperty("类型 不传将无法查到数据")
+        private Integer useFiled = 0;
+    }
+
 }

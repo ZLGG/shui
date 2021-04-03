@@ -47,10 +47,7 @@ public class BbbH5UserServiceImpl implements IBbbH5UserService {
         }
         User user =  repository.getById(qto.getJwtUserId());
         BbbH5UserVO.DetailVO detailVO = new BbbH5UserVO.DetailVO();
-        detailVO.setId(user.getId());
-        detailVO.setUserName(user.getUserName());
-        detailVO.setHeadImg(user.getHeadImg());
-        detailVO.setPhone(user.getPhone());
+        BeanUtils.copyProperties(user,detailVO);
         Integer integer = bbbTradeRpc.myMerchantCard(qto);
         detailVO.setCountCard(integer);
         BbbH5TradeDTO.IdDTO idDTO = new BbbH5TradeDTO.IdDTO();

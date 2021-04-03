@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,7 +38,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格 40=积分 50=发布时间")
         private Integer orderByProperties;
 
         @ApiModelProperty(value = "排序方式 10=升序 20=降序")
@@ -49,7 +51,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
     @Accessors(chain = true)
     public static class OrderGoodsListQTO extends BaseQTO {
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格 40=积分 50=发布时间")
         private Integer orderByProperties;
 
         @ApiModelProperty(value = "排序方式 10=升序 20=降序")
@@ -78,7 +80,9 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("商品店铺类目id")
         private String shopNavigationId;
-
+        
+        @ApiModelProperty("是否全部显示积分商品 0 否；1 是")
+        private Integer isPointGood;
 
     }
 
@@ -175,4 +179,38 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+    
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.TopicQTO")
+    @Accessors(chain = true)
+    public static class TopicQTO extends BaseDTO {
+    	@ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50]",hidden=true)
+        private Integer subject;
+    	
+    	@ApiModelProperty(value="10 20",hidden=true)
+        private Integer terminal;
+    }
+    
+    /**
+     * IN会员查询专区
+     *
+     * 
+     * @author yingjun
+     * @date 2021年3月30日 下午6:44:11
+     */
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.InMemberGoodsQTO")
+    @Accessors(chain = true)
+    public static class InMemberGoodsQTO extends BaseQTO {
+
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.InSpecialAreaGoodsQTO")
+    @Accessors(chain = true)
+    public static class InSpecialAreaGoodsQTO extends BaseQTO {
+        @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
+        @NotNull(message = "inCouponType不能为空")
+        private Integer inCouponType;
+    }
 }

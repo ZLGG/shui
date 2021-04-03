@@ -27,7 +27,7 @@ import javax.validation.Valid;
 */
 @RestController
 @RequestMapping("/platform/merchantApply")
-@Api(tags = "商家入驻申请管理",description = " ")
+@Api(tags = "商家入驻申请管理-v1.1.0",description = " ")
 @Module(code = "listApplyResidence", parent = "bussiness", name = "入驻申请列表", index = 4)
 public class MerchantApplyController {
 
@@ -71,7 +71,7 @@ public class MerchantApplyController {
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
-    @ApiOperation("商家入驻申请审核处理")
+    @ApiOperation("商家入驻申请审核处理-v1.1.0")
     @PutMapping(value = "/apply/{id}")
     @Func(code="edit", name="改")
     public ResponseData<Void> apply(@PathVariable String id, @Valid @RequestBody MerchantApplyDTO.ApplyDTO dto) {

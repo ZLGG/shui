@@ -1,5 +1,9 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
@@ -19,13 +23,12 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
+import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
 * <p>
@@ -111,26 +114,45 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     @Override
     public BbcUserVO.LoginVO login(BbcUserDTO.LoginETO dto) {
 
-        //校验验证码
-        Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
-        String validCode = code != null ? code + "" : "";
-        log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
-        if (!StringUtils.equals(validCode, dto.getValidCode())) {
-            throw new BusinessException("验证码不匹配");
-        }
-        BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
-        if (vo != null && JwtUtil.getJwtUser(vo.getAuthToken()) != null) {
+        /**
+    	 * 验证码登录
+    	 */
+    	if(dto.getType()==null||dto.getType().equals(1)){
+    		 //校验验证码
+            Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
+            String validCode = code != null ? code + "" : "";
+            log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
+            if (!StringUtils.equals(validCode, dto.getValidCode())) {
+                throw new BusinessException("验证码不匹配");
+            }
+            BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
+            if (vo != null) {
+                return vo;
+            }
+            User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
+            if (user == null) {
+                user = new User();
+                user.setState(UserStateEnum.启用.getCode()).setPhone(dto.getPhone()).setType(UserTypeEnum._2C用户.getCode());
+                repository.save(user);
+            }
+            vo = userToLoginVO(user, null);
+            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo);
             return vo;
-        }
-        User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
-        if (user == null) {
-            user = new User();
-            user.setState(UserStateEnum.启用.getCode()).setPhone(dto.getPhone()).setType(UserTypeEnum._2C用户.getCode());
-            repository.save(user);
-        }
-        vo = userToLoginVO(user, null);
-        redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, 60 * 60 * 5);
-        return vo;
+    	}else{
+    		
+    		User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
+            if (user == null) {
+                throw new BusinessException("请先注册");
+            }
+            if (PwdUtil.encoder().matches(dto.getValidCode(), user.getUserPwd())) {
+	            BbcUserVO.LoginVO vo = userToLoginVO(user, null);
+	            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo);
+	            return vo;
+            }else{
+            	throw new BusinessException("密码错误");
+            }
+    	}
+       
     }
 
     @Override

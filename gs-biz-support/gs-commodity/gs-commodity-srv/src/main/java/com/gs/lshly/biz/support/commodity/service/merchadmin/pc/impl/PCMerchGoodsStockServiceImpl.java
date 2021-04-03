@@ -1,8 +1,11 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gs.lshly.biz.support.commodity.entity.SkuStockAlarm;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuStockAlarmRepository;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsStockService;
@@ -12,12 +15,6 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsStockD
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsStockQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsStockVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 /**
 * <p>

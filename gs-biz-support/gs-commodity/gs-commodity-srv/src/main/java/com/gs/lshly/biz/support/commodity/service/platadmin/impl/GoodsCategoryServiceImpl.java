@@ -1,25 +1,10 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
-import cn.hutool.core.collection.ListUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
-import com.gs.lshly.biz.support.commodity.repository.*;
-import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
-import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.*;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsCategoryQTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
-import com.gs.lshly.common.utils.BeanCopyUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.platadmin.merchant.IMerchantShopCategoryApplyRpc;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -27,11 +12,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.gs.lshly.biz.support.commodity.entity.CategoryBrand;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCategoryAttribute;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCategorySpec;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsMaterialLibrary;
+import com.gs.lshly.biz.support.commodity.entity.GoodsParams;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
+import com.gs.lshly.biz.support.commodity.repository.ICategoryBrandRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryAttributeRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCategorySpecRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsMaterialLibraryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsParamsRepository;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsAttributeDictionaryDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsSpecDictionaryDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsCategoryQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.platadmin.merchant.IMerchantShopCategoryApplyRpc;
 
-import static java.util.stream.Collectors.toList;
+import cn.hutool.core.collection.ListUtil;
 
 
 /**

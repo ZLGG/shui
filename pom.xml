@@ -37,7 +37,6 @@
 
         <docker.repostory>registry.cn-shenzhen.aliyuncs.com</docker.repostory>
         <docker.registry.name>lxus</docker.registry.name>
-
     </properties>
 
     <dependencyManagement>
@@ -176,9 +175,6 @@
         <!-- 开发环境配置 -->
         <profile>
             <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <env.dscs>dev</env.dscs>
                 <profiles.active>dev</profiles.active>
@@ -259,6 +255,9 @@
         <!-- 杭州商城测试配置 -->
         <profile>
             <id>hztest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <env.dscs>hztest</env.dscs>
                 <profiles.active>hztest</profiles.active>

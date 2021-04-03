@@ -122,7 +122,8 @@ public class PCMerchGoodsInfoController {
         ExcelUtil.export(exportData, response);
     }
 
-    @ApiOperation("从Excel表格导入商品相关数据")
+//    @ApiOperation("从Excel表格导入商品相关数据")
+    @ApiOperation("从Excel表格导入商品相关数据-已经废弃")
     @PostMapping(value = "/importData")
     public void importData( @RequestParam MultipartFile file,BaseDTO dto) throws Exception {
         List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO> dataVOS = HuToolExcelUtil.importData(PCMerchGoodsInfoDTO.ExcelGoodsDataETO.class,file);

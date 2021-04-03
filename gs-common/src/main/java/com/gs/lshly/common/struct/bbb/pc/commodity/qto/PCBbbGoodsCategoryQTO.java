@@ -19,8 +19,12 @@ public class PCBbbGoodsCategoryQTO implements Serializable {
     @Data
     @ApiModel("PCBbbGoodsCategoryQTO.QTO")
     @Accessors(chain = true)
-    public static class QTO extends BaseQTO {
-
+    public static class QTO extends BaseDTO {
+    	@ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50]",hidden=true)
+        private Integer subject;
+    	
+    	@ApiModelProperty(value="10 20",hidden=true)
+        private Integer terminal;
     }
 
     @Data

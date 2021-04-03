@@ -1,8 +1,21 @@
 package com.gs.lshly.biz.support.trade.service.bbc.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.gs.lshly.biz.support.trade.service.bbb.pc.IPCBbbMarketMerchantCardUsersService;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSettleService;
-import com.gs.lshly.biz.support.trade.service.merchadmin.pc.*;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketMerchantCutGoodsService;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketMerchantDiscountGoodsService;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketMerchantGiftGoodsGiveService;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketMerchantGroupbuyGoodsService;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketPtActivityGoodsSkuService;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5TradeBuildDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5TradeGoodsDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeSettlementVO;
@@ -15,15 +28,8 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.common.dto.CommonMarketDTO;
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
 import com.gs.lshly.common.utils.JsonUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 订单营销
@@ -297,7 +303,7 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
         //2,购买产品与持有优惠券的对应关系-SkuCard, 同一spu合并 -ok
         CommonMarketDTO.MarketSku skuCards = cardUsersService.activeCardSku(dto.getJwtUserId(), skuIds, dto.getTerminal());
 
-        //1.5满赠, 匹配到spuId, 同一spu合并-ok
+        //1.5满赠, 匹配到spuId, 同一spu合并-ok  TODO
         CommonMarketDTO.SkuId giveSkuId = giftGoodsGiveService.activeGiveSku(skuIds, dto.getTerminal());
         BbcTradeGoodsDTO.ETO giftGiveSku = giftGoodsGiveService.fillBbcGoodsInfoOrderVO(giveSkuId, dto);
 

@@ -1,44 +1,78 @@
 package com.gs.lshly.biz.support.trade.service.bbc.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
-import com.gs.lshly.biz.support.trade.repository.*;
-import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketActivityService;
-import com.gs.lshly.common.enums.ActivitySignEnum;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5MarketActivityDTO;
-import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5MarketMerchantActivityDTO;
-import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5MarketActivityQTO;
-import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
-import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
-import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
-import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
-import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCard;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardUsers;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCut;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCutGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantDiscount;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantDiscountGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGift;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGiftGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGiftGoodsGive;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGroupbuy;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGroupbuyGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivity;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsSpu;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityJurisdiction;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityMerchant;
+import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantDiscountGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantDiscountRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsGiveRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityGoodsSpuRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityJurisdictionRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityMerchantRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityRepository;
+import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketActivityService;
+import com.gs.lshly.common.enums.ActivitySignEnum;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketActivityDTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
+import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
+import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 
 @Component
 public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
@@ -79,8 +113,10 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
     @DubboReference
     private IBbcShopRpc iBbcShopRpc;
-
-
+    
+    @DubboReference
+    private IGoodsInfoRpc goodsInfoRpc;
+    
     @Value("${activity.pc.cut}")
     private String pcCut;
     @Value("${activity.pc.gift}")
@@ -999,4 +1035,86 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
             plataformActivity1.setStatus("未开始");
         }
     }
+	@Override
+	public TopicVO listFlashsale(BaseDTO dto) {
+		
+		//查询生成进行的活动
+		QueryWrapper<MarketPtActivity> wrapper = new QueryWrapper<>();
+        wrapper.eq("label","秒杀");
+        wrapper.le("activity_start_time", LocalDateTime.now());
+        wrapper.ge("activity_end_time", LocalDateTime.now());
+        //查询商品的活动
+        MarketPtActivity marketPtActivity = iMarketPtActivityRepository.getOne(wrapper);
+        if(marketPtActivity==null){
+        	return null;
+        }
+        
+        if (ObjectUtils.isEmpty(marketPtActivity)){
+            return null;
+        }
+        TopicVO topicVO = new TopicVO();
+        
+        topicVO.setId(marketPtActivity.getId());
+        topicVO.setName("热门秒杀");
+        topicVO.setRemark("秒优惠 享好礼");
+        
+        PCBbbMarketActivityVO.activityVO activityVO = new PCBbbMarketActivityVO.activityVO();
+        BeanUtils.copyProperties(marketPtActivity,activityVO);
+        IPage<PCBbbMarketActivityVO.activityGoodsVO> pager = MybatisPlusUtil.pager(new PCBbbMarketActivityQTO.QTO());
+        QueryWrapper<BbbMarketActivityDTO.IdDTO> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("goods.activity_id",marketPtActivity.getId()));
+        iMarketPtActivityRepository.selectActivityPageData(pager,query);
+        
+        List<BbcGoodsInfoVO.DetailVO> goodsList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
+        if (ObjectUtils.isNotEmpty(pager)){
+            for (PCBbbMarketActivityVO.activityGoodsVO cutVO : pager.getRecords()) {
+            	
+            	BbcGoodsInfoVO.DetailVO goodsInfoDetailVO= iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(cutVO.getGoodsId()));
+            	goodsList.add(goodsInfoDetailVO);
+        		
+            }
+        }
+        topicVO.setGoodsList(goodsList);
+        
+		return topicVO;
+	}
+
+	@Override
+	public PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(QTO qto) {
+		//查询生成进行的活动
+		QueryWrapper<MarketPtActivity> wrapper = new QueryWrapper<>();
+        wrapper.eq("label","秒杀");
+        wrapper.le("activity_start_time", LocalDateTime.now());
+        wrapper.ge("activity_end_time", LocalDateTime.now());
+        //查询商品的活动
+        MarketPtActivity marketPtActivity = iMarketPtActivityRepository.getOne(wrapper);
+        if(marketPtActivity==null){
+        	return null;
+        }
+        
+        if (ObjectUtils.isEmpty(marketPtActivity)){
+            return null;
+        }
+        
+        PCBbbMarketActivityVO.activityVO activityVO = new PCBbbMarketActivityVO.activityVO();
+        BeanUtils.copyProperties(marketPtActivity,activityVO);
+        IPage<PCBbbMarketActivityVO.activityGoodsVO> pager = MybatisPlusUtil.pager(new PCBbbMarketActivityQTO.QTO());
+        QueryWrapper<BbbMarketActivityDTO.IdDTO> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("goods.activity_id",marketPtActivity.getId()));
+        iMarketPtActivityRepository.selectActivityPageData(pager,query);
+        
+        List<BbcGoodsInfoVO.DetailVO> goodsList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
+        if (ObjectUtils.isNotEmpty(pager)){
+            for (PCBbbMarketActivityVO.activityGoodsVO cutVO : pager.getRecords()) {
+            	
+            	BbcGoodsInfoVO.DetailVO goodsInfoDetailVO= iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(cutVO.getGoodsId()));
+            	goodsList.add(goodsInfoDetailVO);
+        		
+            }
+        }
+        return new PageData<>(goodsList,qto.getPageNum(),qto.getPageSize(),pager.getTotal());
+        
+	}
+
+
 }

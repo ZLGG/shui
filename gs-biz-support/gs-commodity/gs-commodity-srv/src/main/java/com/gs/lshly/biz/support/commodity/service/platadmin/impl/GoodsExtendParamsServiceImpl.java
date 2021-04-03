@@ -1,8 +1,15 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsExtendParams;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsExtendParamsRepository;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsExtendParamsService;
@@ -10,16 +17,8 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsExtendParamsDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsExtendParamsQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsAttributeInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsExtendParamsVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
 * <p>

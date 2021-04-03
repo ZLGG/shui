@@ -1,7 +1,15 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeMargin;
 import com.gs.lshly.biz.support.trade.entity.TradeMarginDetail;
 import com.gs.lshly.biz.support.trade.repository.ITradeMarginDetailRepository;
@@ -13,20 +21,9 @@ import com.gs.lshly.common.enums.TradeMarginEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeMarginDTO;
-import com.gs.lshly.common.struct.platadmin.trade.qto.TradeMarginDetailQTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeMarginQTO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradeMarginDetailVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeMarginVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 
 /**

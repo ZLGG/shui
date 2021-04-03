@@ -1,7 +1,12 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeGoods;
 import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeGoodsService;
@@ -11,10 +16,6 @@ import com.gs.lshly.common.struct.platadmin.trade.dto.TradeGoodsDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeGoodsQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 /**
 * <p>

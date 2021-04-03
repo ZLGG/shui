@@ -41,6 +41,7 @@ import com.gs.lshly.rpc.api.bbb.h5.trade.IBbbH5TradeRpc;
 import com.gs.lshly.rpc.api.bbb.h5.user.IBbbH5UserFavoritesGoodsRpc;
 import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.common.ICommonTradeGoodsRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -98,6 +99,9 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
     @DubboReference
     private IBbbH5TradeRpc tradeRpc;
 
+    @DubboReference
+    private ICommonTradeGoodsRpc iCommonTradeGoodsRpc;
+
     @Autowired
     private IBbbH5GoodsLabelService bbcGoodsLabelService;
 
@@ -122,6 +126,32 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         }
         if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())  && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())){
             boost.orderByDesc("sale_price");
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+            //如果需要积分排序，首先得是积分商品
+            boost.eq("is_point_good", true);
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                //升序
+                if (qto.getOrderByType().equals(10)) {
+                    boost.orderByAsc("point_price", "id");
+                } else {
+                    //降序
+                    boost.orderByDesc("point_price", "id");
+                }
+            } else {
+                boost.orderByAsc("point_price", "id");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                if (qto.getOrderByType().equals(10)) {
+                    boost.orderByAsc("publish_time", "id");
+                } else {
+                    boost.orderByDesc("publish_time", "id");
+                }
+            } else {
+                boost.orderByAsc("publish_time", "id");
+            }
         }
         //获取2B商城的商品
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
@@ -205,7 +235,9 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         if (ObjectUtils.isNotEmpty(skuVO.getWholesalePrice())){
             detailVo.setWholesalePrice(skuVO.getWholesalePrice());
         }
-
+        //销售数量
+        Integer sumQuantity = iCommonTradeGoodsRpc.sumQuantity(goodsInfo.getId());
+        detailVo.setSaleQuantity(sumQuantity);
         //获取用户默认收货地址
         BbbH5StockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(dto,StockAddressTypeEnum.收货.getCode());
         if (defaultAddresslVO != null){
@@ -327,6 +359,32 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         }
         if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().intValue() == OrderByConditionEnum.价格.getCode().intValue() && qto.getOrderByType().intValue() == OrderByTypeEnum.降序.getCode().intValue()){
             boost.orderByDesc("sale_price");
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+            //如果需要积分排序，首先得是积分商品
+            boost.eq("is_point_good", true);
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                //升序
+                if (qto.getOrderByType().equals(10)) {
+                    boost.orderByAsc("point_price", "id");
+                } else {
+                    //降序
+                    boost.orderByDesc("point_price", "id");
+                }
+            } else {
+                boost.orderByAsc("point_price", "id");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                if (qto.getOrderByType().equals(10)) {
+                    boost.orderByAsc("publish_time", "id");
+                } else {
+                    boost.orderByDesc("publish_time", "id");
+                }
+            } else {
+                boost.orderByAsc("publish_time", "id");
+            }
         }
         boost.in("id",goodsIdList);
         //获取2B商城的商品
@@ -623,7 +681,7 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
     }
 
     private  String getImage(String images){
-        if (images !=null){
+        if (images !=null&&!images.equals("{}")){
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)){
                 return null;

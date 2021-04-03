@@ -1,4 +1,11 @@
 package com.gs.lshly.facade.bbb.controller.h5.merchant;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
@@ -14,10 +21,9 @@ import com.gs.lshly.common.struct.common.qto.CommonMerchantArticleQTO;
 import com.gs.lshly.rpc.api.bbb.h5.merchant.IBbbH5ShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonMerchantArticleRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
 
 /**
 * <p>

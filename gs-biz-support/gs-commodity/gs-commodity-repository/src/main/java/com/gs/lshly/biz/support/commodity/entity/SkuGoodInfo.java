@@ -3,6 +3,8 @@ package com.gs.lshly.biz.support.commodity.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.math.BigDecimal;
 
 import lombok.EqualsAndHashCode;
@@ -136,5 +138,19 @@ public class SkuGoodInfo extends Model {
     @TableLogic
     private Boolean flag;
 
+    @ApiModelProperty("积分价格")
+    private BigDecimal pointPrice;
+
+    @ApiModelProperty("办理备注")
+    private String remarks;
+
+    @ApiModelProperty("是否是积分商品")
+    private Boolean isPointGood;
+
+    @ApiModelProperty("是否是in会员礼品")
+    private Boolean isInMemberGift;
+
+    @ApiModelProperty("in会员积分价格")
+    private BigDecimal inMemberPointPrice;
 
 }

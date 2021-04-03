@@ -1,7 +1,14 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
 import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
@@ -13,13 +20,6 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsShopNa
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsShopNavigationQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsShopNavigationVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * <p>

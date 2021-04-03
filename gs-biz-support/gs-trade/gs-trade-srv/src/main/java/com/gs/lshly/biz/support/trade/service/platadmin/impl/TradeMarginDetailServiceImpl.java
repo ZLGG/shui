@@ -1,25 +1,24 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeMarginDetail;
 import com.gs.lshly.biz.support.trade.repository.ITradeMarginDetailRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeMarginDetailService;
 import com.gs.lshly.common.enums.MarginEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsInfoQTO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.TradeMarginDetailDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeMarginDetailQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeMarginDetailVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**

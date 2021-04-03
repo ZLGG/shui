@@ -1,5 +1,8 @@
 package com.gs.lshly.biz.support.trade.service.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantCard;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardUsers;
@@ -7,10 +10,8 @@ import com.gs.lshly.biz.support.trade.enums.MarketPtCardStatusEnum;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j

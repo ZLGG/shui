@@ -55,7 +55,7 @@ public class User2cController {
         return ResponseData.data(userRpc.fullSearchList(qto));
     }
 
-    @ApiOperation("会员列表")
+    @ApiOperation("会员列表-v1.1.0")
     @GetMapping("")
     @Func(code="view", name="查")
     public ResponseData<PageData<UserVO.ListVO>> list(UserQTO.QTO qto) {
@@ -63,7 +63,7 @@ public class User2cController {
         return ResponseData.data(userRpc.pageData(qto));
     }
 
-    @ApiOperation("会员详情")
+    @ApiOperation("会员详情-v1.1.0")
     @GetMapping("/details/{id}")
     @Func(code="view", name="查")
     public ResponseData<UserVO.DetailVO> details(@PathVariable String id) {

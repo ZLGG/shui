@@ -81,6 +81,9 @@ public class BbcShopServiceImpl implements IBbcShopService {
     @Autowired
     private IShopDeliveryStyleRepository shopDeliveryStyleRepository;
 
+    @Autowired
+    private IMerchantRepository merchantRepository;
+    
     @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
 
@@ -185,6 +188,11 @@ public class BbcShopServiceImpl implements IBbcShopService {
             complexVO.setFavoriteState(favoriteState);
         }
 
+        //获取对应的商户类型
+        String merchantId = shop.getMerchantId();
+	    Merchant merchant = merchantRepository.getById(merchantId);
+	    complexVO.setMerchantType(merchant.getType());
+        
         //店铺轮播图
         QueryWrapper<ShopBanner> bannerQueryWrapper = MybatisPlusUtil.query();
         bannerQueryWrapper.eq("shop_id",dto.getId());

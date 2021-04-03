@@ -36,6 +36,24 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("店铺id")
         private String shopId;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格  40积分  50上架时间")
+        private Integer orderByProperties;
+
+        @ApiModelProperty(value = "排序条件字段 10=升序 20=降序")
+        private Integer orderByAscDesc;
     }
 
     @Data
@@ -51,7 +69,7 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格 40=积分 50=发布时间")
         private Integer orderByProperties;
 
         @ApiModelProperty(value = "按什么方式排序 10=升序 20=降序")
@@ -74,8 +92,23 @@ public abstract class PCBbbGoodsInfoQTO implements Serializable {
         @ApiModelProperty("是否仅显示现货 10=显示 20=不显示")
         private Integer hasStock;
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格")
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格  40积分  50上架时间")
         private Integer orderByProperties;
+        
+        @ApiModelProperty(value = "排序条件字段 10=升序 20=降序")
+        private Integer orderByAscDesc;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
     }
 
 

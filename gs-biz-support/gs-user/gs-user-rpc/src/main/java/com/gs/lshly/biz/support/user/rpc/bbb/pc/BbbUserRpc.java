@@ -115,6 +115,10 @@ public class BbbUserRpc implements IBbbUserRpc {
     public void getEmailNum(BbbUserDTO.BandEmailDTO qto) {
         bbbUserService.getEmailNum(qto);
     }
+	@Override
+	public String customerAuthorize(BaseDTO dto) {
+		return bbbUserService.customerAuthorize(dto);
+	}
 
 
 }

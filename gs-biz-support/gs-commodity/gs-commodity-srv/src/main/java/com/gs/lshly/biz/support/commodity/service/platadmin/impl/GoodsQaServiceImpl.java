@@ -1,5 +1,15 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,15 +34,6 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsQaVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author Starry
@@ -174,7 +175,7 @@ public class GoodsQaServiceImpl implements IGoodsQaService {
     }
 
     private  String getImage(String images){
-        if (images !=null){
+        if (images !=null&&!images.equals("{}")){
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)){
                 return null;

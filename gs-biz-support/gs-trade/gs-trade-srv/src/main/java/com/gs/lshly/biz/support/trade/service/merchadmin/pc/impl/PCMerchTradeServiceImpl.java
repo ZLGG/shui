@@ -1,16 +1,42 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
+import static java.util.stream.Collectors.toList;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.entity.Trade;
+import com.gs.lshly.biz.support.trade.entity.TradeCancel;
+import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
+import com.gs.lshly.biz.support.trade.entity.TradeGoods;
+import com.gs.lshly.biz.support.trade.entity.TradePay;
+import com.gs.lshly.biz.support.trade.entity.TradeRights;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
-import com.gs.lshly.biz.support.trade.repository.*;
+import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
-import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
+import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
+import com.gs.lshly.common.enums.TradePayTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
@@ -32,18 +58,6 @@ import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
 import com.lakala.boss.api.common.Common;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
 * <p>
@@ -905,7 +919,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         if (e.getTradeState()==10){
                             tradeVO.setPayType("未支付");
                         }else {
-                            tradeVO.setPayType(EnumUtil.getText(e.getPayType(), TradePayTypeEnum.class));
+                            tradeVO.setPayType(TradePayTypeEnum.getEnum(e.getPayType()).getRemark());
                         }
                         tradeVO.setDeliveryType(EnumUtil.getText(e.getDeliveryType(), TradeDeliveryTypeEnum.class));
                         fillTradeVOE(tradeVO);

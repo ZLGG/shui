@@ -1,26 +1,20 @@
 package com.gs.lshly.facade.bbb.controller.h5.pages;
 
-import com.gs.lshly.common.enums.SubjectEnum;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
-import com.gs.lshly.common.struct.bbb.h5.pages.qto.BbbH5WelfareQTO;
-import com.gs.lshly.common.struct.bbb.h5.pages.vo.BbbH5WelfareVO;
-import com.gs.lshly.common.struct.bbb.pc.pages.qto.PCBbbHomeQTO;
-import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbHomeVO;
-import com.gs.lshly.rpc.api.bbb.h5.foundation.IBbbH5ComplexWelfareRpc;
-import com.gs.lshly.rpc.api.bbb.h5.foundation.IBbbH5SiteBannerRpc;
-import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteAdvertRpc;
-import com.gs.lshly.rpc.api.bbb.pc.foundation.IPCBbbFloorRpc;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
+import com.gs.lshly.common.struct.bbb.h5.pages.qto.BbbH5WelfareQTO;
+import com.gs.lshly.common.struct.bbb.h5.pages.vo.BbbH5WelfareVO;
+import com.gs.lshly.rpc.api.bbb.h5.foundation.IBbbH5ComplexWelfareRpc;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @Author Starry

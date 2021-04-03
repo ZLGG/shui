@@ -41,6 +41,8 @@ import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.bbb.pc.user.IPCBbbUserPrivateUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.common.ICommonTradeGoodsRpc;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -91,6 +93,8 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
     private IBbbPcTradeRpc tradeRpc;
     @Value("${wx.url}")
     private String WXUrl;
+    @DubboReference
+    private ICommonTradeGoodsRpc iCommonTradeGoodsRpc;
 
     @Override
     public PCBbbGoodsInfoVO.GoodsRecommendVO getRecommendGoodsList(PCBbbGoodsInfoQTO.QTO qto) {
@@ -132,8 +136,46 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getBrandId())) {
             wrapper.in("brand_id", qto.getBrandId());
         }
-        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())) {
-            wrapper.orderByAsc("sale_price", "id");
+        if (qto.getIsInMemberGift() != null) {
+            wrapper.eq("is_in_member_gift", qto.getIsInMemberGift());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() != -1) {
+            wrapper.eq("sale_type", qto.getSaleType());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getExchangeType()) && qto.getExchangeType().intValue() != -1) {
+            wrapper.eq("exchange_type", qto.getExchangeType());
+        }
+        if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByAscDesc().equals(OrderByTypeEnum.升序.getCode())){
+            wrapper.orderByAsc("sale_price");
+        }
+        if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())  && qto.getOrderByAscDesc().equals(OrderByTypeEnum.降序.getCode())){
+            wrapper.orderByDesc("sale_price");
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+            //如果需要积分排序，首先得是积分商品
+            wrapper.eq("is_point_good", true);
+            if (ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())) {
+                //升序
+                if (qto.getOrderByAscDesc().equals(10)) {
+                    wrapper.orderByAsc("point_price", "id");
+                } else {
+                    //降序
+                    wrapper.orderByDesc("point_price", "id");
+                }
+            } else {
+                wrapper.orderByAsc("point_price", "id");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())) {
+                if (qto.getOrderByAscDesc().equals(10)) {
+                    wrapper.orderByAsc("publish_time", "id");
+                } else {
+                    wrapper.orderByDesc("publish_time", "id");
+                }
+            } else {
+                wrapper.orderByAsc("publish_time", "id");
+            }
         }
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());
         wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
@@ -151,7 +193,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         if (ObjectUtils.isEmpty(goodsInfoIPage)) {
             return new PageData<>();
         }
-        List<PCBbbGoodsInfoVO.GoodsDetailListVO> listVOList = getPageInfo(goodsInfoIPage, qto,qto.getOrderByProperties(),OrderByTypeEnum.降序.getCode());
+        List<PCBbbGoodsInfoVO.GoodsDetailListVO> listVOList = getPageInfo(goodsInfoIPage, qto, qto.getOrderByProperties(), qto.getOrderByAscDesc());
         return new PageData<>(listVOList, qto.getPageNum(), qto.getPageSize(), goodsInfoIPage.getTotal());
     }
 
@@ -242,6 +284,9 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
             e.printStackTrace();
         }
         goodsDetailVO.setCode(tmpFileName);
+        //销售数量
+        Integer sumQuantity = iCommonTradeGoodsRpc.sumQuantity(goodsInfo.getId());
+        goodsDetailVO.setSaleQuantity(sumQuantity);
         return goodsDetailVO;
     }
 
@@ -258,6 +303,51 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
             wrapper.eq("shop_id", qto.getShopId());
         }
         wrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
+        if (qto.getIsPointGood() != null) {
+            wrapper.eq("is_point_good", qto.getIsPointGood());
+        }
+        if (qto.getIsInMemberGift() != null) {
+            wrapper.eq("is_in_member_gift", qto.getIsInMemberGift());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getSaleType()) && qto.getSaleType().intValue() != -1) {
+            wrapper.eq("sale_type", qto.getSaleType());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getExchangeType()) && qto.getExchangeType().intValue() != -1) {
+            wrapper.eq("exchange_type", qto.getExchangeType());
+        }
+        if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByAscDesc().equals(OrderByTypeEnum.升序.getCode())){
+            wrapper.orderByAsc("sale_price");
+        }
+        if (qto.getOrderByProperties()!=null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())  && qto.getOrderByAscDesc().equals(OrderByTypeEnum.降序.getCode())){
+            wrapper.orderByDesc("sale_price");
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+            //如果需要积分排序，首先得是积分商品
+            wrapper.eq("is_point_good", true);
+            if (ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())) {
+                //升序
+                if (qto.getOrderByAscDesc().equals(10)) {
+                    wrapper.orderByAsc("point_price", "id");
+                } else {
+                    //降序
+                    wrapper.orderByDesc("point_price", "id");
+                }
+            } else {
+                wrapper.orderByAsc("point_price", "id");
+            }
+        }
+        if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByAscDesc())) {
+                if (qto.getOrderByAscDesc().equals(10)) {
+                    wrapper.orderByAsc("publish_time", "id");
+                } else {
+                    wrapper.orderByDesc("publish_time", "id");
+                }
+            } else {
+                wrapper.orderByAsc("publish_time", "id");
+            }
+        }
+        wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
         wrapper.ne("use_platform", GoodsUsePlatformEnums.C商城.getCode());
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page, wrapper);
@@ -267,6 +357,23 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         BaseDTO dto = new BaseDTO();
         BeanUtils.copyProperties(qto, dto);
         List<PCBbbGoodsInfoVO.GoodsListVO> goodsListVOS = getGoodsListVOS(goodsInfoIPage.getRecords(), dto);
+        if(goodsListVOS!=null){
+            List<String> goodIds = goodsListVOS.stream().map(PCBbbGoodsInfoVO.GoodsListVO::getGoodsId).collect(toList());
+             //如果排序类型为销量或评分
+            if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && !qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode())) {
+                List<BbbTradeListVO.InnerGoodsCompareTo> compareTos = getAfterOrderGooodsId(qto.getOrderByProperties(), qto.getOrderByAscDesc(), goodIds);
+                for (PCBbbGoodsInfoVO.GoodsListVO listVO : goodsListVOS) {
+                    for (BbbTradeListVO.InnerGoodsCompareTo vo : compareTos) {
+                        if (listVO.getGoodsId().equals(vo.getId())) {
+                            listVO.setIdx(vo.getIdx());
+                            break;
+                        }
+                    }
+                }
+                goodsListVOS.sort((o1, o2) -> ((Integer) o1.getIdx()) != null && ((Integer) o2.getIdx()) != null ? (o1.getIdx() > o2.getIdx() ? 1 : -1) : -1);
+            }
+        }
+
         return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), goodsInfoIPage.getTotal());
     }
 
@@ -297,13 +404,40 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
                     && (ObjectUtils.isNotEmpty(qto.getOrderByType()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode()))) {
                 wrapper.orderByDesc("gs.sale_price", "gs.id");
             }
+            if (qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode())) {
+                //如果需要积分排序，首先得是积分商品
+                wrapper.eq("is_point_good", true);
+                if (ObjectUtils.isNotEmpty(qto.getOrderByProperties())) {
+                    //升序
+                    if (qto.getOrderByType().equals(10)) {
+                        wrapper.orderByAsc("point_price", "id");
+                    } else {
+                        //降序
+                        wrapper.orderByDesc("point_price", "id");
+                    }
+                } else {
+                    wrapper.orderByAsc("point_price", "id");
+                }
+            }
+            if (qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+                if (ObjectUtils.isNotEmpty(qto.getOrderByProperties())) {
+                    if (qto.getOrderByType().equals(10)) {
+                        wrapper.orderByAsc("publish_time", "id");
+                    } else {
+                        wrapper.orderByDesc("publish_time", "id");
+                    }
+                } else {
+                    wrapper.orderByAsc("publish_time", "id");
+                }
+            }
+
         }
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = goodsInfoMapper.getGoodsPageInfo(page, wrapper);
         if (ObjectUtils.isEmpty(goodsInfoIPage)) {
             return new PageData<>();
         }
-        List<PCBbbGoodsInfoVO.GoodsDetailListVO> listVOList = getPageInfo(goodsInfoIPage, qto,qto.getOrderByProperties(),OrderByTypeEnum.降序.getCode());
+        List<PCBbbGoodsInfoVO.GoodsDetailListVO> listVOList = getPageInfo(goodsInfoIPage, qto, qto.getOrderByProperties(), OrderByTypeEnum.降序.getCode());
 
         return new PageData<>(listVOList, qto.getPageNum(), qto.getPageSize(), goodsInfoIPage.getTotal());
     }
@@ -427,6 +561,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         serviceVO.setSkuId(skuId);
         serviceVO.setPosSpuId(ObjectUtils.isNotEmpty(goodsInfo.getPosSpuId())?goodsInfo.getPosSpuId():"");
         serviceVO.setSQuantity(getSkuStockNum(goodsInfo.getShopId(),skuId));
+        serviceVO.setSQuantity(getSkuStockNum(goodsInfo.getShopId(), skuId));
         return serviceVO;
     }
 
@@ -526,7 +661,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
     }
 
 
-    private List<PCBbbGoodsInfoVO.GoodsDetailListVO> getPageInfo(IPage<GoodsInfo> goodsInfoIPage, BaseDTO dto,Integer orderType,Integer orderWay) {
+    private List<PCBbbGoodsInfoVO.GoodsDetailListVO> getPageInfo(IPage<GoodsInfo> goodsInfoIPage, BaseDTO dto, Integer orderType, Integer orderWay) {
         List<PCBbbGoodsInfoVO.GoodsDetailListVO> listVOList = new ArrayList<>();
         //要检查是否被收藏的商品ID
         List<String> checkFavoritesIdList = new ArrayList<>();
@@ -587,17 +722,17 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
             }
         }
         //如果排序类型为销量或评分
-        if (ObjectUtils.isNotEmpty(orderType) && !orderType.equals(OrderByConditionEnum.价格.getCode())){
-            List<BbbTradeListVO.InnerGoodsCompareTo> compareTos = getAfterOrderGooodsId(orderType,orderWay,goodsIdList);
-            for (PCBbbGoodsInfoVO.GoodsDetailListVO listVO : listVOList){
-                for (BbbTradeListVO.InnerGoodsCompareTo vo : compareTos){
-                    if (listVO.getGoodsId().equals(vo.getId())){
+        if (ObjectUtils.isNotEmpty(orderType) && !orderType.equals(OrderByConditionEnum.价格.getCode())) {
+            List<BbbTradeListVO.InnerGoodsCompareTo> compareTos = getAfterOrderGooodsId(orderType, orderWay, goodsIdList);
+            for (PCBbbGoodsInfoVO.GoodsDetailListVO listVO : listVOList) {
+                for (BbbTradeListVO.InnerGoodsCompareTo vo : compareTos) {
+                    if (listVO.getGoodsId().equals(vo.getId())) {
                         listVO.setIdx(vo.getIdx());
                         break;
                     }
                 }
             }
-            listVOList.sort((o1, o2) -> ((Integer)o1.getIdx()) != null && ((Integer)o2.getIdx()) != null ? (o1.getIdx() > o2.getIdx() ? 1 : -1) : -1);
+            listVOList.sort((o1, o2) -> ((Integer) o1.getIdx()) != null && ((Integer) o2.getIdx()) != null ? (o1.getIdx() > o2.getIdx() ? 1 : -1) : -1);
         }
         return listVOList;
     }
@@ -807,7 +942,7 @@ public class PCBbbGoodsInfoServiceImpl implements IPCBbbGoodsInfoService {
         return wholesalePriceVO;
     }
 
-    private  List<BbbTradeListVO.InnerGoodsCompareTo> getAfterOrderGooodsId(Integer orderType, Integer orderWays, List<String> goodsIdList) {
+    private List<BbbTradeListVO.InnerGoodsCompareTo> getAfterOrderGooodsId(Integer orderType, Integer orderWays, List<String> goodsIdList) {
         BbbOrderDTO.innerCommpareTo dto = new BbbOrderDTO.innerCommpareTo();
         dto.setCompareToMode(orderWays);
         dto.setCompareToType(orderType);

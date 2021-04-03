@@ -1,19 +1,68 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import static java.util.stream.Collectors.toList;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.*;
+import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsExtendParams;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
+import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
-import com.gs.lshly.biz.support.commodity.repository.*;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
-import com.gs.lshly.biz.support.commodity.service.platadmin.*;
-import com.gs.lshly.common.enums.*;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsExtendParamsRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
+import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsBrandService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsCategoryService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsStockService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsExtendParamsService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsSpecInfoService;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.enums.GoodsQueryTypeEnum;
+import com.gs.lshly.common.enums.GoodsStateEnum;
+import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
+import com.gs.lshly.common.enums.SettingGoodsAuditEnum;
+import com.gs.lshly.common.enums.ShopTypeEnum;
+import com.gs.lshly.common.enums.ShowOldPriceEnum;
+import com.gs.lshly.common.enums.SingleStateEnum;
+import com.gs.lshly.common.enums.StockDataFromTypeEnum;
+import com.gs.lshly.common.enums.StockLocationEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.merchant.ShopStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -22,10 +71,23 @@ import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.common.stock.CommonStockTemplateVO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.*;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsAttributeInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsBrandDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsCategoryDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsExtendParamsDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsSpecInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchSkuGoodInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsStockQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.*;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsAttributeInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsBrandVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsCategoryVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsExtendParamsVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsSpecInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsStockVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
 import com.gs.lshly.common.struct.merchadmin.pc.stock.vo.PCMerchStockVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
@@ -43,18 +105,6 @@ import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsRpc;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 /**
 * <p>
@@ -838,6 +888,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         importGoodsDataVO.setShopNavigation2cName("2c店铺分类名称");
         importGoodsDataVO.setStockSubtractType("10");
         importGoodsDataVO.setStockNum("10");
+        importGoodsDataVO.setIsPointGood("false");
+        importGoodsDataVO.setPointPrice("0");
+        importGoodsDataVO.setRemarks("办理备注");
+        importGoodsDataVO.setIsInMemberGift("false");
+        importGoodsDataVO.setInMemberPointPrice("0");
+        importGoodsDataVO.setSaleType("0");
+        importGoodsDataVO.setThirdProductId("123");
+        importGoodsDataVO.setExchangeType("0");
         importGoodsDataVOS.add(importGoodsDataVO);
         return importGoodsDataVOS;
     }
@@ -847,9 +905,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Transactional(rollbackFor = Exception.class)
     public void addGoodsBatch(List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO> list,BaseDTO baseDTO) {
         // TODO 数据校验
-
+        if(list==null||list.size()<=0){
+            throw new BusinessException("excel内容为空");
+        }
         //同一商品为一组
-        Map<String,List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO>> listMap = list.parallelStream()
+        Map<String,List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO>> listMap = list.parallelStream().filter(item->StringUtils.isNotBlank(item.getGoodsNo()))
         .collect(Collectors.groupingBy(PCMerchGoodsInfoDTO.ExcelGoodsDataETO::getGoodsNo));
 
         for (String keys : listMap.keySet()){
@@ -1439,7 +1499,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     private  String getImage(String images){
-        if (images !=null){
+        if (images !=null&&!images.equals("{}")){
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)){
                 return null;
@@ -1625,7 +1685,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     private void checkAddGoodsData(PCMerchGoodsInfoDTO.AddGoodsETO eto){
-        Integer shopState = shopRpc.innerShopState(eto.getJwtShopId());
+        Integer shopState = shopRpc.innerShopState(eto.getShopId());
         if (ObjectUtils.isEmpty(shopState) || shopState.equals(ShopStateEnum.关闭状态.getCode())){
             throw new BusinessException("店铺未开通！！");
         }
@@ -1698,9 +1758,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (StringUtils.isEmpty(eto.getTemplateId())){
             throw new BusinessException("请选择运费模板");
         }
-        if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.C商城.getCode())) && StringUtils.isBlank(eto.getShopNavigationId())){
-            throw new BusinessException("请选择店铺2b自定义类目");
-        }
+//        if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.C商城.getCode())) && StringUtils.isBlank(eto.getShopNavigationId())){
+//            throw new BusinessException("请选择店铺2b自定义类目");
+//        }
         if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城.getCode())) && StringUtils.isBlank(eto.getShop2cNavigationId())){
             throw new BusinessException("请选择店铺2c自定义类目");
         }

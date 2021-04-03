@@ -58,6 +58,15 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         @ApiModelProperty(value = "订单支付金额", hidden = true)
         BigDecimal shopProductAmount;
 
+        @ApiModelProperty(value = "积分商品，用户分配的现金支付金额")
+        private BigDecimal allocatedCashAmount;
+
+        @ApiModelProperty(value = "积分商品，用户分配的积分支付金额")
+        private BigDecimal allocatedPointAmount;
+
+        @ApiModelProperty("是否需要发票")
+        private Boolean isInvoice;
+
         @ApiModelProperty(value = "营销活动", hidden = true)
         private CommonMarketVO.ActiveVO marketActiveVO;
 
@@ -88,13 +97,13 @@ public abstract class BbcTradeBuildDTO implements Serializable {
     @NoArgsConstructor
     public static class cartIdsDTO extends BaseDTO {
 
-        @ApiModelProperty(value = "购物车ID数组")
+        @ApiModelProperty(value = "购物车ID数组（购物车ID数组和sku商品Id二选一填写，分别代表购物车和立即购买）")
         private List<String> cartIds;
 
         @ApiModelProperty(value = "配送类型")
         private Integer deliveryType;
 
-        @ApiModelProperty(value = "sku商品Id")
+        @ApiModelProperty(value = "sku商品Id（购物车ID数组和sku商品Id二选一填写，分别代表购物车和立即购买）")
         private String goodsSkuId;
 
         @ApiModelProperty(value = "购买数量")

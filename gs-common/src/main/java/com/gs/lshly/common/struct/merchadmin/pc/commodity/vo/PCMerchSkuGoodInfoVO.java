@@ -83,6 +83,9 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
 
 
 
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
     }
 
     @Data

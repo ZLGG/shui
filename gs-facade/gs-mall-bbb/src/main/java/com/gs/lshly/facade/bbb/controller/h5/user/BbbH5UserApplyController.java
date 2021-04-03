@@ -1,5 +1,18 @@
 package com.gs.lshly.facade.bbb.controller.h5.user;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.enums.BusinessTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -8,23 +21,17 @@ import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.PCBbbUserUser2bApplyLogQTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.PCBbbUserUser2bApplyLogVO;
-import com.gs.lshly.common.struct.common.dto.CommonUserUser2bApplyDTO;
-import com.gs.lshly.common.struct.common.vo.CommonUserUser2bApplyVO;
 import com.gs.lshly.common.struct.common.CorpTypeDictDTO;
 import com.gs.lshly.common.struct.common.CorpTypeDictVO;
 import com.gs.lshly.common.struct.common.LegalDictVO;
+import com.gs.lshly.common.struct.common.dto.CommonUserUser2bApplyDTO;
+import com.gs.lshly.common.struct.common.vo.CommonUserUser2bApplyVO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.CorpTypeDictQTO;
-import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserUser2bApplyRpc;
 import com.gs.lshly.rpc.api.common.ICorpTypeDictRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 /**
 * <p>

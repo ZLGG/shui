@@ -1,18 +1,17 @@
 package com.gs.lshly.biz.support.commodity.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -199,4 +198,58 @@ public class GoodsInfo extends Model {
     private Boolean flag;
 
 
+    /**
+     * 积分价格
+     */
+    private BigDecimal pointPrice;
+    /**
+     * 办理备注
+     */
+    private String remarks;
+    /**
+     * 是否是积分商品
+     */
+    private Boolean isPointGood;
+    /**
+     * 是否是in会员礼品
+     */
+    private Boolean isInMemberGift;
+    /**
+     * in会员积分价格
+     */
+    private BigDecimal inMemberPointPrice;
+    /**
+     * 出售类型（0普通，1活动）
+     */
+    private Integer saleType;
+
+    /**
+     * 信天游产品号
+     */
+    private Integer thirdProductId;
+
+    /**
+     * 销售数量（临时字段）
+     */
+    private Integer saleQuantity;
+
+    /**
+     * 兑换类型（虚拟，实物）
+     */
+    private Integer exchangeType;
+
+    /**
+     * 点击量（临时）
+     */
+    private Integer clickVolume;
+
+    /**
+     * 视频地址
+     */
+    private String videoUrl;
+
+    /**
+     * in会员优惠券类型（20,30,50,99,200）
+     */
+    private Integer inCouponType;
 }

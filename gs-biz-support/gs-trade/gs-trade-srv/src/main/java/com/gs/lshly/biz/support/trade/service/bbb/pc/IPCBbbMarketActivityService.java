@@ -47,4 +47,11 @@ public interface IPCBbbMarketActivityService {
 
     List<PCBbbMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto);
 
+    /**
+     * 秒杀列表
+     * @param dto
+     * @return
+     */
+    PCBbbMarketActivityVO.FlashsaleVO listFlashsale(BaseDTO dto);
+
 }

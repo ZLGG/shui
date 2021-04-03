@@ -1,7 +1,18 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradePay;
@@ -23,16 +34,6 @@ import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * <p>
@@ -236,7 +237,7 @@ public class TradePayServiceImpl implements ITradePayService {
         List<TradePayVO.RelationDetailExport> listVO=tradePays.parallelStream().map(i->{
             TradePayVO.RelationDetailExport relationDetailVO = new TradePayVO.RelationDetailExport();
             BeanUtils.copyProperties(i,relationDetailVO);
-            relationDetailVO.setPayType(EnumUtil.getText(i.getPayType(),TradePayTypeEnum.class));
+            relationDetailVO.setPayType(TradePayTypeEnum.getEnum(i.getPayType()).getRemark());
             relationDetailVO.setPayState(EnumUtil.getText(i.getPayState(),TradePayStateEnum.class));
             if (relationDetailVO.getPayState().equals(TradePayStateEnum.已支付)){
                 relationDetailVO.setFinishDate(i.getUdate());
@@ -273,7 +274,7 @@ public class TradePayServiceImpl implements ITradePayService {
                 if (ObjectUtils.isNotEmpty(detailVO)){
                     listVO.setShopName(detailVO.getShopName());
                 }
-                listVO.setPayType(EnumUtil.getText(e.getPayType(), TradePayTypeEnum.class));
+                listVO.setPayType(TradePayTypeEnum.getEnum(e.getPayType()).getRemark());
                 listVO.setPayState(EnumUtil.getText(e.getPayState(),TradePayStateEnum.class));
                 return listVO;
             }).collect(Collectors.toList());

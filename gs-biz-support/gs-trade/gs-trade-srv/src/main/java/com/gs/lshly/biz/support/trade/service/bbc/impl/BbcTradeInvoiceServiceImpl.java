@@ -1,20 +1,20 @@
 package com.gs.lshly.biz.support.trade.service.bbc.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeInvoice;
 import com.gs.lshly.biz.support.trade.repository.ITradeInvoiceRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeInvoiceService;
-import com.gs.lshly.common.enums.TradeInvoiceEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeInvoiceDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeInvoiceQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeInvoiceVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 
 

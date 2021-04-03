@@ -1,10 +1,12 @@
 package com.gs.lshly.rpc.api.bbc.commodity;
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
-
-import java.util.List;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 
 /**
 *
@@ -14,10 +16,21 @@ import java.util.List;
 public interface IBbcGoodsCategoryRpc {
 
     /**
-     * 查询所有分类列表
+     * 查询分类列表
      * @return
      */
     List<BbcGoodsCategoryVO.CategoryTreeVO> listGoodsCategory();
 
+    List<BbcGoodsCategoryVO.CategoryTreeVO> listGoodsCategory(BbcGoodsCategoryQTO.ListQTO listQTO);
+    
+    /**
+     * 查询2B商城商品分类列表以及菜单列表
+     * @return
+     */
+    BbcGoodsCategoryVO.CategoryMenuVO getCategoryMenuVO(BbcGoodsCategoryQTO.QTO qto);
 
+
+    PageData<GoodsBrandVO.ListVO> brandList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO);
+
+    PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO);
 }

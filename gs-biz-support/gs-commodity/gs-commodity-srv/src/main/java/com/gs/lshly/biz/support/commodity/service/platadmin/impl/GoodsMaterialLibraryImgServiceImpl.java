@@ -1,8 +1,9 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
 
-import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsMaterialLibraryImgService;
 import org.springframework.stereotype.Component;
+
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsMaterialLibraryImgService;
 
 /**
 * <p>

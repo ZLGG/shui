@@ -35,7 +35,6 @@ public abstract class GoodsInfoVO implements Serializable {
         @ApiModelProperty("店铺id")
         private String shopId;
 
-
         @ApiModelProperty("品牌id")
         private String brandId;
 
@@ -127,6 +126,30 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "发布时间")
         private LocalDateTime publishTime;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
 
     }
 
@@ -227,6 +250,31 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("商品售价")
         private BigDecimal salePrice;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
     }
 
     @Data

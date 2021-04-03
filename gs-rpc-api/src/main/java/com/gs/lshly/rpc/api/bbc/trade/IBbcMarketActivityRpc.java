@@ -1,15 +1,16 @@
 package com.gs.lshly.rpc.api.bbc.trade;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketActivityVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
-
-import java.util.List;
 
 public interface IBbcMarketActivityRpc {
     ResponseData<BbcMarketActivityVO.ListVO> activityList(BbcMarketActivityDTO.DTO dto);
@@ -43,4 +44,13 @@ public interface IBbcMarketActivityRpc {
     List<BbcMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto);
 
     PageData<BbcMarketActivityVO.activityListPageVO> activityListPage(BbcMarketActivityQTO.QTO qto);
+    
+    BbcSiteTopicVO.TopicVO listFlashsale(BaseDTO dto);
+    
+    /**
+     * 分页查询秒杀数据
+     * @param qto
+     * @return
+     */
+    PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(BbcMarketActivityQTO.QTO qto);
 }

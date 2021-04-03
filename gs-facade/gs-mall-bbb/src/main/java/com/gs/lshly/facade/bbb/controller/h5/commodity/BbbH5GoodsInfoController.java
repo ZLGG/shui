@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 */
 @RestController
 @RequestMapping("/bbb/h5/goodsInfo")
-@Api(tags = "2B商城商品信息管理管理")
+@Api(tags = "2B商城商品信息管理管理-V1.1.0")
 public class BbbH5GoodsInfoController {
 
     @DubboReference
@@ -32,7 +32,7 @@ public class BbbH5GoodsInfoController {
     @DubboReference
     private IBbbH5ShopRpc bbcShopRpc;
 
-    @ApiOperation("2B商城商品信息管理列表")
+    @ApiOperation("2B商城商品信息管理列表-V1.1.0")
     @PostMapping("")
     public ResponseData<PageData<BbbH5GoodsInfoVO.GoodsListVO>> pageDataResponseData(@RequestBody  BbbH5GoodsInfoQTO.GoodsListByCategoryQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsListVO(qto));
@@ -45,7 +45,7 @@ public class BbbH5GoodsInfoController {
     }
 
 
-    @ApiOperation("2B商城商品信息管理详情")
+    @ApiOperation("2B商城商品信息管理详情-V1.1.0")
     @GetMapping(value = "detail/{id}")
     public ResponseData<BbbH5GoodsInfoVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(bbcGoodsInfoRpc.detailGoodsInfo(new BbbH5GoodsInfoDTO.IdDTO(id)));
@@ -59,19 +59,19 @@ public class BbbH5GoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.listSpecVOs(dto));
     }
 
-    @ApiOperation("根据商品所选规格信息获取sku信息")
+    @ApiOperation("根据商品所选规格信息获取sku信息-V1.1.0")
     @PostMapping(value = "getSkuVO")
     public ResponseData<BbbH5SkuGoodInfoVO.SkuVO> getSkuVO(@RequestBody BbbH5GoodsInfoQTO.GoodsSkuQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getSkuVO(qto));
     }
 
-    @ApiOperation("获取推荐商品列表")
+    @ApiOperation("获取推荐商品列表-V1.1.0")
     @PostMapping(value = "getRecommendGoodsList")
     public ResponseData<PageData<BbbH5GoodsInfoVO.GoodsListVO>> getRecommendGoodsList(@RequestBody BbbH5GoodsInfoQTO.GoodsListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getRecommendGoodsList(qto));
     }
 
-    @ApiOperation("通过一级类目查询商品（快捷下单）")
+    @ApiOperation("通过一级类目查询商品（快捷下单）-V1.1.0")
     @PostMapping(value = "getQuickOrder")
     public ResponseData<PageData<BbbH5GoodsInfoVO.GoodsListVO>> getQuickOrder(@RequestBody BbbH5GoodsInfoQTO.QuickOrderQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getQuickOrderGoodsList(qto));

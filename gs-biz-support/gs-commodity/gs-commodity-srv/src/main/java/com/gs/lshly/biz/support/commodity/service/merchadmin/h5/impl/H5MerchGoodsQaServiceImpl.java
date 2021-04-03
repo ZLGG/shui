@@ -1,10 +1,20 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.h5.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsQa;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsQaMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodsQaView;
@@ -19,17 +29,8 @@ import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.merchadmin.h5.commodity.dto.H5MerchGoodsQaDTO;
 import com.gs.lshly.common.struct.merchadmin.h5.commodity.qto.H5MerchGoodsQaQTO;
 import com.gs.lshly.common.struct.merchadmin.h5.commodity.vo.H5MerchGoodsQaVO;
-import com.gs.lshly.rpc.api.common.ICommonShopRpc;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 
 
 /**
@@ -125,7 +126,7 @@ public class H5MerchGoodsQaServiceImpl implements IH5MerchGoodsQaService {
     }
 
     private  String getImage(String images){
-        if (images !=null){
+        if (images !=null&&!images.equals("{}")){
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)){
                 return null;

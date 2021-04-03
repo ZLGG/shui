@@ -49,8 +49,14 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         @ApiModelProperty("商品副标题")
         private String goodsTitle;
 
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
         @ApiModelProperty("商品价格")
         private BigDecimal goodsPrice;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal goodsPointPrice;
 
         @ApiModelProperty("SKU-ID")
         private String skuId;
@@ -70,6 +76,15 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         @ApiModelProperty("店铺ID")
         @JsonIgnore
         private String shopId;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private BigDecimal inMemberPointPrice;
     }
 
     @Data
@@ -109,9 +124,14 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         @ApiModelProperty("数量")
         private Integer quantity;
 
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
         @ApiModelProperty("销售价")
         private BigDecimal salePrice;
 
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
     }
 
     @Data
@@ -184,6 +204,31 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         String goodsName;
 
         String goodsTitle;
+
+        /**
+         * 是否是积分商品
+         */
+        private Boolean isPointGood;
+
+        /**
+         * 积分价格
+         */
+        private BigDecimal pointPrice;
+
+        /**
+         * 兑换类型（虚拟，实物）
+         */
+        private Integer exchangeType;
+
+        /**
+         * 是否是in会员礼品
+         */
+        private Boolean isInMemberGift;
+
+        /**
+         * in会员积分价格
+         */
+        private Double inMemberPointPrice;
 
     }
 }

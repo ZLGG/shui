@@ -1,17 +1,19 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbc;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
-import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
-import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 
 /**
 *
@@ -20,7 +22,9 @@ import java.util.List;
 */
 @DubboService
 public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
-    @Autowired
+    
+	
+	@Autowired
     private IBbcGoodsInfoService  bbcGoodsInfoService;
 
 
@@ -96,5 +100,14 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
         return bbcGoodsInfoService.getInnerSimpleServiceVO(goodsIds);
     }
 
+	@Override
+	public BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto) {
+		return bbcGoodsInfoService.pageInMemberGoods(qto);
+	}
+
+    @Override
+    public PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
+        return bbcGoodsInfoService.queryInVIPSpecialAreaList(qto);
+    }
 
 }

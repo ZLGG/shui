@@ -17,6 +17,27 @@ import java.util.List;
 * @since 2020-10-23
 */
 public abstract class BbcGoodsInfoVO implements Serializable {
+	
+	@Data
+    @ApiModel("BbcGoodsInfoVO.InMemberGoodsVO")
+    @Accessors(chain = true)
+    public static class InMemberGoodsVO implements Serializable{
+		
+		@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("标题")
+        private String name;
+        
+        @ApiModelProperty("商品内容")
+        private PageData<DetailVO> list;
+        
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+        
+        @ApiModelProperty("积分值")
+        private Long telecomsIntegral;
+	}
 
     @Data
     @ApiModel("BbcGoodsInfoVO.ListVO")
@@ -186,6 +207,33 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "idx顺序",hidden = true)
         private Integer idx;
 
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
 
  }
     @Data
@@ -263,6 +311,33 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("单规格的库存")
         private Integer singleSkuStock;
 
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
 
 
     }
@@ -316,6 +391,38 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("state 0=失败 1=成功")
         private Integer state;
+
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoVO.InVIPSpecialAreaVO")
+    public static class InVIPSpecialAreaVO implements Serializable{
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty("商品原价")
+        private BigDecimal oldPrice;
+
+        @ApiModelProperty("移动端商品描述")
+        private String goodsH5Desc;
+
+        @ApiModelProperty("可抵扣价格")
+        private Integer inCouponType;
+
+        @ApiModelProperty("in会员券后价格")
+        private BigDecimal inDiscountedPrice;
 
     }
 
@@ -403,6 +510,25 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("条形码")
         private String barcode;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private BigDecimal inMemberPointPrice;
+
+        @ApiModelProperty("划线价")
+        private BigDecimal oldPrice;
+        
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+        
 
     }
 

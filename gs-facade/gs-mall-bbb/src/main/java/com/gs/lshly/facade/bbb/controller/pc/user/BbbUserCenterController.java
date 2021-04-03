@@ -38,7 +38,7 @@ public class BbbUserCenterController {
     @DubboReference
     private IBbbUserCardRpc bbbUserCardRpc;
 
-    @ApiOperation("我的会员信息")
+    @ApiOperation(value = "我的会员信息-v1.1.0",response = BbbUserVO.DetailVO.class)
     @GetMapping("/getUserInfo")
     public ResponseData<BbbUserVO.DetailVO> getUserInfo(BbbUserQTO.QTO qto) {
         return ResponseData.data(bbbUserRpc.getUserInfo(qto));
@@ -51,7 +51,7 @@ public class BbbUserCenterController {
     }
 
 
-    @ApiOperation("获取用户类型")
+    @ApiOperation("获取用户类型-v1.1.0")
     @PostMapping("/userType")
     public ResponseData<BbbUserVO.UserTypeVO> userType() {
         return ResponseData.data(bbbUserRpc.userType(new BaseDTO()));

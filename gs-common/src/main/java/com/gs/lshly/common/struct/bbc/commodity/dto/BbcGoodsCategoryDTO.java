@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.bbc.commodity.dto;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -58,6 +59,15 @@ public abstract class BbcGoodsCategoryDTO implements Serializable {
 
         @ApiModelProperty(value = "商品类别id")
         private String id;
+    }
+    @Data
+    @ApiModel("BbcGoodsCategoryDTO.ListDTO")
+    @Accessors(chain = true)
+    public static class ListDTO extends BaseDTO {
+        @ApiModelProperty("商品类别父id")
+        private String parentId;
+        @ApiModelProperty("查询所有子节点")
+        private Boolean showAll = false;
     }
 
 

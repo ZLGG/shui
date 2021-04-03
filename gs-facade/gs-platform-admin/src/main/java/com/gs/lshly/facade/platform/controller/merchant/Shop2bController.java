@@ -114,7 +114,7 @@ public class Shop2bController {
         return ResponseData.data(shopRpc.selfShopList(qto));
     }
 
-    @ApiOperation("自营店详情")
+    @ApiOperation("自营店详情-v1.1.0")
     @GetMapping(value = "/selfShopDetails/{id}")
     @Func(code="view", name="查")
     public ResponseData<ShopVO.SelfShopDetailVO> selfShopDetails(@PathVariable String id) {

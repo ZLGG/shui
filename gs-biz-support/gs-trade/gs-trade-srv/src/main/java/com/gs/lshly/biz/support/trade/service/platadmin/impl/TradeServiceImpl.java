@@ -1,13 +1,34 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.repository.*;
+import com.gs.lshly.biz.support.trade.entity.Trade;
+import com.gs.lshly.biz.support.trade.entity.TradeCancel;
+import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
+import com.gs.lshly.biz.support.trade.entity.TradeGoods;
+import com.gs.lshly.biz.support.trade.entity.TradePay;
+import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeService;
-import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
+import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
+import com.gs.lshly.common.enums.TradePayTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.enums.TradeTimeOutCancelEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
@@ -16,10 +37,8 @@ import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonUserVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
-import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayQTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradePayVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -28,14 +47,6 @@ import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.lakala.boss.api.common.Common;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
 * <p>
@@ -283,7 +294,7 @@ public class TradeServiceImpl implements ITradeService {
                 if (trade.getTradeState()==10){
                     listVOExport.setPayType("未支付");
                 }else {
-                    listVOExport.setPayType(EnumUtil.getText(trade.getPayType(), TradePayTypeEnum.class));
+                    listVOExport.setPayType(TradePayTypeEnum.getEnum(trade.getPayType()).getRemark());
                 }
                 listVOExport.setDeliveryType(EnumUtil.getText(trade.getDeliveryType(), TradeDeliveryTypeEnum.class));
                 listVOExport.setTimeoutCancel(EnumUtil.getText(trade.getTimeoutCancel(), TradeTimeOutCancelEnum.class));

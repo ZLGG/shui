@@ -20,6 +20,49 @@ import java.util.List;
 */
 public abstract class PCBbbMarketActivityVO implements Serializable {
 
+	@Data
+    @ApiModel("PCBbbMarketActivityVO.FlashsaleVO")
+    @Accessors(chain = true)
+    public static class FlashsaleVO implements Serializable{
+    	
+		@ApiModelProperty("id")
+    	private String id;
+		
+		@ApiModelProperty("是否有秒杀活动 0：否  1：是")
+    	private Integer status;
+		
+    	@ApiModelProperty("秒杀标题")
+    	private String name;
+    	
+    	@ApiModelProperty("产品列表")
+    	private PageData<PCBbbMarketActivityVO.activityGoodsVO> list;
+    	
+    	@ApiModelProperty("活动开始时间")
+    	private LocalDateTime activityStartTime;
+    }
+    
+    @Data
+    @ApiModel("PCBbbMarketActivityVO.FlashsaleGoodsVO")
+    @Accessors(chain = true)
+    public static class FlashsaleGoodsVO implements Serializable{
+    	
+    	@ApiModelProperty("id")
+    	private String id;
+    	
+    	@ApiModelProperty("商品名称")
+    	private String goodsName;
+    	
+    	@ApiModelProperty("秒杀价")
+    	private BigDecimal salePrice;
+    	
+    	@ApiModelProperty("原价")
+    	private BigDecimal oldPrice;
+    	
+    	@ApiModelProperty("商品图片")
+    	private String goodsImage;
+
+    }
+    
     @Data
     @ApiModel("PCBbbMarketActivityVO.ListVO")
     @Accessors(chain = true)

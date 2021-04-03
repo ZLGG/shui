@@ -1,12 +1,40 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.repository.*;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsPosTemporary;
+import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
+import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsPosTemporaryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
+import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsPosTemporaryService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -16,32 +44,22 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.*;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsPosTemporaryDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsPosTemporaryQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.*;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsAttributeInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsPosTemporaryVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsSpecInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
 import com.gs.lshly.common.utils.BASE64DecodedMultipartFileUtil;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.oss.service.IFileService;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Decoder;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import sun.misc.BASE64Decoder;
 
 
 /**
@@ -552,7 +570,7 @@ public class PCMerchGoodsPosTemporaryServiceImpl implements IPCMerchGoodsPosTemp
     }
 
     private  String getSkuImage(String images){
-        if (images !=null){
+        if (images !=null&&!images.equals("{}")){
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)){
                 return null;

@@ -1,7 +1,12 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsCategoryAttribute;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryAttributeRepository;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryAttributeService;
@@ -11,10 +16,6 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryAttribute
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsCategoryAttributeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryAttributeVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 /**
 * <p>

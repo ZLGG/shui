@@ -5,6 +5,8 @@ import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
+import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
@@ -15,6 +17,7 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.middleware.log.Log;
 import com.gs.lshly.middleware.log.aop.LogAspect;
 import com.gs.lshly.middleware.wx.WxMaConfiguration;
+import com.gs.lshly.rpc.api.bbb.pc.user.IBbbUserAuthRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,13 +37,15 @@ import javax.validation.Valid;
 */
 @RestController
 @RequestMapping("/bbcAuth")
-@Api(tags = "会员登录注册")
+@Api(tags = "会员登录注册-v1.1.0")
 @Slf4j
 public class BbcUserAuthController {
 
     @DubboReference
     private IBbcUserAuthRpc bbcUserAuthRpc;
 
+    @DubboReference
+    private IBbbUserAuthRpc bbbUserAuthRpc;
 
     @ApiOperation("用户获取手机验证码")
     @PostMapping("/getPhoneCheck")
@@ -56,10 +61,16 @@ public class BbcUserAuthController {
         BbcUserVO.LoginVO vo = bbcUserAuthRpc.login(dto);
         setLogAspect(vo);
         return ResponseData.data(vo);
+//        BbbUserVO.LoginVO vo = bbbUserAuthRpc.login(dto);
+//        return ResponseData.data(vo);
     }
 
-
-
+    @ApiOperation("手机号注册(注册完成就已经登录)-v1.1.0")
+    @PostMapping("/register")
+    public ResponseData<String> register(@Valid @RequestBody BbbUserDTO.RegisterETO dto) {
+        return ResponseData.data(bbbUserAuthRpc.register(dto));
+    }
+    
     @GetMapping("/wxminiapp/{appid}/openid")
     @ApiOperation(value = "1,微信小程序通过code获取openid")
     public ResponseData<BbcUserVO.LoginVO> login(@PathVariable String appid, String code) {

@@ -65,6 +65,8 @@ public class BbcUserServiceImpl implements IBbcUserService {
         detailVO.setHeadImg(user.getHeadImg());
         detailVO.setPhone(user.getPhone());
         detailVO.setCountCard(bbcTradeRpc.myMerchantCard(qto));
+        BeanUtils.copyProperties(user,detailVO);
+        detailVO.setCountCard(10);
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(qto.getJwtUserId());
         detailVO.setTradeStateList( bbcTradeRpc.tradeStateCount(idDTO));

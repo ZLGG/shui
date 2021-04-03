@@ -1,20 +1,19 @@
 package com.gs.lshly.facade.bbb.controller.h5.foundation;
 
-import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.bbb.h5.foundation.qto.BbbH5SiteBroadQTO;
-import com.gs.lshly.common.struct.bbb.h5.foundation.vo.BbbH5SiteBroadVO;
-import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteBroadQTO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteBroadVO;
-import com.gs.lshly.rpc.api.bbb.h5.foundation.IBbbH5SiteBroadRpc;
-import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteBroadRpc;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbb.h5.foundation.qto.BbbH5SiteBroadQTO;
+import com.gs.lshly.common.struct.bbb.h5.foundation.vo.BbbH5SiteBroadVO;
+import com.gs.lshly.rpc.api.bbb.h5.foundation.IBbbH5SiteBroadRpc;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
 * <p>

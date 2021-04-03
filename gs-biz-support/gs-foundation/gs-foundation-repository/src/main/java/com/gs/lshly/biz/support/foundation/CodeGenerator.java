@@ -62,9 +62,9 @@ public class CodeGenerator {
         packageConfig.setController("facade.platadmin.controller.platadmin");
 
         //路径G
-        globalConfig.setOutputDir("D:/GenCode/lshly/" + "/src/main/java");
+        globalConfig.setOutputDir("C:/works/program/citydo/gs-mall-gitlab/gs-biz-support/gs-foundation/gs-foundation-repository/src/main/java");
         //表名
-        strategy.setInclude("gs_site");
+        strategy.setInclude("gs_message");
         // 作者
         globalConfig.setAuthor("tangjiemin");
 

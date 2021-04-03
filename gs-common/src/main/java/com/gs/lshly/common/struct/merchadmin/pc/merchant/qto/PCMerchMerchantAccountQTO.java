@@ -17,7 +17,12 @@ public abstract class PCMerchMerchantAccountQTO implements Serializable {
     @ApiModel("PCMerchMerchantAccountQTO.QTO")
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
-
+        @ApiModelProperty("商户名称")
+        private String name;
+        @ApiModelProperty("商户类型（10=积分商户 20=普通商户）")
+        private Integer type;
+        @ApiModelProperty("商户属地")
+        private String merAddress;
     }
 
     @Data

@@ -1,11 +1,24 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsPosLog;
 import com.gs.lshly.biz.support.commodity.entity.GoodsPosSkuLog;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsPosLogRepository;
@@ -20,16 +33,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsPosLog
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsPosLogVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsPosSkuLogVO;
 import com.gs.lshly.common.utils.ListUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -239,7 +243,7 @@ public class PCMerchGoodsPosLogServiceImpl implements IPCMerchGoodsPosLogService
     }
 
     private  String getImage(String skuImages){
-        if (skuImages !=null){
+        if (skuImages !=null&&!skuImages.equals("{}")){
             JSONArray arr = JSONArray.parseArray(skuImages);
             if (ObjectUtils.isEmpty(arr)){
                 return "";

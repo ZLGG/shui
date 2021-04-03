@@ -3,6 +3,7 @@ package com.gs.lshly.middleware.oss.service.imp;
 import cn.hutool.core.io.FileUtil;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.CannedAccessControlList;
+import com.aliyun.oss.model.PutObjectResult;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
 import com.gs.lshly.middleware.oss.ConstantPropertiesUtil;
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -162,6 +164,39 @@ public class LocalFileServiceImpl implements IFileService {
             throw new BusinessException("上传异常");
         }
         return detailVO;
+    }
+
+    @Override
+    public String uploadVideo(MultipartFile file) {
+        String endPoint = ConstantPropertiesUtil.END_POINT;
+        String accessKeyId = ConstantPropertiesUtil.ACCESS_KEY_ID;
+        String accessKeySecret = ConstantPropertiesUtil.ACCESS_KEY_SECRET;
+        String bucketName = ConstantPropertiesUtil.LOCAL_BUCKET_NAME;
+        String fileHost = ConstantPropertiesUtil.LOCAL_FILE_HOST;
+        String originalFilename = file.getOriginalFilename();
+        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        Random random = new Random();
+        String name = "Video/"+random.nextInt(10000) + System.currentTimeMillis() + substring;
+        try {
+            InputStream stream = file.getInputStream();
+            String filename = System.currentTimeMillis() + file.getOriginalFilename();
+            //判断oss实例是否存在：如果不存在则创建，如果存在则获取
+            OSSClient client = new OSSClient(endPoint, accessKeyId, accessKeySecret);
+            if (!client.doesBucketExist(bucketName)) {
+                //创建bucket
+                client.createBucket(bucketName);
+                //设置oss实例的访问权限：公共读
+                client.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+            }
+            String fileUrl = fileHost + "/" + name;
+            PutObjectResult result = client.putObject(bucketName, fileUrl, stream);
+            client.shutdown();
+            String uploadUrl = "http://" + bucketName + "." + ConstantPropertiesUtil.END_POINT + "/" + fileUrl;
+            return uploadUrl;
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new BusinessException("视频上传失败");
+        }
     }
 
     private static InputStream getUrlStream(String url) {

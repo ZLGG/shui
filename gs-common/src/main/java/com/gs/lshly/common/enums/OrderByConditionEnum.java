@@ -7,7 +7,9 @@ package com.gs.lshly.common.enums;
 public enum OrderByConditionEnum implements  EnumMessage{
     销售(10,"销量"),
     评价(20,"评价"),
-    价格(30,"价格");
+    价格(30,"价格"),
+    兑换积分(40,"兑换积分"),
+    上架时间(50,"上架时间");
 
     private Integer code;
     private String remark;

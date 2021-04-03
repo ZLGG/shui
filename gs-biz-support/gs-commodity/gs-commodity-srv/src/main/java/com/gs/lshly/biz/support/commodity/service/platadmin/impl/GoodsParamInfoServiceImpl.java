@@ -1,5 +1,9 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.commodity.entity.GoodsParamInfo;
@@ -10,9 +14,6 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsParamInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsParamInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsParamInfoVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
 * <p>

@@ -6,6 +6,7 @@ import com.gs.lshly.common.struct.bbb.pc.merchant.vo.PCBbbMerchantUserTypeVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public abstract class BbbUserVO implements Serializable {
     @ApiModel("BbbUserVO.EditorUserInfoVO")
     public static class EditorUserInfoVO implements Serializable {
 
-               @ApiModelProperty("昵称")
+        @ApiModelProperty("昵称")
         private String nick;
 
         @ApiModelProperty("性别[10=男 20=女 30=保密]")
@@ -91,6 +92,23 @@ public abstract class BbbUserVO implements Serializable {
         @ApiModelProperty("微信openid")
         private String wxOpenid;
 
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+
+        @ApiModelProperty("电信星级")
+        private String telecomsLevel;
+
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+
+        @ApiModelProperty("年底过期积分（电信）")
+        private Integer telecomsPass;
+
+        @ApiModelProperty("定向积分")
+        private Integer directionIntegral;
     }
 
     @Data
@@ -164,6 +182,11 @@ public abstract class BbbUserVO implements Serializable {
         @ApiModelProperty("会员类型[10=2b 20=2c]")
         private Integer userType;
 
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
     }
 
 

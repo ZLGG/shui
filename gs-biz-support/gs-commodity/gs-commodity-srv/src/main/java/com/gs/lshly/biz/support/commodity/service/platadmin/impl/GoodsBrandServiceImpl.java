@@ -1,36 +1,41 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
-import com.gs.lshly.biz.support.commodity.repository.*;
-import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
-import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsBrandDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsBrandVO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsLabelDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
-import com.gs.lshly.common.utils.ListUtil;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.CategoryBrand;
+import com.gs.lshly.biz.support.commodity.entity.GoodsBrand;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsMaterialLibrary;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
+import com.gs.lshly.biz.support.commodity.repository.ICategoryBrandRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsBrandRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsMaterialLibraryRepository;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
+import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 
-import static java.util.stream.Collectors.toList;
+import cn.hutool.core.bean.BeanUtil;
 
 /**
  * <p>

@@ -56,4 +56,9 @@ public interface IBbbUserService {
     BbbUserVO.InnerUserInfoVO innerUserVo(BaseDTO dto);
 
     void getEmailNum(BbbUserDTO.BandEmailDTO qto);
+    /**
+     * 授权信息
+     * @return
+     */
+    String customerAuthorize(BaseDTO dto);
 }

@@ -1,7 +1,12 @@
 package com.gs.lshly.biz.support.trade.service.bbc.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeCancel;
 import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeCancelService;
@@ -11,10 +16,6 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeCancelQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeCancelVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 /**
 * <p>

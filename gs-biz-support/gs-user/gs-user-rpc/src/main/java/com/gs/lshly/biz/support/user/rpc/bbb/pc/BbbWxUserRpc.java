@@ -77,7 +77,13 @@ public class BbbWxUserRpc implements IBbbWxUserRpc {
         paramsMap.put("action_name", QR_SCENE);
         paramsMap.put("action_info", mapMap);
         String data = new Gson().toJson(paramsMap);
-        String result = HttpsUtil.doPost(create_ticket_path + "?access_token="+getToken(), data);
+        String result = "";
+		try {
+			result = HttpsUtil.doPost(create_ticket_path + "?access_token="+getToken(), data);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         JSONObject json = JSON.parseObject(result);
 
         String ticket = json.getString("ticket");

@@ -31,26 +31,26 @@ public class PCMerchMerchantAccountController {
     @DubboReference
     private IPCMerchMerchantAccountRpc pcMerchMerchantAccountRpc;
 
-    @ApiOperation("商家帐号列表")
+    @ApiOperation("商家帐号列表-v1.1.0")
     @GetMapping("")
     public ResponseData<PageData<PCMerchMerchantAccountVO.ListVO>> list(PCMerchMerchantAccountQTO.QTO qto) {
         return ResponseData.data(pcMerchMerchantAccountRpc.pageData(qto));
     }
 
-    @ApiOperation("商家帐号详情")
+    @ApiOperation("商家帐号详情-v1.1.0")
     @GetMapping(value = "/{id}")
     public ResponseData<PCMerchMerchantAccountVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(pcMerchMerchantAccountRpc.detailMerchantAccount(new PCMerchMerchantAccountDTO.IdDTO(id)));
     }
 
-    @ApiOperation("新增商家帐号")
+    @ApiOperation("新增商家帐号-v1.1.0")
     @PostMapping("")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchMerchantAccountDTO.AddDTO dto) {
             pcMerchMerchantAccountRpc.addMerchantAccount(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("删除商家帐号")
+    @ApiOperation("删除商家帐号-v1.1.0")
     @DeleteMapping(value = "/{id}")
     public ResponseData<Void> delete(@PathVariable String id) {
         PCMerchMerchantAccountDTO.IdDTO dto = new PCMerchMerchantAccountDTO.IdDTO(id);

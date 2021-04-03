@@ -1,29 +1,78 @@
 package com.gs.lshly.facade.platform.controller.foundation;
 
-import cn.hutool.core.util.ObjectUtil;
+
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.enums.SiteNavigationEnum;
+import com.gs.lshly.common.enums.SitePCShowEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.platadmin.foundation.dto.*;
-import com.gs.lshly.common.struct.platadmin.foundation.qto.*;
-import com.gs.lshly.common.struct.platadmin.foundation.vo.*;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteActiveDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteAdvertDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteBannerDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteBottomArticleDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteFloorDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteNavigationDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteNoticeDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteTopicDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteVideoDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteBannerQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteBottomArticleQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteFloorQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteNavigationQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteNoticeQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteTopicQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteVideoQTO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteActiveVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteAdvertVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteBannerVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteBottomArticleVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteFloorVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteNavigationVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteNoticeVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteTopicVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteVideoVO;
 import com.gs.lshly.middleware.auth.rbac.Func;
 import com.gs.lshly.middleware.auth.rbac.Module;
-import com.gs.lshly.rpc.api.platadmin.foundation.*;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteActiveRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteAdvertRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteBannerRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteBottomArticleRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteBroadRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteFloorRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteNavigationRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteNoticeRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteTopicRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteVideoRpc;
+
+import cn.hutool.core.util.ObjectUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.Valid;
-import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/platform/bbb/pcSite")
-@Api(tags = "站点配置(BBB-PC)",description = " ")
+@Api(tags = "站点配置(BBB-PC)-v1.1.0",description = " ")
 @Module(code = "configB2BPc", parent = "site", name = "B2BPC配置", index = 2)
 public class SiteB2bPcController {
 
@@ -49,8 +98,13 @@ public class SiteB2bPcController {
     private ISiteBottomArticleRpc siteBottomArticleRpc;
 
     @DubboReference
+    private ISiteNoticeRpc siteNoticeRpc;
+    
+    @DubboReference
+    private ISiteTopicRpc siteTopicRpc;
+    
+    @DubboReference
     private ISiteActiveRpc siteActiveRpc;
-
 
     @ApiOperation("顶部链接列表")
     @GetMapping("/topList")
@@ -228,6 +282,98 @@ public class SiteB2bPcController {
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
+    @ApiOperation("公告配置列表-v1.1.0")
+    @GetMapping("/noticeList")
+    @Func(code="view", name="查")
+    public ResponseData<PageData<SiteNoticeVO.PCListVO>> listNotice(SiteNoticeQTO.QTO qto) {
+        qto.setTerminal(TerminalEnum.BBC.getCode());//2c
+        log.info("[listNotice][request][SiteNoticeQTO.QTO qto=>{}]",qto.toString());
+        return ResponseData.data(siteNoticeRpc.pageData(qto));
+    }
+    
+    
+    @ApiOperation("公告配置编辑-v1.1.0")
+    @PutMapping(value = "/noticeEditor")
+    @Func(code="edit", name="改")
+    public ResponseData<Void> editorNotice(@Valid @RequestBody SiteNoticeDTO.ETO eto) {
+    	eto.setTerminal(TerminalEnum.BBC.getCode());
+    	eto.setPcShow(SitePCShowEnum.显示.getCode());
+    	eto.setSubject(SubjectEnum.默认.getCode());
+    	siteNoticeRpc.editor(eto);
+        return ResponseData.success(MsgConst.SUBMIT_SUCCESS);
+    }
+    
+    @ApiOperation("公告配置详情-v1.1.0")
+    @GetMapping(value = "/notice/{id}")
+    @Func(code="view", name = "查")
+    public ResponseData<SiteNoticeVO.PCDetailVO> detailNotice(@PathVariable String id) {
+        return ResponseData.data(siteNoticeRpc.get(new SiteNoticeDTO.IdDTO(id)));
+    }
+    
+    
+    @ApiOperation("公告配置删除-v1.1.0")
+    @DeleteMapping(value = "/notice/{id}")
+    @Func(code="delete", name="删")
+    public ResponseData<Void> deleteNotice(@PathVariable String id) {
+    	SiteNoticeDTO.IdDTO dto = new SiteNoticeDTO.IdDTO(id);
+    	siteNoticeRpc.delete(dto);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+    }
+    
+    
+    @ApiOperation("专题列表-v1.1.0")
+    @GetMapping("/topicList")
+    @Func(code="view", name="查")
+    public ResponseData<PageData<SiteTopicVO.PCListVO>> listTopic(SiteTopicQTO.QTO qto) {
+        qto.setTerminal(TerminalEnum.BBB.getCode());//2c
+        qto.setSubject(SubjectEnum.默认.getCode());
+        return ResponseData.data(siteTopicRpc.pageData(qto));
+    }
+    
+    @ApiOperation("专题列表编辑-v1.1.0")
+    @PutMapping(value = "/topicEditor")
+    @Func(code="edit", name="改")
+    public ResponseData<Void> editorTopic(@Valid @RequestBody SiteTopicDTO.ETO eto) {
+    	eto.setTerminal(TerminalEnum.BBB.getCode());
+    	eto.setPcShow(SitePCShowEnum.显示.getCode());
+    	eto.setSubject(SubjectEnum.默认.getCode());
+    	siteTopicRpc.editor(eto);
+        return ResponseData.success(MsgConst.SUBMIT_SUCCESS);
+    }
+    
+    @ApiOperation("专题列表详情-v1.1.0")
+    @GetMapping(value = "/topic/{id}")
+    @Func(code="view", name = "查")
+    public ResponseData<SiteTopicVO.PCDetailVO> detailTopic(@PathVariable String id) {
+        return ResponseData.data(siteTopicRpc.get(new SiteTopicDTO.IdDTO(id)));
+    }
+    
+    
+    @ApiOperation("专题列表删除-v1.1.0")
+    @DeleteMapping(value = "/topic/{id}")
+    @Func(code="delete", name="删")
+    public ResponseData<Void> deleteTopic(@PathVariable String id) {
+    	SiteTopicDTO.IdDTO dto = new SiteTopicDTO.IdDTO(id);
+        siteTopicRpc.delete(dto);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+    }
+    
+    
+    @ApiOperation("专题列表上下线-v1.1.0")
+    @PutMapping(value = "/topicOnoff/")
+    @Func(code="edit", name="改")
+    public ResponseData<Void> onoffTopic(@Valid @RequestBody SiteTopicDTO.OnoffDTO dto) {
+    	siteTopicRpc.onoff(dto);
+        return ResponseData.success(MsgConst.SUBMIT_SUCCESS);
+    }
+    
+    @ApiOperation("专题列表->可选商品列表-v1.1.0")
+    @GetMapping("/topicGoodsList")
+    @Func(code="view", name="查")
+    public ResponseData<List<SiteTopicVO.PCGoodsDetailVO>> listTopicGoods() {
+        return ResponseData.data(siteTopicRpc.listGoods());
+    }
+    
     @ApiOperation("活动图片配置")
     @GetMapping("/getSiteActiveVO")
     @Func(code="view", name="查")

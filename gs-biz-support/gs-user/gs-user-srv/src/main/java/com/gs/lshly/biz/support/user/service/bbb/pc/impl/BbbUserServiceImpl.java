@@ -1,9 +1,19 @@
 package com.gs.lshly.biz.support.user.service.bbb.pc.impl;
 
+import java.time.LocalDateTime;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.entity.UserPrivateUser;
@@ -13,10 +23,16 @@ import com.gs.lshly.biz.support.user.enums.UserCardStatusEnum;
 import com.gs.lshly.biz.support.user.mapper.UserCardMapper;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
-import com.gs.lshly.biz.support.user.repository.*;
+import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
+import com.gs.lshly.biz.support.user.repository.IUserPrivateUserRepository;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.biz.support.user.repository.IUserSignInRepository;
+import com.gs.lshly.biz.support.user.repository.IUserUser2bApplyRepository;
 import com.gs.lshly.biz.support.user.service.bbb.pc.IBbbUserService;
 import com.gs.lshly.common.enums.ApplyStateEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
+import com.gs.lshly.common.enums.UserSexEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -29,25 +45,20 @@ import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsIntegralVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReportVO;
 import com.gs.lshly.common.utils.CheckEmailUtils;
 import com.gs.lshly.common.utils.PwdUtil;
+import com.gs.lshly.middleware.mail.Email;
 import com.gs.lshly.middleware.mail.IMailService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
+import com.gs.lshly.middleware.sms.utils.CcsMsgCrypt;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbMerchantAccountRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IPCBbbMerchantUserTypeRpc;
 import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsIntegralRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReportRpc;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import com.gs.lshly.middleware.mail.Email;
-import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
 * <p>
@@ -226,6 +237,8 @@ public class BbbUserServiceImpl implements IBbbUserService {
         BbbUserVO.UserTypeVO userTypeVO  = new BbbUserVO.UserTypeVO();
         userTypeVO.setId(user.getId());
         userTypeVO.setUserType(user.getType());
+        userTypeVO.setMemberType(user.getMemberType());
+        userTypeVO.setIsInUser(user.getIsInUser());
         return userTypeVO;
     }
 
@@ -265,10 +278,7 @@ public class BbbUserServiceImpl implements IBbbUserService {
         }
         User user =  userRepository.getById(qto.getJwtUserId());
         BbbUserVO.DetailVO detailVO = new BbbUserVO.DetailVO();
-        detailVO.setId(user.getId());
-        detailVO.setUserName(user.getUserName());
-        detailVO.setHeadImg(user.getHeadImg());
-        detailVO.setPhone(user.getPhone());
+        BeanUtils.copyProperties(user,detailVO);
         //封装优惠卷数量
         packCountCard(qto,detailVO);
         //获取用户的积分
@@ -444,5 +454,28 @@ public class BbbUserServiceImpl implements IBbbUserService {
     static int randomCode() {
         return 100_000 + ThreadLocalRandom.current().nextInt(1_000_000 - 100_000);
     }
+	@Override
+	public String customerAuthorize(BaseDTO dto) {
+		if (null == dto.getJwtUserId()) {
+			throw new BusinessException("没有登录");
+		}
+		User user = userRepository.getById(dto.getJwtUserId());
+		
+        JSONObject json = new JSONObject();
+        json.put("phoneNumber", user.getPhone());
+        if(StringUtils.isEmpty(user.getNick())){
+        	json.put("uname", user.getPhone());
+        }else{
+        	json.put("uname", user.getNick());
+        }
+        //性别[10=男  20=女 30=保密]
+        json.put("gender",UserSexEnum.getEnum(user.getSex()));
+        json.put("headImg", user.getSex());
+        json.put("tenantId", TerminalEnum.BBB.getCode());
+        json.put("userId", user.getId());
+        log.info("[customerAuthorize][request][json=>{}]",json.toJSONString());
+        return CcsMsgCrypt.encrypt(json.toJSONString(),"aHV6aG91SHp6c3RIenpzdA==");
+	}
+
 
 }

@@ -1,29 +1,24 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeMargin;
 import com.gs.lshly.biz.support.trade.entity.TradeMarginDetail;
-import com.gs.lshly.biz.support.trade.entity.TradeSettlement;
 import com.gs.lshly.biz.support.trade.repository.impl.TradeMarginDetailRepositoryImpl;
 import com.gs.lshly.biz.support.trade.repository.impl.TradeMarginRepositoryImpl;
-import com.gs.lshly.biz.support.trade.repository.impl.TradeSettlementRepositoryImpl;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMarketMarginDetailService;
-import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMarketSettlementService;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeMarginDetailDTO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.TradeSettlementDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeMarginDetailQTO;
-import com.gs.lshly.common.struct.platadmin.trade.qto.TradeSettlementQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeMarginDetailVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeMarginVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradeSettlementVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class PCMarketMarginDetailServiceImpl implements IPCMarketMarginDetailService {

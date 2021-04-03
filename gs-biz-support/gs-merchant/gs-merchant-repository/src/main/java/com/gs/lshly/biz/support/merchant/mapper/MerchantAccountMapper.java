@@ -21,7 +21,8 @@ import org.springframework.stereotype.Repository;
 public interface MerchantAccountMapper extends BaseMapper<MerchantAccount> {
 
 
-    @Select("select distinct act.*,rd.id role_id,rd.role_name,sp.shop_name,sp.shop_type " +
+    @Select("select distinct act.*,rd.id role_id,rd.role_name,sp.shop_name,sp.shop_type," +
+            "CONCAT( act.province,'', act.city ) as merAddress " +
             "from gs_merchant_account act " +
             "left join gs_merchant_account_role aro on act.id = aro.account_id " +
             "left join gs_merchant_role_dict rd on rd.id = aro.role_id " +
@@ -38,4 +39,9 @@ public interface MerchantAccountMapper extends BaseMapper<MerchantAccount> {
             "WHERE act.flag = 0 and sp.flag = 0 and ${ew.sqlSegment}")
     AccountShopView mapperOne(@Param(value = "ew") QueryWrapper<AccountShopView> we);
 
+    @Select("select count(1) from gs_goods_info where shop_id = #{shopId} and flag = 0")
+    int getGoodsCount(String shopId);
+
+    @Select("select count(1) from gs_sku_good_info where shop_id = #{shopId} and flag = 0")
+    int getSkuGoodsCount(String shopId);
 }

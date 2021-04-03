@@ -163,6 +163,7 @@ public class BbbPcStockAddressServiceImpl implements IBbbPcStockAddressService {
         return new PageData<>(listVOS,qto.getPageNum(),qto.getPageSize(),addressViewIPage.getTotal());
     }
 
+
     @Override
     public void setDefaultStockAddress(BbbStockAddressDTO.SetDefaultDTO dto) {
         if (ObjectUtils.isEmpty(dto) || StringUtils.isBlank(dto.getAddressId())){

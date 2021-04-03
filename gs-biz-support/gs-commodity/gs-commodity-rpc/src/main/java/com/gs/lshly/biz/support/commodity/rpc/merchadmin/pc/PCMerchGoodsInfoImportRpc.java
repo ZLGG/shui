@@ -11,6 +11,7 @@ import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoS
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsSpecInfoService;
 import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.CommonShopDTO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
@@ -28,9 +29,11 @@ import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsBrandRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsInfoImportRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,6 +123,7 @@ public class PCMerchGoodsInfoImportRpc implements IPCMerchGoodsInfoImportRpc {
         }else {
             //新增
             GoodsInfo goodsInfo = new GoodsInfo();
+            BeanUtils.copyProperties(data,goodsInfo);
             goodsInfo.setShopId(data.getJwtShopId());
             goodsInfo.setMerchantId(data.getJwtMerchantId());
             goodsInfo.setGoodsName(data.getGoodsName());
@@ -127,7 +131,7 @@ public class PCMerchGoodsInfoImportRpc implements IPCMerchGoodsInfoImportRpc {
             goodsInfo.setGoodsState(GoodsStateEnum.未上架.getCode());
             goodsInfo.setGoodsNo(GoodsNoUtil.getGoodsNo());
             goodsInfo.setGoodsPriceUnit("kg");
-            goodsInfo.setGoodsImage(StringUtils.isEmpty(getDefaultImage(ImageSizeTypeEnum.小图.getCode()))?"":getDefaultImage(ImageSizeTypeEnum.小图.getCode()));
+            goodsInfo.setGoodsImage(StringUtils.isEmpty(getDefaultImage(ImageSizeTypeEnum.小图.getCode()))?"{}":getDefaultImage(ImageSizeTypeEnum.小图.getCode()));
             goodsInfo.setSalePrice(new BigDecimal(data.getSalePrice()));
             goodsInfo.setCostPrice(new BigDecimal(data.getCostPrice()));
             goodsInfo.setOldPrice(new BigDecimal(data.getOldPrice()));
@@ -135,6 +139,13 @@ public class PCMerchGoodsInfoImportRpc implements IPCMerchGoodsInfoImportRpc {
             goodsInfo.setIsSingle(SingleStateEnum.多规格.getCode());
             goodsInfo.setGoodsWeight(new BigDecimal(data.getGoodsWeight()));
             goodsInfo.setIsShowOldPrice(ShowOldPriceEnum.不显示原价.getCode());
+            goodsInfo.setIsPointGood(BooleanUtils.toBoolean(data.getIsPointGood()));
+            goodsInfo.setPointPrice(new BigDecimal(data.getPointPrice()));
+            goodsInfo.setIsInMemberGift(BooleanUtils.toBoolean(data.getIsInMemberGift()));
+            goodsInfo.setInMemberPointPrice(new BigDecimal(data.getInMemberPointPrice()));
+            goodsInfo.setSaleType(Integer.valueOf(data.getSaleType()));
+            goodsInfo.setExchangeType(Integer.valueOf(data.getExchangeType()));
+            goodsInfo.setThirdProductId(Integer.valueOf(data.getThirdProductId()));
             //获取商品类目id
             PCMerchGoodsCategoryVO.innerCategoryVO categoryLevel3VO =categoryService.innerGetListVo(data.getCategoryLevel3Name(),null);
             System.out.println(categoryLevel3VO);
@@ -378,7 +389,9 @@ public class PCMerchGoodsInfoImportRpc implements IPCMerchGoodsInfoImportRpc {
         navigationByDTO.setNavName(name);
         navigationByDTO.setTerminal(useFiled);
         CommonShopVO.NavigationVO navigationVO = commonShopRpc.getNavigationVO(navigationByDTO);
-
+        if(navigationVO==null){
+            throw new BusinessException("navigation为空");
+        }
         GoodsShopNavigation shopNavigation = new GoodsShopNavigation();
         shopNavigation.setMerchantId(merchantId);
         shopNavigation.setShopId(shopId);

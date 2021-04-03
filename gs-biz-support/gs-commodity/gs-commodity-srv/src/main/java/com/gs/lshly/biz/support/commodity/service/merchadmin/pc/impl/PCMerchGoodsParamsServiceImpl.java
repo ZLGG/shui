@@ -1,5 +1,12 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gs.lshly.biz.support.commodity.entity.GoodsParamInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsParams;
@@ -9,16 +16,7 @@ import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsPar
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsCategoryDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsParamInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsParamsVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsParamInfoVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsParamsVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author Starry

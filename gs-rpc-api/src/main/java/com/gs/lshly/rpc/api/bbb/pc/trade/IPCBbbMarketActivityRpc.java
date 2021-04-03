@@ -51,4 +51,11 @@ public interface IPCBbbMarketActivityRpc {
     PageData<PCBbbMarketActivityVO.activityListPageVO> activityListPage(PCBbbMarketActivityQTO.QTO qto);
 
     List<PCBbbMarketActivityVO.merchantCard> activityCardGoodsInfo(BbcMarketMerchantActivityDTO.MerchantIdDTO dto);
+    
+    /**
+     * 查询秒杀列表
+     * @param dto
+     * @return
+     */
+    PCBbbMarketActivityVO.FlashsaleVO listFlashsale(BaseDTO dto);
 }

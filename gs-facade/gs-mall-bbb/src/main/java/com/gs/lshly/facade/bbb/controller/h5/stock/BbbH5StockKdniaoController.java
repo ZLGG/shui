@@ -1,16 +1,17 @@
 package com.gs.lshly.facade.bbb.controller.h5.stock;
 
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.platadmin.stock.dto.StockKdniaoDTO;
 import com.gs.lshly.common.struct.platadmin.stock.vo.LogisticsInformationVO;
 import com.gs.lshly.rpc.api.common.IExpressSurviceRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
 * <p>

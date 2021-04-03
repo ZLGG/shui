@@ -108,11 +108,13 @@ public abstract class GoodsInfoQTO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoQTO.CategoryIdQTO")
-    public static class CategoryIdQTO extends  BaseQTO{
+    public static class CategoryIdQTO extends BaseQTO{
 
         @ApiModelProperty("类目id")
         private String categoryId;
 
+        @ApiModelProperty("类型 不传将无法查到数据")
+        private Integer useFiled = 0;
     }
 
 }

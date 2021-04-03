@@ -187,7 +187,7 @@ public class CommonStockServiceImpl implements ICommonStockService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public ResponseData<CommonStockVO.InnerChangeStockVO> innerChangeStock(CommonStockDTO.InnerChangeStockDTO dto) {
-        if(ObjectUtils.isNotEmpty(dto.getGoodsItemList())){
+        if(ObjectUtils.isEmpty(dto.getGoodsItemList())){
             ResponseData.fail("库存变动商品项不能为空");
         }
         List<String> skuIdList = ListUtil.getIdList(CommonStockDTO.InnerChangeStockItem.class,dto.getGoodsItemList(),"skuId");

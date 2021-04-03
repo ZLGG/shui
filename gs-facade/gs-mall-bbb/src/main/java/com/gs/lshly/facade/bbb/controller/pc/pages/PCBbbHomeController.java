@@ -1,5 +1,13 @@
 package com.gs.lshly.facade.bbb.controller.pc.pages;
 
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -11,6 +19,7 @@ import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.dto.BbbArticleCategoryDTO;
+import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteTopicQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteVideoQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbArticleCategoryVO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteVideoVO;
@@ -18,22 +27,18 @@ import com.gs.lshly.common.struct.bbb.pc.pages.qto.PCBbbHomeQTO;
 import com.gs.lshly.common.struct.bbb.pc.pages.vo.PCBbbHomeVO;
 import com.gs.lshly.common.struct.common.dto.CommonSiteActiveDTO;
 import com.gs.lshly.common.struct.common.vo.CommonSiteActiveVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbArticleCategoryRpc;
+import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IBbbSiteVideoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.foundation.IPCBbbFloorRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonSiteActiveRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @Author Starry
@@ -41,7 +46,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/bbb/home")
-@Api(tags = "2Bpc端首页信息管理",description = " ")
+@Api(tags = "2Bpc端首页信息管理-v1.1.0",description = " ")
 public class PCBbbHomeController {
 
     @DubboReference
@@ -61,11 +66,23 @@ public class PCBbbHomeController {
 
     @DubboReference
     private IBbbSiteVideoRpc  bbbSiteVideoRpc;
+    
+    @DubboReference
+    private IBbbSiteTopicRpc bbbSiteTopicRpc;
 
     @DubboReference
     private ICommonSiteActiveRpc siteActiveRpc;
 
 
+    @ApiOperation("热门搜索-v1.1.0")
+    @GetMapping("/hotsearchList")
+    public ResponseData<List<GoodsInfoVO.DetailVO>> listHotsearch() {
+        BbbSiteTopicQTO.QTO qto = new BbbSiteTopicQTO.QTO();
+        qto.setTerminal(TerminalEnum.BBB.getCode());
+        qto.setSubject(SubjectEnum.默认.getCode());
+        return ResponseData.data(bbbSiteTopicRpc.listHotsearch(qto));
+    }
+    
     @ApiOperation("2Bpc端首页分类菜单信息")
     @GetMapping("")
     public ResponseData<PCBbbGoodsCategoryVO.CategoryMenuVO> getCategoryMenuVO(PCBbbGoodsCategoryQTO.QTO qto) {

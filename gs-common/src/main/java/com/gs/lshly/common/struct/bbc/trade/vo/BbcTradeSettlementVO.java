@@ -88,11 +88,17 @@ public abstract class BbcTradeSettlementVO implements Serializable {
         @ApiModelProperty("商品总金额")
         private BigDecimal goodsAmount;
 
+        @ApiModelProperty("商品总积分金额")
+        private BigDecimal goodsPointAmount;
+
         @ApiModelProperty("运费金额")
         private BigDecimal deliveryAmount;
 
         @ApiModelProperty("交易总金额")
         private BigDecimal tradeAmount;
+
+        @ApiModelProperty("交易总积分金额")
+        private BigDecimal tradePointAmount;
 
         @ApiModelProperty("商品合计数量")
         private Integer goodsCount;
@@ -106,6 +112,9 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 
         @ApiModelProperty(value = "优惠券")
         private CommonMarketVO.UserCardVO userCardVO;
+
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
 
         @Data
         @ApiModel("BbcTradeSettlementVO.goodsInfoVO")
@@ -136,11 +145,23 @@ public abstract class BbcTradeSettlementVO implements Serializable {
             @ApiModelProperty("数量")
             private Integer quantity;
 
+            @ApiModelProperty("是否是积分商品")
+            private Boolean isPointGood;
+
             @ApiModelProperty("销售价")
             private BigDecimal salePrice;
 
             @ApiModelProperty("活动及券后价")
             private BigDecimal activePrice;
+
+            @ApiModelProperty("积分价格")
+            private BigDecimal pointPrice;
+
+            @ApiModelProperty("是否是in会员礼品")
+            private Boolean isInMemberGift;
+
+            @ApiModelProperty("in会员积分价格")
+            private BigDecimal inMemberPointPrice;
 
         }
 

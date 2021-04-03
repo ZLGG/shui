@@ -366,4 +366,27 @@ public class MerchantApply extends Model {
     private Boolean flag;
 
 
+    /**
+     *协议到期时间
+     */
+    private Date expirationTime;
+
+    /**
+     *协议号
+     */
+    private String agreementCode;
+
+    /**
+     *供应商纳税性质(10=一般纳税人 20=小规模纳税人
+     */
+    private Integer taxType;
+
+    /**
+     *税率(%)
+     */
+    private Double taxRate;
+    
+    
+    private Integer type;
+    
 }

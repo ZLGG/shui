@@ -811,7 +811,7 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
             String payResult = paySuccess(trade.getTradeCode());
             return ResponseData.success(payResult);
         }
-        //查询支付数据
+        //查询支付数据 TODO
         QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
         tradePayWrapper.eq("trade_id",trade.getId());
         TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);

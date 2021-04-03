@@ -1,13 +1,14 @@
 package com.gs.lshly.biz.support.trade.utils;
 
-import com.lakala.boss.api.common.Common;
-import org.apache.commons.lang.RandomStringUtils;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Random;
+
+import org.apache.commons.lang.RandomStringUtils;
+
+import com.lakala.boss.api.common.Common;
 
 public class TradeUtils implements Serializable {
 

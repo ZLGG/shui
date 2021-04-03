@@ -1,17 +1,18 @@
 package com.gs.lshly.common.struct.merchadmin.pc.commodity.dto;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodityfupin.dto.PCMerchGoodsFupinDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
 * @author Starry
@@ -148,6 +149,15 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty(value = "pos店铺spuid")
         private String posSpuId;
 
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
+        @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
+        private Integer inCouponType;
+
     }
 
     @Data
@@ -260,6 +270,30 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "同一商品标识",position =19)
         private String goodsNo;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（0实物,1虚拟）")
+        private Integer exchangeType;
     }
 
 

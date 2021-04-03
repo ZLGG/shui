@@ -9,10 +9,11 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+
 /**
-* @author oy
-* @since 2020-10-30
-*/
+ * @author oy
+ * @since 2020-10-30
+ */
 public abstract class BbcTradeGoodsDTO implements Serializable {
 
     @Data
@@ -20,7 +21,7 @@ public abstract class BbcTradeGoodsDTO implements Serializable {
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
-        @ApiModelProperty(value = "交易商品ID",hidden = true)
+        @ApiModelProperty(value = "交易商品ID", hidden = true)
         private String id;
 
         @ApiModelProperty("交易ID")
@@ -82,6 +83,9 @@ public abstract class BbcTradeGoodsDTO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
+
+        @ApiModelProperty("优惠券类型")
+        private Integer couponType;
     }
 
     @Data

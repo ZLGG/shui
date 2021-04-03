@@ -1,5 +1,11 @@
 package com.gs.lshly.biz.support.commodity.service.bbb.pc.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
@@ -7,15 +13,8 @@ import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
 import com.gs.lshly.biz.support.commodity.service.bbb.pc.IPCBbbGoodsLabelService;
-import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
 * <p>

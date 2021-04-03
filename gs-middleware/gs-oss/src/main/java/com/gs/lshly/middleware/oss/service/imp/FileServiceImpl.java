@@ -1,15 +1,5 @@
 package com.gs.lshly.middleware.oss.service.imp;
 
-import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.model.CannedAccessControlList;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
-import com.gs.lshly.middleware.oss.ConstantPropertiesUtil;
-import com.gs.lshly.middleware.oss.service.IFileService;
-import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,25 +7,37 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Random;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
+
+import org.joda.time.DateTime;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.CannedAccessControlList;
+import com.aliyun.oss.model.PutObjectResult;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
+import com.gs.lshly.middleware.oss.ConstantPropertiesUtil;
+import com.gs.lshly.middleware.oss.service.IFileService;
 
 
 /**
  * @author Starry
  */
 public class FileServiceImpl implements IFileService {
+
     @Override
     public PicturesVO.DetailVO upload(MultipartFile file) {
-        //获取阿里云存储相关常量
         String endPoint = ConstantPropertiesUtil.END_POINT;
         String accessKeyId = ConstantPropertiesUtil.ACCESS_KEY_ID;
         String accessKeySecret = ConstantPropertiesUtil.ACCESS_KEY_SECRET;
         String bucketName = ConstantPropertiesUtil.BUCKET_NAME;
         String fileHost = ConstantPropertiesUtil.FILE_HOST;
-
         String uploadUrl = null;
         PicturesVO.DetailVO detailVO = new PicturesVO.DetailVO();
-
         try {
             //判断oss实例是否存在：如果不存在则创建，如果存在则获取
             OSSClient ossClient = new OSSClient(endPoint, accessKeyId, accessKeySecret);
@@ -65,15 +67,15 @@ public class FileServiceImpl implements IFileService {
             //文件名：uuid.扩展名
             String original = file.getOriginalFilename();
             String fileName = UUID.randomUUID().toString();
-            String fileType = original.substring(original.lastIndexOf(".")).toLowerCase();
+            String fileType = original.substring(original.lastIndexOf("."));
             String newName = fileName + fileType;
             String fileUrl = fileHost + "/" + filePath + "/" + newName;
 
             if (!fileType.equals(".jpg") && !fileType.equals(".png") && !fileType.equals(".bmp") &&
-            !fileType.equals(".gif") && !fileType.equals(".tiff") && !fileType.equals(".jpeg")){
-                throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF、JPEG");
+                    !fileType.equals(".gif") && !fileType.equals(".tiff")) {
+                throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF");
             }
-            if (file.getSize() >= (1024*20*1024)){
+            if (file.getSize() >= (1024 * 1 * 1024)) {
                 throw new BusinessException("文件大小最大不能超过1M");
             }
 
@@ -111,7 +113,7 @@ public class FileServiceImpl implements IFileService {
 
     @Override
     public PicturesVO.DetailVO uploadNet(String url) {
-        if (url == null){
+        if (url == null) {
             throw new BusinessException("参数不能为空！");
         }
         //获取阿里云存储相关常量
@@ -136,7 +138,7 @@ public class FileServiceImpl implements IFileService {
             }
             InputStream inputStream = getUrlStream(url);
             InputStream inputStreams = getUrlStream(url);
-            if (inputStream != null && inputStreams != null){
+            if (inputStream != null && inputStreams != null) {
                 //获取图片的大小
                 BigDecimal size = BigDecimal.valueOf(inputStream.available())
                         .divide(BigDecimal.valueOf(1024), 2, 4);
@@ -148,18 +150,18 @@ public class FileServiceImpl implements IFileService {
                 detailVO.setImgHeight(imageHeight);
                 detailVO.setImgWeight(imageWidth);
 
-                String imgType = url.substring(url.lastIndexOf(".")).toLowerCase();
+                String imgType = url.substring(url.lastIndexOf("."));
 
                 if (!imgType.equals(".jpg") && !imgType.equals(".png") && !imgType.equals(".bmp") &&
-                        !imgType.equals(".gif") && !imgType.equals(".tiff") && !imgType.equals(".jpeg")){
-                    throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF、JPEG");
+                        !imgType.equals(".gif") && !imgType.equals(".tiff")) {
+                    throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF");
                 }
-                if (inputStream.available() >= (1024*1024*1)){
+                if (inputStream.available() >= (1024 * 1024 * 1)) {
                     throw new BusinessException("文件大小最大不能超过1M");
                 }
 
-                String newName = UUID.randomUUID().toString()+imgType;
-                 fileUrl = fileHost + "/" +  new DateTime().toString("yyyy/MM/dd") + "/" + newName;
+                String newName = UUID.randomUUID().toString() + imgType;
+                fileUrl = fileHost + "/" + new DateTime().toString("yyyy/MM/dd") + "/" + newName;
                 detailVO.setImageName(newName);
                 detailVO.setImgType(imgType);
                 //文件上传至阿里云
@@ -180,6 +182,39 @@ public class FileServiceImpl implements IFileService {
             throw new BusinessException("上传异常");
         }
         return detailVO;
+    }
+
+    @Override
+    public String uploadVideo(MultipartFile file) {
+        String endPoint = ConstantPropertiesUtil.END_POINT;
+        String accessKeyId = ConstantPropertiesUtil.ACCESS_KEY_ID;
+        String accessKeySecret = ConstantPropertiesUtil.ACCESS_KEY_SECRET;
+        String bucketName = ConstantPropertiesUtil.BUCKET_NAME;
+        String fileHost = ConstantPropertiesUtil.FILE_HOST;
+        String originalFilename = file.getOriginalFilename();
+        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        Random random = new Random();
+        String name = "Video/"+random.nextInt(10000) + System.currentTimeMillis() + substring;
+        try {
+            InputStream stream = file.getInputStream();
+            String filename = System.currentTimeMillis() + file.getOriginalFilename();
+            //判断oss实例是否存在：如果不存在则创建，如果存在则获取
+            OSSClient client = new OSSClient(endPoint, accessKeyId, accessKeySecret);
+            if (!client.doesBucketExist(bucketName)) {
+                //创建bucket
+                client.createBucket(bucketName);
+                //设置oss实例的访问权限：公共读
+                client.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+            }
+            String fileUrl = fileHost + "/" + name;
+            PutObjectResult result = client.putObject(bucketName, fileUrl, stream);
+            client.shutdown();
+            String uploadUrl = "http://" + bucketName + "." + ConstantPropertiesUtil.END_POINT + "/" + fileUrl;
+            return uploadUrl;
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new BusinessException("视频上传失败");
+        }
     }
 
     private static InputStream getUrlStream(String url) {

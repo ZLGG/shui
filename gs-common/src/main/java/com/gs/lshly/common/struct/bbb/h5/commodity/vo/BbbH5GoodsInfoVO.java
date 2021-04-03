@@ -175,6 +175,33 @@ public abstract class BbbH5GoodsInfoVO implements Serializable {
 
         @ApiModelProperty("商品批发价")
         private BigDecimal wholesalePrice;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
     }
 
     @Data
@@ -312,6 +339,35 @@ public abstract class BbbH5GoodsInfoVO implements Serializable {
         @ApiModelProperty("用户默认收货地址")
         private String userDefaultAddress;
 
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+
+        @ApiModelProperty(value = "销售数量")
+        private Integer saleQuantity;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
 
     }
 

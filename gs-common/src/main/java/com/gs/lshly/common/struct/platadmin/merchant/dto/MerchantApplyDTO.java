@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -216,6 +217,18 @@ public abstract class MerchantApplyDTO implements Serializable {
 
         @ApiModelProperty(value = "拒审原因")
         private String rejectWhy;
+        
+        @ApiModelProperty(value = "拒审原因 格式2021-03-31")
+        private String expirationTime;
+        @ApiModelProperty(value = "协议号")
+        private String agreementCode;
+        @ApiModelProperty(value = "供应商纳税性质(10=一般纳税人 20=小规模纳税人")
+        private Integer taxType;
+        @ApiModelProperty(value = "税率 double")
+        private Double taxRate;
+        @ApiModelProperty(value = "商户类别（10=积分商户 20=普通商户）")
+        private Integer type;
+        
     }
 
     @Data

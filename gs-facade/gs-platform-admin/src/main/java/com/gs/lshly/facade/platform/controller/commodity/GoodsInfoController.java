@@ -1,5 +1,17 @@
 package com.gs.lshly.facade.platform.controller.commodity;
 
+import javax.validation.Valid;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
@@ -9,12 +21,9 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.middleware.auth.rbac.Func;
 import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 /**
  * @Author Starry
@@ -22,7 +31,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/platform/GoodsInfo")
-@Api(tags = "商品管理")
+@Api(tags = "商品管理-v1.1.0")
 @Module(code = "commodityManagement", parent = "commodity", name = "商品管理", index =1)
 public class GoodsInfoController {
     @DubboReference

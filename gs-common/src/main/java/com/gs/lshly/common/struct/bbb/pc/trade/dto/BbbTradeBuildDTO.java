@@ -86,7 +86,7 @@ public abstract class BbbTradeBuildDTO implements Serializable {
 
     @Data
     @ApiModel("BbbTradeBuildDTO.cartIdsDTO")
-    @AllArgsConstructor
+    @Accessors(chain = true)
     public static class cartIdsDTO extends BaseDTO {
 
         @ApiModelProperty(value = "购物车ID数组")

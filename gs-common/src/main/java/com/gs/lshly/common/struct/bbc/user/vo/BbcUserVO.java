@@ -45,6 +45,24 @@ public abstract class BbcUserVO implements Serializable {
         @ApiModelProperty("微信openid")
         private String wxOpenid;
 
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+
+        @ApiModelProperty("电信星级")
+        private String telecomsLevel;
+
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+
+        @ApiModelProperty("年底过期积分（电信）")
+        private Integer telecomsPass;
+
+        @ApiModelProperty("定向积分")
+        private Integer directionIntegral;
+        
     }
 
     @Data
@@ -139,6 +157,12 @@ public abstract class BbcUserVO implements Serializable {
 
         @ApiModelProperty("电话")
         private String phone;
+        
+        @ApiModelProperty("所在区域")
+        private String region;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
 
     }
     @Data

@@ -91,4 +91,7 @@ public interface TradeGoodsMapper extends BaseMapper<TradeGoods> {
 
     @Select("select trade_state tradeState,count(trade_state) count from  gs_trade where flag = 0 and trade_state in(20,10,30,50) AND ${ew.sqlSegment} GROUP BY trade_state" )
     List<TradeVO.packTradeStatesDate> packTradeStatesDate(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
+
+    @Select("select sum(quantity) from gs_trade_goods where flag = 0 AND ${ew.sqlSegment}")
+    Integer sumQuantity(@Param(Constants.WRAPPER)QueryWrapper<Trade> qw);
 }

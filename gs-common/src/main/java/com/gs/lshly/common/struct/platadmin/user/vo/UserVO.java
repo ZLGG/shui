@@ -61,6 +61,9 @@ public abstract class UserVO implements Serializable {
 
         @ApiModelProperty("会员类型[10=2b 20=2c]")
         private Integer type;
+
+        @ApiModelProperty("真实姓名")
+        private String realName;
     }
 
     @Data
@@ -107,6 +110,20 @@ public abstract class UserVO implements Serializable {
         @ApiModelProperty("要过期积分")
         private Integer passIntegral;
 
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+
+        @ApiModelProperty("电信星级")
+        private String telecomsLevel;
+
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+
+        @ApiModelProperty("in会员券码")
+        private Integer inCoupon;
     }
 
     @Data

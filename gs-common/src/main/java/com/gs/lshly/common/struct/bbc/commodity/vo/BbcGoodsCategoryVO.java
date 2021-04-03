@@ -1,5 +1,8 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
+import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO.CategoryTreeVO;
+import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -64,13 +67,26 @@ public abstract class BbcGoodsCategoryVO implements Serializable {
         private List<CategoryTreeVO> list;
 
         @ApiModelProperty("站点分类广告图")
-        private List< BbcSiteAdvertVO.InnerCategoryAdvertListVO> categoryAdvertListVO = new ArrayList<>();
+        private List<BbcSiteAdvertVO.InnerCategoryAdvertListVO> categoryAdvertListVO = new ArrayList<>();
 
     }
 
     @Data
     @ApiModel("BbcGoodsCategoryVO.DetailVO")
     public static class DetailVO extends ListVO {
+
+    }
+    
+    @Data
+    @ApiModel("PCBbbGoodsCategoryVO.CategoryMenuVO")
+    @Accessors(chain = true)
+    public static class CategoryMenuVO implements Serializable {
+
+        @ApiModelProperty("首页配置信息")
+        private BbbSiteNavigationVO.HomeVO homeSettins;
+
+        @ApiModelProperty("商品分类列表")
+        private List<CategoryTreeVO> categoryTreeVOS = new ArrayList<>();
 
     }
 }

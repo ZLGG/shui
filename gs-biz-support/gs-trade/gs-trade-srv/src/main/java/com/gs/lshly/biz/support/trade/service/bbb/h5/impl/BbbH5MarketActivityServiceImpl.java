@@ -1,13 +1,58 @@
 package com.gs.lshly.biz.support.trade.service.bbb.h5.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCard;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardUsers;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCut;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantCutGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantDiscount;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantDiscountGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGift;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGiftGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGiftGoodsGive;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGroupbuy;
+import com.gs.lshly.biz.support.trade.entity.MarketMerchantGroupbuyGoods;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivity;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsSpu;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityJurisdiction;
+import com.gs.lshly.biz.support.trade.entity.MarketPtActivityMerchant;
 import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
-import com.gs.lshly.biz.support.trade.repository.*;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantDiscountGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantDiscountRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsGiveRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityGoodsSkuRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityGoodsSpuRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityJurisdictionRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityMerchantRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityRepository;
 import com.gs.lshly.biz.support.trade.service.bbb.h5.IBbbH5MarketActivityService;
 import com.gs.lshly.common.enums.ActivitySignEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -24,21 +69,6 @@ import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.pc.merchant.IBbbShopRpc;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 
 /**

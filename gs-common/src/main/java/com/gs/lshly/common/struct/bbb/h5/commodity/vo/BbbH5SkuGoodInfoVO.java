@@ -138,5 +138,26 @@ public abstract class BbbH5SkuGoodInfoVO implements Serializable {
         @ApiModelProperty("sku库存")
         private Integer skuStock;
 
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty(value = "销售数量（临时字段）")
+        private Integer saleQuantity;
+
+        @ApiModelProperty("兑换类型（虚拟，实物）")
+        private Integer exchangeType;
+
     }
 }

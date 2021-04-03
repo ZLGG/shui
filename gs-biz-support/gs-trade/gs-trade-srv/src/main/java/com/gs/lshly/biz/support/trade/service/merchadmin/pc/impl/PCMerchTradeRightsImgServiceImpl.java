@@ -1,7 +1,12 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.TradeRightsImg;
 import com.gs.lshly.biz.support.trade.repository.ITradeRightsImgRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeRightsImgService;
@@ -10,10 +15,6 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeRightsImgDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeRightsImgQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeRightsImgVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 
 
