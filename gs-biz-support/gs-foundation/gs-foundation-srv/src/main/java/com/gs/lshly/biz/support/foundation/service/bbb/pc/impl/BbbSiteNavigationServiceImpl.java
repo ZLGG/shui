@@ -1,28 +1,28 @@
 package com.gs.lshly.biz.support.foundation.service.bbb.pc.impl;
 
+import java.util.Comparator;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.foundation.entity.SiteBanner;
 import com.gs.lshly.biz.support.foundation.entity.SiteNavigation;
 import com.gs.lshly.biz.support.foundation.repository.ISiteBannerRepository;
 import com.gs.lshly.biz.support.foundation.repository.ISiteNavigationRepository;
 import com.gs.lshly.biz.support.foundation.service.bbb.pc.IBbbSiteNavigationService;
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbb.pc.foundation.dto.BbbSiteNavigationDTO;
+import com.gs.lshly.common.enums.PcH5Enum;
+import com.gs.lshly.common.enums.SiteNavigationEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
+import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.qto.BbbSiteNavigationQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
-import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteFloorVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
 * <p>
@@ -41,10 +41,10 @@ public class BbbSiteNavigationServiceImpl implements IBbbSiteNavigationService {
     private ISiteBannerRepository siteBannerRepository;
 
     @Override
-    public BbbSiteNavigationVO.HomeVO homeDetail() {
+    public BbbSiteNavigationVO.HomeVO homeDetail(PCBbbGoodsCategoryQTO.QTO qto) {
         QueryWrapper<SiteNavigation> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("subject", SubjectEnum.默认.getCode());
-        wrapper.eq("terminal", TerminalEnum.BBB.getCode());
+        wrapper.eq("subject", qto.getSubject());
+        wrapper.eq("terminal", qto.getTerminal());
         wrapper.eq("pc_show", PcH5Enum.YES.getCode());
         List<SiteNavigation> siteNavigationList = repository.list(wrapper);
         BbbSiteNavigationVO.HomeVO detailVO = new BbbSiteNavigationVO.HomeVO();
@@ -64,8 +64,8 @@ public class BbbSiteNavigationServiceImpl implements IBbbSiteNavigationService {
             detailVO.getMenuList().sort(Comparator.comparing(BbbSiteNavigationVO.MenuVO::getIdx));
         }
         QueryWrapper<SiteBanner> siteBannerQueryWrapper = MybatisPlusUtil.query();
-        siteBannerQueryWrapper.eq("subject", SubjectEnum.默认.getCode());
-        siteBannerQueryWrapper.eq("terminal", TerminalEnum.BBB.getCode());
+        siteBannerQueryWrapper.eq("subject", qto.getSubject());
+        siteBannerQueryWrapper.eq("terminal",qto.getTerminal());
         siteBannerQueryWrapper.eq("pc_show", PcH5Enum.YES.getCode());
         siteBannerQueryWrapper.eq("is_classify", TrueFalseEnum.否.getCode());
         siteBannerQueryWrapper.orderByAsc("idx");

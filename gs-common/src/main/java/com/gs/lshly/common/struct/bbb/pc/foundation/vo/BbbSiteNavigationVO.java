@@ -74,6 +74,9 @@ public abstract class BbbSiteNavigationVO implements Serializable {
 
         @ApiModelProperty("排序")
         private Integer idx;
+        
+        @ApiModelProperty("图片链接")
+        private String hotImageUrl;
 
     }
 
