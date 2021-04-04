@@ -178,6 +178,10 @@ ADD COLUMN `tax_rate`  decimal(10,0) NULL DEFAULT NULL COMMENT '税率(%)' AFTER
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `in_coupon_type` int(10) NULL COMMENT 'in会员优惠券类型（20,30,50,99,200）' AFTER `in_member_point_price`;
 
+ALTER TABLE `gs_shop_navigation`
+ADD COLUMN `img_url`  varchar(255) NULL AFTER `merchant_id`;
+
+
 
 
 
