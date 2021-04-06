@@ -58,6 +58,7 @@ public abstract class BbcGoodsCategoryQTO implements Serializable {
         private Boolean showAll = false;
         @ApiModelProperty("类型 不传将无法查到数据")
         private Integer useFiled = 0;
+
     }
 
 }

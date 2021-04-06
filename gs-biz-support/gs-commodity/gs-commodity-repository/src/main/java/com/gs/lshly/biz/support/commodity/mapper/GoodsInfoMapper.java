@@ -74,7 +74,7 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
      * @return
      */
     @Select("SELECT DISTINCT gs.id,gs.merchant_id,gs.shop_id,gs.brand_id,gs.spec_info_id,gs.attribute_info_id,gs.extend_params_id,gs.goods_name,gs.goods_title,gs.goods_state,gs.goods_no,gs.sale_price,gs.old_price,gs.cost_price,gs.goods_weight,gs.goods_valid_days,gs.goods_image,gs.is_single,\n" +
-            "gs.is_show_old_price,gs.goods_price_unit,gs.use_platform,gs.publish_time,gs.cdate,gs.udate,gs.point_price,gs.remarks,gs.is_point_good,gs.is_in_member_gift,gs.in_member_point_price,gs.sale_type,gs.third_product_id,gs.exchange_type FROM gs_goods_info gs\n" +
+            "gs.is_show_old_price,gs.goods_price_unit,gs.use_platform,gs.publish_time,gs.cdate,gs.udate,gs.point_price,gs.remarks,gs.is_point_good,gs.is_in_member_gift,gs.in_member_point_price,gs.sale_type,gs.third_product_id,gs.exchange_type,gs.sale_quantity FROM gs_goods_info gs\n" +
             "LEFT JOIN gs_goods_shop_navigation gsn ON gs.id = gsn.goods_id\n" +
             "where gs.flag = 0 AND gs.goods_state = 20 AND ${ew.sqlSegment}")
     IPage<GoodsInfo> getGoodsPageInfo(IPage<GoodsInfo> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> qw);
@@ -131,17 +131,19 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
 
     /**
      * 获取sku商品信息
+     *
      * @param qw
      * @return
      */
     @Select("SELECT DISTINCT sk.id skuId,sk.good_id goodsId,gs.goods_name goodsName,IFNULL(sk.sale_price,gs.sale_price) salePrice FROM gs_sku_good_info sk\n" +
             "LEFT JOIN gs_goods_info gs ON sk.good_id = gs.id\n" +
             "where gs.flag = 0 AND sk.flag = 0 AND ${ew.sqlSegment} ")
-    List<GoodSkuInfoView> getGoodSkuInfoView(@Param(Constants.WRAPPER)QueryWrapper<GoodSkuInfoView> qw);
+    List<GoodSkuInfoView> getGoodSkuInfoView(@Param(Constants.WRAPPER) QueryWrapper<GoodSkuInfoView> qw);
 
 
     /**
      * 统计店铺首页商品相关数量
+     *
      * @param qw
      * @return
      */
@@ -158,5 +160,5 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
             "\tLEFT JOIN gs_goods_qa qa ON gs.id = qa.good_id \n" +
             "WHERE\n" +
             "\tgs.flag = 0 AND ${ew.sqlSegment}")
-    PCMerchGoodsInfoVO.HomeCountGoodsVO getHomeCountGoodsVO(@Param(Constants.WRAPPER)QueryWrapper<GoodsInfo> qw);
+    PCMerchGoodsInfoVO.HomeCountGoodsVO getHomeCountGoodsVO(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> qw);
 }

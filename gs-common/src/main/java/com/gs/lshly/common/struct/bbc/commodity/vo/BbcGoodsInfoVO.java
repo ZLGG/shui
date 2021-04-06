@@ -234,6 +234,8 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("视频地址")
         private String videoUrl;
 
+        @ApiModelProperty("销售数量（临时字段）")
+        private Integer saleQuantity;
 
  }
     @Data
