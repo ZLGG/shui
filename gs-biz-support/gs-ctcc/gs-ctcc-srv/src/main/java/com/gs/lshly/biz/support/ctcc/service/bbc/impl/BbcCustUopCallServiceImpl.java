@@ -16,7 +16,7 @@ import com.zmq.service.ProvideService;
 @Component
 public class BbcCustUopCallServiceImpl implements IBbcCustUopCallService {
 
-	@Reference(registry = "pay")
+	@Reference(registry = "ctcc")
     private ProvideService provideService;
 	
 	@Override

@@ -17,6 +17,9 @@ public class BbcCustUopCallRpc implements IBbcCustUopCallRpc{
 	
 	
 
+	/**
+	 * 查询积分余额
+	 */
 	@Override
 	public HashMap<String, Object> qryPointBalance(String accNum) {
 		// TODO Auto-generated method stub

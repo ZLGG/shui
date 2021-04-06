@@ -6,10 +6,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * StockApplication
+ * 
  *
- * @author lxus
- * @since 2020/9/14
+ * 
+ * @author yingjun
+ * @date 2021年4月6日 上午10:06:15
  */
 @SpringBootApplication
 @EnableDubboConfig

@@ -2,7 +2,7 @@ spring:
   profiles:
     active: hztest
   application:
-    name: biz-support-stock
+    name: biz-support-ctcc
   cloud:
     nacos:
       config:
