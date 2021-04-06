@@ -19,8 +19,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2020/9/14
  */
 @Configuration
+@Profile(value = {"dev","test"})
 @EnableSwagger2
-@Profile(value = {"dev","test", "hlytest", "fytest", "hztest"})
 public class SwaggerConfig implements WebMvcConfigurer {
 
     @Value("${swagger.title}")

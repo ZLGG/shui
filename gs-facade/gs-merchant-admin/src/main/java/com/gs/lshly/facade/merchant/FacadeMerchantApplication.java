@@ -20,7 +20,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDubboConfig
 @DubboComponentScan("com.gs.lshly.facade.merchant")
 @EnableAsync
-@EnableSwagger2
 public class FacadeMerchantApplication {
 
     public static void main(String[] args) {
