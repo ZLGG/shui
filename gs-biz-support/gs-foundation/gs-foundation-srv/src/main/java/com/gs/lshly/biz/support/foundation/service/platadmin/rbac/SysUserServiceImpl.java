@@ -108,7 +108,7 @@ public class SysUserServiceImpl implements ISysUserService {
         if (user == null) {
             throw new BusinessException("用户未找到");
         }
-        if (PwdUtil.encoder().matches(dto.getOldPwd(),user.getPwd())) {
+        if (PwdUtil.matches(dto.getOldPwd(),user.getPwd())) {
             repository.updateById(new SysUser().setId(user.getId()).setPwd(PwdUtil.encode(dto.getNewPwd())));
         } else {
             throw new BusinessException("旧密码错误");

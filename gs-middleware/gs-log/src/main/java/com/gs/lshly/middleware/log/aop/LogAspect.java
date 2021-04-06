@@ -103,21 +103,23 @@ public class LogAspect implements ApplicationContextAware {
             accessLogDTO.setUseTime(elapsedTime);
 
             log.info("api:{}", JsonUtils.toJson(accessLogDTO));
-
-            if(applicationContext.containsBean("AccessLogService")) {
-                IAccessLogService accessLogService = applicationContext.getBean(IAccessLogService.class);
-                if (accessLogService != null) {
-                    if (!"登陆".equals(accessLogDTO.getModule()) ){
-                        accessLogService.save(accessLogDTO);
-                    } else  {
-                        BaseDTO dto = get();
-                        if (dto!=null && StrUtil.isNotBlank(dto.getJwtUserId())) {
+            try {
+                if (applicationContext.containsBean("AccessLogService")) {
+                    IAccessLogService accessLogService = applicationContext.getBean(IAccessLogService.class);
+                    if (accessLogService != null) {
+                        if (!"登陆".equals(accessLogDTO.getModule())) {
                             accessLogService.save(accessLogDTO);
+                        } else {
+                            BaseDTO dto = get();
+                            if (dto != null && StrUtil.isNotBlank(dto.getJwtUserId())) {
+                                accessLogService.save(accessLogDTO);
+                            }
                         }
                     }
                 }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
-
             if (ee != null) {
                 throw ee;
             }

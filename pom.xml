@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-build</artifactId>
-        <version>2.1.11.RELEASE</version>
+        <version>2.3.2.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -24,9 +24,9 @@
     </modules>
 
     <properties>
-        <ali.version>2.1.2.RELEASE</ali.version>
+        <ali.version>2.2.4.RELEASE</ali.version>
 
-        <spring-cloud-commons.version>2.1.5.RELEASE</spring-cloud-commons.version>
+        <spring-cloud-commons.version>2.2.7.RELEASE</spring-cloud-commons.version>
         <dubbo.version>2.7.9</dubbo.version>
         <lombok.version>1.18.12</lombok.version>
         <swagger.version>2.7.0</swagger.version>
@@ -148,14 +148,8 @@
                     <exclude>rebel.xml</exclude>
                     <exclude>config/dev/**</exclude>
                     <exclude>config/test/**</exclude>
-                    <exclude>config/hlyprod/**</exclude>
-                    <exclude>config/hlytest/**</exclude>
-                    <exclude>config/fytest/**</exclude>
-                    <exclude>config/fyprod/**</exclude>
-                    <exclude>config/cluster/**</exclude>
-                    <exclude>config/local/**</exclude>
-                    <exclude>config/sztest/**</exclude>
-                    <exclude>config/szprod/**</exclude>
+                    <exclude>config/hzprod/**</exclude>
+                    <exclude>config/hztest/**</exclude>
                 </excludes>
                 <filtering>true</filtering>
             </resource>
@@ -180,68 +174,12 @@
                 <profiles.active>dev</profiles.active>
             </properties>
         </profile>
-        <!-- 开发集群环境配置 -->
-        <profile>
-            <id>cluster</id>
-            <properties>
-                <env.dscs>cluster</env.dscs>
-                <profiles.active>cluster</profiles.active>
-            </properties>
-        </profile>
         <!-- 测试环境配置 -->
         <profile>
             <id>test</id>
             <properties>
                 <env.dscs>test</env.dscs>
                 <profiles.active>test</profiles.active>
-            </properties>
-        </profile>
-        <!-- 好粮油正式环境配置 -->
-        <profile>
-            <id>hlyprod</id>
-            <properties>
-                <env.dscs>hlyprod</env.dscs>
-                <profiles.active>hlyprod</profiles.active>
-            </properties>
-        </profile>
-        <!-- 好粮油测试配置 -->
-        <profile>
-            <id>hlytest</id>
-            <properties>
-                <env.dscs>hlytest</env.dscs>
-                <profiles.active>hlytest</profiles.active>
-            </properties>
-        </profile>
-        <!-- 富友商城正式环境配置 -->
-        <profile>
-            <id>fyprod</id>
-            <properties>
-                <env.dscs>fyprod</env.dscs>
-                <profiles.active>fyprod</profiles.active>
-            </properties>
-        </profile>
-        <!-- 富友商城测试配置 -->
-        <profile>
-            <id>fytest</id>
-            <properties>
-                <env.dscs>fytest</env.dscs>
-                <profiles.active>fytest</profiles.active>
-            </properties>
-        </profile>
-        <!-- 深圳正式环境配置 -->
-        <profile>
-            <id>szprod</id>
-            <properties>
-                <env.dscs>szprod</env.dscs>
-                <profiles.active>szprod</profiles.active>
-            </properties>
-        </profile>
-        <!-- 深圳商城测试配置 -->
-        <profile>
-            <id>sztest</id>
-            <properties>
-                <env.dscs>sztest</env.dscs>
-                <profiles.active>sztest</profiles.active>
             </properties>
         </profile>
         <!-- 杭州正式环境配置 -->
@@ -261,14 +199,6 @@
             <properties>
                 <env.dscs>hztest</env.dscs>
                 <profiles.active>hztest</profiles.active>
-            </properties>
-        </profile>
-        <!-- 本地环境 -->
-        <profile>
-            <id>local</id>
-            <properties>
-                <env.dscs>local</env.dscs>
-                <profiles.active>local</profiles.active>
             </properties>
         </profile>
     </profiles>
