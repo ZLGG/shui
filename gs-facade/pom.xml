@@ -15,7 +15,6 @@
     <modules>
         <module>gs-mall-bbc</module>
         <module>gs-mall-bbb</module>
-        <module>gs-pos-sync</module>
         <module>gs-merchant-admin</module>
         <module>gs-platform-admin</module>
     </modules>
