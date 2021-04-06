@@ -105,6 +105,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
@@ -268,6 +269,19 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<BbcTradeSettlementVO.ListVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
+        // 获取用户信息，获取是否是IN会员
+        String jwtUserId = dto.getJwtUserId();
+
+        BbcUserQTO.QTO qto = new BbcUserQTO.QTO();
+        qto.setJwtUserId(jwtUserId);
+        BbcUserVO.DetailVO userInfo = iBbcUserRpc.getUserInfo(qto);
+        if (userInfo == null) {
+            throw new BusinessException("无用户信息");
+        }
+        Integer isInUser = userInfo.getIsInUser();
+        // 用户积分
+        Integer telecomsIntegral = userInfo.getTelecomsIntegral();
+
         //skuid/数量
         List<CommonStockDTO.InnerSkuGoodsInfoItem> goodsItemList = new ArrayList<>();
 
@@ -312,6 +326,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         List<BbcTradeSettlementVO.ListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<>();
         BigDecimal goodsAmount = BigDecimal.ZERO;//商品总金额
+        BigDecimal goodsPointAmount = BigDecimal.ZERO;//商品总积分金额
         Integer goodsCount = 0;//商品总数
         //店铺商品
         for(BbcUserShoppingCarVO.InnerSimpleItem innerSimpleItem : itemList){
@@ -326,17 +341,37 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             BbcTradeSettlementVO.ListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(innerSimpleItem.getId(),innerSimpleItem.getQuantity(), innerServiceGoodsVO);
 
             goodsInfoVOS.add(goodsInfoVO);
-            BigDecimal productPrice = goodsInfoVO.getSalePrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-            goodsAmount = goodsAmount.add(productPrice);
-            goodsCount = goodsCount+goodsInfoVO.getQuantity();
+            if (!goodsInfoVO.getIsPointGood()) {
+                BigDecimal productPrice = goodsInfoVO.getSalePrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                goodsAmount = goodsAmount.add(productPrice);
+            } else if (!goodsInfoVO.getIsInMemberGift()) {
+                BigDecimal pointPrice = goodsInfoVO.getPointPrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                goodsPointAmount = goodsPointAmount.add(pointPrice);
+            } else {
+                if ("1".equals(isInUser)) {
+                    BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                    goodsPointAmount = goodsPointAmount.add(pointPrice);
+                } else {
+                    throw new BusinessException("存在IN会员专属商品，请开通IN会员后重试");
+                }
+            }
+
+            goodsCount = goodsCount + goodsInfoVO.getQuantity();
         }
         settlementVO.setGoodsInfoVOS(goodsInfoVOS);
 
         //组装收货地址信息
         fillAddress(dto, settlementVO);
 
-        settlementVO.setGoodsAmount(goodsAmount);//商品总额
-        settlementVO.setGoodsCount(goodsCount);//商品总数
+        //商品总额
+        settlementVO.setGoodsAmount(goodsAmount);
+        //商品总积分额
+        settlementVO.setGoodsPointAmount(goodsPointAmount);
+        //商品总数
+        settlementVO.setGoodsCount(goodsCount);
+        // 用户积分
+        settlementVO.setTelecomsIntegral(telecomsIntegral);
+
         //营销结算
         try {
             log.info("开始结算:"+ JsonUtils.toJson(settlementVO));
@@ -357,6 +392,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }else {
             settlementVO.setTradeAmount(settlementVO.getGoodsAmount().add(delivery));
         }
+        settlementVO.setTradePointAmount(settlementVO.getGoodsPointAmount());
+
         //组装门店自提联系人信息
         fillContacts(dto, settlementVO);
 
@@ -490,7 +527,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         goodsInfoVO.setSkuSpecValue(StringUtils.isEmpty(innerServiceGoodsVO.getSkuSpecValue()) ? "" : innerServiceGoodsVO.getSkuSpecValue());
         goodsInfoVO.setQuantity(quantity);//购买数量
         goodsInfoVO.setCartId(carId);//购物车id
+        goodsInfoVO.setIsPointGood(innerServiceGoodsVO.getIsPointGood());
         goodsInfoVO.setSalePrice(innerServiceGoodsVO.getSalePrice());
+        goodsInfoVO.setPointPrice(innerServiceGoodsVO.getPointPrice());
+        goodsInfoVO.setIsInMemberGift(innerServiceGoodsVO.getIsInMemberGift());
+        goodsInfoVO.setInMemberPointPrice(innerServiceGoodsVO.getInMemberPointPrice());
         return goodsInfoVO;
     }
 

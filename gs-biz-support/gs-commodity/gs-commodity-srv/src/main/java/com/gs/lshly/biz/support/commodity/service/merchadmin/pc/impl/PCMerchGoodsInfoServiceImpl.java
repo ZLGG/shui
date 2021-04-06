@@ -353,6 +353,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setId("");
                 skuGoodInfo.setCategoryId(eto.getCategoryId());
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
+                skuGoodInfo.setIsPointGood(eto.getIsPointGood());
+                skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
                 skuGoodInfos.add(skuGoodInfo);
 
                 //添加sku商品信息
