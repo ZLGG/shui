@@ -86,7 +86,9 @@ public class PCBbbHomeController {
     @ApiOperation("2Bpc端首页分类菜单信息")
     @GetMapping("")
     public ResponseData<PCBbbGoodsCategoryVO.CategoryMenuVO> getCategoryMenuVO(PCBbbGoodsCategoryQTO.QTO qto) {
-        return ResponseData.data(categoryRpc.getCategoryMenuVO(qto));
+    	 qto.setSubject(SubjectEnum.默认.getCode());
+    	 qto.setTerminal(TerminalEnum.BBB.getCode());
+    	return ResponseData.data(categoryRpc.getCategoryMenuVO(qto));
     }
 
 
