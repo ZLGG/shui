@@ -12,15 +12,6 @@
     <groupId>wholesale.grainoil.gs</groupId>
     <artifactId>gs-payment</artifactId>
 
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
