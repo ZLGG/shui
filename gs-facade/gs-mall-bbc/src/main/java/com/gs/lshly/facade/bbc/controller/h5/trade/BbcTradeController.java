@@ -142,13 +142,13 @@ public class BbcTradeController {
     }
 
     @ApiOperation("我的优惠卷列表（资产管理）")
-    @GetMapping("myUserCard")
+    @GetMapping("//userCenter/myUserCard")
     public ResponseData<PageData<BbcTradeListVO.PageData>> myUserCard(BbcTradeQTO.UserCardQTO qto) {
         return ResponseData.data(bbcTradeRpc.myUserCard(qto));
     }
 
     @ApiOperation("使用优惠卷列表")
-    @PostMapping("/useCard")
+    @PostMapping("//userCenter/useCard")
     public ResponseData<List<BbcTradeListVO.UseCard>> useCard(@Valid @RequestBody BbcTradeDTO.UseCard dto) {
         return ResponseData.data(bbcTradeRpc.useCard(dto));
     }
