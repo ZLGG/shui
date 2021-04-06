@@ -96,6 +96,12 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
 
     @Override
     public String regMerchantAccount(PCMerchMerchantAccountDTO.RegDTO eto) {
+        //校验验证码
+        Object code = redisUtil.get(PhoneValidCodeGroup + eto.getPhone());
+        String validCode = code != null ? code + "" : "";
+        if (!StringUtils.equals(validCode, eto.getVcode())) {
+            throw new BusinessException("验证码不匹配");
+        }
         if(!eto.getUserPwd().equals(eto.getUserPwdCfm())){
             throw new BusinessException("确认密码输入错误");
         }
@@ -351,11 +357,30 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
     }
 
     @Override
+    public void getRegPhoneValidCode(String phone) {
+        QueryWrapper<MerchantAccount> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("phone",phone));
+        Integer count = repository.count(query);
+        if (count != null && count > 0) {
+            throw new BusinessException("该手机已注册");
+        }
+        String validCode=null;
+        try {
+            validCode = smsService.sendRegistrySMSCode(phone);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
+        }
+        //验证码失效时间10分账
+        log.info("设置-手机号码："+phone+"-验证码："+validCode);
+        redisUtil.set(PhoneValidCodeGroup + phone, validCode, 10 * 60);
+    }
+
+    @Override
     public String forgetPasswordByPhone(PCMerchMerchantAccountDTO.ForgetByPhoneETO dto) {
         //校验验证码
         Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
         String validCode = code != null ? code + "" : "";
-        System.out.println("validCode:~~~~~~~~~~~~~"+validCode);
         if (!StringUtils.equals(validCode, dto.getValidCode())) {
             throw new BusinessException("验证码不匹配");
         }

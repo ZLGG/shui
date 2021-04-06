@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.repository.*;
@@ -22,15 +23,13 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsRefundVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
-import com.gs.lshly.common.struct.pos.dto.PosFinishAndCancelRequestDTO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
-import com.gs.lshly.rpc.api.pos.IPosTradeRpc;
 import com.lakala.boss.api.config.MerchantBaseEnum;
 import com.lakala.boss.api.entity.request.EntOrderDetailRefundRequest;
-import com.lakala.boss.api.entity.request.EntOrderRefundRequest;
 import com.lakala.boss.api.entity.request.RefundDetail;
 import com.lakala.boss.api.entity.response.EntOrderRefundResponse;
 import com.lakala.boss.api.utils.BossClient;
@@ -40,8 +39,6 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -76,8 +73,6 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private ITradePayRepository iTradePayRepository;
     @Autowired
     private ITradeCancelRepository iTradeCancelRepository;
-    @Autowired
-    private IPosErrorInfoRepository iPosErrorInfoRepository;
     @DubboReference
     private IGoodsInfoRpc iGoodsInfoRpc;
     @DubboReference
@@ -86,8 +81,6 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private IUserRpc iUserRpc;
     @DubboReference
     private ICommonShopRpc iCommonShopRpc;
-    @DubboReference
-    private IPosTradeRpc iPosTradeRpc;
     @Override
     public PageData<TradeRightsVO.RightsListVO> pageData(TradeRightsQTO.StateDTO qto)  {
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
@@ -410,28 +403,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
                                     throw new BusinessException(e.getMessage());
                                 }
                                 System.out.println("[REQUEST]: " + request.toString());
-                                if (response.isSuccess()) {
-                                    System.out.println("[END]: " + JSONObject.toJSONString(response));
-                                    try {
-                                        PosFinishAndCancelRequestDTO.DTO dto1 = new PosFinishAndCancelRequestDTO.DTO();
-                                        ShopVO.DetailVO detailVO1 = iShopRpc.innerByIdGetPosShopId(tradeRights.getShopId());
-                                        if (ObjectUtils.isNotEmpty(detailVO1)){
-                                            dto1.setShop(ObjectUtils.isNotEmpty(detailVO1.getPosShopId())?detailVO1.getPosShopId():"").
-                                                    setPlatformId(ObjectUtils.isNotEmpty(detailVO1.getPosShopId())?detailVO1.getPosShopId():"");
-                                        }
-                                        dto1.setNumber(tradeRights.getId());
-                                        iPosTradeRpc.FinishOrderRight(dto1);
-                                    }catch (Exception e){
-                                        log.info("订单推送POS发生异常："+e.getMessage(),e);
-                                        PosErrorInfo posErrorInfo = new PosErrorInfo();
-                                        posErrorInfo.setMessage("失败").setTarget("BbcTradeRightsServiceImpl.confirmReceipt 390：2c退换货完成推送失败");
-                                        iPosErrorInfoRepository.save(posErrorInfo);
-                                    }
-                                } else {
-                                    System.out.println("返回数据: " + JSONObject.toJSONString(response));
-                                    System.out.println("接口调用失败");
-                                    throw new BusinessException("退款失败");
-                                }
+
                                 if (response.getStatus().equals(TradePayResultStateEnum.SUCCESS.getRemark())){
                                     tradeRightsRefund.setState(TradeRightsRefundStateEnum.成功.getCode());
                                 }else {

@@ -3,6 +3,7 @@ package com.gs.lshly.middleware.auth.security;
 
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.constants.SecurityConstants;
+import com.gs.lshly.middleware.vcode.kaptcha.CaptchaService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -29,11 +30,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private AuthenticationFailureHandler failedHandler;
 
+    private CaptchaService captchaService;
+
     public JwtAuthenticationFilter() { }
 
-    public JwtAuthenticationFilter(AuthenticationSuccessHandler successHandler, AuthenticationFailureHandler failureHandler) {
+    public JwtAuthenticationFilter(AuthenticationSuccessHandler successHandler, AuthenticationFailureHandler failureHandler, CaptchaService captchaService) {
         this.successHandler = successHandler;
         this.failedHandler = failureHandler;
+        this.captchaService = captchaService;
         super.setFilterProcessesUrl(SecurityConstants.AUTH_LOGIN_URL);
     }
 
@@ -43,8 +47,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String password = this.obtainPassword(request)!=null ? this.obtainPassword(request) : "";
         String remember = request.getParameter("remember-me");
         rememberMe.set(StrUtil.isNotBlank(remember) && ("1".equals(remember) || "true".equals(remember)));
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
-        return this.getAuthenticationManager().authenticate(authRequest);
+        String vcId = request.getParameter("vcId");
+        String vcode = request.getParameter("vcode");
+        if(captchaService.match(vcId, vcode)) {
+            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+            return this.getAuthenticationManager().authenticate(authRequest);
+        } else {
+            throw new CaptchaNotMatchException("验证码错误");
+        }
 
     }
 

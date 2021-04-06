@@ -1,9 +1,5 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
@@ -27,8 +23,10 @@ import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
 * <p>
@@ -144,7 +142,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             if (user == null) {
                 throw new BusinessException("请先注册");
             }
-            if (PwdUtil.encoder().matches(dto.getValidCode(), user.getUserPwd())) {
+            if (PwdUtil.matches(dto.getValidCode(), user.getUserPwd())) {
 	            BbcUserVO.LoginVO vo = userToLoginVO(user, null);
 	            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo);
 	            return vo;

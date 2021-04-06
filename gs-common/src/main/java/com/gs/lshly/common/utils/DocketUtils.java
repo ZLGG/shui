@@ -136,12 +136,12 @@ public class DocketUtils {
                 .globalOperationParameters(pars);
     }
 
-    private static ApiInfo apiInfo(String swaggerTitle, String terminal) {
+    public static ApiInfo apiInfo(String swaggerTitle, String terminal) {
         return new ApiInfoBuilder()
                 .title(swaggerTitle + " API(" + terminal + ")")
                 .version("1.0")
                 .description(swaggerTitle + " API文档(" + terminal + ")<br/>" +
-                        "认证地址：/auth/login?username=用户名&password=密码<br/>")
+                        "认证地址：/auth/login?username=用户名&password=密码&vcId=验证码id&vcode=验证码<br/>")
                 .build();
     }
 

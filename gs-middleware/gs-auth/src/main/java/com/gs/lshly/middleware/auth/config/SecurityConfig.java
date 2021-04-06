@@ -10,6 +10,7 @@ import com.gs.lshly.middleware.auth.security.handler.AuthDeniedHandler;
 import com.gs.lshly.middleware.auth.security.handler.AuthFailedHandler;
 import com.gs.lshly.middleware.auth.security.handler.AuthLogoutHandler;
 import com.gs.lshly.middleware.auth.security.handler.AuthSuccessHandler;
+import com.gs.lshly.middleware.vcode.kaptcha.CaptchaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthEntryPoint authEntryPoint;
     @Autowired
     private AuthLogoutHandler authLogoutHandler;
+    @Autowired
+    private CaptchaService captchaService;
 
     @Value("${auth.prefixs}")
     private String[] authUriPrefix;
@@ -80,12 +83,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         UserDetailsService userDetailsService = (UserDetailsService) getApplicationContext().getBean(authBeanName);
-        auth.userDetailsService(userDetailsService).passwordEncoder(PwdUtil.encoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(PwdUtil.getEncoder());
     }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(successHandler, failedHandler);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(successHandler, failedHandler, captchaService);
         filter.setAuthenticationManager(authenticationManagerBean());
         return filter;
     }

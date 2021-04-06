@@ -30,6 +30,8 @@ public interface IPCMerchMerchantAccountService {
 
     void getPhoneValidCode(String phone);
 
+    void getRegPhoneValidCode(String phone);
+
     String forgetPasswordByPhone(PCMerchMerchantAccountDTO.ForgetByPhoneETO dto);
 
     String forgetByEmail(PCMerchMerchantAccountDTO.ForgetByEmailETO dto);
