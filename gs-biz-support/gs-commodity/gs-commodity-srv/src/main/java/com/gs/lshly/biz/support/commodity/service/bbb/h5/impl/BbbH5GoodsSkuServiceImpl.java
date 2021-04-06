@@ -2,7 +2,6 @@ package com.gs.lshly.biz.support.commodity.service.bbb.h5.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
@@ -11,19 +10,11 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbb.h5.IBbbH5GoodsSkuService;
 import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.h5.commodity.dto.BbbH5GoodsInfoDTO;
-import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5SkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.stock.dto.BbbH5StockDeliveryDTO;
 import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserShoppingCarVO;
-import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.common.stock.CommonStockTemplateVO;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

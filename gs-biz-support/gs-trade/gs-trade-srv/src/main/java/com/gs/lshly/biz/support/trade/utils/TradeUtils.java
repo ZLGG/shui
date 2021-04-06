@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Random;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import com.lakala.boss.api.common.Common;
 

@@ -75,7 +75,7 @@ import com.lakala.boss.api.entity.response.QRCodePaymentCommitResponse;
 import com.lakala.boss.api.utils.BossClient;
 import com.lakala.boss.api.utils.UuidUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
