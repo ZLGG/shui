@@ -1,0 +1,35 @@
+package com.gs.lshly.biz.support.user.rpc.bbb.h5;
+
+import com.gs.lshly.biz.support.user.service.bbb.h5.IBbbH5MessageService;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbb.pc.user.qto.BBBMessageQTO;
+import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbMessageVO;
+import com.gs.lshly.rpc.api.bbb.h5.user.IBbbMessageRpc;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * @Author yangxi
+ * @create 2021/4/6 15:36
+ */
+@DubboService
+public class BbbH5MessageRpc implements IBbbMessageRpc {
+
+    @Autowired
+    private IBbbH5MessageService messageService;
+
+    @Override
+    public Integer getUnreadMessage(BBBMessageQTO.QTO qto) {
+        return messageService.getUnreadMessage(qto);
+    }
+
+    @Override
+    public PageData<BbbMessageVO.MessageListVO> queryMessageList(BBBMessageQTO.QTO qto) {
+        return messageService.queryMessageList(qto);
+    }
+
+    @Override
+    public BbbMessageVO.MessageDetailVO getMessageDetail(String msgId) {
+        return messageService.getMessageDetail(msgId);
+    }
+}
