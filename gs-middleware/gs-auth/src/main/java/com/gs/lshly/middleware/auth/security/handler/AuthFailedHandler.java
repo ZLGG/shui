@@ -53,6 +53,7 @@ public class AuthFailedHandler implements AuthenticationFailureHandler {
         log.info("认证异常:" + exceptionName + ":" + responseMsg);
 
         response.setStatus(responseCode);
+        response.setCharacterEncoding("UTF-8");
         mapper.writeValue(response.getWriter(), ResponseData.authFail(responseMsg));
     }
 

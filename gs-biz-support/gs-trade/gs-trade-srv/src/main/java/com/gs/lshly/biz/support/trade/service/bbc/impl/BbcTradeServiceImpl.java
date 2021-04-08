@@ -1,103 +1,33 @@
 package com.gs.lshly.biz.support.trade.service.bbc.impl;
 
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardGoods;
-import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardUsers;
-import com.gs.lshly.biz.support.trade.entity.PosErrorInfo;
-import com.gs.lshly.biz.support.trade.entity.Trade;
-import com.gs.lshly.biz.support.trade.entity.TradeCancel;
-import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
-import com.gs.lshly.biz.support.trade.entity.TradeGoods;
-import com.gs.lshly.biz.support.trade.entity.TradePay;
-import com.gs.lshly.biz.support.trade.entity.TradePayOffline;
-import com.gs.lshly.biz.support.trade.entity.TradePayOfflineImg;
-import com.gs.lshly.biz.support.trade.entity.TradeRights;
-import com.gs.lshly.biz.support.trade.entity.TradeRightsGoods;
+import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.MarketPtCardStatusEnum;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
 import com.gs.lshly.biz.support.trade.mapper.TradePayMapper;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
-import com.gs.lshly.biz.support.trade.repository.IPosErrorInfoRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeCommentRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradePayOfflineImgRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradePayOfflineRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeRightsGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
+import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSettleService;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
-import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.ResponseCodeEnum;
-import com.gs.lshly.common.enums.StockAddressTypeEnum;
-import com.gs.lshly.common.enums.StockCheckStateEnum;
-import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
-import com.gs.lshly.common.enums.TradeCancelRefundStateEnum;
-import com.gs.lshly.common.enums.TradeCancelStateEnum;
-import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
-import com.gs.lshly.common.enums.TradeHideEnum;
-import com.gs.lshly.common.enums.TradePayOfficeEnum;
-import com.gs.lshly.common.enums.TradePayResultStateEnum;
-import com.gs.lshly.common.enums.TradePayStateEnum;
-import com.gs.lshly.common.enums.TradePayTypeEnum;
-import com.gs.lshly.common.enums.TradeRightsReasonTypeEnum;
-import com.gs.lshly.common.enums.TradeRightsStateEnum;
-import com.gs.lshly.common.enums.TradeRightsTypeEnum;
-import com.gs.lshly.common.enums.TradeSourceTypeEnum;
-import com.gs.lshly.common.enums.TradeStateEnum;
-import com.gs.lshly.common.enums.TradeTimeOutCancelEnum;
-import com.gs.lshly.common.enums.TradeTrueFalseEnum;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockDeliveryDTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockDeliveryVO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeGoodsDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.*;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
@@ -105,19 +35,13 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
-import com.gs.lshly.common.struct.pos.body.OCustomer;
-import com.gs.lshly.common.struct.pos.body.OOnlineOrderLine;
-import com.gs.lshly.common.struct.pos.body.OOnlineOrderPayment;
-import com.gs.lshly.common.struct.pos.body.OReceiverInfo;
-import com.gs.lshly.common.struct.pos.body.RSThinSku2;
-import com.gs.lshly.common.struct.pos.dto.PosFinishAndCancelTradeRequestDTO;
-import com.gs.lshly.common.struct.pos.dto.PosTradeODeliverOrderRequestDTO;
 import com.gs.lshly.common.utils.Base64;
 import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.common.utils.JsonUtils;
@@ -135,7 +59,6 @@ import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReceiptRpc;
-import com.gs.lshly.rpc.api.pos.IPosTradeRpc;
 import com.lakala.boss.api.common.Common;
 import com.lakala.boss.api.config.MerchantBaseEnum;
 import com.lakala.boss.api.entity.notify.EntMergeOfflineResultNotify;
@@ -146,9 +69,21 @@ import com.lakala.boss.api.entity.response.EntOffLinePaymentResponse;
 import com.lakala.boss.api.entity.response.QRCodePaymentCommitResponse;
 import com.lakala.boss.api.utils.BossClient;
 import com.lakala.boss.api.utils.UuidUtil;
-
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
 * <p>
@@ -179,17 +114,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @DubboReference
     private ISettingsReceiptRpc iSettingsReceiptRpc;
     @DubboReference
-    private IPosTradeRpc iPosTradeRpc;
-    @DubboReference
     private IBbcUserRpc iBbcUserRpc;
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
 
     @Autowired
     private IMarketMerchantCardUsersRepository iMarketMerchantCardUsersRepository;
-
-    @Autowired
-    private IPosErrorInfoRepository iPosErrorInfoRepository;
 
     @Autowired
     private IMarketMerchantCardGoodsRepository iMarketMerchantCardGoodsRepository;
@@ -268,6 +198,19 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<BbcTradeSettlementVO.ListVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
+        // 获取用户信息，获取是否是IN会员
+        String jwtUserId = dto.getJwtUserId();
+
+        BbcUserQTO.QTO qto = new BbcUserQTO.QTO();
+        qto.setJwtUserId(jwtUserId);
+        BbcUserVO.DetailVO userInfo = iBbcUserRpc.getUserInfo(qto);
+        if (userInfo == null) {
+            throw new BusinessException("无用户信息");
+        }
+        Integer isInUser = userInfo.getIsInUser();
+        // 用户积分
+        Integer telecomsIntegral = userInfo.getTelecomsIntegral();
+
         //skuid/数量
         List<CommonStockDTO.InnerSkuGoodsInfoItem> goodsItemList = new ArrayList<>();
 
@@ -312,6 +255,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         List<BbcTradeSettlementVO.ListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<>();
         BigDecimal goodsAmount = BigDecimal.ZERO;//商品总金额
+        BigDecimal goodsPointAmount = BigDecimal.ZERO;//商品总积分金额
         Integer goodsCount = 0;//商品总数
         //店铺商品
         for(BbcUserShoppingCarVO.InnerSimpleItem innerSimpleItem : itemList){
@@ -326,17 +270,37 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             BbcTradeSettlementVO.ListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(innerSimpleItem.getId(),innerSimpleItem.getQuantity(), innerServiceGoodsVO);
 
             goodsInfoVOS.add(goodsInfoVO);
-            BigDecimal productPrice = goodsInfoVO.getSalePrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-            goodsAmount = goodsAmount.add(productPrice);
-            goodsCount = goodsCount+goodsInfoVO.getQuantity();
+            if (!goodsInfoVO.getIsPointGood()) {
+                BigDecimal productPrice = goodsInfoVO.getSalePrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                goodsAmount = goodsAmount.add(productPrice);
+            } else if (!goodsInfoVO.getIsInMemberGift()) {
+                BigDecimal pointPrice = goodsInfoVO.getPointPrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                goodsPointAmount = goodsPointAmount.add(pointPrice);
+            } else {
+                if ("1".equals(isInUser)) {
+                    BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice().multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                    goodsPointAmount = goodsPointAmount.add(pointPrice);
+                } else {
+                    throw new BusinessException("存在IN会员专属商品，请开通IN会员后重试");
+                }
+            }
+
+            goodsCount = goodsCount + goodsInfoVO.getQuantity();
         }
         settlementVO.setGoodsInfoVOS(goodsInfoVOS);
 
         //组装收货地址信息
         fillAddress(dto, settlementVO);
 
-        settlementVO.setGoodsAmount(goodsAmount);//商品总额
-        settlementVO.setGoodsCount(goodsCount);//商品总数
+        //商品总额
+        settlementVO.setGoodsAmount(goodsAmount);
+        //商品总积分额
+        settlementVO.setGoodsPointAmount(goodsPointAmount);
+        //商品总数
+        settlementVO.setGoodsCount(goodsCount);
+        // 用户积分
+        settlementVO.setTelecomsIntegral(telecomsIntegral);
+
         //营销结算
         try {
             log.info("开始结算:"+ JsonUtils.toJson(settlementVO));
@@ -357,6 +321,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }else {
             settlementVO.setTradeAmount(settlementVO.getGoodsAmount().add(delivery));
         }
+        settlementVO.setTradePointAmount(settlementVO.getGoodsPointAmount());
+
         //组装门店自提联系人信息
         fillContacts(dto, settlementVO);
 
@@ -490,7 +456,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         goodsInfoVO.setSkuSpecValue(StringUtils.isEmpty(innerServiceGoodsVO.getSkuSpecValue()) ? "" : innerServiceGoodsVO.getSkuSpecValue());
         goodsInfoVO.setQuantity(quantity);//购买数量
         goodsInfoVO.setCartId(carId);//购物车id
+        goodsInfoVO.setIsPointGood(innerServiceGoodsVO.getIsPointGood());
         goodsInfoVO.setSalePrice(innerServiceGoodsVO.getSalePrice());
+        goodsInfoVO.setPointPrice(innerServiceGoodsVO.getPointPrice());
+        goodsInfoVO.setIsInMemberGift(innerServiceGoodsVO.getIsInMemberGift());
+        goodsInfoVO.setInMemberPointPrice(innerServiceGoodsVO.getInMemberPointPrice());
         return goodsInfoVO;
     }
 
@@ -1219,30 +1189,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             e.printStackTrace();
         }
 
-        //推送到POS
-        try {
-            PosFinishAndCancelTradeRequestDTO.DTO dto1 = new PosFinishAndCancelTradeRequestDTO.DTO();
-            BbcShopVO.DetailVO detailVO = iBbcShopRpc.detailShop(new BbcShopDTO.IdDTO(trade.getShopId()));
-            dto1.setNumber(trade.getId());
-            if (ObjectUtils.isNotEmpty(detailVO)){
-                dto1. setPlatformId(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"").setShop(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"");
-            }
-            if (ObjectUtils.isNotEmpty(trade.getDeliveryType())) {
-                if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
-                    dto1.setOrderType("PickUpInStoreOrder");
-                } else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode())) {
-                    dto1.setOrderType("ExpressDeliverOrder");
-                } else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())) {
-                    dto1.setOrderType("ShopDeliverOrder");
-                }
-            }
-            iPosTradeRpc.finishTrade(dto1);
-        }catch (Exception e){
-            log.info("订单推送POS发生异常："+e.getMessage(),e);
-            PosErrorInfo posErrorInfo = new PosErrorInfo();
-            posErrorInfo.setMessage("失败").setTarget("BbcTradeRightsServiceImpl.orderConfirmReceipt 931：完成订单推送失败");
-            iPosErrorInfoRepository.save(posErrorInfo);
-        }
         return ResponseData.success();
     }
 
@@ -1366,101 +1312,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             }
             commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
             responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
-            //推送POS
-            try {
-                PosTradeODeliverOrderRequestDTO.DTO dto1 = getPOSDTO(trade, tradePay);
-                iPosTradeRpc.addTrade(dto1);
-            }catch (Exception e){
-                log.info("订单推送POS发生异常："+e.getMessage(),e);
-                PosErrorInfo posErrorInfo = new PosErrorInfo();
-                posErrorInfo.setMessage("失败").setTarget("BbcTradeServiceImpl.paySuccess 1049：申请退换货推送失败");
-                iPosErrorInfoRepository.save(posErrorInfo);
-            }
+
             return responseJson.toString();
         }
         responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
         return responseJson.toString();
-    }
-
-    private PosTradeODeliverOrderRequestDTO.DTO getPOSDTO(Trade trade,TradePay tradePay) {
-        PosTradeODeliverOrderRequestDTO.DTO dto = new PosTradeODeliverOrderRequestDTO.DTO();
-        BbcShopVO.DetailVO detailVO = iBbcShopRpc.detailShop(new BbcShopDTO.IdDTO(trade.getShopId()));
-        if (ObjectUtils.isNotEmpty(detailVO)){
-            dto. setPlatformId(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"").setShop(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"");
-        }
-        dto.setFreight(trade.getDeliveryAmount()).
-                setPickUpCode(trade.getTakeGoodsCode()).
-                setNumber(trade.getId()).setState("ORDERED").
-                setOrderTime(Date.from(trade.getCdate().atZone( ZoneId.systemDefault()).toInstant())).
-                setAmount(trade.getGoodsAmount()).
-                setDiscountAmount(BigDecimal.ZERO).
-                setCustomerRemark(trade.getBuyerRemark()).
-                setRemark(trade.getDeliveryRemark());
-        OReceiverInfo oReceiverInfo = new OReceiverInfo();
-        oReceiverInfo.setAddress(trade.getRecvFullAddres()).setName(trade.getRecvPersonName()).setPhone(trade.getRecvPhone());
-        dto.setReceiverInfo(oReceiverInfo);
-        OCustomer oCustomer = new OCustomer();
-        BbcUserVO.InnerUserInfoVO innerUserInfoVO = iBbcUserRpc.innerGetUserInfo(trade.getUserId());
-        if (ObjectUtils.isNotEmpty(innerUserInfoVO)){
-            oCustomer.setName(innerUserInfoVO.getUserName()).setUuid(trade.getUserId()).setMobile(innerUserInfoVO.getPhone());
-        }
-        dto.setCustomer(oCustomer);
-        if (ObjectUtils.isNotEmpty(trade.getDeliveryType())){
-            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
-                dto.setOrderType("PickUpInStoreOrder");
-            }else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode())){
-                dto.setOrderType("ExpressDeliverOrder");
-            }else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())){
-                dto.setOrderType("ShopDeliverOrder");
-            }
-        }
-        QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("trade_id",trade.getId()));
-        List<TradeGoods> list = tradeGoodsRepository.list(query);
-        int qty=0;
-        if (ObjectUtils.isNotEmpty(list)){
-            List<OOnlineOrderLine> oOnlineOrderLine = new ArrayList<>();
-            for (TradeGoods goods: list) {
-                qty=qty+goods.getQuantity();
-                OOnlineOrderLine oOnlineOrderLine1 = new OOnlineOrderLine();
-                RSThinSku2 rsThinSku2 = new RSThinSku2();
-                BbcGoodsInfoVO.InnerServiceVO innerServiceVO = iBbcGoodsInfoRpc.innerSimpleServiceGoodsVO(goods.getSkuId());
-                if (ObjectUtils.isNotEmpty(innerServiceVO)){
-                    rsThinSku2.setBarcode(innerServiceVO.getBarcode()).
-                            setName(innerServiceVO.getGoodsName()).
-                            setSpec(innerServiceVO.getSkuSpecValue());
-                    rsThinSku2.setId(ObjectUtils.isNotEmpty(innerServiceVO.getPosSpuId())?innerServiceVO.getPosSpuId():"");
-                }
-                oOnlineOrderLine1.setQty(goods.getQuantity()).
-                        setPrice(goods.getSalePrice()).setAmount(goods.getPayAmount()).setSku(rsThinSku2);
-                oOnlineOrderLine.add(oOnlineOrderLine1);
-            }
-            dto.setLines(oOnlineOrderLine);
-        }
-        dto.setQty(qty);
-        List<OOnlineOrderPayment> payments=new ArrayList<>();
-        OOnlineOrderPayment oOnlineOrderPayment = new OOnlineOrderPayment();
-        oOnlineOrderPayment.setPayTime(Date.from(tradePay.getCdate().atZone( ZoneId.systemDefault()).toInstant())).
-                setAmount(tradePay.getTotalAmount());
-        SetPayMethodNameAndName(oOnlineOrderPayment,tradePay);
-        payments.add(oOnlineOrderPayment);
-        dto.setPayments(payments);
-        return dto;
-    }
-
-    private void SetPayMethodNameAndName(OOnlineOrderPayment oOnlineOrderPayment,TradePay tradePay) {
-        if (
-                tradePay.getPayType()==TradePayTypeEnum.微信APP支付.getCode() ||
-                tradePay.getPayType()==TradePayTypeEnum.微信公众号.getCode() ||
-                tradePay.getPayType()==TradePayTypeEnum.微信扫码.getCode()){
-            oOnlineOrderPayment.setPayMethodCode("weiXinAccount").setPayMethodName("微信记账");
-        }else if (tradePay.getPayType()==TradePayTypeEnum.微信小程序支付.getCode() ){
-            oOnlineOrderPayment.setPayMethodCode("weiXinXcx").setPayMethodName("微信小程序");
-        }else if (tradePay.getPayType()==TradePayTypeEnum.支付宝APP.getCode() ||
-                tradePay.getPayType()==TradePayTypeEnum.支付扫码.getCode()){
-            oOnlineOrderPayment.setPayMethodCode("weiXinAccountAliPay").setPayMethodName("扫码支付");
-        }
-
     }
 
     /**
@@ -1519,31 +1375,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         //回库存
         cancelTradeReturnStock(trade.getId());
 
-        //推送到POS
-        //推送到POS
-        try {
-            PosFinishAndCancelTradeRequestDTO.DTO dto1 = new PosFinishAndCancelTradeRequestDTO.DTO();
-            BbcShopVO.DetailVO detailVO = iBbcShopRpc.detailShop(new BbcShopDTO.IdDTO(trade.getShopId()));
-            if (ObjectUtils.isNotEmpty(detailVO)){
-                dto1. setPlatformId(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"").setShop(StringUtils.isNotEmpty(detailVO.getPosShopId()) ? detailVO.getPosShopId():"");
-            }
-            dto1.setNumber(trade.getId());
-            if (ObjectUtils.isNotEmpty(trade.getDeliveryType())) {
-                if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
-                    dto1.setOrderType("PickUpInStoreOrder");
-                } else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode())) {
-                    dto1.setOrderType("ExpressDeliverOrder");
-                } else if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())) {
-                    dto1.setOrderType("ShopDeliverOrder");
-                }
-            }
-            iPosTradeRpc.cancelTrade(dto1);
-        }catch (Exception e){
-            log.info("订单推送POS发生异常："+e.getMessage(),e);
-            PosErrorInfo posErrorInfo = new PosErrorInfo();
-            posErrorInfo.setMessage("失败").setTarget("BbcTradeRightsServiceImpl.orderCancel 1200：取消订单推送失败");
-            iPosErrorInfoRepository.save(posErrorInfo);
-        }
         return ResponseData.success();
     }
     private TradeRights inset(Trade trade,BbcTradeCancelDTO.CancelDTO dto) {

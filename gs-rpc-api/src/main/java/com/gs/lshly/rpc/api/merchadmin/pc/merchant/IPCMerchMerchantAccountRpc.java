@@ -1,7 +1,6 @@
 package com.gs.lshly.rpc.api.merchadmin.pc.merchant;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMerchantAccountQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
@@ -34,6 +33,8 @@ public interface IPCMerchMerchantAccountRpc {
     PCMerchMerchantAccountVO.ListVO innnerDetailMerchantAccount(String phoneNum);
 
     void getPhoneValidCode(String phone);
+
+    void getRegPhoneValidCode(String phone);
 
     String forgetPasswordByPhone(PCMerchMerchantAccountDTO.ForgetByPhoneETO dto);
 

@@ -182,6 +182,15 @@ ALTER TABLE `gs_shop_navigation`
 ADD COLUMN `img_url`  varchar(255) NULL AFTER `merchant_id`;
 
 
+-- 添中字段 from 上海
+child_trade_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
+invoice_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
+invoice_address_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
+user_card_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
+
+
+
+
 
 
 

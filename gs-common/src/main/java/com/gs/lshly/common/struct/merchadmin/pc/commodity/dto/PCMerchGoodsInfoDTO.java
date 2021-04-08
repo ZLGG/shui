@@ -108,6 +108,24 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty("使用平台")
         private Integer usePlatform;
 
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
     }
 
     @Data
@@ -148,6 +166,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "pos店铺spuid")
         private String posSpuId;
+        
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
 
         @ApiModelProperty("兑换类型（0实物,1虚拟）")
         private Integer exchangeType;

@@ -1,14 +1,14 @@
 package com.gs.lshly.common.struct.merchadmin.pc.merchant.dto;
-import java.io.Serializable;
-import java.util.Date;
 
 import com.gs.lshly.common.struct.BaseDTO;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
 * @author xxfc
@@ -38,6 +38,9 @@ public abstract class PCMerchMerchantAccountDTO implements Serializable {
 
         @ApiModelProperty("邮箱")
         private String email;
+
+        @ApiModelProperty("短信验证码")
+        private String vcode;
 
     }
 

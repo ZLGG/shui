@@ -20,6 +20,8 @@ public class OssConfig {
                 || "fyprod".equalsIgnoreCase(active)
                 || "sztest".equalsIgnoreCase(active)
                 || "szprod".equalsIgnoreCase(active)
+                || "hztest".equalsIgnoreCase(active)
+                || "hzprod".equalsIgnoreCase(active)
         ) {
             log.info("本地方式存储-" + active);
             return new LocalFileServiceImpl();

@@ -20,7 +20,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDubboConfig
 @DubboComponentScan("com.gs.lshly.facade.bbb")
 @EnableAsync
-@EnableSwagger2
 public class FacadeBbbApplication {
 
     public static void main(String[] args) {

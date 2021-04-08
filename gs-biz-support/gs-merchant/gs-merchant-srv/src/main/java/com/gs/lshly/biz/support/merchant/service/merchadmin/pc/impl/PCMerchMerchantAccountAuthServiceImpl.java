@@ -97,7 +97,7 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     @Override
     public AuthDTO login(String openid, String username, String password) {
         MerchantAccount user = repository.getOne(new QueryWrapper<MerchantAccount>().eq("user_name", username));
-        if (user != null && PwdUtil.encoder().matches(password, user.getUserPwd())) {
+        if (user != null && PwdUtil.matches(password, user.getUserPwd())) {
             //更新openid
             user.setWxOpenid(openid);
             repository.updateById(user);
