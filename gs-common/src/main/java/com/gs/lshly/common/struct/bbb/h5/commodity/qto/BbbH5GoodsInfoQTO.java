@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -139,6 +140,15 @@ public abstract class BbbH5GoodsInfoQTO implements Serializable {
         @ApiModelProperty(value = "商品id列表")
         private List<String> idList;
 
+    }
+
+    @Data
+    @ApiModel("BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO")
+    @Accessors(chain = true)
+    public static class InSpecialAreaGoodsQTO extends BaseQTO {
+        @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
+        @NotNull(message = "inCouponType不能为空")
+        private Integer inCouponType;
     }
 
 }

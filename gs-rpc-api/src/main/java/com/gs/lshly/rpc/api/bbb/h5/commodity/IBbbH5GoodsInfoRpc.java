@@ -6,6 +6,9 @@ import com.gs.lshly.common.struct.bbb.h5.commodity.qto.BbbH5GoodsInfoQTO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5SkuGoodInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+
 import java.util.List;
 
 /**
@@ -106,4 +109,10 @@ public interface IBbbH5GoodsInfoRpc {
     List<BbbH5GoodsInfoVO.HomeInnerServiceVO> getHomeGoodsInnerServiceVO(List<String> goodsIdList, BaseDTO dto);
 
 
+    /**
+     * 获取in会员专区商品列表
+     * @param qto
+     * @return
+     */
+    PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto);
 }

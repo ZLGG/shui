@@ -7,6 +7,7 @@ import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
@@ -161,4 +162,20 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
             "WHERE\n" +
             "\tgs.flag = 0 AND ${ew.sqlSegment}")
     PCMerchGoodsInfoVO.HomeCountGoodsVO getHomeCountGoodsVO(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> qw);
+
+    /**
+     *
+     * @param page
+     * @param wrapper
+     * @return
+     */
+    @Select("SELECT DISTINCT\n" +
+            "gs.id,gs.brand_id,gs.spec_info_id,gs.goods_image,gs.goods_name,gs.goods_title,gs.sale_price,gs.old_price,\n" +
+            "gs.goods_h5_desc,gs.in_coupon_type,gs.in_member_point_price,gi.spec_name,gi.spec_value,gb.brand_name\n" +
+            "FROM\n" +
+            "gs_goods_info gs\n" +
+            "LEFT JOIN gs_goods_spec_info gi ON gs.spec_info_id = gi.id\n" +
+            "LEFT JOIN gs_goods_brand gb ON  gs.brand_id = gb.id\n" +
+            "WHERE ${ew.sqlSegment}")
+    IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
 }

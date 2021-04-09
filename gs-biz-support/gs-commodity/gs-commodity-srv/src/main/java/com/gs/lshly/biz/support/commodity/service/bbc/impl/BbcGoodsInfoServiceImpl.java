@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -983,16 +984,16 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @Override
     public PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("in_coupon_type",qto.getInCouponType());
-        wrapper.eq("is_in_member_gift",1);
-        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
-        IPage<GoodsInfo> pageData = repository.page(page,wrapper);
-        List<BbcGoodsInfoVO.InVIPSpecialAreaVO> inVIPSpecialAreaVOS = ListUtil.listCover(BbcGoodsInfoVO.InVIPSpecialAreaVO.class,pageData.getRecords());
+        wrapper.eq("gs.in_coupon_type",qto.getInCouponType());
+        wrapper.eq("gs.is_in_member_gift",1);
+        wrapper.eq("gs.flag",0);
+        IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page = MybatisPlusUtil.pager(qto);
+        IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> pageData = goodsInfoMapper.queryInVIPSpecialAreaList(page,wrapper);
         // 计算商品折后价格
-        inVIPSpecialAreaVOS.parallelStream().forEach(m->{
+        pageData.getRecords().parallelStream().forEach(m->{
             m.setInDiscountedPrice(m.getSalePrice().subtract(new BigDecimal(m.getInCouponType())));
         });
-        return new PageData<>(inVIPSpecialAreaVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
+        return MybatisPlusUtil.toPageData(qto, BbcGoodsInfoVO.InVIPSpecialAreaVO.class,pageData);
     }
 
     @Override
