@@ -27,7 +27,7 @@
         <ali.version>2.2.4.RELEASE</ali.version>
 
         <spring-cloud-commons.version>2.2.7.RELEASE</spring-cloud-commons.version>
-        <dubbo.version>2.7.9</dubbo.version>
+        <dubbo.version>2.7.8</dubbo.version>
         <lombok.version>1.18.12</lombok.version>
         <swagger.version>2.7.0</swagger.version>
         <hutool.version>5.4.4</hutool.version>
