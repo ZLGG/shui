@@ -214,7 +214,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private String remarks;
 
         @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
+        private BigDecimal isPointGood;
 
         @ApiModelProperty("是否是in会员礼品")
         private Boolean isInMemberGift;
@@ -326,7 +326,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Boolean isInMemberGift;
 
         @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
+        private BigDecimal inMemberPointPrice;
 
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;

@@ -7,6 +7,6 @@ spring:
     nacos:
       config:
         group: facade
-        server-addr: 127.0.0.1:8848
+        server-addr: 172.20.137.11:8848/?username=nacos&password=nacos
         file-extension: yml
         namespace: 8a16d313-0d74-45f8-9d9e-81df380a8dd8

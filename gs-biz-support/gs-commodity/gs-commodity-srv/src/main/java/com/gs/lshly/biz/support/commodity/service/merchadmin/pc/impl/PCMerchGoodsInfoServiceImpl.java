@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -355,6 +356,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
                 skuGoodInfo.setIsPointGood(eto.getIsPointGood());
                 skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
+                if(skuInfo.getCostPrice()!=null){
+                	skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
+                }
+                
+                if(skuInfo.getInMemberPointPrice()!=null){
+                	skuGoodInfo.setInMemberPointPrice(new BigDecimal(skuInfo.getInMemberPointPrice()));
+                }
+                
                 skuGoodInfos.add(skuGoodInfo);
 
                 //添加sku商品信息
@@ -382,6 +391,10 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuGoodInfo.setGoodId(goodsInfo.getId());
             skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
             skuGoodInfo.setId("");
+            skuGoodInfo.setCategoryId(eto.getCategoryId());
+            skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
+            skuGoodInfo.setIsPointGood(eto.getIsPointGood());
+            skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
             skuGoodInfoRepository.save(skuGoodInfo);
 
             CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
@@ -498,7 +511,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
                 if (StringUtils.isNotEmpty(info.getId())){
                     UpdateWrapper<GoodsExtendParams> paramsBoost = MybatisPlusUtil.update();
-                    paramsBoost.eq("id",info.getId());
+                    paramsBoost.eq("id",info.getId()); 
                     extendParamsRepository.update(info,paramsBoost);
                 }else {
                     extendParamsRepository.save(info);
@@ -614,6 +627,17 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setState(eto.getGoodsState());
                 skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
                 skuGoodInfo.setShopId(goodsInfo.getShopId());
+                skuGoodInfo.setCategoryId(eto.getCategoryId());
+                skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId())?"":eto.getPosSpuId());
+                skuGoodInfo.setIsPointGood(eto.getIsPointGood());
+                skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
+                if(skuInfo.getCostPrice()!=null){
+                	skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
+                }
+                
+                if(skuInfo.getInMemberPointPrice()!=null){
+                	skuGoodInfo.setInMemberPointPrice(new BigDecimal(skuInfo.getInMemberPointPrice()));
+                }
                 skuGoodInfos.add(skuGoodInfo);
 
                 //添加sku商品信息

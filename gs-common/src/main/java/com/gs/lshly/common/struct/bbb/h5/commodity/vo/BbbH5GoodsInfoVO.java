@@ -346,7 +346,7 @@ public abstract class BbbH5GoodsInfoVO implements Serializable {
         private String remarks;
 
         @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
+        private BigDecimal isPointGood;
 
         @ApiModelProperty("是否是in会员礼品")
         private Boolean isInMemberGift;

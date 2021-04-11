@@ -188,6 +188,9 @@ invoice_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
 invoice_address_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
 user_card_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
 
+gs_remind_merchant
+state	int	11	0	-1	0	0	0	0		0	10=待读 20=已读				0	0
+
 
 
 

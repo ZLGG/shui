@@ -64,6 +64,7 @@ public class CaptchaService {
     }
 
     public boolean match(String vcId, String inputValidCode) {
+    	log.info("[match][request][vcId=>{}][inputValidCode=>{}]",vcId,inputValidCode);
         if (StrUtil.isBlank(vcId) || StrUtil.isBlank(inputValidCode)) {
             return false;
         }

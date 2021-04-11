@@ -99,5 +99,4 @@ public class MerchantAccountOAuth2Controller {
         pcMerchMerchantAccountRpc.getEmailNum(email);
         return ResponseData.success(MsgConst.SEND_EMAIL_SUCCESS);
     }
-
 }

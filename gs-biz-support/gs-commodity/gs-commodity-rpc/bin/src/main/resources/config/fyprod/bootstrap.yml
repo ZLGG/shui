@@ -7,6 +7,12 @@ spring:
     nacos:
       config:
         group: biz-support
-        server-addr: 127.0.0.1:8848
+        server-addr: 172.20.137.11:8848
         file-extension: yml
         namespace: e8e01bec-190e-4b89-bd2c-3b0fe134cf61
+        username: nacos
+        password: nacos
+      discovery:
+        server-addr: 172.20.137.11:8848
+        username: nacos
+        password: nacos
