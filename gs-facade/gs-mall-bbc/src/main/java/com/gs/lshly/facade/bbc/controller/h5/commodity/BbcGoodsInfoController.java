@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+
 /**
 * <p>
 *  前端控制器
@@ -77,6 +79,4 @@ public class BbcGoodsInfoController {
     public ResponseData<PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO>> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
     }
-
-
 }

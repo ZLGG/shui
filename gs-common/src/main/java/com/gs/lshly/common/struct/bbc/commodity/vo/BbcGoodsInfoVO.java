@@ -426,6 +426,21 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("in会员券后价格")
         private BigDecimal inDiscountedPrice;
 
+        @ApiModelProperty("品牌id")
+        private String brandId;
+
+        @ApiModelProperty("品牌名称")
+        private String brandName;
+
+        @ApiModelProperty("商品拓展规格id")
+        private String specInfoId;
+
+        @ApiModelProperty("商品拓展规格名字")
+        private String specName;
+
+        @ApiModelProperty("商品拓展规格值名称")
+        private String specValue;
+
     }
 
 

@@ -8,6 +8,7 @@ import com.gs.lshly.common.struct.bbb.h5.commodity.qto.BbbH5GoodsInfoQTO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5SkuGoodInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,11 @@ public class BbbH5GoodsInfoRpc implements IBbbH5GoodsInfoRpc {
     @Override
     public BbbH5GoodsInfoVO.InnerServiceVO innerSimpleServiceVO(String skuId) {
         return bbbH5GoodsInfoService.innerSimpleServiceVO(skuId);
+    }
+
+    @Override
+    public PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
+        return bbbH5GoodsInfoService.queryInVIPSpecialAreaList(qto);
     }
 
     @Override

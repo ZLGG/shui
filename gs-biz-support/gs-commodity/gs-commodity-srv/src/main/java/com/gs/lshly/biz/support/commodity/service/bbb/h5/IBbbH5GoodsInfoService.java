@@ -7,6 +7,7 @@ import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5SkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 
 import java.util.List;
 
@@ -100,4 +101,6 @@ public interface IBbbH5GoodsInfoService {
 
 
     BbbH5GoodsInfoVO.InnerServiceVO innerSimpleServiceVO(String skuId);
+
+    PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto);
 }

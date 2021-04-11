@@ -1,18 +1,18 @@
 spring:
   profiles:
-    active: dev
+    active: hzprod
   application:
-    name: biz-support-foundation
+    name: biz-support-user
   cloud:
     nacos:
       config:
         group: biz-support
-        server-addr: 172.20.137.11:8848
+        server-addr: 172.20.137.2:8848
         file-extension: yml
-        namespace: 871b6d8e-dbdb-4dc4-b221-6e2c46d0500e
+        namespace: 9ea3eab6-bf44-480b-8975-a03006fb8f84
         username: nacos
         password: nacos
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 172.20.137.2:8848
         username: nacos
         password: nacos

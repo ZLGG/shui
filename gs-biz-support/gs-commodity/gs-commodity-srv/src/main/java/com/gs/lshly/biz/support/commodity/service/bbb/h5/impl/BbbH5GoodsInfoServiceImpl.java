@@ -33,7 +33,9 @@ import com.gs.lshly.common.struct.bbb.h5.trade.dto.BbbH5TradeDTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeListVO;
 import com.gs.lshly.common.struct.bbb.pc.merchant.vo.PCBbbMerchantUserTypeVO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
+import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbb.h5.merchant.IBbbH5ShopRpc;
 import com.gs.lshly.rpc.api.bbb.h5.stock.IBbbH5StockAddressRpc;
@@ -528,6 +530,23 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
                     return homeInnerServiceVO;
                 }).collect(toList());
         return homeInnerServiceVOS;
+    }
+
+    @Override
+    public PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("gs.in_coupon_type",qto.getInCouponType());
+        wrapper.eq("gs.is_in_member_gift",1);
+        wrapper.eq("gs.flag",0);
+        IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page = MybatisPlusUtil.pager(qto);
+        // 查询商品基础信息、品牌信息、类别信息
+        IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> pageData = goodsInfoMapper.queryInVIPSpecialAreaList(page,wrapper);
+        List<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> inVIPSpecialAreaVOS = ListUtil.listCover(BbbH5GoodsInfoVO.InVIPSpecialAreaVO.class,pageData.getRecords());
+        // 计算商品折后价格
+        inVIPSpecialAreaVOS.parallelStream().forEach(m->{
+            m.setInDiscountedPrice(m.getSalePrice().subtract(new BigDecimal(m.getInCouponType())));
+        });
+        return new PageData<>(inVIPSpecialAreaVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
 
     @Override

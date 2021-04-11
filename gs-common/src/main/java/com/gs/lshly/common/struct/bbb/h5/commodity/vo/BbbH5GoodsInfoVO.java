@@ -390,6 +390,53 @@ public abstract class BbbH5GoodsInfoVO implements Serializable {
         private BigDecimal shopScore;
     }
 
+    @Data
+    @ApiModel("BbbH5GoodsInfoVO.InVIPSpecialAreaVO")
+    public static class InVIPSpecialAreaVO implements Serializable{
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty("商品原价")
+        private BigDecimal oldPrice;
+
+        @ApiModelProperty("移动端商品描述")
+        private String goodsH5Desc;
+
+        @ApiModelProperty("可抵扣价格")
+        private Integer inCouponType;
+
+        @ApiModelProperty("in会员券后价格")
+        private BigDecimal inDiscountedPrice;
+
+        @ApiModelProperty("品牌id")
+        private String brandId;
+
+        @ApiModelProperty("品牌名称")
+        private String brandName;
+
+        @ApiModelProperty("商品拓展规格id")
+        private String specInfoId;
+
+        @ApiModelProperty("商品拓展规格名字")
+        private String specName;
+
+        @ApiModelProperty("商品拓展规格值名称")
+        private String specValue;
+
+    }
+
 
 
     //----------------内部服务VO-----------------------------

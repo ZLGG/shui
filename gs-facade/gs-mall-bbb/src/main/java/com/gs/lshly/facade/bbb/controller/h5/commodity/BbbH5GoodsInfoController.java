@@ -7,12 +7,16 @@ import com.gs.lshly.common.struct.bbb.h5.commodity.qto.BbbH5GoodsInfoQTO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5SkuGoodInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.rpc.api.bbb.h5.commodity.IBbbH5GoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbb.h5.merchant.IBbbH5ShopRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
 
 /**
 * <p>
@@ -75,6 +79,12 @@ public class BbbH5GoodsInfoController {
     @PostMapping(value = "getQuickOrder")
     public ResponseData<PageData<BbbH5GoodsInfoVO.GoodsListVO>> getQuickOrder(@RequestBody BbbH5GoodsInfoQTO.QuickOrderQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getQuickOrderGoodsList(qto));
+    }
+
+    @ApiOperation("in会员专区商品列表-v1.1.0")
+    @PostMapping("/queryInVIPSpecialAreaList")
+    public ResponseData<PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO>> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
     }
 
 }
