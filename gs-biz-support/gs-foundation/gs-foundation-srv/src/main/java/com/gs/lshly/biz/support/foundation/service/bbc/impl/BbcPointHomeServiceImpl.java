@@ -13,7 +13,7 @@ import com.gs.lshly.biz.support.foundation.service.bbc.IBbcPointHomeService;
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteTopicService;
 import com.gs.lshly.common.enums.PointHomeTypeEnum;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
@@ -23,6 +23,7 @@ import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopicNameQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO.ListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
@@ -116,12 +117,14 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setList(goodsListVO.getContent());
 		retList.add(listVO);
 		
+		BbcMarketActivityVO.Seckill seckill = bbcMarketActivityRpc.listSeckill(new BaseQTO());
 		listVO = new ListVO();
 		listVO.setId(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setCode(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setIdx(PointHomeTypeEnum.秒杀.getIdx());
 		listVO.setName(PointHomeTypeEnum.秒杀.getRemark());
-		listVO.setList(bbcMarketActivityRpc.listFlashsale(new BaseDTO()).getGoodsList());
+		listVO.setRemark(seckill.getActivityStartTime().toString());
+		listVO.setList(seckill.getGoodsList());
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.电信国际.getRemark());

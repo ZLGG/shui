@@ -37,6 +37,9 @@ public abstract class BbcPointHomePageVO implements Serializable {
         
         @ApiModelProperty("内容")
         private List list;
+        
+        @ApiModelProperty("备注：秒杀开始时间")
+        private String remark;
 
 
     }

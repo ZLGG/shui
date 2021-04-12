@@ -9,6 +9,7 @@ import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketActivityService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
@@ -16,6 +17,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.Seckill;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 
 /**
@@ -115,5 +117,10 @@ public class BbcMarketActivityRpc implements IBbcMarketActivityRpc {
 	@Override
 	public PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(QTO qto) {
 		return iBbcMarketActivityService.pageFlashsale(qto);
+	}
+
+	@Override
+	public Seckill listSeckill(BaseQTO qto) {
+		return iBbcMarketActivityService.listSeckill(qto);
 	}
 }

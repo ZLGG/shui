@@ -3,6 +3,8 @@ package com.gs.lshly.common.struct.bbc.trade.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -521,5 +523,31 @@ public abstract class BbcMarketActivityVO implements Serializable {
         private String status;
     }
 
+	@Data
+	@ApiModel("BbcMarketActivityVO.Seckill")
+	@Accessors(chain = true)
+	public static class Seckill implements Serializable {
+		@ApiModelProperty("id")
+		private String id;
 
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("备注")
+		private String remark;
+
+		@ApiModelProperty("排序")
+		private Integer idx;
+
+		@ApiModelProperty("开始秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime activityStartTime;
+
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime activityEndTime;
+
+		@ApiModelProperty("商品列表")
+		private List<BbcGoodsInfoVO.DetailVO> goodsList;
+	}
 }

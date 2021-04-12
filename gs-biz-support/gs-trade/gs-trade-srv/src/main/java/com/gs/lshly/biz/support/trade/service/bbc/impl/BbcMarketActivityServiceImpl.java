@@ -55,6 +55,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbMarketActivityDTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.qto.PCBbbMarketActivityQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
@@ -69,6 +70,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.Seckill;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
@@ -1114,6 +1116,51 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
         }
         return new PageData<>(goodsList,qto.getPageNum(),qto.getPageSize(),pager.getTotal());
         
+	}
+	@Override
+	public Seckill listSeckill(BaseQTO qto) {
+		//查询生成进行的活动
+		QueryWrapper<MarketPtActivity> wrapper = new QueryWrapper<>();
+        wrapper.eq("label","秒杀");
+        wrapper.le("activity_start_time", LocalDateTime.now());
+        wrapper.ge("activity_end_time", LocalDateTime.now());
+        //查询商品的活动
+        MarketPtActivity marketPtActivity = iMarketPtActivityRepository.getOne(wrapper);
+        if(marketPtActivity==null){
+        	return null;
+        }
+        
+        if (ObjectUtils.isEmpty(marketPtActivity)){
+            return null;
+        }
+        Seckill topicVO = new Seckill();
+        
+        topicVO.setId(marketPtActivity.getId());
+        topicVO.setName("热门秒杀");
+        topicVO.setRemark("秒优惠 享好礼");
+        topicVO.setActivityStartTime(marketPtActivity.getActivityStartTime());
+        topicVO.setActivityEndTime(marketPtActivity.getActivityEndTime());
+        
+        
+        PCBbbMarketActivityVO.activityVO activityVO = new PCBbbMarketActivityVO.activityVO();
+        BeanUtils.copyProperties(marketPtActivity,activityVO);
+        IPage<PCBbbMarketActivityVO.activityGoodsVO> pager = MybatisPlusUtil.pager(new PCBbbMarketActivityQTO.QTO());
+        QueryWrapper<BbbMarketActivityDTO.IdDTO> query = MybatisPlusUtil.query();
+        query.and(i->i.eq("goods.activity_id",marketPtActivity.getId()));
+        iMarketPtActivityRepository.selectActivityPageData(pager,query);
+        
+        List<BbcGoodsInfoVO.DetailVO> goodsList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
+        if (ObjectUtils.isNotEmpty(pager)){
+            for (PCBbbMarketActivityVO.activityGoodsVO cutVO : pager.getRecords()) {
+            	
+            	BbcGoodsInfoVO.DetailVO goodsInfoDetailVO= iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(cutVO.getGoodsId()));
+            	goodsList.add(goodsInfoDetailVO);
+        		
+            }
+        }
+        topicVO.setGoodsList(goodsList);
+        
+		return topicVO;
 	}
 
 
