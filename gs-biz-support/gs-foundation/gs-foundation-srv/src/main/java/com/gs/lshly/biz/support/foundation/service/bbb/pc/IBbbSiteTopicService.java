@@ -15,5 +15,6 @@ public interface IBbbSiteTopicService {
      * @return
      */
     List<GoodsInfoVO.DetailVO> listHotsearch(BbbSiteTopicQTO.QTO qto);
-
+    
+    
 }

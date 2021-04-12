@@ -27,10 +27,12 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopicNameQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.SearchmoreQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.ListByTopicNameVO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -327,6 +329,40 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		}
 		return goodvo;
 		
+	}
+
+	@Override
+	public ListByTopicNameVO listByTopicName(ListByTopicNameQTO qto) {
+		ListByTopicNameVO listByTopicNameVO = new ListByTopicNameVO();
+		QueryWrapper<SiteTopic> wrapper =  MybatisPlusUtil.query();
+		wrapper.eq("terminal",qto.getTerminal());
+        wrapper.eq("subject",qto.getSubject());
+        wrapper.eq("is_default", TrueFalseEnum.是.getCode());
+        wrapper.eq("onoff", TrueFalseEnum.是.getCode());
+        wrapper.eq("name", qto.getName());
+        SiteTopic siteTopic = repository.getOne(wrapper);
+				
+        listByTopicNameVO.setId(siteTopic.getId());
+        listByTopicNameVO.setName(siteTopic.getName());
+        listByTopicNameVO.setImageUrl(siteTopic.getImageUrl());
+
+        QueryWrapper<SiteTopicGoods> goodsWrapper =  MybatisPlusUtil.query();
+		goodsWrapper.eq("topic_id",siteTopic.getId());
+		List<SiteTopicGoods> goodslist =goodsRepository.list(goodsWrapper);
+		
+		if(CollectionUtils.isNotEmpty(goodslist)){
+			List<GoodsInfoVO.DetailVO> goodsInfoList =new ArrayList<GoodsInfoVO.DetailVO>();
+			for(SiteTopicGoods siteTopicGoods:goodslist){
+				
+				String goodsId = siteTopicGoods.getGoodsId();
+        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+        		goodsInfoList.add(goodsInfoDetailVO);
+				
+			}
+			listByTopicNameVO.setList(goodsInfoList);
+		}
+		
+		return listByTopicNameVO;
 	}
 
     

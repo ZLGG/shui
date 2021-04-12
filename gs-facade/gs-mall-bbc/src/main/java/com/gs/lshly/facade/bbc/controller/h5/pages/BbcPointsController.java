@@ -12,13 +12,12 @@ import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.foundation.qto.BbcHomePageQTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteBannerQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteFloorQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteBannerVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteFloorVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSitePopupVO;
@@ -26,6 +25,7 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertPopupQTO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
+import com.gs.lshly.rpc.api.bbc.foundation.IBbcPointHomeRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteBannerRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteFloorRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSitePopupRpc;
@@ -61,12 +61,15 @@ public class BbcPointsController {
     @DubboReference
     private IBbcSitePopupRpc bbcSitePopupRpc;
     
-    @ApiOperation("banner/菜单信息-v1.1.0")
+    @DubboReference
+    private IBbcPointHomeRpc bbcPointHomeRpc;
+    
+    @ApiOperation("/分类/banner/菜单信息/电信产品/秒杀专区/电信国际/IN会员专区/心选好礼/本地生活/精打细算-v1.1.0")
     @GetMapping("")
-    public ResponseData<PCBbbGoodsCategoryVO.CategoryMenuVO> getCategoryMenuVO(PCBbbGoodsCategoryQTO.QTO qto) {
+    public ResponseData<List<BbcPointHomePageVO.ListVO>> getHome(BbcPointHomeQTO.QTO qto) {
         qto.setSubject(SubjectEnum.积分商城.getCode());
         qto.setTerminal(TerminalEnum.BBC.getCode());
-    	return ResponseData.data(categoryRpc.getCategoryMenuVO(qto));
+    	return ResponseData.data(bbcPointHomeRpc.getHome(qto));
     }
     
     @ApiOperation("电信甄选/心选好礼/本地生活/精打细算/名品集市产品列表-v1.1.0")

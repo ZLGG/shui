@@ -22,4 +22,5 @@ public interface IBbcGoodsCategoryService {
     PageData<GoodsBrandVO.ListVO> brandList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO);
 
     PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO);
+    
 }

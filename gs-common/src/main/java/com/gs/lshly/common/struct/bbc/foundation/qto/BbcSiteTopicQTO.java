@@ -63,5 +63,24 @@ public abstract class BbcSiteTopicQTO implements Serializable {
         @ApiModelProperty(value="分类ID")
         private String id;
         
+        @ApiModelProperty(value="分类名称")
+        private String name;
+        
+    }
+    
+    @Data
+    @ApiModel("BbcSiteTopicQTO.ListByTopicNameQTO")
+    @Accessors(chain = true)
+    public static class ListByTopicNameQTO extends BaseQTO {
+
+        @ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏]",hidden = true)
+        private Integer subject;
+        
+        @ApiModelProperty(value="终端[10=2b 20=2c]",hidden=true)
+        private Integer terminal;
+        
+        @ApiModelProperty(value="分类名称")
+        private String name;
+        
     }
 }

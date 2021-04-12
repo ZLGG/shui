@@ -162,4 +162,31 @@ public abstract class BbcSiteTopicVO implements Serializable {
         @ApiModelProperty("商品列表")
         private List<BbcGoodsInfoVO.DetailVO> goodsList;
     }
+	
+	
+    /**
+     * IN会员专区
+     *
+     * 
+     * @author yingjun
+     * @date 2021年3月17日 上午1:23:43
+     */
+	@Data
+    @ApiModel("BbcSiteTopicVO.ListByTopicNameVO")
+    @Accessors(chain = true)
+    public static class ListByTopicNameVO implements Serializable{
+		
+		@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("标题")
+        private String name;
+        
+        @ApiModelProperty("内容")
+        private List list;
+        
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+        
+    }
 }

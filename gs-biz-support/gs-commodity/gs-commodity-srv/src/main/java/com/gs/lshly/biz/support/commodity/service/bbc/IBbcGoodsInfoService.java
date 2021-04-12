@@ -103,4 +103,6 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto);
+
+
 }
