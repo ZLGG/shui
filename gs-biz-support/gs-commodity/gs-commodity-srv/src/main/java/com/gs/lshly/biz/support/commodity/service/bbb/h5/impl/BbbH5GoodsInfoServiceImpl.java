@@ -55,6 +55,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -530,6 +531,48 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
                     return homeInnerServiceVO;
                 }).collect(toList());
         return homeInnerServiceVOS;
+    }
+
+    @Override
+    public PageData<BbbH5GoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbbH5GoodsInfoQTO.IntegralGoodsQTO qto) {
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        if (StringUtils.isNotBlank(qto.getGoodsName())) {
+            wrapper.like("gs.goods_name",qto.getGoodsName());
+        }
+        wrapper.eq("gs.flag",false);
+        wrapper.eq("is_point_good",true);
+        // 1. 我能兑换积分商品
+        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
+            Optional.ofNullable(qto.getUserId()).orElseThrow(() -> new BusinessException("请登录后查看我能兑换的积分商品"));
+            // 查询用户可用积分
+            Integer okIntegral = goodsInfoMapper.getUserOkIntegral(qto.getUserId());
+            wrapper.lt("gs.point_price",okIntegral);
+        }
+        // 2. in会员积分商品 判断是否为in会员(暂时不做判断)
+        if (QueryIntegralGoodsEnum.IN会员.getCode() == qto.getOrderByProperties()) {
+            wrapper.eq("gs.is_in_member_gift",1);
+        }
+        // 3. 销量查询积分商品
+        if (QueryIntegralGoodsEnum.销量.getCode() == qto.getOrderByProperties()) {
+            wrapper.orderByDesc("gs.sale_quantity");
+        }
+        // 4. 价格查询积分商品
+        if (QueryIntegralGoodsEnum.价格.getCode() == qto.getOrderByProperties()) {
+            if (10 == qto.getOrderByType()) {
+                wrapper.orderByAsc("gs.point_price");
+            }else {
+                wrapper.orderByDesc("gs.point_price");
+            }
+        }
+        // 5. 上新查询积分商品
+        if (QueryIntegralGoodsEnum.上新.getCode() == qto.getOrderByProperties()) {
+            wrapper.orderByDesc("gs.cdate");
+        }
+
+        IPage<BbcGoodsInfoVO.IntegralGoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<BbcGoodsInfoVO.IntegralGoodsInfo> pageData = goodsInfoMapper.queryIntegralGoodsInfo(page,wrapper);
+        List<BbbH5GoodsInfoVO.IntegralGoodsInfo> integralGoodsInfos = ListUtil.listCover(BbbH5GoodsInfoVO.IntegralGoodsInfo.class,pageData.getRecords());
+        return new PageData<>(integralGoodsInfos, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
 
     @Override

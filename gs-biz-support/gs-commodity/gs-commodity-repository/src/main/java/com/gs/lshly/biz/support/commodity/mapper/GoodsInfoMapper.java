@@ -164,7 +164,7 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
     PCMerchGoodsInfoVO.HomeCountGoodsVO getHomeCountGoodsVO(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> qw);
 
     /**
-     *
+     * 查询in会员专区商品
      * @param page
      * @param wrapper
      * @return
@@ -178,4 +178,27 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
             "LEFT JOIN gs_goods_brand gb ON  gs.brand_id = gb.id\n" +
             "WHERE ${ew.sqlSegment}")
     IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
+
+    /**
+     * 查询用户当前可用积分
+     * @param userId
+     * @return
+     */
+    @Select("SELECT SUM(quantity) okIntegral FROM gs_user_integral WHERE end_date > CURRENT_TIMESTAMP and user_id = #{userId}")
+    Integer getUserOkIntegral(@Param("userId") String userId);
+
+    /**
+     * 查询积分商品列表
+     * @param page
+     * @param wrapper
+     * @return
+     */
+    @Select("SELECT DISTINCT\n" +
+            "gs.id,gs.goods_image,gs.goods_name,gs.goods_title,gs.goods_h5_desc,gb.brand_name,gm.shop_name,gs.sale_quantity,gs.point_price\n" +
+            "from\n" +
+            "gs_goods_info gs\n" +
+            "left join gs_goods_brand gb on gs.brand_id = gb.id\n" +
+            "left join gs_trade_margin gm on gs.shop_id = gm.shop_id\n" +
+            "where ${ew.sqlSegment}")
+    IPage<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(IPage<BbcGoodsInfoVO.IntegralGoodsInfo> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
 }

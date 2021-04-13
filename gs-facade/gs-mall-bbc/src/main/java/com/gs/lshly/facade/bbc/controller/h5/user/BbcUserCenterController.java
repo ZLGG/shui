@@ -1,9 +1,12 @@
 package com.gs.lshly.facade.bbc.controller.h5.user;
 
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbb.h5.commodity.vo.BbbH5GoodsInfoVO;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbUserQTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
@@ -55,8 +58,5 @@ public class BbcUserCenterController {
     public ResponseData<List<BbcUserVO.UserIntegralRecordVO>> integralLog(BbcUserDTO.IntegralLogQTO qto) {
         return ResponseData.data(bbcUserRpc.integralLog(qto));
     }
-
-
-
 
 }

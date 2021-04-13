@@ -1,4 +1,5 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import io.swagger.annotations.ApiModel;
@@ -442,6 +443,48 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private String specValue;
 
     }
+
+
+    @Data
+    @ApiModel("BbcGoodsInfoVO.IntegralGoodsInfo")
+    public static class IntegralGoodsInfo implements Serializable{
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("移动端商品描述")
+        private String goodsH5Desc;
+
+        @ApiModelProperty("品牌id")
+        @JsonIgnore
+        private String brandId;
+
+        @ApiModelProperty("品牌名称")
+        private String brandName;
+
+        @ApiModelProperty("店铺id")
+        @JsonIgnore
+        private String shopId;
+
+        @ApiModelProperty("店铺名称")
+        private String shopName;
+
+        @ApiModelProperty("商品销量")
+        private Integer saleQuantity;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+    }
+
 
 
     //----------------内部服务VO-----------------------------

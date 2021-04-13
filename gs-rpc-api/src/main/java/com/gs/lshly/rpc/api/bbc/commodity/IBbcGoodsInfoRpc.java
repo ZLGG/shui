@@ -117,4 +117,11 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto);
+
+    /**
+     * 获取积分商城商品信息列表
+     * @param qto
+     * @return
+     */
+    PageData<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto);
 }

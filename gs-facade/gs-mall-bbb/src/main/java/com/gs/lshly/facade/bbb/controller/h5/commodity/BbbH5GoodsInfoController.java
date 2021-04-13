@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 
 /**
 * <p>
@@ -85,6 +84,12 @@ public class BbbH5GoodsInfoController {
     @PostMapping("/queryInVIPSpecialAreaList")
     public ResponseData<PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO>> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
+    }
+
+    @ApiOperation("积分商城商品信息列表-v1.1.0")
+    @PostMapping("/queryIntegralGoodsInfo")
+    public ResponseData<PageData<BbbH5GoodsInfoVO.IntegralGoodsInfo>> queryIntegralGoodsInfo(BbbH5GoodsInfoQTO.IntegralGoodsQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.queryIntegralGoodsInfo(qto));
     }
 
 }
