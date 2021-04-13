@@ -34,4 +34,11 @@ public interface IBbcSiteTopicService {
      * @return
      */
     BbcSiteTopicVO.ListByTopicNameVO listByTopicName(ListByTopicNameQTO qto);
+    
+    /**
+     * 跟据分类查询
+     * @param category
+     * @return
+     */
+    List<BbcSiteTopicVO.CategoryDetailVO> listTopicByCategory(Integer category);
 }

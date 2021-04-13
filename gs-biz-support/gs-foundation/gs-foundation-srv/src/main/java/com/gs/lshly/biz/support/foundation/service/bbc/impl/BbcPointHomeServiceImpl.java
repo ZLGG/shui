@@ -103,18 +103,21 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		
 		ListByTopicNameQTO qto2 = new ListByTopicNameQTO();
 		BeanCopyUtils.copyProperties(qto, qto2);
-		BbcGoodsInfoQTO.GoodsListByCategoryQTO goodsListByCategoryQTO = new BbcGoodsInfoQTO.GoodsListByCategoryQTO();
-		goodsListByCategoryQTO.setCategoryLevel("1377448881003933697");
-		goodsListByCategoryQTO.setPageNum(1);
-		goodsListByCategoryQTO.setPageSize(6);
-		PageData<BbcGoodsInfoVO.GoodsListVO> goodsListVO= bbcGoodsInfoRpc.pageGoodsListVO(goodsListByCategoryQTO);
+		
+//		BbcGoodsInfoQTO.GoodsListByCategoryQTO goodsListByCategoryQTO = new BbcGoodsInfoQTO.GoodsListByCategoryQTO();
+//		goodsListByCategoryQTO.setCategoryLevel("1377448881003933697");
+//		goodsListByCategoryQTO.setPageNum(1);
+//		goodsListByCategoryQTO.setPageSize(6);
+//		PageData<BbcGoodsInfoVO.GoodsListVO> goodsListVO= bbcGoodsInfoRpc.pageGoodsListVO(goodsListByCategoryQTO);
+//		
+//		bbcSiteTopicService.listTopicByCategory(10);
 		
 		listVO = new ListVO();
-		listVO.setId("1377448881003933697");
+		listVO.setId(PointHomeTypeEnum.电信产品.getCode());
 		listVO.setCode(PointHomeTypeEnum.电信产品.getCode());
 		listVO.setIdx(PointHomeTypeEnum.电信产品.getIdx());
 		listVO.setName(PointHomeTypeEnum.电信产品.getRemark());
-		listVO.setList(goodsListVO.getContent());
+		listVO.setList(bbcSiteTopicService.listTopicByCategory(10));
 		retList.add(listVO);
 		
 		BbcMarketActivityVO.Seckill seckill = bbcMarketActivityRpc.listSeckill(new BaseQTO());
@@ -158,7 +161,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.心选好礼.getCode());
 		listVO.setIdx(PointHomeTypeEnum.心选好礼.getIdx());
 		listVO.setName(PointHomeTypeEnum.心选好礼.getRemark());
-		listVO.setList(homeVO.getMenuList());
+		listVO.setList(listByTopicNameVO.getList());
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.本地生活.getRemark());
@@ -169,7 +172,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.本地生活.getCode());
 		listVO.setIdx(PointHomeTypeEnum.本地生活.getIdx());
 		listVO.setName(PointHomeTypeEnum.本地生活.getRemark());
-		listVO.setList(homeVO.getMenuList());
+		listVO.setList(listByTopicNameVO.getList());
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.精打细算.getRemark());
@@ -180,7 +183,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.精打细算.getCode());
 		listVO.setIdx(PointHomeTypeEnum.精打细算.getIdx());
 		listVO.setName(PointHomeTypeEnum.精打细算.getRemark());
-		listVO.setList(homeVO.getMenuList());
+		listVO.setList(listByTopicNameVO.getList());
 		retList.add(listVO);
 		
 		return retList;

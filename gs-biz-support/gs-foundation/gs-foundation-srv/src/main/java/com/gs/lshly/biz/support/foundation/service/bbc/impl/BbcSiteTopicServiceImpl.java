@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ import com.gs.lshly.biz.support.foundation.mapper.SiteTopicGoodsMapper;
 import com.gs.lshly.biz.support.foundation.repository.ISiteTopicGoodsRepository;
 import com.gs.lshly.biz.support.foundation.repository.ISiteTopicRepository;
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteTopicService;
-import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
 import com.gs.lshly.common.enums.SiteTopicCategoryEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -25,10 +23,7 @@ import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketMerchantCardUsersVO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
@@ -36,8 +31,10 @@ import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopic
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.SearchmoreQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryDetailVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.ListByTopicNameVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -392,6 +389,21 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		}
 		
 		return listByTopicNameVO;
+	}
+
+	@Override
+	public List<CategoryDetailVO> listTopicByCategory(Integer category) {
+		List<CategoryDetailVO> retList = new ArrayList<CategoryDetailVO>();
+		QueryWrapper<SiteTopic> wrapper =  MybatisPlusUtil.query();
+		wrapper.eq("terminal",TerminalEnum.BBC.getCode());
+        wrapper.eq("subject",SubjectEnum.积分商城.getCode());
+        wrapper.eq("is_default", TrueFalseEnum.是.getCode());
+        wrapper.eq("onoff", TrueFalseEnum.是.getCode());
+        wrapper.eq("category", category);
+        List<SiteTopic> listDefault = repository.list(wrapper);
+        if(CollectionUtils.isNotEmpty(listDefault))
+        	retList = BeanUtils.copyList(CategoryDetailVO.class, listDefault);
+        return retList;
 	}
 
     

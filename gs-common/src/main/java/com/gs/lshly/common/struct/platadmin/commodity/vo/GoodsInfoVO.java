@@ -204,6 +204,9 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "扶贫商品信息")
         private GoodsFupinVO.DetailVO fupinInfo;
+        
+        @ApiModelProperty(value="标签")
+        private List<String> tags;
     }
 
     @Data

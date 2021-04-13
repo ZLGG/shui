@@ -231,4 +231,11 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         @NotNull(message = "inCouponType不能为空")
         private Integer inCouponType;
     }
+    
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.EnjoyQTO")
+    @Accessors(chain = true)
+    public static class EnjoyQTO extends BaseQTO {
+
+    }
 }

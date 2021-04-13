@@ -298,6 +298,8 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         String templateName = getTemplateName(goodsInfo.getId());
         detailVO.setTemplateName(StringUtils.isBlank(templateName)?"":templateName);
 
+        //查询标签
+        detailVO.setTags(relationLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
         return detailVO;
     }
 

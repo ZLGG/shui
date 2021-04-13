@@ -1,10 +1,19 @@
 package com.gs.lshly.facade.bbc.controller.h5.user;
 import com.gs.lshly.common.constants.MsgConst;
+import com.gs.lshly.common.enums.SubjectEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +37,9 @@ public class BbcUserShoppingCarController {
 
     @DubboReference
     private IBbcUserShoppingCarRpc bbcUserShoppingCarRpc;
+    
+    @DubboReference
+    private IBbcGoodsInfoRpc bbcGoodsInfoRpc; 
 
     @ApiOperation("购物车商品列表-v1.1.0")
     @GetMapping("")
@@ -78,5 +90,14 @@ public class BbcUserShoppingCarController {
         bbcUserShoppingCarRpc.changeQuantity(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
+    
+    @ApiOperation("猜你喜欢-v1.1.0")
+    @GetMapping("/enjoyList")
+    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> listEnjoy(BbcGoodsInfoQTO.EnjoyQTO qto) {
+    	BbcGoodsInfoQTO.GoodsListQTO goodsListQTO = new BbcGoodsInfoQTO.GoodsListQTO();
+    	BeanCopyUtils.copyProperties(qto, goodsListQTO);
+    	return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(goodsListQTO));
+    }
+    
 
 }

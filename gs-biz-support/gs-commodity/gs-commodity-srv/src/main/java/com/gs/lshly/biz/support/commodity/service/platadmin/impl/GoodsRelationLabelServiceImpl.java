@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
 import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsLabelService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsRelationLabelService;
@@ -37,6 +40,8 @@ public class GoodsRelationLabelServiceImpl implements IGoodsRelationLabelService
     @Autowired
     private IGoodsLabelService labelService;
 
+    @Autowired
+    private IGoodsLabelRepository goodsLabelRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -120,5 +125,22 @@ public class GoodsRelationLabelServiceImpl implements IGoodsRelationLabelService
         queryWrapper.in("goods_id",goodsId);
         repository.remove(queryWrapper);
     }
+
+	@Override
+	public List<String> listGoodsLabelByGoodsId(String goodsId) {
+		List<String> retList =new ArrayList<String>();
+		QueryWrapper<GoodsRelationLabel> boost = MybatisPlusUtil.query();
+        boost.eq("goods_id",goodsId);
+        List<GoodsRelationLabel> list = repository.list(boost);
+        if(CollectionUtils.isNotEmpty(list)){
+        	for(GoodsRelationLabel goodsRelationLabel:list){
+        		String labelId = goodsRelationLabel.getLabelId();
+        		GoodsLabel goodsLabel = goodsLabelRepository.getById(labelId);
+        		if(goodsLabel!=null)
+        			retList.add(goodsLabel.getLabelName());
+        	}
+        }
+		return retList;
+	}
 
 }

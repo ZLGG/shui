@@ -37,5 +37,11 @@ public interface IGoodsRelationLabelService {
      */
     List<GoodsRelationLabelVO.ListVO> getRelationLabel (GoodsLabelDTO.IdDTO dto);
 
+    /**
+     * 跟据商品获取标签
+     * @param goodsId
+     * @return
+     */
+    List<String> listGoodsLabelByGoodsId(String goodsId);
 
 }

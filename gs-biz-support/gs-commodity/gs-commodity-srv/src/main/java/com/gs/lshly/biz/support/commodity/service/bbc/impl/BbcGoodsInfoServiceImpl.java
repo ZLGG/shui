@@ -8,8 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -38,16 +37,23 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.enums.GoodsStateEnum;
+import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
+import com.gs.lshly.common.enums.OrderByConditionEnum;
+import com.gs.lshly.common.enums.OrderByTypeEnum;
+import com.gs.lshly.common.enums.QueryIntegralGoodsEnum;
+import com.gs.lshly.common.enums.SingleStateEnum;
+import com.gs.lshly.common.enums.StockAddressTypeEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.QTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.GoodsListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
@@ -134,6 +140,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @DubboReference
     private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
+    
     
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
@@ -364,6 +371,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
         //获取商品收藏状态
         detailVo.setFavoritesState(favoritesGoodsRpc.innerFavoritesState(dto.getId(), dto.getJwtUserId()));
+        
+        //查询标签
+        detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
         return detailVo;
     }
 
@@ -1052,6 +1062,13 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             return ret;
         }
         List<BbcGoodsInfoVO.DetailVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.DetailVO.class,goodsInfoIPage.getRecords());
+        if(CollectionUtils.isNotEmpty(categoryGoodsVOS)){
+        	for(BbcGoodsInfoVO.DetailVO detailVO:categoryGoodsVOS){
+        		String goodsId = detailVO.getGoodsId();
+        		//查询标签
+                detailVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsId));
+        	}
+        }
         ret.setList(new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal()));
         
         return ret;

@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -53,4 +54,22 @@ public class BbcGoodsLabelServiceImpl implements IBbcGoodsLabelService {
         }
         return new ArrayList<>();
     }
+
+
+	@Override
+	public List<String> listGoodsLabelByGoodsId(String goodsId) {
+		List<String> retList =new ArrayList<String>();
+		QueryWrapper<GoodsRelationLabel> boost = MybatisPlusUtil.query();
+        boost.eq("goods_id",goodsId);
+        List<GoodsRelationLabel> list = relationLabelRepository.list(boost);
+        if(CollectionUtils.isNotEmpty(list)){
+        	for(GoodsRelationLabel goodsRelationLabel:list){
+        		String labelId = goodsRelationLabel.getLabelId();
+        		GoodsLabel goodsLabel = repository.getById(labelId);
+        		if(goodsLabel!=null)
+        			retList.add(goodsLabel.getLabelName());
+        	}
+        }
+		return retList;
+	}
 }

@@ -12,5 +12,12 @@ public interface IBbcGoodsLabelService {
      * @return
      */
     List<String> listGoodsId(BbcGoodsLabelQTO.QTO qto);
+    
+    /**
+     * 跟据商品获取标签
+     * @param goodsId
+     * @return
+     */
+    List<String> listGoodsLabelByGoodsId(String goodsId);
 
 }
