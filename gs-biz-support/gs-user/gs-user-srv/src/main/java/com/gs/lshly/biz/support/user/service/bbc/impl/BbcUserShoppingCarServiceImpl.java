@@ -80,6 +80,18 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         QueryWrapper<UserShoppingCar> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("user_id", qto.getJwtUserId());
+        
+        Integer goodsType = qto.getGoodsType();
+        if(goodsType!=null){
+        	if(goodsType.equals(10)){	//普通商品
+        		wrapper.eq("is_point_good", false);
+        		wrapper.eq("is_in_member_gift", false);
+        	}else if(goodsType.equals(20)){	//积分商品
+        		wrapper.eq("is_point_good", true);
+        	}else if(goodsType.equals(30)){//IN商品
+        		wrapper.eq("is_in_member_gift", true);
+        	}
+        }
         wrapper.orderByAsc("sku_id");
         List<UserShoppingCar> userShoppingCarList = repository.list(wrapper);
         if (ObjectUtils.isEmpty(userShoppingCarList)) {
