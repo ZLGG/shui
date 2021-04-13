@@ -23,15 +23,15 @@ import java.util.List;
 */
 @RestController
 @RequestMapping("/bbc/userCenter/userShoppingCar")
-@Api(tags = "会员购物车管理")
+@Api(tags = "会员购物车管理-v1.1.0")
 public class BbcUserShoppingCarController {
 
     @DubboReference
     private IBbcUserShoppingCarRpc bbcUserShoppingCarRpc;
 
-    @ApiOperation("购物车商品列表")
+    @ApiOperation("购物车商品列表-v1.1.0")
     @GetMapping("")
-    public ResponseData<List<BbcUserShoppingCarVO.ListVO>> list(BbcUserShoppingCarQTO.QTO qto) {
+    public ResponseData<BbcUserShoppingCarVO.HomeVO> list(BbcUserShoppingCarQTO.QTO qto) {
         return ResponseData.data(bbcUserShoppingCarRpc.list(qto));
     }
 

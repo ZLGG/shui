@@ -16,7 +16,7 @@ import java.util.List;
 */
 public interface IBbcUserShoppingCarRpc {
 
-    List<BbcUserShoppingCarVO.ListVO> list(BbcUserShoppingCarQTO.QTO qto);
+	BbcUserShoppingCarVO.HomeVO list(BbcUserShoppingCarQTO.QTO qto);
 
     BbcUserShoppingCarVO.CountVO countShoppingCarGoods(BaseDTO dto);
 

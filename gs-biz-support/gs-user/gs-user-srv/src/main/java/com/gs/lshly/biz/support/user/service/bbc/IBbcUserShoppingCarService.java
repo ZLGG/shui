@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IBbcUserShoppingCarService {
 
-    List<BbcUserShoppingCarVO.ListVO> list(BbcUserShoppingCarQTO.QTO qto);
+	BbcUserShoppingCarVO.HomeVO list(BbcUserShoppingCarQTO.QTO qto);
 
     BbcUserShoppingCarVO.CountVO countShoppingCarGoods(BaseDTO dto);
 

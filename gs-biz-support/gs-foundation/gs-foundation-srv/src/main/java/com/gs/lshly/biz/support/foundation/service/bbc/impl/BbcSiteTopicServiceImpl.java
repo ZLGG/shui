@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import com.gs.lshly.biz.support.foundation.mapper.SiteTopicGoodsMapper;
 import com.gs.lshly.biz.support.foundation.repository.ISiteTopicGoodsRepository;
 import com.gs.lshly.biz.support.foundation.repository.ISiteTopicRepository;
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteTopicService;
+import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
 import com.gs.lshly.common.enums.SiteTopicCategoryEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -23,7 +25,10 @@ import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5MarketMerchantCardUsersVO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
@@ -40,6 +45,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.DetailVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
@@ -71,6 +77,9 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
     
     @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
+    
+    @DubboReference
+    private IBbcGoodsCategoryRpc bbcGoodsCategoryRpc;
 
 	@Override
 	public List<CategoryListVO> list(QTO qto) {
@@ -128,8 +137,27 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		
 		QueryWrapper<SiteTopicGoods> wrapper =  MybatisPlusUtil.query();
         wrapper.eq("topic_id",2);
+        /**
+        String category = qto.getCategory();	//1级分类
+        if(StringUtils.isNotEmpty(category)){
+        	BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
+        	listQTO.setParentId(category);
+        	listQTO.setShowAll(true);
+        	listQTO.setUseFiled(GoodsUsePlatformEnums.B商城和C商城.getCode());
+        	List<BbcGoodsCategoryVO.CategoryTreeVO> categoryTreeList = bbcGoodsCategoryRpc.listGoodsCategory(listQTO);
+        	String categorys = "'";
+        	if(CollectionUtils.isNotEmpty(categoryTreeList)){
+        		for(BbcGoodsCategoryVO.CategoryTreeVO categoryTreeVO:categoryTreeList){
+        			categorys = categorys+categoryTreeVO.getId()+"',";
+        		}
+        		categorys = categorys.substring(0, categorys.length()-1);
+        		qto.setCategoryIds(categorys);
+        	}
+        }
+        **/
         IPage<SiteTopicGoods> page = MybatisPlusUtil.pager(qto);
-        goodsRepository.page(page, wrapper);
+        goodsRepository.page(page,wrapper);
+        //siteTopicGoodsMapper.pageByCodeCategoryIds(page, new QueryWrapper(qto));
         PageData<SiteTopicGoods> pageData = MybatisPlusUtil.toPageData(qto, SiteTopicGoods.class, page);
         List<SiteTopicGoods> goodsList = pageData.getContent();
         List<GoodsInfoVO.DetailVO> retList = new ArrayList<GoodsInfoVO.DetailVO>();
@@ -144,6 +172,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
         retPage.setPageNum(pageData.getPageNum());
         retPage.setPageSize(pageData.getPageSize());
         retPage.setTotal(pageData.getTotal());
+        
         return retPage;
 		
         /**

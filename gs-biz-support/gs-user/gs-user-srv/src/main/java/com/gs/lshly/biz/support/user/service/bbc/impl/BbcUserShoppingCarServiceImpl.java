@@ -1,5 +1,14 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -20,6 +29,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShoppingCarItemVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -29,15 +39,6 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsSkuRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -70,7 +71,9 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
 
 
     @Override
-    public List<BbcUserShoppingCarVO.ListVO> list(BbcUserShoppingCarQTO.QTO qto) {
+    public BbcUserShoppingCarVO.HomeVO list(BbcUserShoppingCarQTO.QTO qto) {
+    	
+    	BbcUserShoppingCarVO.HomeVO homeVO = new BbcUserShoppingCarVO.HomeVO();
         // 用户登录校验
         if (null == qto.getJwtUserId()) {
             throw new BusinessException("没有登录");
@@ -80,10 +83,22 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         QueryWrapper<UserShoppingCar> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("user_id", qto.getJwtUserId());
+        
+        Integer goodsType = qto.getGoodsType();
+        if(goodsType!=null){
+        	if(goodsType.equals(10)){	//普通商品
+        		wrapper.eq("is_point_good", false);
+        		wrapper.eq("is_in_member_gift", false);
+        	}else if(goodsType.equals(20)){	//积分商品
+        		wrapper.eq("is_point_good", true);
+        	}else if(goodsType.equals(30)){//IN商品
+        		wrapper.eq("is_in_member_gift", true);
+        	}
+        }
         wrapper.orderByAsc("sku_id");
         List<UserShoppingCar> userShoppingCarList = repository.list(wrapper);
         if (ObjectUtils.isEmpty(userShoppingCarList)) {
-            return new ArrayList<>();
+            return null;
         }
 
         Map<String, BbcUserShoppingCarVO.ListVO> voMap = new HashMap<>();
@@ -111,7 +126,7 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
             skuIdList.add(shoppingCarItem.getSkuId());
         }
 
-        List<String> deleteIdList = new ArrayList<>();
+        List<ShoppingCarItemVO> deleteIdList = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(skuIdList)) {
             // 获取商品最新的信息
             List<BbcGoodsInfoVO.InnerServiceVO> innerSkuGoodsList = bbcGoodsInfoRpc.innerServicePageShopGoods(new BbcGoodsInfoQTO.SkuIdListQTO().setSkuIdList(skuIdList));
@@ -141,14 +156,15 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
                             listVO.getGoodsList().add(shoppingCarItemVO);
                         }
                     } else {
-                        deleteIdList.add(shoppingCarItemVO.getId());
+                        deleteIdList.add(shoppingCarItemVO);
                     }
                 }
             }
         }
         //清理数据库无效的购物车数据
         if (ObjectUtils.isNotEmpty(deleteIdList)) {
-            userShoppingCarMapper.deleteBatchIds(deleteIdList);
+            //userShoppingCarMapper.deleteBatchIds(deleteIdList);
+        	homeVO.setLoseList(deleteIdList);
         }
         //获取最终前效的购物车数据
         List<BbcUserShoppingCarVO.ListVO> voList = new ArrayList<>();
@@ -157,7 +173,8 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
                 voList.add(listVO);
             }
         }
-        return voList;
+        homeVO.setCarList(voList);
+        return homeVO;
     }
 
     @Override

@@ -17,6 +17,8 @@ public abstract class BbcUserShoppingCarQTO implements Serializable {
     @ApiModel("BbcUserShoppingCarQTO.QTO")
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
-
+    	
+    	@ApiModelProperty("商品分类0/null/other所有 10 普通商品 20 积分商品 30 IN会员商品 ")
+    	private Integer goodsType;
     }
 }

@@ -1,7 +1,6 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbb.pc;
 
 import com.gs.lshly.biz.support.commodity.service.bbb.pc.IPCBbbGoodsCategoryService;
-import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
