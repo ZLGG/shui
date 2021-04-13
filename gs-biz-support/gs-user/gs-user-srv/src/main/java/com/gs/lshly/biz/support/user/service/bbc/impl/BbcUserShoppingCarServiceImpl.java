@@ -74,6 +74,8 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
     public BbcUserShoppingCarVO.HomeVO list(BbcUserShoppingCarQTO.QTO qto) {
     	
     	BbcUserShoppingCarVO.HomeVO homeVO = new BbcUserShoppingCarVO.HomeVO();
+    	homeVO.setCarList(new ArrayList<>());
+    	homeVO.setLoseList(new ArrayList<>());
         // 用户登录校验
         if (null == qto.getJwtUserId()) {
             throw new BusinessException("没有登录");
@@ -98,7 +100,7 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         wrapper.orderByAsc("sku_id");
         List<UserShoppingCar> userShoppingCarList = repository.list(wrapper);
         if (ObjectUtils.isEmpty(userShoppingCarList)) {
-            return null;
+            return homeVO;
         }
 
         Map<String, BbcUserShoppingCarVO.ListVO> voMap = new HashMap<>();

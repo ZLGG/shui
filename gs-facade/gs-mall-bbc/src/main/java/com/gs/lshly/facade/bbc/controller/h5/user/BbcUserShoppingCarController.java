@@ -48,7 +48,7 @@ public class BbcUserShoppingCarController {
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("删除购物车商品")
+    @ApiOperation("删除/清空失效购物车商品-v1.1.0")
     @DeleteMapping(value = "/deleteBatch")
     public ResponseData<Void> deleteBatch(@Valid @RequestBody BbcUserShoppingCarDTO.IdListDTO dto) {
         bbcUserShoppingCarRpc.deleteBatchUserShoppingCar(dto);
