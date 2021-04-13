@@ -87,6 +87,11 @@ public class BbbH5GoodsInfoRpc implements IBbbH5GoodsInfoRpc {
     }
 
     @Override
+    public PageData<BbbH5GoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbbH5GoodsInfoQTO.IntegralGoodsQTO qto) {
+        return bbbH5GoodsInfoService.queryIntegralGoodsInfo(qto);
+    }
+
+    @Override
     public List<BbbH5GoodsInfoVO.HomeInnerServiceVO> getHomeGoodsInnerServiceVO(List<String> goodsIdList, BaseDTO dto) {
         return bbbH5GoodsInfoService.getHomeGoodsInnerServiceVO(goodsIdList,dto);
     }

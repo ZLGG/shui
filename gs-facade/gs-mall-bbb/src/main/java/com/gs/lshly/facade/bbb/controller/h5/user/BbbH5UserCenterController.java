@@ -82,6 +82,4 @@ public class BbbH5UserCenterController {
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
-
-
 }

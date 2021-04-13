@@ -12,7 +12,6 @@ import io.swagger.annotations.ApiParam;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.Optional;
 

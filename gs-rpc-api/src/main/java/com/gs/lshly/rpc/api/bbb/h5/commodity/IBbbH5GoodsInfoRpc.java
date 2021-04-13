@@ -115,4 +115,11 @@ public interface IBbbH5GoodsInfoRpc {
      * @return
      */
     PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto);
+
+    /**
+     * 获取积分商城商品信息列表
+     * @param qto
+     * @return
+     */
+    PageData<BbbH5GoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbbH5GoodsInfoQTO.IntegralGoodsQTO qto);
 }
