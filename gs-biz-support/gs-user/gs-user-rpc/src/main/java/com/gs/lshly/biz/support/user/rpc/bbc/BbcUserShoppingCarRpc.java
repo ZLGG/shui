@@ -24,7 +24,7 @@ public class BbcUserShoppingCarRpc implements IBbcUserShoppingCarRpc{
     private IBbcUserShoppingCarService  bbcUserShoppingCarService;
 
     @Override
-    public List<BbcUserShoppingCarVO.ListVO> list(BbcUserShoppingCarQTO.QTO qto){
+    public BbcUserShoppingCarVO.HomeVO list(BbcUserShoppingCarQTO.QTO qto){
         return bbcUserShoppingCarService.list(qto);
     }
 

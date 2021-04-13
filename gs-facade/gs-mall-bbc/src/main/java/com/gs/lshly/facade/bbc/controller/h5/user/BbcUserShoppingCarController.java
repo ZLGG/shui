@@ -31,7 +31,7 @@ public class BbcUserShoppingCarController {
 
     @ApiOperation("购物车商品列表-v1.1.0")
     @GetMapping("")
-    public ResponseData<List<BbcUserShoppingCarVO.ListVO>> list(BbcUserShoppingCarQTO.QTO qto) {
+    public ResponseData<BbcUserShoppingCarVO.HomeVO> list(BbcUserShoppingCarQTO.QTO qto) {
         return ResponseData.data(bbcUserShoppingCarRpc.list(qto));
     }
 

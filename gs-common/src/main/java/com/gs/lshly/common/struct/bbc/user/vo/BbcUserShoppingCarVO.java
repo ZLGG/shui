@@ -16,7 +16,19 @@ import java.util.List;
 * @since 2020-10-28
 */
 public abstract class BbcUserShoppingCarVO implements Serializable {
+	
+	@Data
+    @ApiModel("BbcUserShoppingCarVO.HomeVO")
+    @Accessors(chain = true)
+    public static class HomeVO implements Serializable{
 
+        @ApiModelProperty("购物车列表")
+        private List<ListVO> carList;
+
+        @ApiModelProperty("失效购物车列表")
+        private List<ShoppingCarItemVO> loseList = new ArrayList<>();
+
+    }
     @Data
     @ApiModel("BbcUserShoppingCarVO.ListVO")
     @Accessors(chain = true)
