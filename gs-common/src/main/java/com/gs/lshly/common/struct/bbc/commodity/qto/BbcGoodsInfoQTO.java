@@ -3,15 +3,13 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -155,7 +153,14 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         private String goodsName;
 
         @ApiModelProperty("用户id")
+        @NotBlank(message = "userId不能为空")
         private String userId;
+
+        @ApiModelProperty("可用积分")
+        private Integer okIntegral;
+
+        @ApiModelProperty("商品类目id")
+        private String categoryId;
 
         @ApiModelProperty(value = "排序条件字段 10=我能兑换 20=in会员 30=销量 40=价格 50=上新")
         private Integer orderByProperties;

@@ -539,16 +539,21 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         if (StringUtils.isNotBlank(qto.getGoodsName())) {
             wrapper.like("gs.goods_name",qto.getGoodsName());
         }
+        if (StringUtils.isNotBlank(qto.getCategoryId())) {
+            wrapper.eq("gs.category_id",qto.getCategoryId());
+        }
+        wrapper.lt("gs.point_price",qto.getOkIntegral());
         wrapper.eq("gs.flag",false);
         wrapper.eq("is_point_good",true);
-        // 1. 我能兑换积分商品
-        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
-            Optional.ofNullable(qto.getUserId()).orElseThrow(() -> new BusinessException("请登录后查看我能兑换的积分商品"));
-            // 查询用户可用积分
-            Integer okIntegral = goodsInfoMapper.getUserOkIntegral(qto.getUserId());
-            wrapper.lt("gs.point_price",okIntegral);
-        }
-        // 2. in会员积分商品 判断是否为in会员(暂时不做判断)
+
+//        // 1. 我能兑换积分商品
+//        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
+//            Optional.ofNullable(qto.getUserId()).orElseThrow(() -> new BusinessException("请登录后查看我能兑换的积分商品"));
+//            // 查询用户可用积分
+//            Integer okIntegral = goodsInfoMapper.getUserOkIntegral(qto.getUserId());
+//            wrapper.lt("gs.point_price",okIntegral);
+//        }
+        // 2. in会员积分商品
         if (QueryIntegralGoodsEnum.IN会员.getCode() == qto.getOrderByProperties()) {
             wrapper.eq("gs.is_in_member_gift",1);
         }

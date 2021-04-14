@@ -86,7 +86,7 @@ public class BbbH5GoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
     }
 
-    @ApiOperation("积分商城商品信息列表-v1.1.0")
+    @ApiOperation("积分商城-我能兑换商品信息列表-v1.1.0")
     @PostMapping("/queryIntegralGoodsInfo")
     public ResponseData<PageData<BbbH5GoodsInfoVO.IntegralGoodsInfo>> queryIntegralGoodsInfo(BbbH5GoodsInfoQTO.IntegralGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryIntegralGoodsInfo(qto));

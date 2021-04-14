@@ -180,14 +180,6 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
     IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
 
     /**
-     * 查询用户当前可用积分
-     * @param userId
-     * @return
-     */
-    @Select("SELECT SUM(quantity) okIntegral FROM gs_user_integral WHERE end_date > CURRENT_TIMESTAMP and user_id = #{userId}")
-    Integer getUserOkIntegral(@Param("userId") String userId);
-
-    /**
      * 查询积分商品列表
      * @param page
      * @param wrapper

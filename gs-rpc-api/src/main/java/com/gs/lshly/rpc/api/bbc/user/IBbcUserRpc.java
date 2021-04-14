@@ -31,4 +31,6 @@ public interface IBbcUserRpc {
     BbcUserVO.UserIntegralVO integral(BaseDTO dto);
 
     List<BbcUserVO.UserIntegralRecordVO> integralLog(BbcUserDTO.IntegralLogQTO qto);
+
+    BbcUserVO.MyIntegralVO myIntegral(String userId);
 }
