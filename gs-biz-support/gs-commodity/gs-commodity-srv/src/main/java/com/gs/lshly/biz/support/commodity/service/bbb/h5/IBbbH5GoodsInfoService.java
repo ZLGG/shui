@@ -102,6 +102,11 @@ public interface IBbbH5GoodsInfoService {
 
     BbbH5GoodsInfoVO.InnerServiceVO innerSimpleServiceVO(String skuId);
 
+    /**
+     * 获取in会员抵扣专区商品列表
+     * @param qto
+     * @return
+     */
     PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto);
 
     /**

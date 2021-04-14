@@ -167,6 +167,12 @@ public abstract class BbbH5GoodsInfoQTO implements Serializable {
         @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
         @NotNull(message = "inCouponType不能为空")
         private Integer inCouponType;
+
+        @ApiModelProperty(value = "排序条件字段 10=综合 20=销量 30=价格 40=上新")
+        private Integer orderByProperties;
+
+        @ApiModelProperty(value = "排序方式 10=升序 20=降序")
+        private Integer orderByType;
     }
 
 }

@@ -449,6 +449,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     @Data
     @ApiModel("BbcGoodsInfoVO.IntegralGoodsInfo")
     public static class IntegralGoodsInfo implements Serializable{
+
         @ApiModelProperty("商品id")
         private String id;
 

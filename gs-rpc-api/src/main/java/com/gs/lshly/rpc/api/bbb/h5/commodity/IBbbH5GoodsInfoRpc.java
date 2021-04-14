@@ -110,7 +110,7 @@ public interface IBbbH5GoodsInfoRpc {
 
 
     /**
-     * 获取in会员专区商品列表
+     * 获取in会员抵扣专区商品列表
      * @param qto
      * @return
      */

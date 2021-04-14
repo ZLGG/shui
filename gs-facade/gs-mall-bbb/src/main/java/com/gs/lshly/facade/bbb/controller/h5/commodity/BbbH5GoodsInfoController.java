@@ -80,7 +80,7 @@ public class BbbH5GoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.getQuickOrderGoodsList(qto));
     }
 
-    @ApiOperation("in会员专区商品列表-v1.1.0")
+    @ApiOperation("in会员抵扣专区商品列表-v1.1.0")
     @PostMapping("/queryInVIPSpecialAreaList")
     public ResponseData<PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO>> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));

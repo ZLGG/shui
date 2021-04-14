@@ -75,7 +75,7 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.getGoodsSharingVO(qto));
     }
 
-    @ApiOperation("in会员专区商品列表-v1.1.0")
+    @ApiOperation("in会员抵扣专区商品列表-v1.1.0")
     @PostMapping("/queryInVIPSpecialAreaList")
     public ResponseData<PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO>> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
