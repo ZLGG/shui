@@ -124,4 +124,10 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     PageData<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto);
+
+    /**
+     * 我能兑换的积分商品列表
+     * @return
+     */
+    List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange();
 }

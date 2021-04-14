@@ -984,6 +984,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
+    public List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange() {
+        List<BbcGoodsInfoVO.MyIntegrationExchangeVO> integralGoodsInfos = goodsInfoMapper.myIntegrationExchange();
+        return integralGoodsInfos;
+    }
+
+    @Override
     public PageData<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto) {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         if (StringUtils.isNotBlank(qto.getGoodsName())) {

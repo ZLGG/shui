@@ -3,10 +3,7 @@ package com.gs.lshly.facade.bbc.controller.h5.pages;
 import java.util.List;
 
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -185,4 +182,11 @@ public class BbcHomeController {
     public ResponseData<BbcGoodsInfoVO> inMemberGoods(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageInMemberGoods(qto));
     }
+
+    @ApiOperation("我能兑换-v1.1.0")
+    @GetMapping("/myIntegrationExchange")
+    public ResponseData<List<BbcGoodsInfoVO.MyIntegrationExchangeVO>> myIntegrationExchange() {
+        return ResponseData.data(bbcGoodsInfoRpc.myIntegrationExchange());
+    }
+
 }
