@@ -66,11 +66,27 @@ public class BbcPointsController {
     
     @ApiOperation("/分类/banner/菜单信息/电信产品/秒杀专区/电信国际/IN会员专区/心选好礼/本地生活/精打细算-v1.1.0")
     @GetMapping("")
-    public ResponseData<List<BbcPointHomePageVO.ListVO>> getHome(BbcPointHomeQTO.QTO qto) {
+    public ResponseData<List<BbcPointHomePageVO.ListVO>> home(BbcPointHomeQTO.QTO qto) {
         qto.setSubject(SubjectEnum.积分商城.getCode());
         qto.setTerminal(TerminalEnum.BBC.getCode());
     	return ResponseData.data(bbcPointHomeRpc.getHome(qto));
     }
+    
+    @ApiOperation("电信国际首页-v1.1.0")
+    @GetMapping("/ctccInternational")
+    public ResponseData<List<BbcPointHomePageVO.ListVO>> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto) {
+        qto.setSubject(SubjectEnum.电信国际.getCode());
+        qto.setTerminal(TerminalEnum.BBC.getCode());
+    	return ResponseData.data(bbcPointHomeRpc.ctccInternationalHome(qto));
+    }
+    
+//    @ApiOperation("秒杀首页-v1.1.0")
+//    @GetMapping("/seckill")
+//    public ResponseData<List<BbcPointHomePageVO.ListVO>> seckillHome(BbcPointHomeQTO.SeckillQTO qto) {
+//        qto.setSubject(SubjectEnum.积分商城.getCode());
+//        qto.setTerminal(TerminalEnum.BBC.getCode());
+//    	return ResponseData.data(bbcPointHomeRpc.seckillHome(qto));
+//    }
     
     @ApiOperation("电信甄选/心选好礼/本地生活/精打细算/名品集市产品列表-v1.1.0")
     @GetMapping("/floorGoods")

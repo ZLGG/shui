@@ -377,11 +377,11 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		List<SiteTopicGoods> goodslist =goodsRepository.list(goodsWrapper);
 		
 		if(CollectionUtils.isNotEmpty(goodslist)){
-			List<GoodsInfoVO.DetailVO> goodsInfoList =new ArrayList<GoodsInfoVO.DetailVO>();
+			List<BbcGoodsInfoVO.DetailVO> goodsInfoList =new ArrayList<BbcGoodsInfoVO.DetailVO>();
 			for(SiteTopicGoods siteTopicGoods:goodslist){
 				
 				String goodsId = siteTopicGoods.getGoodsId();
-        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+				BbcGoodsInfoVO.DetailVO goodsInfoDetailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
         		goodsInfoList.add(goodsInfoDetailVO);
 				
 			}

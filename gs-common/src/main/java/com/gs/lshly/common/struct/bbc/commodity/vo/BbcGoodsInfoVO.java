@@ -315,7 +315,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Integer singleSkuStock;
 
         @ApiModelProperty("积分价格")
-        private Double pointPrice;
+        private BigDecimal pointPrice;
 
         @ApiModelProperty("办理备注")
         private String remarks;

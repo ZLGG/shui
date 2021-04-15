@@ -30,4 +30,13 @@ public abstract class BbcMarketActivityQTO implements Serializable {
         private String id;
 
     }
+    
+    
+    @Data
+    @ApiModel("BbcMarketActivityQTO.SeckillHomeQTO")
+    @Accessors(chain = true)
+    public static class SeckillHomeQTO extends BaseQTO {
+        @ApiModelProperty(value= "秒杀活动ID",required = false)
+        private String id;
+    }
 }

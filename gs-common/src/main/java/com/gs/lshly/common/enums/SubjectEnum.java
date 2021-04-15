@@ -8,7 +8,8 @@ public enum SubjectEnum implements EnumMessage {
     扶贫(20, "扶贫"),
     好粮油(30, "好粮油"),
     推荐专栏(40,"推荐专栏"),
-    积分商城(50,"积分商城");
+    积分商城(50,"积分商城"),
+    电信国际(60,"电信国际");
 
     SubjectEnum(Integer code, String remark){
         this.code = code;

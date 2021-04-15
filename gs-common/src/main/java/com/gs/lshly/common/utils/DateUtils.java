@@ -21,7 +21,7 @@ import java.util.Date;
 public  class DateUtils {
 
 
-    private final static String dateFormatStr = "yyyy-MM-dd";
+    public final static String dateFormatStr = "yyyy-MM-dd";
 
     public final static String timeFormatStr = "yyyy-MM-dd HH:mm:ss";
     
@@ -169,5 +169,26 @@ public  class DateUtils {
         }
 
         return null;
+    }
+    
+    /**
+     * 获取当前时间的前一天时间
+     *
+     * @param cl
+     * @return
+     */
+    public static String getBeforeDay(int num) {
+    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        
+        c.add(Calendar.DATE, -num);
+        Date start = c.getTime();
+        String qyt= format.format(start);//前一天
+        return qyt;
+    }
+    
+    public static void main(String args[]){
+    	System.out.println(getBeforeDay(1));
     }
 }

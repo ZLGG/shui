@@ -44,4 +44,55 @@ public abstract class BbcPointHomePageVO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("BbcPointHomePageVO.CtccInternationalListVO")
+    @Accessors(chain = true)
+    public static class CtccInternationalListVO implements Serializable{
+    	
+    	@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("标题")
+        private String name;
+        
+        @ApiModelProperty("楼层排序数")
+        private Integer idx;
+        
+        @ApiModelProperty("编码标识")
+        private String code;
+        
+        @ApiModelProperty("内容")
+        private List list;
+        
+        @ApiModelProperty("备注")
+        private String remark;
+
+
+    }
+    
+    @Data
+    @ApiModel("BbcPointHomePageVO.SeckillListVO")
+    @Accessors(chain = true)
+    public static class SeckillListVO implements Serializable{
+    	
+    	@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("标题")
+        private String name;
+        
+        @ApiModelProperty("楼层排序数")
+        private Integer idx;
+        
+        @ApiModelProperty("编码标识")
+        private String code;
+        
+        @ApiModelProperty("内容")
+        private List list;
+        
+        @ApiModelProperty("备注")
+        private String remark;
+
+
+    }
 }

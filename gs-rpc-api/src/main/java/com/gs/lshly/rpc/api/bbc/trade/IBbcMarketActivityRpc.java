@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.SeckillHomeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 
 public interface IBbcMarketActivityRpc {
@@ -61,4 +62,11 @@ public interface IBbcMarketActivityRpc {
      * @return
      */
     PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(BbcMarketActivityQTO.QTO qto);
+    
+    /**
+     * 秒杀首页
+     * @param qto
+     * @return
+     */
+    BbcMarketActivityVO.SeckillHome seckillHome(SeckillHomeQTO qto);
 }

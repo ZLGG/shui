@@ -19,9 +19,14 @@ import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO.QTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO.SeckillQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopicNameQTO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO.CtccInternationalListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO.ListVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO.SeckillListVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -157,7 +162,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listByTopicNameVO = bbcSiteTopicService.listByTopicName(qto2);
 		
 		listVO = new ListVO();
-		listVO.setId(PointHomeTypeEnum.心选好礼.getCode());
+		listVO.setId(listByTopicNameVO.getId());
 		listVO.setCode(PointHomeTypeEnum.心选好礼.getCode());
 		listVO.setIdx(PointHomeTypeEnum.心选好礼.getIdx());
 		listVO.setName(PointHomeTypeEnum.心选好礼.getRemark());
@@ -168,7 +173,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listByTopicNameVO = bbcSiteTopicService.listByTopicName(qto2);
 		
 		listVO = new ListVO();
-		listVO.setId(PointHomeTypeEnum.本地生活.getCode());
+		listVO.setId(listByTopicNameVO.getId());
 		listVO.setCode(PointHomeTypeEnum.本地生活.getCode());
 		listVO.setIdx(PointHomeTypeEnum.本地生活.getIdx());
 		listVO.setName(PointHomeTypeEnum.本地生活.getRemark());
@@ -179,7 +184,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listByTopicNameVO = bbcSiteTopicService.listByTopicName(qto2);
 		
 		listVO = new ListVO();
-		listVO.setId(PointHomeTypeEnum.精打细算.getCode());
+		listVO.setId(listByTopicNameVO.getId());
 		listVO.setCode(PointHomeTypeEnum.精打细算.getCode());
 		listVO.setIdx(PointHomeTypeEnum.精打细算.getIdx());
 		listVO.setName(PointHomeTypeEnum.精打细算.getRemark());
@@ -187,6 +192,12 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		retList.add(listVO);
 		
 		return retList;
+	}
+
+	@Override
+	public List<BbcPointHomePageVO.CtccInternationalListVO> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

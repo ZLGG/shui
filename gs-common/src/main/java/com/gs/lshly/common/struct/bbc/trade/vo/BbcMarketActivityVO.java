@@ -550,4 +550,57 @@ public abstract class BbcMarketActivityVO implements Serializable {
 		@ApiModelProperty("商品列表")
 		private List<BbcGoodsInfoVO.DetailVO> goodsList;
 	}
+	
+	/**
+	 * 秒杀活动首页
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年4月14日 下午5:55:28
+	 */
+	@Data
+	@ApiModel("BbcMarketActivityVO.SeckillHome")
+	@Accessors(chain = true)
+	public static class SeckillHome implements Serializable {
+
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("封面图")
+		private String imageUrl;
+
+		@ApiModelProperty("封面图跳转")
+		private String jumpUrl;
+
+		@ApiModelProperty("秒杀时间段")
+		private List<SeckillTimeQuantum> timeQuantum;
+		
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillEndTime;
+		
+		@ApiModelProperty("初始化数据")
+		private PageData<BbcMarketSeckillVO.SeckillGoodsVO> list;
+		
+	}
+	
+	@Data
+	@ApiModel("BbcMarketActivityVO.SeckillTimeQuantum")
+	@Accessors(chain = true)
+	public static class SeckillTimeQuantum implements Serializable {
+		@ApiModelProperty("id")
+		private String id;
+
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("状态 10抢购中 20 已开抢 30 昨日已开抢 40 即将开抢")
+		private Integer status;
+
+		@ApiModelProperty("状态描述")
+		private String statusDesc;
+		
+		@ApiModelProperty("时间段")
+		private String timeQuantum;
+	}
 }

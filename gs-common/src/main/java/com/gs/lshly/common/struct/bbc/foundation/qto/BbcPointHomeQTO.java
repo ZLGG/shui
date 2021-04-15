@@ -29,6 +29,29 @@ public class BbcPointHomeQTO implements Serializable {
     	@ApiModelProperty(value="10 20",hidden=true)
         private Integer terminal;
     }
+    
+    @Data
+    @ApiModel("BbcPointHomeQTO.CtccInternationalQTO")
+    @Accessors(chain = true)
+    public static class CtccInternationalQTO extends BaseDTO {
+    	@ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50积分商城 60电信国际]",hidden=true)
+        private Integer subject;
+    	
+    	@ApiModelProperty(value="10 20",hidden=true)
+        private Integer terminal;
+    }
+
+    
+    @Data
+    @ApiModel("BbcPointHomeQTO.SeckillQTO")
+    @Accessors(chain = true)
+    public static class SeckillQTO extends BaseDTO {
+    	@ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50积分商城 60电信国际]",hidden=true)
+        private Integer subject;
+    	
+    	@ApiModelProperty(value="10 20",hidden=true)
+        private Integer terminal;
+    }
 
     /**
      * 猜你喜欢查询

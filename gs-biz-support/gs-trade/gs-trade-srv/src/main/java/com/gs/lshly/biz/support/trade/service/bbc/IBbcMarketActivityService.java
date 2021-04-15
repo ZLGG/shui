@@ -11,7 +11,9 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.SeckillHomeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 
 
 public interface IBbcMarketActivityService {
@@ -67,4 +69,11 @@ public interface IBbcMarketActivityService {
      * @return
      */
     PageData<BbcGoodsInfoVO.DetailVO> pageFlashsale(BbcMarketActivityQTO.QTO qto);
+    
+    /**
+     * 
+     * @param qto
+     * @return
+     */
+    SeckillHome seckillHome(SeckillHomeQTO qto);
 }
