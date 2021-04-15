@@ -984,21 +984,31 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
+    public List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange() {
+        List<BbcGoodsInfoVO.MyIntegrationExchangeVO> integralGoodsInfos = goodsInfoMapper.myIntegrationExchange();
+        return integralGoodsInfos;
+    }
+
+    @Override
     public PageData<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto) {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         if (StringUtils.isNotBlank(qto.getGoodsName())) {
             wrapper.like("gs.goods_name",qto.getGoodsName());
         }
-        wrapper.eq("is_point_good",true);
-        wrapper.eq("gs.flag",false);
-        // 1. 我能兑换积分商品
-        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
-            Optional.ofNullable(qto.getUserId()).orElseThrow(() -> new BusinessException("请登录后查看我能兑换的积分商品"));
-            // 查询用户可用积分
-            Integer okIntegral = goodsInfoMapper.getUserOkIntegral(qto.getUserId());
-            wrapper.lt("gs.point_price",okIntegral);
+        if (StringUtils.isNotBlank(qto.getCategoryId())) {
+            wrapper.eq("gs.category_id",qto.getCategoryId());
         }
-        // 2. in会员积分商品 判断是否为in会员(暂时不做判断)
+        wrapper.lt("gs.point_price",qto.getOkIntegral());
+        wrapper.eq("gs.is_point_good",true);
+        wrapper.eq("gs.flag",false);
+//        // 1. 我能兑换积分商品
+//        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
+//            Optional.ofNullable(qto.getUserId()).orElseThrow(() -> new BusinessException("请登录后查看我能兑换的积分商品"));
+//            // 查询用户可用积分
+//            Integer okIntegral = goodsInfoMapper.getUserOkIntegral(qto.getUserId());
+//            wrapper.lt("gs.point_price",okIntegral);
+//        }
+        // 2. in会员积分商品
         if (QueryIntegralGoodsEnum.IN会员.getCode() == qto.getOrderByProperties()) {
             wrapper.eq("gs.is_in_member_gift",1);
         }
@@ -1028,8 +1038,26 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     public PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("gs.in_coupon_type",qto.getInCouponType());
-        wrapper.eq("gs.is_in_member_gift",1);
-        wrapper.eq("gs.flag",0);
+        wrapper.eq("gs.is_in_member_gift",true);
+        wrapper.eq("gs.flag",false);
+        // 排序条件字段 10=综合 20=销量 30=价格 40=上新
+        if (20 == qto.getOrderByProperties()) {
+            if (10 == qto.getOrderByType()) {
+                wrapper.orderByAsc("gs.sale_quantity");
+            }else {
+                wrapper.orderByDesc("gs.sale_quantity");
+            }
+        }
+        if (30 == qto.getOrderByProperties()) {
+            if (10 == qto.getOrderByType()) {
+                wrapper.orderByAsc("gs.sale_price");
+            }else {
+                wrapper.orderByDesc("gs.sale_price");
+            }
+        }
+        if (40 == qto.getOrderByProperties()) {
+            wrapper.orderByDesc("gs.cdate");
+        }
         IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page = MybatisPlusUtil.pager(qto);
         IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> pageData = goodsInfoMapper.queryInVIPSpecialAreaList(page,wrapper);
         // 计算商品折后价格

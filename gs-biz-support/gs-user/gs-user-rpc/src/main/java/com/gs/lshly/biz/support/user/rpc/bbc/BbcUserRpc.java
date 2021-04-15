@@ -39,6 +39,11 @@ public class BbcUserRpc implements IBbcUserRpc {
     }
 
     @Override
+    public BbcUserVO.MyIntegralVO myIntegral(String userId) {
+        return bbcUserService.myIntegral(userId);
+    }
+
+    @Override
     public List<BbcUserVO.UserIntegralRecordVO> integralLog(BbcUserDTO.IntegralLogQTO qto) {
         return bbcUserService.integralLog(qto);
     }

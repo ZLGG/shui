@@ -106,6 +106,12 @@ public class BbcUserServiceImpl implements IBbcUserService {
     }
 
     @Override
+    public BbcUserVO.MyIntegralVO myIntegral(String userId) {
+        BbcUserVO.MyIntegralVO myIntegralVO = userIntegralMapper.myIntegral(userId);
+        return myIntegralVO;
+    }
+
+    @Override
     public List<BbcUserVO.UserIntegralRecordVO> integralLog(BbcUserDTO.IntegralLogQTO qto) {
         QueryWrapper<UserIntegral> userIntegralQueryWrapper = MybatisPlusUtil.query();
         userIntegralQueryWrapper.eq("user_id",qto.getJwtUserId());

@@ -180,14 +180,6 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
     IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(IPage<BbcGoodsInfoVO.InVIPSpecialAreaVO> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
 
     /**
-     * 查询用户当前可用积分
-     * @param userId
-     * @return
-     */
-    @Select("SELECT SUM(quantity) okIntegral FROM gs_user_integral WHERE end_date > CURRENT_TIMESTAMP and user_id = #{userId}")
-    Integer getUserOkIntegral(@Param("userId") String userId);
-
-    /**
      * 查询积分商品列表
      * @param page
      * @param wrapper
@@ -201,4 +193,16 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
             "left join gs_trade_margin gm on gs.shop_id = gm.shop_id\n" +
             "where ${ew.sqlSegment}")
     IPage<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(IPage<BbcGoodsInfoVO.IntegralGoodsInfo> page, @Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
+
+    /**
+     * 我能兑换积分商品列表
+     * @return
+     */
+    @Select("SELECT DISTINCT\n" +
+            "gs.id,gs.goods_image,gs.goods_name,gs.goods_title,gb.brand_name,gs.point_price\n" +
+            "from\n" +
+            "gs_goods_info gs\n" +
+            "left join gs_goods_brand gb on gs.brand_id = gb.id\n" +
+            "where gs.is_point_good = 1 and gs.flag = 0 ORDER BY RAND() LIMIT 0,4")
+    List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange();
 }

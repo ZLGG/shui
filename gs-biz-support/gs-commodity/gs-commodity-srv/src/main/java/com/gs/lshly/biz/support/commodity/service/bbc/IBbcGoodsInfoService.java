@@ -98,7 +98,7 @@ public interface IBbcGoodsInfoService {
     BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto);
 
     /**
-     * 获取in会员专区商品列表
+     * 获取in会员抵扣专区商品列表
      * @param qto
      * @return
      */
@@ -110,4 +110,10 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     PageData<BbcGoodsInfoVO.IntegralGoodsInfo> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto);
+
+    /**
+     * 我能兑换的积分商品列表
+     * @return
+     */
+    List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange();
 }

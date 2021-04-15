@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -188,6 +189,21 @@ public abstract class BbcUserVO implements Serializable {
         @ApiModelProperty("创建时间")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
+
+    }
+
+    @Data
+    @ApiModel("BbcUserVO.MyIntegralVO")
+    public static class MyIntegralVO implements Serializable {
+
+        @ApiModelProperty("可用积分")
+        private Integer okIntegral = 0;
+
+        @ApiModelProperty("定向积分")
+        private Integer directionIntegral = 0;
+
+        @ApiModelProperty("电话号码")
+        private String phone;
 
     }
 

@@ -75,13 +75,13 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.getGoodsSharingVO(qto));
     }
 
-    @ApiOperation("in会员专区商品列表-v1.1.0")
+    @ApiOperation("in会员抵扣专区商品列表-v1.1.0")
     @PostMapping("/queryInVIPSpecialAreaList")
     public ResponseData<PageData<BbcGoodsInfoVO.InVIPSpecialAreaVO>> queryInVIPSpecialAreaList(BbcGoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
     }
 
-    @ApiOperation("积分商城商品信息列表-v1.1.0")
+    @ApiOperation("积分商城-我能兑换商品信息列表-v1.1.0")
     @PostMapping("/queryIntegralGoodsInfo")
     public ResponseData<PageData<BbcGoodsInfoVO.IntegralGoodsInfo>> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryIntegralGoodsInfo(qto));

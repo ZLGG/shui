@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.bbc.controller.h5.user;
 
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -13,10 +14,12 @@ import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
 * <p>
@@ -57,6 +60,14 @@ public class BbcUserCenterController {
     @GetMapping("/integralLog")
     public ResponseData<List<BbcUserVO.UserIntegralRecordVO>> integralLog(BbcUserDTO.IntegralLogQTO qto) {
         return ResponseData.data(bbcUserRpc.integralLog(qto));
+    }
+
+    @ApiOperation("我能兑换-我的积分-v1.1.0")
+    @GetMapping("/myIntegral")
+    public ResponseData<BbcUserVO.MyIntegralVO> myIntegral(@ApiParam(name = "userId",value = "用户id",required = true)
+                                                           @RequestParam("userId") String userId) {
+        Optional.ofNullable(userId).orElseThrow(() ->new BusinessException("请登录后操作"));
+        return ResponseData.data(bbcUserRpc.myIntegral(userId));
     }
 
 }
