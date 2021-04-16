@@ -515,6 +515,13 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("BbcGoodsInfoVO.SearchHistory")
+    public static class SearchHistory implements Serializable{
+        @ApiModelProperty("搜索关键字")
+        private String keyword;
+    }
+
 
     //----------------内部服务VO-----------------------------
 
@@ -620,8 +627,6 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         
 
     }
-
-
 
     @Data
     @ApiModel("BbcGoodsInfoVO.InnerGoodsKitSkuVO")

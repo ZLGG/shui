@@ -130,4 +130,11 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange();
+
+    /**
+     * 查询搜索历史记录
+     * @param qto
+     * @return
+     */
+    BbcGoodsInfoVO.SearchHistory getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
 }

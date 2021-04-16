@@ -9,9 +9,11 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -52,8 +54,8 @@ public class BbcGoodsInfoController {
     }
 
     @ApiOperation("搜素2C商城首页商品信息-v1.1.0")
-    @GetMapping(value = "getHomeGoods")
-    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getHomeGoods(BbcGoodsInfoQTO.GoodsListQTO qto) {
+    @PostMapping(value = "getHomeGoods")
+    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getHomeGoods(@Valid @RequestBody BbcGoodsInfoQTO.GoodsListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(qto));
     }
 
@@ -81,9 +83,15 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.queryInVIPSpecialAreaList(qto));
     }
 
-    @ApiOperation("积分商城-我能兑换商品信息列表-v1.1.0")
+/*    @ApiOperation("积分商城-我能兑换商品信息列表-v1.1.0（暂时不用）")
     @PostMapping("/queryIntegralGoodsInfo")
     public ResponseData<PageData<BbcGoodsInfoVO.IntegralGoodsInfo>> queryIntegralGoodsInfo(BbcGoodsInfoQTO.IntegralGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.queryIntegralGoodsInfo(qto));
+    }*/
+
+    @ApiOperation("查询搜索历史记录-v1.1.0")
+    @GetMapping("/getSearchHistory")
+    public ResponseData<BbcGoodsInfoVO.SearchHistory> getSearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.getSearchHistory(qto));
     }
 }

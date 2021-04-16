@@ -197,12 +197,16 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
     /**
      * 我能兑换积分商品列表
      * @return
+     * @param wrapper
      */
     @Select("SELECT DISTINCT\n" +
             "gs.id,gs.goods_image,gs.goods_name,gs.goods_title,gb.brand_name,gs.point_price\n" +
             "from\n" +
             "gs_goods_info gs\n" +
             "left join gs_goods_brand gb on gs.brand_id = gb.id\n" +
-            "where gs.is_point_good = 1 and gs.flag = 0 ORDER BY RAND() LIMIT 0,4")
-    List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange();
+            "where ${ew.sqlSegment}")
+    List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
+
+    @Select("select gs.id from gs_goods_info gs where ${ew.sqlSegment}")
+    List<String> getAllIds(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
 }

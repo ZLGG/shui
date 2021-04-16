@@ -1,9 +1,10 @@
 package com.gs.lshly.common.struct.bbc.commodity.qto;
+
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
+import com.gs.lshly.common.struct.bbb.h5.commodity.qto.BbbH5GoodsInfoQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,9 +14,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
-* @author Starry
-* @since 2020-10-23
-*/
+ * @author Starry
+ * @since 2020-10-23
+ */
 public abstract class BbcGoodsInfoQTO implements Serializable {
 
     @Data
@@ -36,7 +37,20 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格 40=积分 50=发布时间")
+        @ApiModelProperty("用户id")
+        private String userId;
+
+        @ApiModelProperty("可用积分")
+        private Integer okIntegral;
+
+        @ApiModelProperty(value = "搜索入口（0-电信商城 1-积分商城 2-积分商城-我能兑换）")
+        @NotNull(message = "搜索入口字段不能为空")
+        private Integer searchEntry;
+
+//        @ApiModelProperty("积分商城-我能兑换条件")
+//        private BbbH5GoodsInfoQTO.MyExchangeGoodsQTO myExchangeGoodsQTO;
+
+        @ApiModelProperty(value = "排序条件字段 10=综合（我能兑换） 20=销量 30=价格 40=上新 50=in会员")
         private Integer orderByProperties;
 
         @ApiModelProperty(value = "排序方式 10=升序 20=降序")
@@ -78,7 +92,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("商品店铺类目id")
         private String shopNavigationId;
-        
+
         @ApiModelProperty("是否全部显示积分商品 0 否；1 是")
         private Integer isPointGood;
 
@@ -140,7 +154,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         private String iv;
 
         @ApiModelProperty("code")
-        private  String code;
+        private String code;
 
     }
 
@@ -177,7 +191,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
     public static class SkuIdListQTO implements Serializable {
 
         @ApiModelProperty(value = "skuId列表")
-       private List<String> skuIdList;
+        private List<String> skuIdList;
 
 
     }
@@ -202,22 +216,21 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
-    
+
     @Data
     @ApiModel("BbcGoodsInfoQTO.TopicQTO")
     @Accessors(chain = true)
     public static class TopicQTO extends BaseDTO {
-    	@ApiModelProperty(value="专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50]",hidden=true)
+        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50]", hidden = true)
         private Integer subject;
-    	
-    	@ApiModelProperty(value="10 20",hidden=true)
+
+        @ApiModelProperty(value = "10 20", hidden = true)
         private Integer terminal;
     }
-    
+
     /**
      * IN会员查询专区
      *
-     * 
      * @author yingjun
      * @date 2021年3月30日 下午6:44:11
      */
@@ -243,11 +256,24 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         private Integer orderByType;
 
     }
-    
+
     @Data
     @ApiModel("BbcGoodsInfoQTO.EnjoyQTO")
     @Accessors(chain = true)
     public static class EnjoyQTO extends BaseQTO {
 
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.SearchHistoryQTO")
+    @Accessors(chain = true)
+    public static class SearchHistoryQTO {
+        @ApiModelProperty("用户id")
+        @NotBlank(message = "用户id不能为空")
+        private String userId;
+
+        @ApiModelProperty("搜索入口（0-电信商城，1-积分商城）")
+        @NotNull(message = "搜索入口不能为空")
+        private Integer searchEntry;
     }
 }

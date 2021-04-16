@@ -135,6 +135,21 @@ public abstract class BbbH5GoodsInfoQTO implements Serializable {
         private Integer orderByType;
     }
 
+    @Data
+    @ApiModel("BbbH5GoodsInfoQTO.MyExchangeGoodsQTO")
+    @Accessors(chain = true)
+    public static class MyExchangeGoodsQTO implements Serializable{
+
+        @ApiModelProperty("可用积分")
+        private Integer okIntegral;
+
+        @ApiModelProperty(value = "排序条件字段 10=我能兑换 20=in会员 30=销量 40=价格 50=上新")
+        private Integer orderByProperties;
+
+        @ApiModelProperty(value = "排序方式 10=升序 20=降序")
+        private Integer orderByType;
+    }
+
     //-------------------------------内部服务-------------------------
 
     @Data

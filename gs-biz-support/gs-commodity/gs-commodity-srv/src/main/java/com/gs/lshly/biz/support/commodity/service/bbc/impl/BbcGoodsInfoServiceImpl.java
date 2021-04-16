@@ -3,11 +3,9 @@ package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import com.gs.lshly.common.enums.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -37,15 +35,6 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
-import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
-import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
-import com.gs.lshly.common.enums.OrderByConditionEnum;
-import com.gs.lshly.common.enums.OrderByTypeEnum;
-import com.gs.lshly.common.enums.QueryIntegralGoodsEnum;
-import com.gs.lshly.common.enums.SingleStateEnum;
-import com.gs.lshly.common.enums.StockAddressTypeEnum;
-import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -380,19 +369,64 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsListQTO qto) {
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
-        if (StringUtils.isNotEmpty(qto.getGoodsName())) {
+        // 1. 通用查询条件
+        if (StringUtils.isNotBlank(qto.getGoodsName())) {
             boost.like("goods_name", qto.getGoodsName());
         }
         boost.ne("use_platform", GoodsUsePlatformEnums.B商城.getCode());
         boost.eq("goods_state", GoodsStateEnum.已上架.getCode());
+        // 按点击量排序（默认排序）
+        if (qto.getOrderByProperties() != null && qto.getOrderByProperties() == 10) {
+            boost.orderByDesc("click_volume");
+        }
+        // 按价格排序
+        if (MallCategoryEnum.电信商城.getCode().equals(qto.getSearchEntry())) {
+            if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+                boost.orderByAsc("sale_price");
+            }
+            if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
+                boost.orderByDesc("sale_price");
+            }
+        }else {
+            if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+                boost.orderByAsc("point_price");
+            }
+            if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
+                boost.orderByDesc("point_price");
+            }
+        }
+        // 按上架时间排序
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties() == 40) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                if (qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+                    boost.orderByAsc("publish_time", "id");
+                } else {
+                    boost.orderByDesc("publish_time", "id");
+                }
+            } else {
+                boost.orderByDesc("publish_time", "id");
+            }
+        }
 
-        if (qto.getOrderByProperties() != null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
-            boost.orderByAsc("sale_price");
+        // 2.积分商城
+        if (MallCategoryEnum.积分商城.getCode().equals(qto.getSearchEntry())) {
+            boost.eq("is_point_good", true);
         }
-        if (qto.getOrderByProperties() != null && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
-            boost.orderByDesc("sale_price");
+
+        // 3.积分商城-我能兑换
+        if (MallCategoryEnum.我能兑换.getCode().equals(qto.getSearchEntry())) {
+            System.out.println(qto.getUserId());
+            if (StringUtils.isBlank(qto.getUserId()) || qto.getOkIntegral() == null) {
+                throw new BusinessException("请登陆后查询我能兑换的积分商品");
+            }
+            boost.lt("point_price",qto.getOkIntegral());
+            boost.eq("is_point_good",true);
+            // in会员
+            if(null != qto.getOrderByProperties() && qto.getOrderByProperties() == 50) {
+                boost.eq("is_in_member_gift",true);
+            }
         }
-        //如果是积分查询
+/*        //如果是积分查询
         else if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode()))) {
             boost.eq("is_point_good", true);
             if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
@@ -404,8 +438,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             } else {
                 boost.orderByAsc("is_point_good", "id");
             }
-        }//按照发布时间排序
-        else if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
+        }//按照发布时间排序*/
+/*        else if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
             if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
                 if (qto.getOrderByType().equals(10)) {
                     boost.orderByAsc("publish_time", "id");
@@ -415,38 +449,40 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             } else {
                 boost.orderByAsc("publish_time", "id");
             }
-        }
-        //获取2C商城的商品
+        }*/
+        // 4.获取2C商城的商品
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> pageData = repository.page(page, boost);
         List<GoodsInfo> goodsInfos = pageData.getRecords();
-        //声明商品数据的储存容器
+        // 声明商品数据的储存容器
         List<BbcGoodsInfoVO.GoodsListVO> goodsListVOS = new ArrayList<>();
 
-        //按销售或者评价排序
-        if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode()) || qto.getOrderByProperties().equals(OrderByConditionEnum.评价.getCode()))) {
-
+        // 按销量排序
+        if (qto.getOrderByProperties() != null && (qto.getOrderByProperties() == 20)) {
             goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
-        } else {
-            //按价格排序
-            for (GoodsInfo info : goodsInfos) {
-                BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
-                BeanUtils.copyProperties(info, goodsListVO);
-                goodsListVO.setGoodsId(info.getId());
-                if (ObjectUtils.isNotEmpty(getSpecInfoVO(info))) {
-                    goodsListVO.setSpecListVOS(getSpecInfoVO(info));
-                }
-                if (info.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
-                    BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(info).get(0);
-                    goodsListVO.setSkuId(skuVO.getSkuId());
-                    goodsListVO.setSingleSkuStock(getSkuStockNum(info.getShopId(), skuVO.getSkuId()));
-                }
-                goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
-                goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
-                goodsListVOS.add(goodsListVO);
-            }
         }
 
+        // 查询商品规格、库存信息
+        for (GoodsInfo info : goodsInfos) {
+            BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
+            BeanUtils.copyProperties(info, goodsListVO);
+            goodsListVO.setGoodsId(info.getId());
+            if (ObjectUtils.isNotEmpty(getSpecInfoVO(info))) {
+                goodsListVO.setSpecListVOS(getSpecInfoVO(info));
+            }
+            if (info.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+                BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(info).get(0);
+                goodsListVO.setSkuId(skuVO.getSkuId());
+                goodsListVO.setSingleSkuStock(getSkuStockNum(info.getShopId(), skuVO.getSkuId()));
+            }
+            goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
+            goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
+            goodsListVOS.add(goodsListVO);
+        }
+        // 5.保存搜索记录
+        if (StringUtils.isNotBlank(qto.getGoodsName()) && StringUtils.isNotBlank(qto.getUserId())) {
+
+        }
         return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
 
@@ -984,8 +1020,25 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
+    public BbcGoodsInfoVO.SearchHistory getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+        return null;
+    }
+
+    @Override
     public List<BbcGoodsInfoVO.MyIntegrationExchangeVO> myIntegrationExchange() {
-        List<BbcGoodsInfoVO.MyIntegrationExchangeVO> integralGoodsInfos = goodsInfoMapper.myIntegrationExchange();
+        // 随机查询四个我能兑换的商品
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("gs.is_point_good",true);
+        wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.C商城.getCode());
+        List<String> goodsIds = goodsInfoMapper.getAllIds(wrapper);
+        List<String> ranIds = new ArrayList<>();
+        Random rand = new Random();
+        for (int i = 0; i < 5; i++) {
+            ranIds.add(goodsIds.get(rand.nextInt(goodsIds.size())));
+        }
+        wrapper.in("gs.id",ranIds);
+        List<BbcGoodsInfoVO.MyIntegrationExchangeVO> integralGoodsInfos = goodsInfoMapper.myIntegrationExchange(wrapper);
         return integralGoodsInfos;
     }
 
