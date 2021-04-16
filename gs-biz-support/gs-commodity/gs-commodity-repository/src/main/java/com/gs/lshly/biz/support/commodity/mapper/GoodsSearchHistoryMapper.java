@@ -1,0 +1,36 @@
+package com.gs.lshly.biz.support.commodity.mapper;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSearchHistory;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * @Author yangxi
+ * @create 2021/4/16 15:17
+ */
+@Repository
+public interface GoodsSearchHistoryMapper extends BaseMapper<GoodsSearchHistory> {
+
+    /**
+     * 查询历史搜索记录
+     * @param wrapper
+     * @return
+     */
+    @Select("select keyword from gs_goods_search_history where ${ew.sqlSegment}")
+    List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(@Param(Constants.WRAPPER) QueryWrapper<GoodsSearchHistory> wrapper);
+
+    /**
+     * 清空历史搜索记录
+     * @param userId
+     */
+    @Update("update gs_goods_search_history set flag = 1, udate = now() where user_id = #{userId) and flag = 0")
+    void emptySearchHistory(String userId);
+}

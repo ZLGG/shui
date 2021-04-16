@@ -106,8 +106,13 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	}
 
     @Override
-    public BbcGoodsInfoVO.SearchHistory getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+    public List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         return bbcGoodsInfoService.getSearchHistory(qto);
+    }
+
+    @Override
+    public void emptySearchHistory(String userId) {
+        bbcGoodsInfoService.emptySearchHistory(userId);
     }
 
     @Override

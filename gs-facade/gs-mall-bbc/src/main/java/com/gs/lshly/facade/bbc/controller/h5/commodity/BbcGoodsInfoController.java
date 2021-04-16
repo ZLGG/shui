@@ -8,13 +8,14 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
+import java.util.List;
 
 
 /**
@@ -89,9 +90,17 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.queryIntegralGoodsInfo(qto));
     }*/
 
-    @ApiOperation("查询搜索历史记录-v1.1.0")
+    @ApiOperation("查询历史记录-v1.1.0")
     @GetMapping("/getSearchHistory")
-    public ResponseData<BbcGoodsInfoVO.SearchHistory> getSearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+    public ResponseData<List<BbcGoodsInfoVO.SearchHistory>> getSearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getSearchHistory(qto));
+    }
+
+    @ApiModelProperty("清空历史搜索记录-v1.1.0")
+    @GetMapping("/emptySearchHistory")
+    public ResponseData emptySearchHistory(@ApiParam(value = "userId", name = "用户id", required = true)
+                                           @RequestParam("userId") String userId) {
+        bbcGoodsInfoRpc.emptySearchHistory(userId);
+        return ResponseData.success();
     }
 }

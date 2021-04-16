@@ -5,6 +5,8 @@ import static java.util.stream.Collectors.toList;
 import java.math.BigDecimal;
 import java.util.*;
 
+import com.gs.lshly.biz.support.commodity.entity.*;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsSearchHistoryMapper;
 import com.gs.lshly.common.enums.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,12 +21,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
-import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
-import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
-import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
-import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
@@ -99,6 +95,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private IGoodsCategoryRepository categoryRepository;
     @Autowired
     private GoodsCategoryMapper categoryMapper;
+    @Autowired
+    private GoodsSearchHistoryMapper searchHistoryMapper;
 
 
 
@@ -462,7 +460,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
         }
 
-        // 查询商品规格、库存信息
+        // 查询商品规格、库存、店铺信息
         for (GoodsInfo info : goodsInfos) {
             BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
             BeanUtils.copyProperties(info, goodsListVO);
@@ -481,7 +479,14 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         // 5.保存搜索记录
         if (StringUtils.isNotBlank(qto.getGoodsName()) && StringUtils.isNotBlank(qto.getUserId())) {
-
+            GoodsSearchHistory goodsSearchHistory = new GoodsSearchHistory()
+                    .setFlag(false)
+                    .setCdate(new Date())
+                    .setKeyword(qto.getGoodsName())
+                    .setUdate(new Date())
+                    .setUserId(qto.getUserId())
+                    .setSearchEntry(qto.getSearchEntry() == MallCategoryEnum.电信商城.getCode() ? 0:1);
+            searchHistoryMapper.insert(goodsSearchHistory);
         }
         return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
@@ -1020,8 +1025,20 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
-    public BbcGoodsInfoVO.SearchHistory getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
-        return null;
+    public void emptySearchHistory(String userId) {
+        searchHistoryMapper.emptySearchHistory(userId);
+    }
+
+    @Override
+    public List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+        QueryWrapper<GoodsSearchHistory> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("search_entry",qto.getSearchEntry());
+        wrapper.eq("user_id",qto.getUserId());
+        wrapper.eq("flag",false);
+        wrapper.orderByDesc("cdate");
+        wrapper.last("limit 10");
+        List<BbcGoodsInfoVO.SearchHistory> searchHistoryList = searchHistoryMapper.getSearchHistory(wrapper);
+        return searchHistoryList;
     }
 
     @Override
@@ -1030,12 +1047,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("gs.is_point_good",true);
         wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
-        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.C商城.getCode());
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
         List<String> goodsIds = goodsInfoMapper.getAllIds(wrapper);
         List<String> ranIds = new ArrayList<>();
         Random rand = new Random();
-        for (int i = 0; i < 5; i++) {
-            ranIds.add(goodsIds.get(rand.nextInt(goodsIds.size())));
+        for (int i = 0; i < 4; i++) {
+            String ranNum = goodsIds.get(rand.nextInt(goodsIds.size()));
+            for (int j = 0; j < goodsIds.size(); j++) {
+                if (ranNum == goodsIds.get(j)) {
+                    break;
+                }
+            }
+            ranIds.add(ranNum);
         }
         wrapper.in("gs.id",ranIds);
         List<BbcGoodsInfoVO.MyIntegrationExchangeVO> integralGoodsInfos = goodsInfoMapper.myIntegrationExchange(wrapper);

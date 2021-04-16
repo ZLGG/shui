@@ -122,5 +122,11 @@ public interface IBbcGoodsInfoService {
      * @param qto
      * @return
      */
-    BbcGoodsInfoVO.SearchHistory getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
+    List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
+
+    /**
+     * 清空历史搜索记录
+     * @param userId
+     */
+    void emptySearchHistory(String userId);
 }
