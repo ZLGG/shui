@@ -111,8 +111,8 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     }
 
     @Override
-    public void emptySearchHistory(String userId) {
-        bbcGoodsInfoService.emptySearchHistory(userId);
+    public void emptySearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+        bbcGoodsInfoService.emptySearchHistory(qto);
     }
 
     @Override

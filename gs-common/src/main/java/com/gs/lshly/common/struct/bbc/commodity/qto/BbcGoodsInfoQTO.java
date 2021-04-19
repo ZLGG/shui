@@ -47,9 +47,6 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         @NotNull(message = "搜索入口字段不能为空")
         private Integer searchEntry;
 
-//        @ApiModelProperty("积分商城-我能兑换条件")
-//        private BbbH5GoodsInfoQTO.MyExchangeGoodsQTO myExchangeGoodsQTO;
-
         @ApiModelProperty(value = "排序条件字段 10=综合（我能兑换） 20=销量 30=价格 40=上新 50=in会员")
         private Integer orderByProperties;
 
@@ -267,7 +264,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
     @Data
     @ApiModel("BbcGoodsInfoQTO.SearchHistoryQTO")
     @Accessors(chain = true)
-    public static class SearchHistoryQTO {
+    public static class SearchHistoryQTO implements Serializable{
         @ApiModelProperty("用户id")
         @NotBlank(message = "用户id不能为空")
         private String userId;

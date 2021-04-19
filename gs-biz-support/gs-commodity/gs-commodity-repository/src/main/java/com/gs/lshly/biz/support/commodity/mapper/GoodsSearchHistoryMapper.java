@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -29,8 +30,8 @@ public interface GoodsSearchHistoryMapper extends BaseMapper<GoodsSearchHistory>
 
     /**
      * 清空历史搜索记录
-     * @param userId
+     * @param wrapper
      */
-    @Update("update gs_goods_search_history set flag = 1, udate = now() where user_id = #{userId) and flag = 0")
-    void emptySearchHistory(String userId);
+    @Update("update gs_goods_search_history set flag = 1, udate = now() where ${ew.sqlSegment}")
+    void emptySearchHistory(@Param(Constants.WRAPPER) QueryWrapper<GoodsSearchHistory> wrapper);
 }

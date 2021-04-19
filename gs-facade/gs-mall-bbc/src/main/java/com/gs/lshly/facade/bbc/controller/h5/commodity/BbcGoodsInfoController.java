@@ -90,17 +90,16 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.queryIntegralGoodsInfo(qto));
     }*/
 
-    @ApiOperation("查询历史记录-v1.1.0")
-    @GetMapping("/getSearchHistory")
+    @ApiOperation("查询历史搜索记录-v1.1.0")
+    @PostMapping("/getSearchHistory")
     public ResponseData<List<BbcGoodsInfoVO.SearchHistory>> getSearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getSearchHistory(qto));
     }
 
-    @ApiModelProperty("清空历史搜索记录-v1.1.0")
-    @GetMapping("/emptySearchHistory")
-    public ResponseData emptySearchHistory(@ApiParam(value = "userId", name = "用户id", required = true)
-                                           @RequestParam("userId") String userId) {
-        bbcGoodsInfoRpc.emptySearchHistory(userId);
+    @ApiOperation("清空历史搜索记录-v1.1.0")
+    @PostMapping("/emptySearchHistory")
+    public ResponseData emptySearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+        bbcGoodsInfoRpc.emptySearchHistory(qto);
         return ResponseData.success();
     }
 }

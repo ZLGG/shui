@@ -458,35 +458,37 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         // 按销量排序
         if (qto.getOrderByProperties() != null && (qto.getOrderByProperties() == 20)) {
             goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
-        }
-
-        // 查询商品规格、库存、店铺信息
-        for (GoodsInfo info : goodsInfos) {
-            BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
-            BeanUtils.copyProperties(info, goodsListVO);
-            goodsListVO.setGoodsId(info.getId());
-            if (ObjectUtils.isNotEmpty(getSpecInfoVO(info))) {
-                goodsListVO.setSpecListVOS(getSpecInfoVO(info));
+        }else {
+            for (GoodsInfo info : goodsInfos) {
+                BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
+                BeanUtils.copyProperties(info, goodsListVO);
+                goodsListVO.setGoodsId(info.getId());
+                goodsListVO.setShopName(shopDetailVO(info.getShopId()).getShopName());
+                if (ObjectUtils.isNotEmpty(getSpecInfoVO(info))) {
+                    goodsListVO.setSpecListVOS(getSpecInfoVO(info));
+                }
+                if (info.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+                    BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(info).get(0);
+                    goodsListVO.setSkuId(skuVO.getSkuId());
+                    goodsListVO.setSingleSkuStock(getSkuStockNum(info.getShopId(), skuVO.getSkuId()));
+                }
+                goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
+                goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
+                goodsListVOS.add(goodsListVO);
             }
-            if (info.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
-                BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(info).get(0);
-                goodsListVO.setSkuId(skuVO.getSkuId());
-                goodsListVO.setSingleSkuStock(getSkuStockNum(info.getShopId(), skuVO.getSkuId()));
-            }
-            goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
-            goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
-            goodsListVOS.add(goodsListVO);
         }
         // 5.保存搜索记录
         if (StringUtils.isNotBlank(qto.getGoodsName()) && StringUtils.isNotBlank(qto.getUserId())) {
-            GoodsSearchHistory goodsSearchHistory = new GoodsSearchHistory()
-                    .setFlag(false)
-                    .setCdate(new Date())
-                    .setKeyword(qto.getGoodsName())
-                    .setUdate(new Date())
-                    .setUserId(qto.getUserId())
-                    .setSearchEntry(qto.getSearchEntry() == MallCategoryEnum.电信商城.getCode() ? 0:1);
-            searchHistoryMapper.insert(goodsSearchHistory);
+            if (MallCategoryEnum.我能兑换.getCode() != qto.getSearchEntry()) {
+                GoodsSearchHistory goodsSearchHistory = new GoodsSearchHistory()
+                        .setFlag(false)
+                        .setCdate(new Date())
+                        .setKeyword(qto.getGoodsName())
+                        .setUdate(new Date())
+                        .setUserId(qto.getUserId())
+                        .setSearchEntry(qto.getSearchEntry() == MallCategoryEnum.电信商城.getCode() ? MallCategoryEnum.电信商城.getCode():MallCategoryEnum.积分商城.getCode());
+                searchHistoryMapper.insert(goodsSearchHistory);
+            }
         }
         return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
@@ -840,6 +842,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
                 BeanUtils.copyProperties(e, goodsListVO);
                 goodsListVO.setGoodsId(e.getId());
+                goodsListVO.setShopName(shopDetailVO(e.getShopId()).getShopName());
                 List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS = getSpecInfoVO(e);
                 if (ObjectUtils.isNotEmpty(specListVOS)) {
                     goodsListVO.setSpecListVOS(specListVOS);
@@ -1025,8 +1028,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
-    public void emptySearchHistory(String userId) {
-        searchHistoryMapper.emptySearchHistory(userId);
+    public void emptySearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+        QueryWrapper<GoodsSearchHistory> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("flag", false);
+        wrapper.eq("search_entry", qto.getSearchEntry());
+        wrapper.eq("user_id", qto.getUserId());
+        searchHistoryMapper.emptySearchHistory(wrapper);
     }
 
     @Override
@@ -1053,11 +1060,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         Random rand = new Random();
         for (int i = 0; i < 4; i++) {
             String ranNum = goodsIds.get(rand.nextInt(goodsIds.size()));
-            for (int j = 0; j < goodsIds.size(); j++) {
-                if (ranNum == goodsIds.get(j)) {
-                    break;
-                }
-            }
+            goodsIds.remove(ranNum);
             ranIds.add(ranNum);
         }
         wrapper.in("gs.id",ranIds);

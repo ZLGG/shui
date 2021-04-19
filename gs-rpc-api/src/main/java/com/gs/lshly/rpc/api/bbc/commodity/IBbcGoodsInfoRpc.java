@@ -140,8 +140,7 @@ public interface IBbcGoodsInfoRpc {
 
     /**
      * 清空搜索历史记录
-     * @param userId
      * @return
      */
-    void emptySearchHistory(String userId);
+    void emptySearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO userId);
 }

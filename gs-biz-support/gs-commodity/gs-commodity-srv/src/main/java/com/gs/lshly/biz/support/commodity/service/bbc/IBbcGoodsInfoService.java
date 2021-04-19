@@ -126,7 +126,6 @@ public interface IBbcGoodsInfoService {
 
     /**
      * 清空历史搜索记录
-     * @param userId
      */
-    void emptySearchHistory(String userId);
+    void emptySearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
 }
