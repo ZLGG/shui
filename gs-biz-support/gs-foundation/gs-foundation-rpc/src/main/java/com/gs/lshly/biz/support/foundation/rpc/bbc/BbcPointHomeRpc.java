@@ -36,10 +36,10 @@ public class BbcPointHomeRpc implements IBbcPointHomeRpc{
 		return bbcPointHomeService.getHome(qto);
 	}
 
-	@Override
-	public List<CtccInternationalListVO> ctccInternationalHome(CtccInternationalQTO qto) {
-		return bbcPointHomeService.ctccInternationalHome(qto);
-	}
+//	@Override
+//	public List<CtccInternationalListVO> ctccInternationalHome(CtccInternationalQTO qto) {
+//		return bbcPointHomeService.ctccInternationalHome(qto);
+//	}
 
 
 }

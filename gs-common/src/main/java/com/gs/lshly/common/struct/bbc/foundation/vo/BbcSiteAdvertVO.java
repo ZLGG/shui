@@ -66,4 +66,29 @@ public abstract class BbcSiteAdvertVO implements Serializable {
         @ApiModelProperty("文字")
         private String text;
     }
+    
+    
+    @Data
+    @ApiModel("BbcSiteAdvertVO.AdvertDetailVO")
+    @Accessors(chain = true)
+    public static class AdvertDetailVO implements Serializable{
+
+        @ApiModelProperty("商品类目ID")
+        private String categoryId;
+
+        @ApiModelProperty("图片地址")
+        private String imageUrl;
+
+        @ApiModelProperty("跳转地址")
+        private String jumpUrl;
+
+        @ApiModelProperty("名称")
+        private String name;
+        
+        @ApiModelProperty("是否商品类目广告")
+        private Integer isCategory;
+        
+        @ApiModelProperty("排序")
+        private Integer idx;
+    }
 }

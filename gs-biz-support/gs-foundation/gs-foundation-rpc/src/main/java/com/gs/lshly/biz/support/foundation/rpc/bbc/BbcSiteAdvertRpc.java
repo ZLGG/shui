@@ -3,7 +3,9 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.foundation.dto.BbcSiteAdvertDTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO.SubjectQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO.AdvertDetailVO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertQTO;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteAdvertService;
@@ -42,6 +44,11 @@ public class BbcSiteAdvertRpc implements IBbcSiteAdvertRpc{
     public List<BbcSiteAdvertVO.InnerCategoryAdvertListVO> innerCategoryAdvertList(BaseDTO dto) {
         return bbcSiteAdvertService.innerCategoryAdvertList(dto);
     }
+
+	@Override
+	public List<AdvertDetailVO> listBySubject(SubjectQTO qto) {
+		return bbcSiteAdvertService.listBySubject(qto);
+	}
 
 
 }

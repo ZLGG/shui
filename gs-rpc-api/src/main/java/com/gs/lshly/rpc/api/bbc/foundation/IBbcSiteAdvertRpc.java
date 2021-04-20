@@ -19,6 +19,8 @@ public interface IBbcSiteAdvertRpc {
 
     List<BbcSiteAdvertVO.SubjectListVO> subjectAdvertList(BbcSiteAdvertQTO.SubjectQTO qto);
 
+    
+    
     PageData<BbcSiteAdvertVO.SubjectListVO> subjectAdvertPageList(BbcSiteAdvertQTO.SubjectPageQTO qto);
 
     /**
@@ -27,5 +29,12 @@ public interface IBbcSiteAdvertRpc {
      * @return
      */
     List<BbcSiteAdvertVO.InnerCategoryAdvertListVO> innerCategoryAdvertList(BaseDTO dto);
+    
+    /**
+     * 跟据主题查询对应的广告信息
+     * @param qto
+     * @return
+     */
+    List<BbcSiteAdvertVO.AdvertDetailVO> listBySubject(BbcSiteAdvertQTO.SubjectQTO qto);
 
 }

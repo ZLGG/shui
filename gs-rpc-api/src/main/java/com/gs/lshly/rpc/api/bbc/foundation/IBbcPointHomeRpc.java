@@ -23,11 +23,11 @@ public interface IBbcPointHomeRpc {
 	 */
     List<BbcPointHomePageVO.ListVO> getHome(BbcPointHomeQTO.QTO qto);
     
-    /**
-     * 电信国际首页
-     * @param qto
-     * @return
-     */
-    List<BbcPointHomePageVO.CtccInternationalListVO> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto);
+//    /**
+//     * 电信国际首页
+//     * @param qto
+//     * @return
+//     */
+//    List<BbcPointHomePageVO.CtccInternationalListVO> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto);
 
 }

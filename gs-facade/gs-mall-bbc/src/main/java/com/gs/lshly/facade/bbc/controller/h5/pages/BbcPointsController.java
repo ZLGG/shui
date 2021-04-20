@@ -72,13 +72,13 @@ public class BbcPointsController {
     	return ResponseData.data(bbcPointHomeRpc.getHome(qto));
     }
     
-    @ApiOperation("电信国际首页-v1.1.0")
-    @GetMapping("/ctccInternational")
-    public ResponseData<List<BbcPointHomePageVO.ListVO>> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto) {
-        qto.setSubject(SubjectEnum.电信国际.getCode());
-        qto.setTerminal(TerminalEnum.BBC.getCode());
-    	return ResponseData.data(bbcPointHomeRpc.ctccInternationalHome(qto));
-    }
+//    @ApiOperation("电信国际首页-v1.1.0")
+//    @GetMapping("/ctccInternational")
+//    public ResponseData<List<BbcPointHomePageVO.ListVO>> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto) {
+//        qto.setSubject(SubjectEnum.电信国际.getCode());
+//        qto.setTerminal(TerminalEnum.BBC.getCode());
+//    	return ResponseData.data(bbcPointHomeRpc.ctccInternationalHome(qto));
+//    }
     
 //    @ApiOperation("秒杀首页-v1.1.0")
 //    @GetMapping("/seckill")

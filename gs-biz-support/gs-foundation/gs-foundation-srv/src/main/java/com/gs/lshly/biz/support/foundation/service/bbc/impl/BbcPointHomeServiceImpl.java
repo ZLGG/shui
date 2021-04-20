@@ -34,6 +34,8 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
 
+import cn.hutool.core.collection.CollectionUtil;
+
 /**
  * 积分商城首页
  *
@@ -131,8 +133,10 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setIdx(PointHomeTypeEnum.秒杀.getIdx());
 		listVO.setName(PointHomeTypeEnum.秒杀.getRemark());
-		listVO.setRemark(seckill.getActivityStartTime().toString());
-		listVO.setList(seckill.getGoodsList());
+		if(seckill!=null){
+			listVO.setRemark(seckill.getActivityStartTime().toString());
+			listVO.setList(seckill.getGoodsList());
+		}
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.电信国际.getRemark());
@@ -193,12 +197,5 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		
 		return retList;
 	}
-
-	@Override
-	public List<BbcPointHomePageVO.CtccInternationalListVO> ctccInternationalHome(BbcPointHomeQTO.CtccInternationalQTO qto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

@@ -1,23 +1,31 @@
 package com.gs.lshly.biz.support.foundation.service.bbc.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.foundation.entity.SiteAdvert;
 import com.gs.lshly.biz.support.foundation.repository.ISiteAdvertRepository;
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteAdvertService;
 import com.gs.lshly.common.enums.PcH5Enum;
+import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO.SubjectQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO.AdvertDetailVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
 * <p>
@@ -76,5 +84,24 @@ public class BbcSiteAdvertServiceImpl implements IBbcSiteAdvertService {
         List<SiteAdvert> siteAdverList = repository.list( wrapper);
         return ListUtil.listCover(BbcSiteAdvertVO.InnerCategoryAdvertListVO.class,siteAdverList);
     }
+
+	@Override
+	public List<AdvertDetailVO> listBySubject(SubjectQTO qto) {
+		QueryWrapper<SiteAdvert> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        wrapper.eq("subject",SubjectEnum.电信国际.getCode());
+        List<SiteAdvert> siteAdverList = repository.list( wrapper);
+        List<AdvertDetailVO> retList = new ArrayList<AdvertDetailVO>();
+        if(CollectionUtil.isNotEmpty(siteAdverList)){
+        	AdvertDetailVO advertDetailVO = null;
+        	for(SiteAdvert siteAdvert:siteAdverList){
+        		advertDetailVO = new AdvertDetailVO();
+        		BeanCopyUtils.copyProperties(siteAdvert, advertDetailVO);
+        		advertDetailVO.setName(siteAdvert.getText());
+        		retList.add(advertDetailVO);
+        	}
+        }
+        return retList;
+	}
 
 }

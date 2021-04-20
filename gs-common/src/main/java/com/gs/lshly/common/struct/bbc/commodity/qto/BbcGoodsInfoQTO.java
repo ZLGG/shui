@@ -218,7 +218,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
     @ApiModel("BbcGoodsInfoQTO.TopicQTO")
     @Accessors(chain = true)
     public static class TopicQTO extends BaseDTO {
-        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50]", hidden = true)
+        @ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50=积分专栏   60=电信国际]", hidden = true)
         private Integer subject;
 
         @ApiModelProperty(value = "10 20", hidden = true)
