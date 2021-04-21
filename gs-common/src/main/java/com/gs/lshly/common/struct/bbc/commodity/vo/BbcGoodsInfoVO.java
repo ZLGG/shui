@@ -1,4 +1,5 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.common.CommonShopVO;
@@ -18,6 +19,38 @@ import java.util.List;
 * @since 2020-10-23
 */
 public abstract class BbcGoodsInfoVO implements Serializable {
+	
+	/**
+	 * 秒杀商品详情
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年4月21日 下午2:17:59
+	 */
+	@Data
+    @ApiModel("BbcGoodsInfoVO.SeckillDetailVO")
+    @Accessors(chain = true)
+	public static class SeckillDetailVO extends DetailVO{
+		
+		@ApiModelProperty("秒杀价格")
+        private BigDecimal seckillPrice;
+		
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillEndTime;
+		
+		@ApiModelProperty("秒杀状态 10=>抢购中,20=>已开抢,30=>即将开抢,50=>已结束,")
+		private Integer status;
+		
+		/**
+		 * 普通商品(10,"普通商品"),
+		         积分商品(20,"积分商品"),
+		   IN会员商品(30,"IN会员商品");
+		 */
+		@ApiModelProperty("商品类型 10=》普通商品；20=》积分商品；30=》IN会员商品")
+		private Integer goodsType;
+		
+	}
 	
 	@Data
     @ApiModel("BbcGoodsInfoVO.InMemberGoodsVO")

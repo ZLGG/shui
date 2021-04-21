@@ -2,12 +2,15 @@ package com.gs.lshly.facade.bbc.controller.h5.trade;
 
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
@@ -39,11 +42,16 @@ public class BbcMarkeSeckillController {
     }
     
     @ApiOperation("秒杀活动商品分页加载-v1.1.0")
-    @PostMapping("/seckill/pageGoods")
+    @GetMapping("/seckill/pageGoods")
     public ResponseData<BbcMarketSeckillVO.SeckillGoodsVO> pageGoods(BbcMarketSeckillQTO.QTO qto) {
         return ResponseData.data(bbcMarketSeckillRpc.pageSeckillGoods(qto));
     }
 
-
+    
+    @ApiOperation("秒杀商品详情页-v1.1.0")
+    @GetMapping(value = "/seckill/goodsInfo/{id}")
+    public ResponseData<BbcGoodsInfoVO.DetailVO> get(@PathVariable String id) {
+        return ResponseData.data(bbcMarketSeckillRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(id)));
+    }
 
 }

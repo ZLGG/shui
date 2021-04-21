@@ -1,6 +1,8 @@
 package com.gs.lshly.rpc.api.bbc.trade;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
@@ -28,4 +30,11 @@ public interface IBbcMarketSeckillRpc {
      * @return
      */
     PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods(BbcMarketSeckillQTO.QTO qto);
+    
+    /**
+     * 秒杀商品详情
+     * @param dto
+     * @return
+     */
+    BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
 }

@@ -10,7 +10,9 @@ public enum MarketPtSeckillStatusEnum implements EnumMessage{
 	抢购中(10,"抢购中"),
 	已开抢(20,"已开抢"),
 	昨日已开抢(40,"昨日已开抢"),
-	即将开抢(30,"即将开抢");
+	即将开抢(30,"即将开抢"),
+	已结束(50,"已结束"),
+	;
     private Integer code;
     private String remark;
 

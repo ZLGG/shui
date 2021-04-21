@@ -72,9 +72,10 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         	
         	CtccInternationalCategoryVO ctccInternationalCategoryVO = null;
         	
-        	QueryWrapper<CtccCategoryGoods> wrapperGoods = MybatisPlusUtil.query();
         	
         	for(CtccCategory ctccCategory:ctccCategoryList){
+            	QueryWrapper<CtccCategoryGoods> wrapperGoods = MybatisPlusUtil.query();
+
         		ctccInternationalCategoryVO = new CtccInternationalCategoryVO();
         		BeanCopyUtils.copyProperties(ctccCategory, ctccInternationalCategoryVO);
         		
@@ -94,6 +95,7 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         		}
         		
         		ctccInternationalCategoryVO.setGoodsList(detailVOList);
+        		categorys.add(ctccInternationalCategoryVO);
         	}
         	ctccInternationalHomeVO.setCategorys(categorys);
         }

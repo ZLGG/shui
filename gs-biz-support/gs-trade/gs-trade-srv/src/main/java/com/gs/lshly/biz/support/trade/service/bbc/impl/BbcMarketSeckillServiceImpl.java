@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.trade.service.bbc.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,23 +18,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
+import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSpu;
+import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillGoodsSpuMapper;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillMapper;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCutRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantDiscountGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantDiscountRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsGiveRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGiftRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketMerchantGroupbuyRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityGoodsSpuRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityJurisdictionRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityMerchantRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.enums.GoodsPointTypeEnum;
@@ -42,12 +29,12 @@ import com.gs.lshly.common.enums.MarketPtSeckillTimeQuantumEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
@@ -55,7 +42,6 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
-import com.twelvemonkeys.lang.StringUtil;
 
 import cn.hutool.core.collection.CollectionUtil;
 
@@ -64,6 +50,10 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     
     @Autowired
     private MarketPtSeckillMapper marketPtSeckillMapper;
+    
+    @Autowired
+    private MarketPtSeckillGoodsSpuMapper marketPtSeckillGoodsSpuMapper;
+    
 
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
@@ -176,6 +166,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         BeanCopyUtils.copyProperties(dto, qto);
         qto.setPageNum(1);
         qto.setPageSize(20);
+        qto.setId(id);
         PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods = this.pageSeckillGoods(qto);
         seckillHome.setList(pageSeckillGoods);
 		return seckillHome;
@@ -202,7 +193,6 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 	}
 	 
 	 public static void main(String args[]){
-		//System.out.println(rangeInDefined(10,12,18)); 
 	 }
 
 	@Override
@@ -262,4 +252,49 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         }
         return null;
     }
+
+	@Override
+	public SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO idDTO) {
+		BbcGoodsInfoVO.DetailVO detailVO = iBbcGoodsInfoRpc.detailGoodsInfo(idDTO);
+		BbcGoodsInfoVO.SeckillDetailVO seckillDetailVO = new BbcGoodsInfoVO.SeckillDetailVO();
+		
+		BeanCopyUtils.copyProperties(detailVO, seckillDetailVO);
+		
+		//查询对应的秒杀状态
+		//跟据产品id查询对应的
+		QueryWrapper<MarketPtSeckillGoodsSpu> marketPtSeckillGoodsSpuQueryWrapper = MybatisPlusUtil.query();	//查询条件
+		marketPtSeckillGoodsSpuQueryWrapper.eq("goods_id",idDTO.getId());
+		MarketPtSeckillGoodsSpu marketPtSeckillGoodsSpu = marketPtSeckillGoodsSpuMapper.selectOne(marketPtSeckillGoodsSpuQueryWrapper);
+		seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
+		if(seckillDetailVO.getIsInMemberGift()){
+			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
+			seckillDetailVO.setOldPrice(seckillDetailVO.getInMemberPointPrice());
+			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillInMemberPointPrice());
+		}else if(seckillDetailVO.getIsPointGood()){
+			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
+			seckillDetailVO.setOldPrice(seckillDetailVO.getPointPrice());
+			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
+		}else{
+			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
+			seckillDetailVO.setOldPrice(seckillDetailVO.getSalePrice());
+			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillSalePrice());
+		}
+		String seckillId = marketPtSeckillGoodsSpu.getSeckillId();
+		MarketPtSeckill marketPtSeckill = marketPtSeckillMapper.selectById(seckillId);
+		
+		LocalDateTime seckillStartTime = marketPtSeckill.getSeckillStartTime();
+		LocalDateTime seckillEndTime = marketPtSeckill.getSeckillEndTime();
+		LocalDateTime now = LocalDateTime.now();
+		Integer status = 0;
+		if(now.compareTo(seckillStartTime)<0){
+			status = MarketPtSeckillStatusEnum.即将开抢.getCode();
+		}else if(now.compareTo(seckillEndTime)>0){
+			status = MarketPtSeckillStatusEnum.已结束.getCode();
+		}else if(now.compareTo(seckillStartTime)>=0&&now.compareTo(seckillEndTime)<=0){
+			status = MarketPtSeckillStatusEnum.抢购中.getCode();
+		}
+		seckillDetailVO.setStatus(status);
+		seckillDetailVO.setSeckillEndTime(marketPtSeckill.getSeckillEndTime());
+		return seckillDetailVO;
+	}
 }

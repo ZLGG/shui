@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
@@ -32,5 +34,10 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 	@Override
 	public PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods(QTO qto) {
 		return bbcMarketSeckillService.pageSeckillGoods(qto);
+	}
+
+	@Override
+	public SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto) {
+		return bbcMarketSeckillService.detailGoodsInfo(dto);
 	}
 }

@@ -86,5 +86,8 @@ public class MarketPtSeckillGoodsSpu implements Serializable {
      */
     private BigDecimal seckillPointPrice;
 
-
+    /**
+     * IN会员秒杀价格
+     */
+    private BigDecimal seckillInMemberPointPrice;
 }
