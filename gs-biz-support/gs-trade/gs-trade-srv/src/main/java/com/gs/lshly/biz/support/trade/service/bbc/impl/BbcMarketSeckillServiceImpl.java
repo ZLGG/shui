@@ -185,7 +185,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		for(MarketPtSeckill marketPtSeckill:nowList){
 			boolean flag = Math.max(from, minute) == Math.min(minute, marketPtSeckill.getTimeQuantum());
 			if(flag){
-				return marketPtSeckill.getTimeQuantum();
+				return from;
 			}
 			from = marketPtSeckill.getTimeQuantum();
 		}
