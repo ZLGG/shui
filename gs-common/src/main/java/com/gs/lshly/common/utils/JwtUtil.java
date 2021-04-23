@@ -44,6 +44,7 @@ public class JwtUtil {
             String jwtStr = mapper.writeValueAsString(jwtUser);
             long expiration = jwtUser.getRememberMe()!=null && jwtUser.getRememberMe()
                     ? SecurityConstants.EXPIRATION_REMEMBER : SecurityConstants.EXPIRATION;
+            log.info("失效时间:{}",expiration);
             Date expire = new Date(System.currentTimeMillis() + expiration * 1000);
             log.info("[createToken][expire=>{}]",expire);
             

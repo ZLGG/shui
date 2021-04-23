@@ -7,6 +7,7 @@ import com.gs.lshly.biz.support.user.entity.UserThirdLogin;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.IUserThirdLoginRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserAuthService;
+import com.gs.lshly.common.constants.SecurityConstants;
 import com.gs.lshly.common.enums.GenderEnum;
 import com.gs.lshly.common.enums.UserStateEnum;
 import com.gs.lshly.common.enums.UserTypeEnum;
@@ -134,7 +135,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
                 repository.save(user);
             }
             vo = userToLoginVO(user, null);
-            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo);
+            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
             return vo;
     	}else{
     		
@@ -144,7 +145,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             }
             if (PwdUtil.matches(dto.getValidCode(), user.getUserPwd())) {
 	            BbcUserVO.LoginVO vo = userToLoginVO(user, null);
-	            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo);
+	            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
 	            return vo;
             }else{
             	throw new BusinessException("密码错误");

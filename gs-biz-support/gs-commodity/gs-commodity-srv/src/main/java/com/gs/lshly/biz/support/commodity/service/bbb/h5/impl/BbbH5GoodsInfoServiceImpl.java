@@ -586,6 +586,7 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         wrapper.eq("gs.in_coupon_type",qto.getInCouponType());
         wrapper.eq("gs.is_in_member_gift",1);
         wrapper.eq("gs.flag",0);
+        wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
         // 排序条件字段 10=综合 20=销量 30=价格 40=上新
         if (20 == qto.getOrderByProperties()) {
             if (10 == qto.getOrderByType()) {

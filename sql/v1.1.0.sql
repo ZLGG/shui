@@ -181,6 +181,19 @@ ADD COLUMN `in_coupon_type` int(10) NULL COMMENT 'in会员优惠券类型（20,3
 ALTER TABLE `gs_shop_navigation`
 ADD COLUMN `img_url`  varchar(255) NULL AFTER `merchant_id`;
 
+DROP TABLE IF EXISTS `gs_goods_search_history`;
+CREATE TABLE `gs_goods_search_history` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `keyword` varchar(255) DEFAULT NULL COMMENT '关键字',
+  `user_id` varchar(64) NOT NULL COMMENT '用户id',
+  `cdate` datetime DEFAULT NULL COMMENT '创建时间',
+  `udate` datetime DEFAULT NULL COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT NULL COMMENT '删除标志（0-未删除，1-已删除）',
+  `search_entry` tinyint(1) DEFAULT NULL COMMENT '搜索入口（0-电信商城，1-积分商城）',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='搜索历史记录表';
+
 
 -- 添中字段 from 上海
 child_trade_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0
