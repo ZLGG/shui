@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 * @author Starry
 * @since 2020-10-23
 */
+@SuppressWarnings("serial")
 public abstract class BbcGoodsInfoDTO implements Serializable {
 
     @Data

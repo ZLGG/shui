@@ -12,6 +12,7 @@ import java.util.List;
 * @author Starry
 * @since 2020-10-09
 */
+@SuppressWarnings("serial")
 public abstract class BbcGoodsSpecInfoVO implements Serializable {
 
     @Data

@@ -16,9 +16,10 @@ import lombok.experimental.Accessors;
  * @author yingjun
  * @date 2021年4月15日 上午10:51:19
  */
+@SuppressWarnings("serial")
 public abstract class BbcCtccCategoryGoodsDTO implements Serializable {
 
-    @Data
+	@Data
     @ApiModel(value = "DTO")
     @Accessors(chain = true)
     public static class DTO  extends BaseDTO implements Serializable {

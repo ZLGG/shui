@@ -1,22 +1,22 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO;
-import com.gs.lshly.common.struct.bbb.pc.commodity.vo.PCBbbGoodsCategoryVO.CategoryTreeVO;
-import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
 * @author Starry
 * @since 2020-10-23
 */
+@SuppressWarnings("serial")
 public abstract class BbcGoodsCategoryVO implements Serializable {
 
     @Data

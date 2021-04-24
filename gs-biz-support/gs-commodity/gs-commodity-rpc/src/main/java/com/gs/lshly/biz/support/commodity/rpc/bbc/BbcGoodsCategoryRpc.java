@@ -11,9 +11,11 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO.QTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CategoryMenuVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CategoryTreeVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO.IdQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 
 /**
@@ -27,7 +29,6 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
 
     @Override
     public List<CategoryTreeVO> listGoodsCategory() {
-        // TODO Auto-generated method stub
         return bbcGoodsCategoryService.listGoodsCategory();
     }
     @Override
@@ -37,7 +38,6 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
 
     @Override
     public CategoryMenuVO getCategoryMenuVO(QTO qto) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -50,5 +50,9 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
     public PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
         return bbcGoodsCategoryService.goodsList(categoryIdQTO);
     }
+	@Override
+	public PageData<ListVO> goodsListByBrand(IdQTO idQTO) {
+		return bbcGoodsCategoryService.goodsListByBrand(idQTO);
+	}
 
 }

@@ -1,23 +1,25 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.common.CommonShopVO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.CommonShopVO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
 * @author Starry
 * @since 2020-10-23
 */
+@SuppressWarnings("serial")
 public abstract class BbcGoodsInfoVO implements Serializable {
 	
 	/**

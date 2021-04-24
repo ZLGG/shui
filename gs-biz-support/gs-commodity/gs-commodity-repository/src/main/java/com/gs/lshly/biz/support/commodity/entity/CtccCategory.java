@@ -94,5 +94,6 @@ public class CtccCategory extends Model  {
      */
     private String imageUrl;
 
+    private String remark;
 
 }

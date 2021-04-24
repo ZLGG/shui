@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
  * @author yingjun
  * @date 2021年4月20日 上午10:37:25
  */
+@SuppressWarnings("serial")
 public abstract class BbcCtccCategoryGoodsVO implements Serializable {
 
 	
@@ -56,6 +57,9 @@ public abstract class BbcCtccCategoryGoodsVO implements Serializable {
 		
 		@ApiModelProperty("类目ID")
 		private String categoryId;
+		
+		@ApiModelProperty("备注")
+		private String remark;
 
 	}
 	@Data
@@ -74,6 +78,9 @@ public abstract class BbcCtccCategoryGoodsVO implements Serializable {
 		
 		@ApiModelProperty("排序")
 		private Integer idx;
+		
+		@ApiModelProperty("备注")
+		private String remark;
 		
 		@ApiModelProperty("商品列表")
 		private List<BbcGoodsInfoVO.DetailVO> goodsList;

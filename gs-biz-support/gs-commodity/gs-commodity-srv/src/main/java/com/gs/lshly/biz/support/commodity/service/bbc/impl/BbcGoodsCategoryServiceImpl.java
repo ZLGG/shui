@@ -19,9 +19,11 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO.IdQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
+@SuppressWarnings({"unchecked","rawtypes"})
 public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
     @Autowired
@@ -149,7 +152,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         return categoryTreeVOS;
     }
 
-    @Override
+	@Override
     public PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
 
         List<String> cIds = getSubCategoryIds(categoryIdQTO);
@@ -280,5 +283,14 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         }
         throw new BusinessException(String.format("无法为Id：%s；name：%s的类目找到上级类目", subVO.getId(), subVO.getGsCategoryName()));
     }
+
+	@Override
+	public PageData<ListVO> goodsListByBrand(IdQTO idQTO) {
+        QueryWrapper<GoodsInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("brand_id", idQTO.getId());
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(idQTO);
+        IPage<GoodsInfo> pageData = iGoodsInfoRepository.page(page, queryWrapper);
+        return new PageData(pageData.getRecords(), idQTO.getPageNum(), idQTO.getPageSize(), pageData.getTotal());
+	}
 
 }

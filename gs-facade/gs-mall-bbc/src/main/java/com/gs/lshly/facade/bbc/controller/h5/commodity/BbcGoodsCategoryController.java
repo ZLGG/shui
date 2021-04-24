@@ -3,6 +3,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bbc/goodsCategory")
 @Api(tags = "2C商城商品分类列表管理-v1.1.0")
+@SuppressWarnings("unchecked")
 public class BbcGoodsCategoryController {
 
     @DubboReference
@@ -48,6 +50,14 @@ public class BbcGoodsCategoryController {
         PageData<GoodsBrandVO.ListVO> listVOS = bbcGoodsCategoryRpc.brandList(categoryIdQTO);
         return ResponseData.data(listVOS);
     }
+    
+	@ApiOperation("跟据品牌查询商品-v1.1.0")
+    @GetMapping("/brand/goods/list")
+    public ResponseData<PageData<GoodsInfoVO.ListVO>> goodsListByBrand(GoodsBrandQTO.IdQTO idQTO) {
+        PageData<GoodsInfoVO.ListVO> listVOS = bbcGoodsCategoryRpc.goodsListByBrand(idQTO);
+        return ResponseData.data(listVOS);
+    }
+    
     @ApiOperation("2C商城根据产品分类查询商品列表-v1.1.0")
     @GetMapping("goods/list")
     public ResponseData<PageData<GoodsInfoVO.ListVO>> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
