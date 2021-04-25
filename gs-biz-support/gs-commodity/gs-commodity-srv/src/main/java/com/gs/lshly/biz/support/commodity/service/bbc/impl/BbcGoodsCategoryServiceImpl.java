@@ -263,7 +263,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         } else {
             boost.eq("gs_category_level", 1);
         }
-
+        boost.orderByAsc("idx");
         List<GoodsCategory> list = repository.list(boost);
         if (CollectionUtils.isEmpty(list)) {
             return null;
