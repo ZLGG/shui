@@ -10,6 +10,7 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -61,6 +62,7 @@ public abstract class BbcGoodsCategoryVO implements Serializable {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsCategoryVO.CategoryTreeVO")
     public static class CategoryTreeVO extends ListVO {
         @ApiModelProperty("子分类列表")
@@ -72,6 +74,7 @@ public abstract class BbcGoodsCategoryVO implements Serializable {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsCategoryVO.DetailVO")
     public static class DetailVO extends ListVO {
 
@@ -89,4 +92,73 @@ public abstract class BbcGoodsCategoryVO implements Serializable {
         private List<CategoryTreeVO> categoryTreeVOS = new ArrayList<>();
 
     }
+    
+    
+    /**
+     * 电信产品首页
+     *
+     * 
+     * @author yingjun
+     * @date 2021年4月25日 上午11:49:09
+     */
+    @Data
+    @EqualsAndHashCode(callSuper=false)
+    @ApiModel("BbcGoodsCategoryVO.CtccHomeVO")
+    public static class CtccHomeVO implements Serializable {
+    	
+    	@ApiModelProperty("广告位列表")
+		private List<CtccGoodsInfoAdvertVO> adverts;
+
+    	@ApiModelProperty("分类列表")
+        private List<CtccCategoryVO> categorys;
+
+    }
+    
+	@Data
+    @ApiModel("BbcGoodsCategoryVO.CtccCategoryVO")
+    @Accessors(chain = true)
+    public static class CtccCategoryVO implements Serializable{
+    	
+		@ApiModelProperty("电信产品分类ID")
+		private String id;
+		
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("排序")
+		private Integer idx;
+		
+    }
+	
+    /**
+     * 电信产品广告
+     *
+     * 
+     * @author yingjun
+     * @date 2021年4月25日 上午11:37:58
+     */
+	@Data
+    @ApiModel("BbcGoodsCategoryVO.CtccGoodsInfoAdvertVO")
+    @Accessors(chain = true)
+    public static class CtccGoodsInfoAdvertVO implements Serializable{
+    	
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("封面图")
+		private String imageUrl;
+
+		@ApiModelProperty("封面图跳转")
+		private String jumpUrl;
+		
+		@ApiModelProperty("是否是类目商品")
+		private Integer isCategory;
+		
+		@ApiModelProperty("类目ID")
+		private String categoryId;
+		
+		@ApiModelProperty("备注")
+		private String remark;
+
+	}
 }

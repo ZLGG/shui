@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 /**
 * @author Starry
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 public abstract class BbcGoodsCategoryDTO implements Serializable {
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsCategoryDTO.ETO")
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
@@ -54,6 +56,7 @@ public abstract class BbcGoodsCategoryDTO implements Serializable {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsCategoryDTO.IdDTO")
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
@@ -62,6 +65,7 @@ public abstract class BbcGoodsCategoryDTO implements Serializable {
         private String id;
     }
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsCategoryDTO.ListDTO")
     @Accessors(chain = true)
     public static class ListDTO extends BaseDTO {
@@ -72,4 +76,16 @@ public abstract class BbcGoodsCategoryDTO implements Serializable {
     }
 
 
+	@Data
+	@EqualsAndHashCode(callSuper=false)
+    @ApiModel(value = "BbcGoodsCategoryDTO.CtccDTO")
+    @Accessors(chain = true)
+    public static class CtccDTO  extends BaseDTO implements Serializable {
+
+    	@ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50=积分专栏   60=电信国际   70=电信产品]", hidden = true)
+        private Integer subject;
+
+        @ApiModelProperty(value = "10 20", hidden = true)
+        private Integer terminal;
+    }
 }

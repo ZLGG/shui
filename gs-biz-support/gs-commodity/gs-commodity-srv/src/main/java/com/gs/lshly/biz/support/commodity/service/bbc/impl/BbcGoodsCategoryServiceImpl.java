@@ -1,5 +1,17 @@
 package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -13,11 +25,17 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
+import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.CtccDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CtccCategoryVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CtccGoodsInfoAdvertVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CtccHomeVO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO.IdQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
@@ -26,18 +44,8 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -291,6 +299,35 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(idQTO);
         IPage<GoodsInfo> pageData = iGoodsInfoRepository.page(page, queryWrapper);
         return new PageData(pageData.getRecords(), idQTO.getPageNum(), idQTO.getPageSize(), pageData.getTotal());
+	}
+
+	@Override
+	public CtccHomeVO ctcchome(CtccDTO ctccDTO) {
+		BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
+		listQTO.setParentId("ctcc");
+		List<GoodsCategory> categorysList = this.getGoodsCategories(listQTO);
+		List<CtccCategoryVO> categorys = new ArrayList<CtccCategoryVO>();
+		CtccCategoryVO ctccCategoryVO = null;
+		if(CollectionUtils.isNotEmpty(categorysList)){
+			for(GoodsCategory goodsCategory:categorysList){
+				ctccCategoryVO = new CtccCategoryVO();
+				ctccCategoryVO.setName(goodsCategory.getGsCategoryName());
+				ctccCategoryVO.setId(goodsCategory.getId());
+				ctccCategoryVO.setIdx(goodsCategory.getIdx());
+				categorys.add(ctccCategoryVO);
+			}
+		}
+		
+		BbcSiteAdvertQTO.SubjectQTO subjectQTO = new BbcSiteAdvertQTO.SubjectQTO();
+		subjectQTO.setSubject(SubjectEnum.电信产品.getCode());
+		List<BbcSiteAdvertVO.AdvertDetailVO> advertVO = siteAdvertRpc.listBySubject(subjectQTO);
+		CtccHomeVO ctccHomeVO = new CtccHomeVO();
+    	
+    	List<CtccGoodsInfoAdvertVO> adverts = com.gs.lshly.common.utils.BeanUtils.copyList(CtccGoodsInfoAdvertVO.class, advertVO);
+    	
+    	ctccHomeVO.setAdverts(adverts);//广告位
+    	ctccHomeVO.setCategorys(categorys);
+		return ctccHomeVO;
 	}
 
 }

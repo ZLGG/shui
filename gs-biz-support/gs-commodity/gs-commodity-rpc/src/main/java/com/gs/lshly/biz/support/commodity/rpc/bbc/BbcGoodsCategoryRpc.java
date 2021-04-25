@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.CtccDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO.QTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CategoryMenuVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CategoryTreeVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CtccHomeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO.IdQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
@@ -53,6 +55,10 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
 	@Override
 	public PageData<ListVO> goodsListByBrand(IdQTO idQTO) {
 		return bbcGoodsCategoryService.goodsListByBrand(idQTO);
+	}
+	@Override
+	public CtccHomeVO ctcchome(CtccDTO ctccDTO) {
+		return bbcGoodsCategoryService.ctcchome(ctccDTO);
 	}
 
 }

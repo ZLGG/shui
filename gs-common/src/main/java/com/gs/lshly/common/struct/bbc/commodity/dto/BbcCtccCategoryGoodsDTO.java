@@ -24,7 +24,7 @@ public abstract class BbcCtccCategoryGoodsDTO implements Serializable {
     @Accessors(chain = true)
     public static class DTO  extends BaseDTO implements Serializable {
 
-    	@ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50=积分专栏   60=电信国际]", hidden = true)
+    	@ApiModelProperty(value = "专栏类型[10=默认 20=扶贫  30=好粮油 40=推荐专栏 50=积分专栏   60=电信国际   70=电信产品]", hidden = true)
         private Integer subject;
 
         @ApiModelProperty(value = "10 20", hidden = true)

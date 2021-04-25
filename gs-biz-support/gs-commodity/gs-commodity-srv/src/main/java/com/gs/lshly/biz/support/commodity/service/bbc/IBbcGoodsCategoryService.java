@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.commodity.service.bbc;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO;
@@ -30,5 +31,12 @@ public interface IBbcGoodsCategoryService {
      * @return
      */
     PageData<GoodsInfoVO.ListVO> goodsListByBrand(GoodsBrandQTO.IdQTO idQTO);
+    
+    /**
+     * 电信产品
+     * @param ctccDTO
+     * @return
+     */
+    BbcGoodsCategoryVO.CtccHomeVO ctcchome(BbcGoodsCategoryDTO.CtccDTO ctccDTO);
     
 }
