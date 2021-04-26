@@ -158,8 +158,8 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		InMemberGoodsQTO inMemberGoodsQTO = new InMemberGoodsQTO();
 		inMemberGoodsQTO.setPageNum(1);
 		inMemberGoodsQTO.setPageSize(6);
-		bbcGoodsInfoRpc.pageInMemberGoods(inMemberGoodsQTO).getList().getContent();
-		listVO.setList(bbcGoodsInfoRpc.pageInMemberGoods(inMemberGoodsQTO).getList().getContent());
+		bbcGoodsInfoRpc.inMemberGoodsHome(inMemberGoodsQTO).getList().getContent();
+		listVO.setList(bbcGoodsInfoRpc.inMemberGoodsHome(inMemberGoodsQTO).getList().getContent());
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.心选好礼.getRemark());
