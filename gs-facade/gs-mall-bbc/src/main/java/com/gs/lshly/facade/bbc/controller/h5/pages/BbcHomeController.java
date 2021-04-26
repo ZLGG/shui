@@ -180,7 +180,7 @@ public class BbcHomeController {
     @ApiOperation("IN会员产品专区-v1.1.0")
     @GetMapping("/inMemberGoods")
     public ResponseData<BbcGoodsInfoVO> inMemberGoods(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
-        return ResponseData.data(bbcGoodsInfoRpc.pageInMemberGoods(qto));
+        return ResponseData.data(bbcGoodsInfoRpc.inMemberGoodsHome(qto));
     }
 
     @ApiOperation("我能兑换-v1.1.0")

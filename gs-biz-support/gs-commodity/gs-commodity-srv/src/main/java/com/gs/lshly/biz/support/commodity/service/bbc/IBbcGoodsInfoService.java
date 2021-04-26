@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.service.bbc;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
@@ -95,7 +96,7 @@ public interface IBbcGoodsInfoService {
      * @param qto
      * @return
      */
-    BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto);
+    BbcGoodsInfoVO.InMemberGoodsVO inMemberGoodsHome(InMemberGoodsQTO qto);
 
     /**
      * 获取in会员抵扣专区商品列表
@@ -128,4 +129,11 @@ public interface IBbcGoodsInfoService {
      * 清空历史搜索记录
      */
     void emptySearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
+    
+    /**
+     * 分页查询IN会员商品数据
+     * @param qto
+     * @return
+     */
+    PageData<BbcGoodsInfoVO.DetailVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
 }

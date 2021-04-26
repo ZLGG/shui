@@ -105,11 +105,11 @@ public interface IBbcGoodsInfoRpc {
     
     
     /**
-     * 获取IN会员商口
+     * IN会员商品首页
      * @param qto
      * @return
      */
-    BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
+    BbcGoodsInfoVO.InMemberGoodsVO inMemberGoodsHome(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
 
     /**
      * 获取in会员抵扣专区商品列表
@@ -143,4 +143,13 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     void emptySearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO userId);
+    
+    
+    /**
+     * 分页查询IN会员商品信息
+     * @param qto
+     * @return
+     */
+    PageData<BbcGoodsInfoVO.DetailVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
+
 }

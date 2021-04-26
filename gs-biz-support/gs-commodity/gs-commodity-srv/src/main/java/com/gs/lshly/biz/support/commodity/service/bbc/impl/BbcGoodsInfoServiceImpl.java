@@ -39,6 +39,7 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
@@ -75,6 +76,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 @Slf4j
+@SuppressWarnings({"unchecked","null","unused"})
 public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @Autowired
@@ -640,7 +642,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         // 获取会话密钥（session_key）
         String session_key = json.get("session_key").toString();
         // 用户的唯一标识（openid）
-        String openid = (String) json.get("openid");
+//        String openid = (String) json.get("openid");
 
         //2、对encryptedData加密数据进行AES解密
         try {
@@ -1148,7 +1150,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
-	public BbcGoodsInfoVO.InMemberGoodsVO pageInMemberGoods(InMemberGoodsQTO qto) {
+	public BbcGoodsInfoVO.InMemberGoodsVO inMemberGoodsHome(InMemberGoodsQTO qto) {
 		BbcGoodsInfoVO.InMemberGoodsVO ret = new BbcGoodsInfoVO.InMemberGoodsVO();
 		ret.setId("inmembergoods");
 		ret.setName("IN会员精口专区");
@@ -1186,5 +1188,25 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         List<String> shopNavigationIds = bbcShopRpc.innerGetNavigationList(navigationId);
         return shopNavigationIds;
     }
+
+	@Override
+	public PageData<DetailVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
+		QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("is_in_member_gift",TrueFalseEnum.是.getCode());
+        
+		IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
+
+        List<BbcGoodsInfoVO.DetailVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.DetailVO.class,goodsInfoIPage.getRecords());
+        if(CollectionUtils.isNotEmpty(categoryGoodsVOS)){
+        	for(BbcGoodsInfoVO.DetailVO detailVO:categoryGoodsVOS){
+        		String goodsId = detailVO.getGoodsId();
+        		//查询标签
+                detailVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsId));
+        	}
+        }
+        return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());
+        
+	}
 
 }
