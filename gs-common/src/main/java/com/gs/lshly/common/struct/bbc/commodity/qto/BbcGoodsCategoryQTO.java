@@ -60,5 +60,5 @@ public abstract class BbcGoodsCategoryQTO implements Serializable {
         private Integer useFiled = 0;
 
     }
-
+    
 }

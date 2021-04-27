@@ -3,6 +3,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -87,5 +89,13 @@ public abstract class BbcGoodsCategoryDTO implements Serializable {
 
         @ApiModelProperty(value = "10 20", hidden = true)
         private Integer terminal;
+    }
+	
+    @Data
+    @ApiModel("BbcGoodsCategoryQTO.ThirdListQTO")
+    @Accessors(chain = true)
+    public static class ThirdListDTO extends BaseDTO {
+        @ApiModelProperty("商品类别父id")
+        private String parentId;
     }
 }

@@ -49,4 +49,11 @@ public interface IBbcGoodsCategoryRpc {
      * @return
      */
     BbcGoodsCategoryVO.CtccHomeVO ctcchome(BbcGoodsCategoryDTO.CtccDTO ctccDTO);
+    
+    /**
+     * 查询第三级分类
+     * @param dto
+     * @return
+     */
+    List<BbcGoodsCategoryVO.ListVO> listThirdGoodsCategory(BbcGoodsCategoryDTO.ThirdListDTO dto);
 }

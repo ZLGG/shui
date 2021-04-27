@@ -30,6 +30,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.CtccDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.ThirdListDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO.CtccCategoryVO;
@@ -42,6 +43,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 
@@ -328,6 +330,39 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
     	ctccHomeVO.setAdverts(adverts);//广告位
     	ctccHomeVO.setCategorys(categorys);
 		return ctccHomeVO;
+	}
+
+	@Override
+	public List<BbcGoodsCategoryVO.ListVO> listThirdGoodsCategory(ThirdListDTO dto) {
+		List<BbcGoodsCategoryVO.ListVO> retList = new ArrayList<BbcGoodsCategoryVO.ListVO>();
+		BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
+        listQTO.setParentId(dto.getParentId());
+        listQTO.setUseFiled(dto.getUseFiled());
+        
+        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("parent_id", dto.getParentId());
+//        queryWrapper.eq("use_filed", dto.getUseFiled());
+        //获取树结构
+        List<GoodsCategory> goodsCategorys = repository.list(queryWrapper);
+        if(CollectionUtils.isNotEmpty(goodsCategorys)){
+        	for(GoodsCategory goodsCategory:goodsCategorys){
+        		queryWrapper = new QueryWrapper<>();
+                queryWrapper.in("parent_id", goodsCategory.getId());
+                queryWrapper.ne("use_filed", GoodsUsePlatformEnums.B商城.getCode());
+                //获取树结构
+                List<GoodsCategory> thirds = repository.list(queryWrapper);
+                if(CollectionUtils.isNotEmpty(thirds)){
+                	BbcGoodsCategoryVO.ListVO listVO = null;
+                	for(GoodsCategory third:thirds){
+                		listVO = new BbcGoodsCategoryVO.ListVO();
+                		
+                		BeanCopyUtils.copyProperties(third, listVO);
+                		retList.add(listVO);
+                	}
+                }
+        	}
+        }
+		return retList;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.gs.lshly.facade.bbc.controller.h5.commodity;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO;
@@ -36,6 +37,12 @@ public class BbcGoodsCategoryController {
     @GetMapping("")
     public ResponseData<List<BbcGoodsCategoryVO.CategoryTreeVO>> list() {
         return ResponseData.data(bbcGoodsCategoryRpc.listGoodsCategory());
+    }
+    
+    @ApiOperation("2C商城商品所有第三级分类列表")
+    @GetMapping("/third/list")
+    public ResponseData<List<BbcGoodsCategoryVO.CategoryTreeVO>> listThirdGoodsCategory(BbcGoodsCategoryDTO.ThirdListDTO dto) {
+        return ResponseData.data(bbcGoodsCategoryRpc.listThirdGoodsCategory(dto));
     }
 
     @ApiOperation("2C商城商品分类列表-v1.1.0")

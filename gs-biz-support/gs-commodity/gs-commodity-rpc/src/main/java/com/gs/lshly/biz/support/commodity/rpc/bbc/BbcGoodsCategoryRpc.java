@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.CtccDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.ThirdListDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO.QTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
@@ -59,6 +60,10 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
 	@Override
 	public CtccHomeVO ctcchome(CtccDTO ctccDTO) {
 		return bbcGoodsCategoryService.ctcchome(ctccDTO);
+	}
+	@Override
+	public List<BbcGoodsCategoryVO.ListVO> listThirdGoodsCategory(ThirdListDTO dto) {
+		return bbcGoodsCategoryService.listThirdGoodsCategory(dto);
 	}
 
 }
