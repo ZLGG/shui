@@ -60,6 +60,12 @@ public interface IBbcTradeRpc {
      */
     int innerMonthSaleNum(String goodsId);
     Integer myMerchantCard(BaseDTO dto);
-    
-    
+
+    /**
+     * 获取商品数量
+     * @param id
+     * @param code
+     * @return
+     */
+    Integer getSaleQuantity(String id, Integer code);
 }

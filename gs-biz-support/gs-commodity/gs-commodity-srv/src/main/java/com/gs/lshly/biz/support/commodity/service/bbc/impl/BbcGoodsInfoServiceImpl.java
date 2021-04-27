@@ -8,6 +8,7 @@ import java.util.*;
 import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsSearchHistoryMapper;
 import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -342,6 +343,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         int spuStockNum = tradeRpc.innerMonthSaleNum(goodsInfo.getId());
         detailVo.setSpuStockNum(spuStockNum);
 
+        //获取商品销售数量
+        Integer saleQuantity = tradeRpc.getSaleQuantity(dto.getId(), GoodsSourceTypeEnum.商城商品.getCode());
+        detailVo.setSaleQuantity(saleQuantity);
+        //获取积分兑换数量
+        Integer exchangeQuantity = tradeRpc.getSaleQuantity(dto.getId(),GoodsSourceTypeEnum.积分商品.getCode());
+        detailVo.setExchangeQuantity(exchangeQuantity);
 
         //获取用户默认收货地址
         BbcStockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(new BaseDTO(), StockAddressTypeEnum.收货.getCode());

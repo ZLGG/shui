@@ -340,4 +340,7 @@ public interface TradeMapper extends BaseMapper<Trade> {
 
     @Select("select ifnull(avg(describe_grade),0) goodsGrade ,COUNT(1) commentCount from gs_trade_comment where flag=0 AND ${ew.sqlSegment}")
     BbbTradeListVO.InnerGoodsScore selectGoodScore(@Param(Constants.WRAPPER) QueryWrapper<Object> queryWrapper);
+
+    @Select("select count(id) from gs_trade where id in (select trade_id from gs_trade_goods where goods_id = #{id} and flag = 0) and trade_state = 40 and flag = 0 and goods_source_type = #{code} and source_type = 20")
+    Integer getSaleQuantity(@Param("id") String id, @Param("code") Integer code);
 }
