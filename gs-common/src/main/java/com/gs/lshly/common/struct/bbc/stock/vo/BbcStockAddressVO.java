@@ -77,4 +77,54 @@ public abstract class BbcStockAddressVO implements Serializable {
     public static class DetailVO extends ListVO {
 
     }
+
+    @Data
+    @ApiModel("BbcStockAddressVO.IdentifyAddressVO")
+    public static class IdentifyAddressVO implements Serializable {
+        @ApiModelProperty("省")
+        private String province;
+
+        @ApiModelProperty("省code")
+        private String provinceCode;
+
+        @ApiModelProperty("市")
+        private String city;
+
+        @ApiModelProperty("市code")
+        private String cityCode;
+
+        @ApiModelProperty("县/区")
+        private String county;
+
+        @ApiModelProperty("县/区code")
+        private String countyCode;
+
+        @ApiModelProperty("经度")
+        private BigDecimal longitude;
+
+        @ApiModelProperty("纬度")
+        private BigDecimal latitude;
+
+        @ApiModelProperty("详细地址")
+        private String reals="";
+
+        @ApiModelProperty("街道地址")
+        private String street="";
+
+        @ApiModelProperty("联系人")
+        private String contactsName;
+
+        @ApiModelProperty("手机号")
+        private String contactsPhone;
+
+        @ApiModelProperty("地址")
+        private String address;
+
+        @ApiModelProperty("详情地址")
+        private String detail;
+
+        @ApiModelProperty("匹配器")
+        private String regex;
+    }
+
 }

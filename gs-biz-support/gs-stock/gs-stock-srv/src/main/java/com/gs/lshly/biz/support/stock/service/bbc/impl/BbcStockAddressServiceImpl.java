@@ -1,14 +1,17 @@
 package com.gs.lshly.biz.support.stock.service.bbc.impl;
 
+import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.stock.entity.ProvinceCityCode;
 import com.gs.lshly.biz.support.stock.entity.StockAddress;
 import com.gs.lshly.biz.support.stock.entity.StockAddressChild;
 import com.gs.lshly.biz.support.stock.enums.StockAddressOwnerTypeEnum;
 import com.gs.lshly.biz.support.stock.mapper.StockAddressChildMapper;
 import com.gs.lshly.biz.support.stock.mapper.StockAddressMapper;
+import com.gs.lshly.biz.support.stock.mapper.StockProvinceAddressMapper;
 import com.gs.lshly.biz.support.stock.mapper.view.StockAddressView;
 import com.gs.lshly.biz.support.stock.repository.IStockAddressChildRepository;
 import com.gs.lshly.biz.support.stock.repository.IStockAddressRepository;
@@ -20,17 +23,21 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import com.gs.lshly.common.struct.bbc.stock.qto.BbcStockAddressQTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
+import com.gs.lshly.common.utils.AddressAnalyzerUtil;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.common.utils.RegExUtil;
+import com.gs.lshly.common.utils.SurnameUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.BackingStoreException;
+import java.util.regex.Matcher;
 
 /**
 * <p>
@@ -40,6 +47,7 @@ import java.util.prefs.BackingStoreException;
 * @since 2020-11-02
 */
 @Component
+@Slf4j
 public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
 
     @Autowired
@@ -53,6 +61,9 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
 
     @Autowired
     private StockAddressChildMapper stockAddressChildMapper;
+
+    @Autowired
+    private StockProvinceAddressMapper stockProvinceAddressMapper;
 
     @Override
     public List<BbcStockAddressVO.ListVO> list(BbcStockAddressQTO.QTO qto,Integer addressType) {
@@ -183,6 +194,7 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         }
         return null;
     }
+
 
     @Override
     public void setDefault(BbcStockAddressDTO.IdDTO dto,Integer addressType) {

@@ -56,7 +56,7 @@ public class BbcGoodsInfoController {
 
     @ApiOperation("搜素2C商城首页商品信息-v1.1.0")
     @PostMapping(value = "getHomeGoods")
-    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getHomeGoods(@Valid @RequestBody BbcGoodsInfoQTO.GoodsListQTO qto) {
+    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getHomeGoods(@Valid @RequestBody BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(qto));
     }
 

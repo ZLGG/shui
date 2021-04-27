@@ -9,6 +9,7 @@ import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -78,4 +79,5 @@ public class BbcStockAddressController {
         bbcStockAddressRpc.setDefault(new BbcStockAddressDTO.IdDTO(id), StockAddressTypeEnum.收货.getCode());
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
+
 }

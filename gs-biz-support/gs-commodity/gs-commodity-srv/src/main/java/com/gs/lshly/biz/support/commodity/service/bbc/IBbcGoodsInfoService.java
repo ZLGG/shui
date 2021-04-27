@@ -40,7 +40,7 @@ public interface IBbcGoodsInfoService {
      * @param qto
      * @return
      */
-    PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsListQTO qto);
+    PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto);
 
 
     /**

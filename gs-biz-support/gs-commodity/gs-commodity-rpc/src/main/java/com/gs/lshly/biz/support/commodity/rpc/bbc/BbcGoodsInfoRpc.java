@@ -47,7 +47,7 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     }
 
     @Override
-    public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsListQTO qto) {
+    public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
         return bbcGoodsInfoService.pageGoodsData(qto);
     }
 

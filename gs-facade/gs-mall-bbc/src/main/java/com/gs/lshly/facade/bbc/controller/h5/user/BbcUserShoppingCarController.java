@@ -94,7 +94,7 @@ public class BbcUserShoppingCarController {
     @ApiOperation("猜你喜欢-v1.1.0")
     @GetMapping("/enjoyList")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> listEnjoy(BbcGoodsInfoQTO.EnjoyQTO qto) {
-    	BbcGoodsInfoQTO.GoodsListQTO goodsListQTO = new BbcGoodsInfoQTO.GoodsListQTO();
+    	BbcGoodsInfoQTO.GoodsSearchListQTO goodsListQTO = new BbcGoodsInfoQTO.GoodsSearchListQTO();
     	BeanCopyUtils.copyProperties(qto, goodsListQTO);
     	return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(goodsListQTO));
     }
