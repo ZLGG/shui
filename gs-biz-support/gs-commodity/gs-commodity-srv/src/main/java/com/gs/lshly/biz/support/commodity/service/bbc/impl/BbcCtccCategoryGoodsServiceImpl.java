@@ -21,6 +21,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalAdvertVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -102,5 +103,23 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         
     	return ctccInternationalHomeVO;
     }
+	@Override
+	public List<DetailVO> listGoodsInfo() {
+		QueryWrapper<CtccCategoryGoods> wrapperGoods = MybatisPlusUtil.query();
+		wrapperGoods.last("LIMIT 0,6");
+		List<CtccCategoryGoods> ctccCategoryGoods = goodsRepository.list(wrapperGoods);
+		
+		List<BbcGoodsInfoVO.DetailVO> detailVOList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
+		if(CollectionUtil.isNotEmpty(ctccCategoryGoods)){
+    		for(CtccCategoryGoods ctccCategoryGood:ctccCategoryGoods){
+				
+				String goodsId = ctccCategoryGood.getGoodsId();
+				BbcGoodsInfoVO.DetailVO detailVO= bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+				detailVOList.add(detailVO);
+				
+			}
+		}
+		return detailVOList;
+	}
     
 }

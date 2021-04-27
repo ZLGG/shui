@@ -1,5 +1,7 @@
 package com.gs.lshly.rpc.api.bbc.trade;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
@@ -37,4 +39,5 @@ public interface IBbcMarketSeckillRpc {
      * @return
      */
     BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
+    
 }

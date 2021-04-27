@@ -35,6 +35,7 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
@@ -297,4 +298,5 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		seckillDetailVO.setSeckillEndTime(marketPtSeckill.getSeckillEndTime());
 		return seckillDetailVO;
 	}
+
 }

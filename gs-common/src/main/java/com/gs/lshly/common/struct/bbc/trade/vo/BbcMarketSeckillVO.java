@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -20,7 +21,13 @@ import lombok.experimental.Accessors;
  * @author yingjun
  * @date 2021年4月15日 上午10:13:10
  */
+@SuppressWarnings("serial")
 public abstract class BbcMarketSeckillVO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 秒杀活动列表
@@ -56,6 +63,7 @@ public abstract class BbcMarketSeckillVO implements Serializable {
         private BigDecimal saleRate;
     }
 	
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcMarketSeckillVO.SeckillGoodsVO")
     @Accessors(chain = true)
@@ -158,5 +166,41 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 		
 		@ApiModelProperty("时间段")
 		private String timeQuantum;
+	}
+	
+	/**
+	 * 积分商城秒杀活动列表
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年4月27日 上午9:56:29
+	 */
+	@Data
+	@ApiModel("BbcMarketActivityVO.SeckillPointHome")
+	@Accessors(chain = true)
+	public static class SeckillPointHome implements Serializable {
+		
+		@ApiModelProperty("id")
+		private String id;
+
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("备注")
+		private String remark;
+
+		@ApiModelProperty("排序")
+		private Integer idx;
+
+		@ApiModelProperty("开始秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillStartTime;
+
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillEndTime;
+
+		@ApiModelProperty("商品列表")
+		private List<BbcGoodsInfoVO.DetailVO> goodsList;
 	}
 }

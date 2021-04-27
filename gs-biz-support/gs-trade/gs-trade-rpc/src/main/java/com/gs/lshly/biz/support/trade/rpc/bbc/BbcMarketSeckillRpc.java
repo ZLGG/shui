@@ -40,4 +40,5 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 	public SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto) {
 		return bbcMarketSeckillService.detailGoodsInfo(dto);
 	}
+
 }
