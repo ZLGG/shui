@@ -1,8 +1,14 @@
 package com.gs.lshly.common.struct.bbc.trade.vo;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbb.pc.trade.vo.PCBbbMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 
 import io.swagger.annotations.ApiModel;
@@ -11,11 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
 * @author zdf
@@ -576,7 +577,8 @@ public abstract class BbcMarketActivityVO implements Serializable {
 		private List<SeckillTimeQuantum> timeQuantum;
 		
 		@ApiModelProperty("结束秒杀时间")
-		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 		private LocalDateTime seckillEndTime;
 		
 		@ApiModelProperty("初始化数据")

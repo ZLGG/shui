@@ -25,6 +25,7 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteAdvertPopupQTO;
 import com.gs.lshly.rpc.api.bbb.pc.commodity.IPCBbbGoodsCategoryRpc;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcPointHomeRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteBannerRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteFloorRpc;
@@ -63,6 +64,9 @@ public class BbcPointsController {
     
     @DubboReference
     private IBbcPointHomeRpc bbcPointHomeRpc;
+    
+    @DubboReference
+    private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
     
     @ApiOperation("/分类/banner/菜单信息/电信产品/秒杀专区/电信国际/IN会员专区/心选好礼/本地生活/精打细算-v1.1.0")
     @GetMapping("")
@@ -157,6 +161,11 @@ public class BbcPointsController {
         qto.setFloorId(floorId);
         return ResponseData.data(bbcSiteFloorRpc.goodsMore(qto));
     }
-
+    
+    @ApiOperation("我能兑换-v1.1.0")
+    @GetMapping("/myIntegrationExchange")
+    public ResponseData<List<BbcGoodsInfoVO.MyIntegrationExchangeVO>> myIntegrationExchange() {
+        return ResponseData.data(bbcGoodsInfoRpc.myIntegrationExchange());
+    }
 
 }

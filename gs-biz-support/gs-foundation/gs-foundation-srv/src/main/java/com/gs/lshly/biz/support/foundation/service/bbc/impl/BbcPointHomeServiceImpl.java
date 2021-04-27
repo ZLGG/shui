@@ -130,13 +130,13 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setIdx(PointHomeTypeEnum.秒杀.getIdx());
 		listVO.setName(PointHomeTypeEnum.秒杀.getRemark());
 		if(seckill!=null){
-			listVO.setRemark(seckill.getSeckillEndTime().toString());
+			listVO.setRemark(seckill.getSeckillEndTime()+"");
 			PageData<BbcMarketSeckillVO.SeckillGoodsVO> page = seckill.getList();
 			if(page!=null){
 				List<BbcMarketSeckillVO.SeckillGoodsVO> list = page.getContent();
 				
 				if(CollectionUtil.isNotEmpty(list)&&list.size()>3){
-					listVO.setList(list.subList(0, 3));
+					listVO.setList(list.subList(0, 4));
 				}else{
 					listVO.setList(list);
 				}
