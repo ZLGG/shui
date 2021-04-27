@@ -1,10 +1,13 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbc;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcCtccCategoryGoodsService;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO.DTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalHomeVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcCtccCategoryGoodsRpc;
 
 /**
@@ -23,6 +26,11 @@ public class BbcCtccCategoryGoodsRpc implements IBbcCtccCategoryGoodsRpc {
 	@Override
 	public CtccInternationalHomeVO ctccInternationalHomeVO(DTO dto) {
 		return bbcCtccCategoryGoodsService.ctccInternationalHome(dto);
+	}
+
+	@Override
+	public List<DetailVO> listGoodsInfo() {
+		return bbcCtccCategoryGoodsService.listGoodsInfo();
 	}
 
 

@@ -1,7 +1,10 @@
 package com.gs.lshly.biz.support.commodity.service.bbc;
 
+import java.util.List;
+
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 
 public interface IBbcCtccCategoryGoodsService {
 
@@ -12,4 +15,6 @@ public interface IBbcCtccCategoryGoodsService {
 	 */
     BbcCtccCategoryGoodsVO.CtccInternationalHomeVO ctccInternationalHome(BbcCtccCategoryGoodsDTO.DTO dto);
     
+    
+    List<DetailVO> listGoodsInfo();
 }

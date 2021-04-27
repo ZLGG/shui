@@ -15,6 +15,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.pc.commodity.qto.PCBbbGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbb.pc.foundation.vo.BbbSiteNavigationVO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO.QTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopicNameQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO.ListVO;
@@ -24,6 +25,8 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.DateUtils;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcCtccCategoryGoodsRpc;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
@@ -58,6 +61,9 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
     
     @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
+    
+    @DubboReference
+    private IBbcCtccCategoryGoodsRpc bbcCtccCategoryGoodsRpc;
     
 	@Override
 	public List<ListVO> getHome(QTO qto) {
@@ -130,7 +136,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setIdx(PointHomeTypeEnum.秒杀.getIdx());
 		listVO.setName(PointHomeTypeEnum.秒杀.getRemark());
 		if(seckill!=null){
-			listVO.setRemark(seckill.getSeckillEndTime()+"");
+			listVO.setRemark(seckill.getSeckillEndTime().toString().replace("T", " "));
 			PageData<BbcMarketSeckillVO.SeckillGoodsVO> page = seckill.getList();
 			if(page!=null){
 				List<BbcMarketSeckillVO.SeckillGoodsVO> list = page.getContent();
@@ -146,14 +152,14 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.电信国际.getRemark());
-		BbcSiteTopicVO.ListByTopicNameVO listByTopicNameVO = bbcSiteTopicService.listByTopicName(qto2);
+		List<BbcGoodsInfoVO.DetailVO>  listCtcc = bbcCtccCategoryGoodsRpc.listGoodsInfo();
 		
 		listVO = new ListVO();
 		listVO.setId(PointHomeTypeEnum.电信国际.getCode());
 		listVO.setCode(PointHomeTypeEnum.电信国际.getCode());
 		listVO.setIdx(PointHomeTypeEnum.电信国际.getIdx());
 		listVO.setName(PointHomeTypeEnum.电信国际.getRemark());
-		listVO.setList(listByTopicNameVO.getList());
+		listVO.setList(listCtcc);
 		retList.add(listVO);
 		
 		listVO = new ListVO();
@@ -169,7 +175,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.心选好礼.getRemark());
-		listByTopicNameVO = bbcSiteTopicService.listByTopicName(qto2);
+		BbcSiteTopicVO.ListByTopicNameVO listByTopicNameVO = bbcSiteTopicService.listByTopicName(qto2);
 		
 		listVO = new ListVO();
 		listVO.setId(listByTopicNameVO.getId());

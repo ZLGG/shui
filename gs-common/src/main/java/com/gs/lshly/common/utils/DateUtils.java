@@ -59,6 +59,22 @@ public  class DateUtils {
             return null;
         }
     }
+    
+    /**
+     * 格式化日期
+     *
+     * @param date
+     * @return
+     */
+    public static String fomatLocalDateTime(LocalDateTime date,String pattern) {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(pattern);
+        try {
+            return simpleDateFormat.format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * 获取月份第一天起始时间

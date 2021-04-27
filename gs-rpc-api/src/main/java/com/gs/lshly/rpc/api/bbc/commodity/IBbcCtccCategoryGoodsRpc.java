@@ -1,6 +1,9 @@
 package com.gs.lshly.rpc.api.bbc.commodity;
+import java.util.List;
+
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 
 /**
  * 电信类产品
@@ -17,5 +20,11 @@ public interface IBbcCtccCategoryGoodsRpc {
      * @return
      */
     BbcCtccCategoryGoodsVO.CtccInternationalHomeVO ctccInternationalHomeVO(BbcCtccCategoryGoodsDTO.DTO dto);
+    
+    /**
+     * 获取电信国际列表
+     * @return
+     */
+    List<BbcGoodsInfoVO.DetailVO> listGoodsInfo();
     
 }
