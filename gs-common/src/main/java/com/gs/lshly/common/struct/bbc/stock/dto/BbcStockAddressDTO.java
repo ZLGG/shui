@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -67,5 +69,24 @@ public abstract class BbcStockAddressDTO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("BbcStockAddressDTO.AnalyzeParamsDTO")
+    public static class AnalyzeParamsDTO implements Serializable{
 
+        @ApiModelProperty("名称")
+        private String name;
+
+        @ApiModelProperty("级别")
+        private String level;
+
+    }
+
+    @Data
+    @ApiModel("BbcStockAddressDTO.IdentifyAddressDTO")
+    public static class IdentifyAddressDTO implements Serializable{
+
+        @ApiModelProperty("地址")
+        @NotBlank
+        private String address;
+    }
 }

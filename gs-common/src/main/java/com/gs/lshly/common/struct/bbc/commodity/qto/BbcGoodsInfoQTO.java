@@ -37,6 +37,22 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
+        @ApiModelProperty(value = "排序条件字段 10=销售 20=评价(或综合) 30=价格 40=积分 50=发布时间")
+        private Integer orderByProperties;
+
+        @ApiModelProperty(value = "排序方式 10=升序 20=降序")
+        private Integer orderByType;
+
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.GoodsSearchListQTO")
+    @Accessors(chain = true)
+    public static class GoodsSearchListQTO extends BaseQTO {
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
         @ApiModelProperty("用户id")
         private String userId;
 
@@ -54,6 +70,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         private Integer orderByType;
 
     }
+
 
     @Data
     @ApiModel("BbcGoodsInfoQTO.OrderGoodsListQTO")

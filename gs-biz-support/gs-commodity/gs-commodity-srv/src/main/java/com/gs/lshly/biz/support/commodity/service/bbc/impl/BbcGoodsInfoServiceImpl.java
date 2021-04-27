@@ -367,7 +367,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
-    public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsListQTO qto) {
+    public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
         // 1. 通用查询条件
         if (StringUtils.isNotBlank(qto.getGoodsName())) {

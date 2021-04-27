@@ -56,4 +56,12 @@ public interface StockAddressMapper extends BaseMapper<StockAddress> {
             "LEFT JOIN gs_stock_address_child gsac ON gsa.id = gsac.address_id\n" +
             "WHERE  gsa.flag = 0 and ${ew.sqlSegment}")
     IPage<StockAddressView> pageStockAddressView(@Param(value = "ew") QueryWrapper<StockAddressView> ew,IPage<StockAddressView> page);
+
+    /**
+     * 根据前置地名匹配地址是否存在
+     * @param name
+     * @return
+     */
+    @Select("select count(*) from gs_stock_province_address where (name like concat(#{name},'&') or alias = #{name} and deleted = 0)")
+    Integer fuzzyMatchingName(@Param("name") String name);
 }
