@@ -1701,6 +1701,21 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return count;
     }
 
+    @Override
+    public Integer getExchangeQuantity(String id) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("id", id);
+        wrapper.eq("trade_state",TradeStateEnum.已完成.getCode());
+        wrapper.eq("flag", false);
+        wrapper.eq("goods_source_type",2);
+        return tradeMapper.selectCount(wrapper);
+    }
+
+    @Override
+    public Integer getSaleQuantity(String id, Integer code) {
+        return tradeMapper.getSaleQuantity(id, code);
+    }
+
     private TradePayOffline saveTradeOffline(BbcTradeDTO.OfflinePayDTO dto, Trade trade, TradePay tradePay) {
         TradePayOffline tradePayOffline = new TradePayOffline();
         SettingsReceiptVO.DetailVO detailVO = iSettingsReceiptRpc.detailSettingsReceipt(dto);

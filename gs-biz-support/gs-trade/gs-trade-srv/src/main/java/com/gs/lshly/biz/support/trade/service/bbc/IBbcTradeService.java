@@ -56,4 +56,19 @@ public interface IBbcTradeService {
     int innerMonthSaleNum(String goodsId);
 
     Integer myMerchantCard(BaseDTO dto);
+
+    /**
+     * 获取商品数量
+     * @param id
+     * @param code
+     * @return
+     */
+    Integer getSaleQuantity(String id, Integer code);
+
+    /**
+     * 获取积分兑换数量
+     * @param id
+     * @return
+     */
+    Integer getExchangeQuantity(String id);
 }

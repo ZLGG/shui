@@ -4,7 +4,6 @@ import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbOrderDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
@@ -112,6 +111,11 @@ public class BbcTradeRpc implements IBbcTradeRpc{
     @Override
     public int innerMonthSaleNum(String goodsId) {
         return bbcTradeService.innerMonthSaleNum(goodsId);
+    }
+
+    @Override
+    public Integer getSaleQuantity(String id, Integer code) {
+        return bbcTradeService.getSaleQuantity(id, code);
     }
 
     @Override

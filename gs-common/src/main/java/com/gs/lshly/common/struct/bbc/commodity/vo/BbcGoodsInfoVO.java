@@ -382,6 +382,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("标签")
         private List<String> tags;
 
+        @ApiModelProperty("销售数量")
+        private Integer saleQuantity;
+
+        @ApiModelProperty("积分兑换数量")
+        private Integer exchangeQuantity;
+
     }
 
     @Data
