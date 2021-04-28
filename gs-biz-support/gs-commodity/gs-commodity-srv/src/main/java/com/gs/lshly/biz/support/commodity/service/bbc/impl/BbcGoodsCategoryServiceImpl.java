@@ -335,9 +335,6 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 	@Override
 	public List<BbcGoodsCategoryVO.ListVO> listThirdGoodsCategory(ThirdListDTO dto) {
 		List<BbcGoodsCategoryVO.ListVO> retList = new ArrayList<BbcGoodsCategoryVO.ListVO>();
-		BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
-        listQTO.setParentId(dto.getParentId());
-        listQTO.setUseFiled(dto.getUseFiled());
         
         QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("parent_id", dto.getParentId());
@@ -361,6 +358,10 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
                 	}
                 }
         	}
+        }
+        
+        if(retList!=null&&retList.size()>14){
+        	retList = retList.subList(0, 14);
         }
 		return retList;
 	}
