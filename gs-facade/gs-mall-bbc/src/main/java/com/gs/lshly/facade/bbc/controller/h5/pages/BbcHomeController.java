@@ -121,8 +121,8 @@ public class BbcHomeController {
         categoryIdCountDTO.setCategoryId("ctcc");
         categoryIdCountDTO.setCount(4);
         List<BbcGoodsInfoVO.SimpleListVO> goodsinfos = bbcGoodsInfoRpc.listGoodsInfoByCategory(categoryIdCountDTO);
-        categoryListVO.setId(HomeTypeEnum.电信产品.getCode());
-        categoryListVO.setName(HomeTypeEnum.电信产品.getRemark());
+        categoryListVO.setId(HomeTypeEnum.电信专区.getCode());
+        categoryListVO.setName(HomeTypeEnum.电信专区.getRemark());
         categoryListVO.setIdx(1);
         categoryListVO.setList(goodsinfos);
         retList.add(categoryListVO);
@@ -130,9 +130,9 @@ public class BbcHomeController {
         BbcMarketActivityVO.SeckillHome seckill = bbcMarketSeckillRpc.seckillHome(new BbcMarketSeckillDTO.DTO());
 		
         categoryListVO = new BbcSiteTopicVO.CategoryListVO();
-        categoryListVO.setId(PointHomeTypeEnum.秒杀.getCode());
+        categoryListVO.setId(HomeTypeEnum.热门秒杀.getCode());
         categoryListVO.setIdx(2);
-        categoryListVO.setName(PointHomeTypeEnum.秒杀.getRemark());
+        categoryListVO.setName(HomeTypeEnum.热门秒杀.getRemark());
 		if(seckill!=null){
 			PageData<BbcMarketSeckillVO.SeckillGoodsVO> page = seckill.getList();
 			if(page!=null){

@@ -217,14 +217,17 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getInMemberPointPrice());
         				seckillGoodsVO.setSeckillPrice(goodsDetail.getInMemberPointPrice());
+        				seckillGoodsVO.setSalePrice(goodsDetail.getInMemberPointPrice());
         			}else if(goodsDetail.getIsPointGood()){
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getPointPrice());
         				seckillGoodsVO.setSeckillPrice(goodsDetail.getPointPrice());
+        				seckillGoodsVO.setSalePrice(goodsDetail.getPointPrice());
         			}else{
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getSalePrice());
         				seckillGoodsVO.setSeckillPrice(goodsDetail.getSalePrice());
+        				seckillGoodsVO.setSalePrice(goodsDetail.getSalePrice());
         			}
         				
         			//TODO yingjun
