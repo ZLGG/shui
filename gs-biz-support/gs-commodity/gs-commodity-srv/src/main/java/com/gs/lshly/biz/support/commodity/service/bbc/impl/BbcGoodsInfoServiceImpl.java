@@ -1088,6 +1088,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         wrapper.lt("gs.point_price",qto.getOkIntegral());
         wrapper.eq("gs.is_point_good",true);
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
         wrapper.eq("gs.flag",false);
 //        // 1. 我能兑换积分商品
 //        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
@@ -1128,6 +1129,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         wrapper.eq("gs.in_coupon_type",qto.getInCouponType());
         wrapper.eq("gs.is_in_member_gift",true);
         wrapper.eq("gs.flag",false);
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
         wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
         // 排序条件字段 10=综合 20=销量 30=价格 40=上新
         if (20 == qto.getOrderByProperties()) {

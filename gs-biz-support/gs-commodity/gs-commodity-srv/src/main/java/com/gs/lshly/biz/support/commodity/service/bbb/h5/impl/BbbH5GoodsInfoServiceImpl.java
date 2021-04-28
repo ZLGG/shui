@@ -544,7 +544,9 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
         }
         wrapper.lt("gs.point_price",qto.getOkIntegral());
         wrapper.eq("gs.flag",false);
-        wrapper.eq("is_point_good",true);
+        wrapper.eq("gs.is_point_good",true);
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.C商城.getCode());
+
 
 //        // 1. 我能兑换积分商品
 //        if (QueryIntegralGoodsEnum.我能兑换.getCode() == qto.getOrderByProperties()) {
@@ -584,8 +586,9 @@ public class BbbH5GoodsInfoServiceImpl implements IBbbH5GoodsInfoService {
     public PageData<BbbH5GoodsInfoVO.InVIPSpecialAreaVO> queryInVIPSpecialAreaList(BbbH5GoodsInfoQTO.InSpecialAreaGoodsQTO qto) {
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("gs.in_coupon_type",qto.getInCouponType());
-        wrapper.eq("gs.is_in_member_gift",1);
-        wrapper.eq("gs.flag",0);
+        wrapper.eq("gs.is_in_member_gift",true);
+        wrapper.eq("gs.flag",false);
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.C商城.getCode());
         wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
         // 排序条件字段 10=综合 20=销量 30=价格 40=上新
         if (20 == qto.getOrderByProperties()) {
