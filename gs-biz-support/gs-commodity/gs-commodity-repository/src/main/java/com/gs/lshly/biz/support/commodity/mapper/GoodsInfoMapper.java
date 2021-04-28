@@ -209,4 +209,5 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
 
     @Select("select gs.id from gs_goods_info gs where ${ew.sqlSegment}")
     List<String> getAllIds(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
+    
 }

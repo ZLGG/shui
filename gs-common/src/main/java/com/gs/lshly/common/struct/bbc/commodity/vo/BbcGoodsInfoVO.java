@@ -13,6 +13,7 @@ import com.gs.lshly.common.struct.common.CommonShopVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -21,6 +22,67 @@ import lombok.experimental.Accessors;
 */
 @SuppressWarnings("serial")
 public abstract class BbcGoodsInfoVO implements Serializable {
+	
+	/**
+	 * 简单列表数据
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年4月28日 下午2:27:56
+	 */
+	@Data
+	@EqualsAndHashCode(callSuper=false)
+    @ApiModel("BbcGoodsInfoVO.SimpleListVO")
+    @Accessors(chain = true)
+	public static class SimpleListVO  implements Serializable {
+		
+		@ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private BigDecimal inMemberPointPrice;
+
+        @ApiModelProperty("标签")
+        private List<String> tags;
+        
+		@ApiModelProperty("商品id")
+        private String id;
+
+
+        @ApiModelProperty("类目id")
+        private String categoryId;
+
+
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+
+        @ApiModelProperty("商品状态")
+        private Integer goodsState;
+
+
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+
+        @ApiModelProperty("商品原价")
+        private BigDecimal oldPrice;
+
+        @ApiModelProperty("商品图片组")
+        private String goodsImage;
+
+	}
 	
 	/**
 	 * 秒杀商品详情

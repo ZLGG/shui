@@ -30,6 +30,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.CtccDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.ParentIdDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO.ThirdListDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
@@ -363,6 +364,39 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         if(retList!=null&&retList.size()>14){
         	retList = retList.subList(0, 14);
         }
+		return retList;
+	}
+
+	@Override
+	public List<String> listGoodsCategoryByParentId(ParentIdDTO dto) {
+		
+		List<String> retList = new ArrayList<String>();
+        
+		if(dto==null||StringUtils.isEmpty(dto.getParentId())){
+			return retList;
+		}
+		retList.add(dto.getParentId());
+		
+        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("parent_id", dto.getParentId());
+        //获取树结构
+        List<GoodsCategory> goodsCategorys = repository.list(queryWrapper);
+        if(CollectionUtils.isNotEmpty(goodsCategorys)){
+        	for(GoodsCategory goodsCategory:goodsCategorys){
+        		retList.add(goodsCategory.getId());
+        		queryWrapper = new QueryWrapper<>();
+                queryWrapper.in("parent_id", goodsCategory.getId());
+//                queryWrapper.ne("use_filed", GoodsUsePlatformEnums.B商城.getCode());
+                //获取树结构
+                List<GoodsCategory> thirds = repository.list(queryWrapper);
+                if(CollectionUtils.isNotEmpty(thirds)){
+                	for(GoodsCategory third:thirds){
+                		retList.add(third.getId());
+                	}
+                }
+        	}
+        }
+        
 		return retList;
 	}
 
