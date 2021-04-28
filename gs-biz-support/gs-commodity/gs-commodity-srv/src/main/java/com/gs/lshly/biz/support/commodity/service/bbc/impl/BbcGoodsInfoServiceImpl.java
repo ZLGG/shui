@@ -3,12 +3,12 @@ package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
-import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsSearchHistoryMapper;
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -22,25 +22,49 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
+import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSearchHistory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
+import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsSearchHistoryMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.enums.GoodsStateEnum;
+import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
+import com.gs.lshly.common.enums.MallCategoryEnum;
+import com.gs.lshly.common.enums.OrderByConditionEnum;
+import com.gs.lshly.common.enums.OrderByTypeEnum;
+import com.gs.lshly.common.enums.QueryIntegralGoodsEnum;
+import com.gs.lshly.common.enums.SingleStateEnum;
+import com.gs.lshly.common.enums.StockAddressTypeEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
+import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCountDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
@@ -52,7 +76,9 @@ import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.AesCbcUtil;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
@@ -100,6 +126,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private GoodsCategoryMapper categoryMapper;
     @Autowired
     private GoodsSearchHistoryMapper searchHistoryMapper;
+    
+    @Autowired
+    private IBbcGoodsCategoryService bbcGoodsCategoryService;
 
 
 
@@ -1214,6 +1243,29 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());
         
+	}
+
+	@Override
+	public List<SimpleListVO> listGoodsInfoByCategory(CategoryIdCountDTO dto) {
+		
+		List<SimpleListVO> retList = new ArrayList<SimpleListVO>();
+		BbcGoodsCategoryDTO.ParentIdDTO parentIdDTO = new BbcGoodsCategoryDTO.ParentIdDTO();
+		parentIdDTO.setParentId(dto.getCategoryId());
+		List<String> categoryIds = bbcGoodsCategoryService.listGoodsCategoryByParentId(parentIdDTO);
+		
+		QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.in("category_id",categoryIds);
+        List<GoodsInfo> goodsInfoList = repository.list(wrapper);
+        
+		List<Integer> counts = StringManageUtil.randomdBetween(0, goodsInfoList.size(), 4);
+		for(int i=0;i<counts.size();i++){
+			GoodsInfo goodsInfo = goodsInfoList.get(counts.get(i));
+			SimpleListVO listVO = new SimpleListVO();
+			BeanCopyUtils.copyProperties(goodsInfo, listVO);
+			listVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
+			retList.add(listVO);
+		}
+		return retList;
 	}
 
 }

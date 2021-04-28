@@ -1,13 +1,16 @@
 package com.gs.lshly.common.struct.bbc.commodity.dto;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import com.gs.lshly.common.struct.BaseDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 /**
 * @author Starry
 * @since 2020-10-23
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 public abstract class BbcGoodsInfoDTO implements Serializable {
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsInfoDTO.ETO")
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
@@ -107,6 +111,7 @@ public abstract class BbcGoodsInfoDTO implements Serializable {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     @ApiModel("BbcGoodsInfoDTO.IdDTO")
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
@@ -114,6 +119,25 @@ public abstract class BbcGoodsInfoDTO implements Serializable {
         @ApiModelProperty(value = "商品id")
         private String id;
     }
+    
+    
+    /**
+     * 跟据商品分类查询商品信息，并指字商品数量
+     *
+     * 
+     * @author yingjun
+     * @date 2021年4月28日 上午11:55:07
+     */
+    @Data
+    @EqualsAndHashCode(callSuper=false)
+    @ApiModel("BbcGoodsInfoDTO.CategoryIdCountDTO")
+    public static class CategoryIdCountDTO extends BaseDTO {
 
+		@ApiModelProperty(value = "商品分类id")
+        private String categoryId;
+    
+        @ApiModelProperty(value = "商品数量")
+        private Integer count;
+    }
 
 }

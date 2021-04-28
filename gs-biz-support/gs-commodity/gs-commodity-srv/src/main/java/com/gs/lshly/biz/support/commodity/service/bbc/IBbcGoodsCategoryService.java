@@ -46,4 +46,11 @@ public interface IBbcGoodsCategoryService {
      */
     List<BbcGoodsCategoryVO.ListVO> listThirdGoodsCategory(BbcGoodsCategoryDTO.ThirdListDTO dto);
     
+    /**
+     * 跟据父Id查询所有子ID
+     * @param dto
+     * @return
+     */
+    List<String> listGoodsCategoryByParentId(BbcGoodsCategoryDTO.ParentIdDTO dto);
+    
 }

@@ -9,10 +9,12 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCountDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 
@@ -134,6 +136,11 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	@Override
 	public PageData<DetailVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
 		return bbcGoodsInfoService.pageInMemberGoodsInfo(qto);
+	}
+
+	@Override
+	public List<SimpleListVO> listGoodsInfoByCategory(CategoryIdCountDTO dto) {
+		return bbcGoodsInfoService.listGoodsInfoByCategory(dto);
 	}
 
 }

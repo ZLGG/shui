@@ -2,10 +2,12 @@ package com.gs.lshly.biz.support.commodity.service.bbc;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCountDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 
 import java.util.List;
 
@@ -136,4 +138,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     PageData<BbcGoodsInfoVO.DetailVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
+    
+    /**
+     * 获取指定分类下的指定产品数
+     * @param dto
+     * @return
+     */
+    List<BbcGoodsInfoVO.SimpleListVO> listGoodsInfoByCategory(CategoryIdCountDTO dto);
 }

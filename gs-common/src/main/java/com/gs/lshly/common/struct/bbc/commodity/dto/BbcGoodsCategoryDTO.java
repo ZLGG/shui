@@ -92,9 +92,20 @@ public abstract class BbcGoodsCategoryDTO implements Serializable {
     }
 	
     @Data
-    @ApiModel("BbcGoodsCategoryQTO.ThirdListQTO")
+    @EqualsAndHashCode(callSuper=false)
+    @ApiModel("BbcGoodsCategoryQTO.ThirdListDTO")
     @Accessors(chain = true)
     public static class ThirdListDTO extends BaseDTO {
+        @ApiModelProperty("商品类别父id")
+        private String parentId;
+    }
+    
+    
+    @Data
+    @EqualsAndHashCode(callSuper=false)
+    @ApiModel("BbcGoodsCategoryQTO.ParentIdDTO")
+    @Accessors(chain = true)
+    public static class ParentIdDTO extends BaseDTO {
         @ApiModelProperty("商品类别父id")
         private String parentId;
     }

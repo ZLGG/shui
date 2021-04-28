@@ -151,5 +151,12 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     PageData<BbcGoodsInfoVO.DetailVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
+    
+    /**
+     * 获取指定分类下面，指定商品数量
+     * @param dto
+     * @return
+     */
+    List<BbcGoodsInfoVO.SimpleListVO> listGoodsInfoByCategory(BbcGoodsInfoDTO.CategoryIdCountDTO dto);
 
 }

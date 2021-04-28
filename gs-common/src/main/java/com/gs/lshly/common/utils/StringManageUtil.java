@@ -715,5 +715,14 @@ public class StringManageUtil {
             return info;
         }
 
-
+        public static List<Integer> randomdBetween(Integer min,Integer max,Integer num){
+        	List<Integer> retList = new ArrayList<Integer>();
+        	
+        	for(int i= 0;i<num;i++){
+	        	Random random = new Random();
+	            Integer s = random.nextInt(max) % (max - min + 1) + min;
+	            retList.add(s);
+        	}
+        	return retList;
+        }
 }

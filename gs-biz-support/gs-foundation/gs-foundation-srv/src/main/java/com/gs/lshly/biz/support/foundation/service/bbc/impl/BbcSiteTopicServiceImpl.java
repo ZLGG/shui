@@ -78,6 +78,10 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
     @DubboReference
     private IBbcGoodsCategoryRpc bbcGoodsCategoryRpc;
 
+    /**
+     * 获取电信大类下面的四个随机产品
+     * 
+     */
 	@Override
 	public List<CategoryListVO> list(QTO qto) {
 		QueryWrapper<SiteTopic> wrapper =  MybatisPlusUtil.query();
