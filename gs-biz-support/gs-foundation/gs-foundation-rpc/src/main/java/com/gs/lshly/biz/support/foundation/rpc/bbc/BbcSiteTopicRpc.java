@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteTopicService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.QTO;
@@ -53,6 +54,11 @@ public class BbcSiteTopicRpc implements IBbcSiteTopicRpc{
 	@Override
 	public GoodsVO pageMore(SearchmoreQTO qto) {
 		return bbcSiteTopicService.pageMore(qto);
+	}
+
+	@Override
+	public List<SimpleListVO> listGoodsInfo(String id) {
+		return bbcSiteTopicService.listGoodsInfo(id);
 	}
 	
 

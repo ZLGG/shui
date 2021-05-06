@@ -18,6 +18,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
@@ -128,10 +129,12 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             if (vo != null) {
                 return vo;
             }
-            User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
+            
+            //1、获取加密对象
+            User user = repository.getOne(new QueryWrapper<User>().eq("phone", AESUtil.aesEncrypt(dto.getPhone())));
             if (user == null) {
                 user = new User();
-                user.setState(UserStateEnum.启用.getCode()).setPhone(dto.getPhone()).setType(UserTypeEnum._2C用户.getCode());
+                user.setState(UserStateEnum.启用.getCode()).setPhone(AESUtil.aesEncrypt(dto.getPhone())).setType(UserTypeEnum._2C用户.getCode());
                 repository.save(user);
             }
             vo = userToLoginVO(user, null);

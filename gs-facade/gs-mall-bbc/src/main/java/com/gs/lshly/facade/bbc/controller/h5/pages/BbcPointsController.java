@@ -45,6 +45,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/bbc/points")
 @Api(tags = "b2c积分商城专栏页-v1.1.0")
+@SuppressWarnings("unchecked")
 public class BbcPointsController {
 
 	@DubboReference
@@ -74,6 +75,12 @@ public class BbcPointsController {
         qto.setSubject(SubjectEnum.积分商城.getCode());
         qto.setTerminal(TerminalEnum.BBC.getCode());
     	return ResponseData.data(bbcPointHomeRpc.getHome(qto));
+    }
+    
+	@ApiOperation("电信产品列表-v1.1.0")
+    @GetMapping("/ctccProduct/goodsinfo")
+    public ResponseData<BbcSiteTopicVO.CategoryListVO> listCtccProductGoodsInfo(String id) {
+        return ResponseData.data(bbcSiteTopicRpc.listGoodsInfo(id));
     }
     
 //    @ApiOperation("电信国际首页-v1.1.0")

@@ -133,7 +133,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
             	
             	Integer fromTimeQuantumEnum = this.rangeInDefined(nowList);
             	
-            	if(seckill.getTimeQuantum().equals(fromTimeQuantumEnum)){
+            	if(seckill.getTimeQuantum().equals(fromTimeQuantumEnum)||seckill.getTimeQuantum().equals(10)){
             		seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
                 	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.抢购中.getRemark());
             	}else if(seckill.getTimeQuantum()>fromTimeQuantumEnum){
@@ -194,6 +194,25 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 	}
 	 
 	 public static void main(String args[]){
+		 
+		 List<Integer> list = new ArrayList<Integer>();
+		 list.add(10);
+		 list.add(12);
+		 list.add(18);
+		 list.add(20);
+		 list.add(22);
+		 
+		 Integer minute = 10;
+			Integer from = 0;
+			for(Integer i:list){
+				boolean flag = Math.max(from, minute) == Math.min(minute, i);
+				if(flag){
+					System.out.println(from);
+					break;
+				}
+				from = i;
+				System.out.println(from+"<><>");
+			}
 	 }
 
 	@Override
@@ -216,18 +235,18 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         			if(goodsDetail.getIsInMemberGift()){
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getInMemberPointPrice());
-        				seckillGoodsVO.setSeckillPrice(goodsDetail.getInMemberPointPrice());
-        				seckillGoodsVO.setSalePrice(goodsDetail.getInMemberPointPrice());
+        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillInMemberPointPrice());
+        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillInMemberPointPrice());
         			}else if(goodsDetail.getIsPointGood()){
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getPointPrice());
-        				seckillGoodsVO.setSeckillPrice(goodsDetail.getPointPrice());
-        				seckillGoodsVO.setSalePrice(goodsDetail.getPointPrice());
+        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillPointPrice());
+        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillPointPrice());
         			}else{
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getSalePrice());
-        				seckillGoodsVO.setSeckillPrice(goodsDetail.getSalePrice());
-        				seckillGoodsVO.setSalePrice(goodsDetail.getSalePrice());
+        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSalePrice());
+        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSalePrice());
         			}
         				
         			//TODO yingjun

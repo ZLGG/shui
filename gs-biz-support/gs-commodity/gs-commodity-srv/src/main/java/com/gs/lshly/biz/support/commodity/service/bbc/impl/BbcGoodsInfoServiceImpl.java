@@ -58,6 +58,7 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCountDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.IdDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
@@ -1257,6 +1258,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 		
 		QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.in("category_id",categoryIds);
+        wrapper.in("goods_state",GoodsStateEnum.已上架.getCode());
         List<GoodsInfo> goodsInfoList = repository.list(wrapper);
         
 		List<Integer> counts = StringManageUtil.randomdBetween(0, goodsInfoList.size(), 4);
@@ -1268,6 +1270,25 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 			retList.add(listVO);
 		}
 		return retList;
+	}
+
+	@Override
+	public SimpleListVO simpleListVO(IdDTO dto) {
+		if (dto == null) {
+            throw new BusinessException("参数不能为空！");
+        }
+        GoodsInfo goodsInfo = repository.getById(dto.getId());
+        if (ObjectUtils.isEmpty(goodsInfo)) {
+            throw new BusinessException("数据异常");
+        }
+
+        BbcGoodsInfoVO.SimpleListVO detailVo = new BbcGoodsInfoVO.SimpleListVO();
+        BeanUtils.copyProperties(goodsInfo, detailVo);
+        detailVo.setGoodsId(goodsInfo.getId());
+
+        //查询标签
+        detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
+        return detailVo;
 	}
 
 }

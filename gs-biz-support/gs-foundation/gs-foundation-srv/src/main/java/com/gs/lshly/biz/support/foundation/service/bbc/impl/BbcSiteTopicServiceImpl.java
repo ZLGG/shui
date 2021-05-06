@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.foundation.entity.SiteTopic;
 import com.gs.lshly.biz.support.foundation.entity.SiteTopicGoods;
-import com.gs.lshly.biz.support.foundation.mapper.SiteTopicGoodsMapper;
 import com.gs.lshly.biz.support.foundation.repository.ISiteTopicGoodsRepository;
 import com.gs.lshly.biz.support.foundation.repository.ISiteTopicRepository;
 import com.gs.lshly.biz.support.foundation.service.bbc.IBbcSiteTopicService;
@@ -25,6 +24,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopicNameQTO;
@@ -34,7 +34,6 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryDetailVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.CategoryListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.ListByTopicNameVO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -55,6 +54,7 @@ import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 * @since 2020-11-03
 */
 @Component
+@SuppressWarnings("unchecked")
 public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 
     @Autowired
@@ -68,9 +68,6 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
     
     @DubboReference
     IBbcMarketActivityRpc bbcMarketActivityRpc;
-    
-    @Autowired
-    private SiteTopicGoodsMapper siteTopicGoodsMapper;
     
     @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
@@ -339,7 +336,8 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 		}else{
 			QueryWrapper<SiteTopicGoods> wrapper =  MybatisPlusUtil.query();
 	        wrapper.eq("topic_id",qto.getId());
-	        IPage<SiteTopicGoods> page = MybatisPlusUtil.pager(qto);
+	        
+			IPage<SiteTopicGoods> page = MybatisPlusUtil.pager(qto);
 	        goodsRepository.page(page, wrapper);
 	        PageData<SiteTopicGoods> pageData = MybatisPlusUtil.toPageData(qto, SiteTopicGoods.class, page);
 	        List<SiteTopicGoods> goodsList = pageData.getContent();
@@ -408,6 +406,23 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
         if(CollectionUtils.isNotEmpty(listDefault))
         	retList = BeanUtils.copyList(CategoryDetailVO.class, listDefault);
         return retList;
+	}
+
+	@Override
+	public List<SimpleListVO> listGoodsInfo(String id) {
+		List<SimpleListVO> retList = new ArrayList<SimpleListVO>();
+		QueryWrapper<SiteTopicGoods> goodsWrapper =  MybatisPlusUtil.query();
+		goodsWrapper.eq("topic_id",id);
+		List<SiteTopicGoods> goodslist =goodsRepository.list(goodsWrapper);
+		
+		if(CollectionUtils.isNotEmpty(goodslist)){
+			for(SiteTopicGoods siteTopicGoods:goodslist){
+				String goodsId = siteTopicGoods.getGoodsId();
+				BbcGoodsInfoVO.SimpleListVO simpleListVO = bbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
+        		retList.add(simpleListVO);
+			}
+		}
+		return retList;
 	}
 
     

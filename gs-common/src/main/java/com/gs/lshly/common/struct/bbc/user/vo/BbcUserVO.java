@@ -1,18 +1,20 @@
 package com.gs.lshly.common.struct.bbc.user.vo;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
-import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
 * @author xxfc
 * @since 2020-10-27
 */
+@SuppressWarnings("serial")
 public abstract class BbcUserVO implements Serializable {
 
     @Data
@@ -63,7 +65,7 @@ public abstract class BbcUserVO implements Serializable {
 
         @ApiModelProperty("定向积分")
         private Integer directionIntegral;
-        
+
     }
 
     @Data
