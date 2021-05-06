@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.bbc.foundation.vo;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
@@ -22,7 +23,8 @@ public abstract class BbcSiteTopicVO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 2936344726126995945L;
-
+	
+	
 	@Data
     @ApiModel("BbcSiteTopicVO.ListVO")
     @Accessors(chain = true)

@@ -1,5 +1,9 @@
 package com.gs.lshly.biz.support.user.service.bbb.pc.impl;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
@@ -18,16 +22,15 @@ import com.gs.lshly.common.struct.bbb.pc.user.dto.BbbUserDTO;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
+import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
 * <p>
@@ -76,28 +79,30 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
         if (!org.apache.commons.lang3.StringUtils.equals(validCode, dto.getValidCode())) {
             throw new BusinessException("手机验证码不匹配");
         }
-        //手机号是否注册检查
         QueryWrapper<User> userQueryWrapper = MybatisPlusUtil.query();
-        userQueryWrapper.eq("phone",dto.getPhone());
+        userQueryWrapper.eq("phone",AESUtil.aesEncrypt(dto.getPhone()));
         User user = repository.getOne(userQueryWrapper);
         if(null != user){
             //throw new BusinessException("手机号码已注册");
             //为了方便前端开如，此处注册就是修改
-            user.setPhone(dto.getPhone());
-            user.setUserName(dto.getPhone());
+            user.setPhone(AESUtil.aesEncrypt(dto.getPhone()));
+            user.setUserName(AESUtil.aesEncrypt(dto.getPhone()));
             user.setUserPwd(PwdUtil.encode(dto.getUserPwd()));
             user.setType(UserTypeEnum._2C用户.getCode());
             user.setState(UserStateEnum.启用.getCode());
             repository.updateById(user);
         }else{
             user  = new User();
-            user.setPhone(dto.getPhone());
-            user.setUserName(dto.getPhone());
+            user.setPhone(AESUtil.aesEncrypt(dto.getPhone()));
+            user.setUserName(AESUtil.aesEncrypt(dto.getPhone()));
             user.setUserPwd(PwdUtil.encode(dto.getUserPwd()));
             user.setType(UserTypeEnum._2C用户.getCode());
             user.setState(UserStateEnum.启用.getCode());
             repository.save(user);
         }
+        //解密
+        user.setPhone(dto.getPhone());
+        user.setUserName(dto.getPhone());
         return this.regCreateUserJwtToken(user);
     }
 

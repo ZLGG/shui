@@ -17,12 +17,36 @@ import java.security.Key;
  * Description: AES工具类
  */
 public class AESUtil {
+	
+	public static void main(String args[]){
+		System.out.println(aesEncrypt("17858373830"));
+	}
 
     private AESUtil(){}
 
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final String PASSWORD = "21CTCCLOVECITYDO";
     private static final byte[] IV_BYTE = new byte[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    
+    public static String aesDecrypt(String encryptContent){
+    	String ret = "";
+    	try {
+    		ret = aesDecrypt(encryptContent, PASSWORD);
+		} catch (InvalidEncryptedKeyException e) {
+			e.printStackTrace();
+		}
+    	return ret;
+    }
 
+    public static String aesEncrypt(String encryptContent){
+    	String ret = "";
+    	try {
+    		ret = aesEncrypt(encryptContent, PASSWORD);
+		} catch (InvalidEncryptedKeyException e) {
+			e.printStackTrace();
+		}
+    	return ret;
+    }
     /**
      * aes解密-256位
      */

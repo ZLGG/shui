@@ -52,9 +52,11 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private List<String> tags;
         
 		@ApiModelProperty("商品id")
+        private String goodsId;
+
+		@ApiModelProperty("商品id")
         private String id;
-
-
+		
         @ApiModelProperty("类目id")
         private String categoryId;
 

@@ -10,6 +10,7 @@ import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCountDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.IdDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
@@ -141,6 +142,11 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	@Override
 	public List<SimpleListVO> listGoodsInfoByCategory(CategoryIdCountDTO dto) {
 		return bbcGoodsInfoService.listGoodsInfoByCategory(dto);
+	}
+
+	@Override
+	public SimpleListVO simpleListVO(IdDTO dto) {
+		return bbcGoodsInfoService.simpleListVO(dto);
 	}
 
 }

@@ -1,18 +1,20 @@
 package com.gs.lshly.biz.support.user.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
+
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.gs.lshly.common.utils.AESUtil;
+import com.twelvemonkeys.lang.StringUtil;
+
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -22,7 +24,8 @@ import java.time.LocalDateTime;
  * @author xxfc
  * @since 2020-10-05
  */
-@Data
+@SuppressWarnings("rawtypes")
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("gs_user")
@@ -214,4 +217,155 @@ public class User extends Model {
      * 定向积分
      */
     private Integer directionIntegral;
+
+	public String getId() {
+		return id;
+	}
+
+	public String getUserName() {
+		if(StringUtils.isNotEmpty(userName)&&!userName.startsWith("1"))
+			userName = AESUtil.aesDecrypt(userName);
+		return userName;
+	}
+
+	public String getUserPwd() {
+		return userPwd;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public String getNick() {
+		return nick;
+	}
+
+	public String getHeadImg() {
+		return headImg;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPhone() {
+		if(StringUtils.isNotEmpty(phone)&&!phone.startsWith("1"))
+			phone = AESUtil.aesDecrypt(phone);
+		return phone;
+	}
+
+	public String getBirthday() {
+		return birthday;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public Integer getIntegral() {
+		return integral;
+	}
+
+	public Integer getExp() {
+		return exp;
+	}
+
+	public String getRealName() {
+		if(StringUtils.isNotEmpty(realName))
+			realName = AESUtil.aesDecrypt(realName);
+		return realName;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public String getCounty() {
+		return county;
+	}
+
+	public String getProvinceText() {
+		return provinceText;
+	}
+
+	public String getCityText() {
+		return cityText;
+	}
+
+	public String getCountyText() {
+		return countyText;
+	}
+
+	public String getRealAddress() {
+		return realAddress;
+	}
+
+	public String getLegalId() {
+		return legalId;
+	}
+
+	public String getLeveId() {
+		return leveId;
+	}
+
+	public String getLeveName() {
+		return leveName;
+	}
+
+	public String getFromShopId() {
+		return fromShopId;
+	}
+
+	public String getPayPwd() {
+		return payPwd;
+	}
+
+	public LocalDateTime getCdate() {
+		return cdate;
+	}
+
+	public LocalDateTime getUdate() {
+		return udate;
+	}
+
+	public Boolean getFlag() {
+		return flag;
+	}
+
+	public Integer getMemberType() {
+		return memberType;
+	}
+
+	public Integer getIsInUser() {
+		return isInUser;
+	}
+
+	public String getTelecomsLevel() {
+		return telecomsLevel;
+	}
+
+	public Integer getTelecomsIntegral() {
+		return telecomsIntegral;
+	}
+
+	public Integer getTelecomsPass() {
+		return telecomsPass;
+	}
+
+	public Integer getDirectionIntegral() {
+		return directionIntegral;
+	}
+    
 }

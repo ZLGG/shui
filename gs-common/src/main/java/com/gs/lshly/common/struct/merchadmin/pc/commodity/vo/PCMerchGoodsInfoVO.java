@@ -129,7 +129,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private LocalDateTime publishTime;
 
         @ApiModelProperty("积分价格")
-        private Double pointPrice;
+        private BigDecimal pointPrice;
 
         @ApiModelProperty("办理备注")
         private String remarks;
@@ -141,7 +141,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private Boolean isInMemberGift;
 
         @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
+        private BigDecimal inMemberPointPrice;
 
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;

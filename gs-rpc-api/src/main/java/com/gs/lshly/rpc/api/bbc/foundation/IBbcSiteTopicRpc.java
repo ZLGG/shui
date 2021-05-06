@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.bbc.foundation;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -41,6 +42,13 @@ public interface IBbcSiteTopicRpc {
      * @return
      */
     BbcSiteTopicVO.GoodsVO pageMore(BbcSiteTopicQTO.SearchmoreQTO qto);
+    
+    /**
+     * 获取电信产品分类下商品列表信息
+     * @param id
+     * @return
+     */
+    List<BbcGoodsInfoVO.SimpleListVO> listGoodsInfo(String id);
     
     
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gs.lshly.common.enums.HomeTypeEnum;
-import com.gs.lshly.common.enums.PointHomeTypeEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.response.PageData;
@@ -32,7 +31,6 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
-import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPointHomePageVO.ListVO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;

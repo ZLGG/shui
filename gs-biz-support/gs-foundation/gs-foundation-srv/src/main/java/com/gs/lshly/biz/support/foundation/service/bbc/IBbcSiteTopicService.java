@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.foundation.service.bbc;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.EnjoyQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteTopicQTO.ListByTopicNameQTO;
@@ -41,4 +42,11 @@ public interface IBbcSiteTopicService {
      * @return
      */
     List<BbcSiteTopicVO.CategoryDetailVO> listTopicByCategory(Integer category);
+    
+    /**
+     * 跟据分类查询商品列表
+     * @param id
+     * @return
+     */
+    List<BbcGoodsInfoVO.SimpleListVO> listGoodsInfo(String id);
 }

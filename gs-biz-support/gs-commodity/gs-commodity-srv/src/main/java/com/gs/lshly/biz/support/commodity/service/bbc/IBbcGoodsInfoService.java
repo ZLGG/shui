@@ -145,4 +145,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     List<BbcGoodsInfoVO.SimpleListVO> listGoodsInfoByCategory(CategoryIdCountDTO dto);
+    
+    /**
+     * 获取简单数据内容
+     * @param dto
+     * @return
+     */
+    BbcGoodsInfoVO.SimpleListVO simpleListVO(BbcGoodsInfoDTO.IdDTO dto);
 }
