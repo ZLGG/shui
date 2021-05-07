@@ -39,7 +39,7 @@ public class PlatformRbacConfig implements CommandLineRunner {
                 log.info("更新缓存");
                 return;
             } catch (RpcException rpcException){
-                log.info("等待远程服务10秒");
+//                log.info("等待远程服务10秒");
                 ThreadUtil.sleep(1000 * 10);
             }
         }

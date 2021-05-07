@@ -64,7 +64,7 @@ public class CodeGenerator {
         //路径G
         globalConfig.setOutputDir("C:/works/program/citydo/gs-mall-new/gs-biz-support/gs-trade/gs-trade-repository/src/main/java");
         //表名
-        strategy.setInclude("gs_market_pt_seckill_goods_spu","gs_market_pt_seckill_merchant");
+        strategy.setInclude("gs_market_pt_seckill_goods_category","gs_market_pt_seckill_goods_sku");
         // 作者
         globalConfig.setAuthor("yingjun");
 
