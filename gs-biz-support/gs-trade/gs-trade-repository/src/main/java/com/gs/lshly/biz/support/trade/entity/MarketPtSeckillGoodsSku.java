@@ -38,7 +38,7 @@ public class MarketPtSeckillGoodsSku extends Model {
     /**
      * 活动ID
      */
-    private String activityId;
+    private String seckillId;
 
     /**
      * 店铺ID
@@ -65,7 +65,7 @@ public class MarketPtSeckillGoodsSku extends Model {
     /**
      * sku活动价
      */
-    private BigDecimal activitySaleSkuPrice;
+    private BigDecimal seckillSaleSkuPrice;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdate;
