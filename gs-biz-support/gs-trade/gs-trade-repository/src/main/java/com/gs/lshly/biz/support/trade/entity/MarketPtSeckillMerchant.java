@@ -1,8 +1,13 @@
 package com.gs.lshly.biz.support.trade.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -61,34 +66,34 @@ public class MarketPtSeckillMerchant implements Serializable {
     /**
      * 状态[10=审核 20=未审核 30=审核驳回]
      */
-    private Integer state;
+    private String state;
 
     private String reasonsForRejection;
 
     /**
      * 报名开始时间
      */
-    private Date signStartTime;
+    private LocalDateTime signStartTime;
 
     /**
      * 报名结束时间
      */
-    private Date signEndTime;
+    private LocalDateTime signEndTime;
 
     /**
      * 活动上线时间
      */
-    private Date onlineStartTime;
+    private LocalDateTime onlineStartTime;
 
     /**
      * 开售开始时间
      */
-    private Date seckillStartTime;
+    private LocalDateTime seckillStartTime;
 
     /**
      * 开售结束时间
      */
-    private Date seckillEndTime;
+    private LocalDateTime seckillEndTime;
 
     /**
      * 会员限购数量上限
@@ -118,17 +123,21 @@ public class MarketPtSeckillMerchant implements Serializable {
     /**
      * 创建时间
      */
-    private Date cdate;
+     @TableField(fill = FieldFill.INSERT)
+     private LocalDateTime cdate;
 
-    /**
+     /**
      * 更新时间
      */
-    private Date udate;
+     @TableField(fill = FieldFill.INSERT_UPDATE)
+     private LocalDateTime udate;
 
-    /**
+     /**
      * 逻辑删除标记
      */
-    private Boolean flag;
+     @TableField(fill = FieldFill.INSERT)
+     @TableLogic
+     private Boolean flag;
 
 
 }

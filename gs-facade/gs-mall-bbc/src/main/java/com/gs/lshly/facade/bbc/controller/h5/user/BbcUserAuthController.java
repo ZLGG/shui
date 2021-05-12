@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JsonUtils;
 import com.gs.lshly.common.utils.JwtUtil;
@@ -58,6 +59,7 @@ public class BbcUserAuthController {
     @PostMapping("/login")
     @Log(module = "登陆", func = "2C-手机验证码")
     public ResponseData<BbcUserVO.LoginVO> login(@Valid @RequestBody BbcUserDTO.LoginETO dto) {
+    	
         BbcUserVO.LoginVO vo = bbcUserAuthRpc.login(dto);
         setLogAspect(vo);
         return ResponseData.data(vo);

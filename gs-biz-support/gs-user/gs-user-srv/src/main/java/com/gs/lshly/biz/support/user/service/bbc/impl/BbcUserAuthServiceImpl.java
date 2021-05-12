@@ -142,7 +142,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             return vo;
     	}else{
     		
-    		User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
+    		User user = repository.getOne(new QueryWrapper<User>().eq("phone", AESUtil.aesEncrypt(dto.getPhone())));
             if (user == null) {
                 throw new BusinessException("请先注册");
             }

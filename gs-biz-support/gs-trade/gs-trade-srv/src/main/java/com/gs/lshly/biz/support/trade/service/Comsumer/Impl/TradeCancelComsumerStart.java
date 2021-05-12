@@ -53,7 +53,7 @@ public class TradeCancelComsumerStart implements InitializingBean {
             @Override
             public void run() {
                 do {
-                    System.out.println("消费者监听中~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    //System.out.println("消费者监听中~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     List<Message> messages = null;
 
                     try {

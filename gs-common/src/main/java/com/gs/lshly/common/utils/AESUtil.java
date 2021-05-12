@@ -19,7 +19,7 @@ import java.security.Key;
 public class AESUtil {
 	
 	public static void main(String args[]){
-		System.out.println(aesEncrypt("17858373830"));
+		System.out.println(aesEncrypt("13675899916"));
 	}
 
     private AESUtil(){}
@@ -38,6 +38,11 @@ public class AESUtil {
     	return ret;
     }
 
+    /**
+     * aes加密-256位
+     * @param encryptContent
+     * @return
+     */
     public static String aesEncrypt(String encryptContent){
     	String ret = "";
     	try {
