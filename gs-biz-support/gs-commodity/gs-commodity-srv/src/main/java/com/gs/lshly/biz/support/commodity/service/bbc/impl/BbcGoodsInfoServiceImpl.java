@@ -1098,6 +1098,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         List<String> ranIds = new ArrayList<>();
         Random rand = new Random();
         for (int i = 0; i < 4; i++) {
+
             String ranNum = goodsIds.get(rand.nextInt(goodsIds.size()));
             goodsIds.remove(ranNum);
             ranIds.add(ranNum);

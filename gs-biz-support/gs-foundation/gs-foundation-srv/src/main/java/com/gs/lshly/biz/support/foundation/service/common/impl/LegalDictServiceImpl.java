@@ -488,6 +488,7 @@ public class LegalDictServiceImpl implements ILegalDictService {
         if(null == userLegalCortpTypeView){
             throw new BusinessException("无效的ID");
         }
+
         LegalDictVO.CompanyVO companyVO = new LegalDictVO.CompanyVO();
         LegalDictVO.BankVO bankVO  = new LegalDictVO.BankVO();
         BeanUtils.copyProperties(userLegalCortpTypeView, companyVO);

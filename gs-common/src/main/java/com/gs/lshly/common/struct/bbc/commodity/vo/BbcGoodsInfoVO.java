@@ -624,8 +624,32 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     }
 
     @Data
+    @ApiModel("BbcGoodsInfoVO.CtccGoodsDetailVO")
+    public static class CtccGoodsDetailVO implements Serializable {
+
+        @ApiModelProperty("sku商品id")
+        private String skuId;
+
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("规格列表")
+        private List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS;
+
+//        @ApiModelProperty("多规格商品默认选择规格信息")
+//        private BbcSkuGoodInfoVO.SkuVO skuVO;
+
+    }
+
+    @Data
     @ApiModel("BbcGoodsInfoVO.SearchHistory")
-    public static class SearchHistory implements Serializable{
+    public static class SearchHistory implements Serializable {
         @ApiModelProperty("搜索关键字")
         private String keyword;
     }
