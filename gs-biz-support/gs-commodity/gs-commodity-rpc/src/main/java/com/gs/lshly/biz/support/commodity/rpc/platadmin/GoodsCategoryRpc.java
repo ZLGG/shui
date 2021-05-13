@@ -53,6 +53,11 @@ public class GoodsCategoryRpc implements IGoodsCategoryRpc {
     }
 
     @Override
+    public List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTreeWithGoods() {
+        return categoryService.selectCategoryTreeWithGoods();
+    }
+
+    @Override
     public List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTree() {
         return categoryService.listCategory();
     }

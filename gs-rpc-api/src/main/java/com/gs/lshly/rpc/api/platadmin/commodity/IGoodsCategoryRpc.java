@@ -60,6 +60,11 @@ public interface IGoodsCategoryRpc {
     List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTree();
 
     /**
+     * 获取有商品的类目列表
+     */
+    List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTreeWithGoods();
+
+    /**
      *修该分类信息
      * @param eto
      */

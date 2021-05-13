@@ -58,6 +58,12 @@ public interface IGoodsCategoryService {
     List<GoodsCategoryVO.CategoryTreeVO> listCategory();
 
     /**
+     * 获取有商品的类目
+     * @return
+     */
+    List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTreeWithGoods();
+
+    /**
      * 修改分类数据
      * @param eto
      */
@@ -225,4 +231,5 @@ public interface IGoodsCategoryService {
      * @return
      */
     List<GoodsCategoryVO.InnerListVO> innerCategoryList(BaseDTO dto);
+
 }
