@@ -5,6 +5,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 
 /**
@@ -157,7 +158,7 @@ public interface IBbcGoodsInfoRpc {
      * @param qto
      * @return
      */
-    PageData<BbcGoodsInfoVO.DetailVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
+    PageData<BbcGoodsInfoVO.ListVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
     
     /**
      * 获取指定分类下面，指定商品数量
@@ -165,5 +166,10 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     List<BbcGoodsInfoVO.SimpleListVO> listGoodsInfoByCategory(BbcGoodsInfoDTO.CategoryIdCountDTO dto);
-
+    
+    /**
+     * IN会员首页信息
+     * @return
+     */
+    InMemberHomeVO inMemberHome();
 }

@@ -4,9 +4,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gs.lshly.common.enums.InUserCouponPriceEnum;
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 
 import io.swagger.annotations.Api;
@@ -31,8 +35,16 @@ public class BbcInMemberGoodsInfoController {
 
 	@ApiOperation("IN会员商品列表-v1.1.0")
     @GetMapping("/goodsinfo")
-    public ResponseData<BbcGoodsCategoryVO.CtccHomeVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
+    public ResponseData<PageData<BbcGoodsInfoVO.ListVO>> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageInMemberGoodsInfo(qto));
     }
-
+	
+	
+	@ApiOperation("优惠券首页内容>广告位/分类数据-v1.1.0")
+    @GetMapping("")
+    public ResponseData<InMemberHomeVO> inMemberHome() {
+        return ResponseData.data(bbcGoodsInfoRpc.inMemberHome());
+    }
+	
+	
 }

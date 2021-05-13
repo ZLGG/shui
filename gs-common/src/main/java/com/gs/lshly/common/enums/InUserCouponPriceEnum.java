@@ -1,5 +1,10 @@
 package com.gs.lshly.common.enums;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author yangxi
  * @create 2021/3/26 15:38
@@ -31,4 +36,19 @@ public enum InUserCouponPriceEnum implements EnumMessage{
     public String getRemark() {
         return remark;
     }
+    
+    
+    public static List<Map<String,Object>> getAll(){
+        Map<String,Object> map = null;
+        List<Map<String,Object>> typeList = new ArrayList<Map<String,Object>>();
+        for (InUserCouponPriceEnum couponEnum : InUserCouponPriceEnum.values()) {
+            map = new HashMap<String,Object>();
+            map.put("id",couponEnum.getCode());
+            map.put("name",couponEnum.getRemark());
+            typeList.add(map);
+        }
+        return typeList;
+    }
+    
+    
 }
