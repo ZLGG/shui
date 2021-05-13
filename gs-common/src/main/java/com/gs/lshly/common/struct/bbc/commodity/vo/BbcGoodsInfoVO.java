@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 
 import io.swagger.annotations.ApiModel;
@@ -765,6 +767,24 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     public static class InnerGoodsKitSkuVO implements Serializable {
 
 
+    }
+    
+    /**
+     * IN会员首页
+     *
+     * 
+     * @author yingjun
+     * @date 2021年5月13日 下午3:47:03
+     */
+    @Data
+    @ApiModel("BbcGoodsInfoVO.InMemberHomeVO")
+    public static class InMemberHomeVO implements Serializable{
+    	
+    	@ApiModelProperty("广告位列表")
+		private List<BbcSiteAdvertVO.AdvertDetailVO> adverts;
+
+		@ApiModelProperty("优惠券分类列表")
+		private List<Map<String,Object>> couponTypes;
     }
 
 }

@@ -10,7 +10,8 @@ public enum SubjectEnum implements EnumMessage {
     推荐专栏(40,"推荐专栏"),
     积分商城(50,"积分商城"),
     电信国际(60,"电信国际"),
-    电信产品(70,"电信产品");
+    电信产品(70,"电信产品"),
+    IN会员专区(80,"IN会员专区");
 
     SubjectEnum(Integer code, String remark){
         this.code = code;

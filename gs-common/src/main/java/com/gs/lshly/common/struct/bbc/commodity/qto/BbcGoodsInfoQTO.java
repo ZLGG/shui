@@ -1,24 +1,28 @@
 package com.gs.lshly.common.struct.bbc.commodity.qto;
 
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.BaseQTO;
-import com.gs.lshly.common.struct.bbb.h5.commodity.qto.BbbH5GoodsInfoQTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
+
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * @author Starry
  * @since 2020-10-23
  */
+@SuppressWarnings("serial")
 public abstract class BbcGoodsInfoQTO implements Serializable {
-
+	
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.QTO")
     @Accessors(chain = true)
@@ -29,6 +33,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.GoodsListQTO")
     @Accessors(chain = true)
@@ -45,6 +50,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.GoodsSearchListQTO")
     @Accessors(chain = true)
@@ -71,7 +77,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.OrderGoodsListQTO")
     @Accessors(chain = true)
@@ -85,6 +91,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.GoodsListByCategoryQTO")
     @Accessors(chain = true)
@@ -95,7 +102,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.MerchantGoodsQTO")
     @Accessors(chain = true)
@@ -112,6 +119,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.MerchantShopGoodsQTO")
     @Accessors(chain = true)
@@ -129,7 +137,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.ShopGoodsQTO")
     @Accessors(chain = true)
@@ -143,6 +151,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.GoodsSkuQTO")
     @Accessors(chain = true)
@@ -156,6 +165,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.GoodsSharingQTO")
     @Accessors(chain = true)
@@ -172,6 +182,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.IntegralGoodsQTO")
     @Accessors(chain = true)
@@ -199,6 +210,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     //-------------------------------内部服务-------------------------
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.SkuIdListQTO")
     @Accessors(chain = true)
@@ -210,6 +222,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.ShopIdListQTO")
     @Accessors(chain = true)
@@ -220,6 +233,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.GoodsIdListQTO")
     @Accessors(chain = true)
@@ -230,7 +244,7 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.TopicQTO")
     @Accessors(chain = true)
@@ -248,13 +262,18 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
      * @author yingjun
      * @date 2021年3月30日 下午6:44:11
      */
-    @Data
+	@EqualsAndHashCode(callSuper=false)
+	@Data
     @ApiModel("BbcGoodsInfoQTO.InMemberGoodsQTO")
     @Accessors(chain = true)
     public static class InMemberGoodsQTO extends BaseQTO {
+    	
+    	@ApiModelProperty("in会员优惠券类型（20,30,50,99,200） 为空查询所有")
+        private Integer inCouponType;
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.InSpecialAreaGoodsQTO")
     @Accessors(chain = true)

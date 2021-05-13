@@ -31,33 +31,33 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/merchadmin/marketPtSeckillMerchant")
-@Api(tags = "秒杀商家参与记录管理")
+@Api(tags = "秒杀商家参与记录管理-v1.1.0")
 @SuppressWarnings("unchecked")
 public class PCMerchMarketPtSeckillMerchantController {
 
     @DubboReference
     private IPCMerchMarketPtSeckillMerchantRpc pcMerchMarketPtSeckillMerchantRpc;
 
-	@ApiOperation("秒杀商家参与记录列表")
+	@ApiOperation("秒杀商家参与记录列表-v1.1.0")
     @GetMapping("")
     public ResponseData<PageData<PCMerchMarketPtSeckillMerchantVO.ListVO>> list(PCMerchMarketPtSeckillMerchantQTO.QTO qto) {
         return ResponseData.data(pcMerchMarketPtSeckillMerchantRpc.pageData(qto));
     }
 
-    @ApiOperation("秒杀商家参与记录详情")
+    @ApiOperation("秒杀商家参与记录详情-v1.1.0")
     @GetMapping(value = "/{id}")
     public ResponseData<PCMerchMarketPtSeckillMerchantVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(pcMerchMarketPtSeckillMerchantRpc.detailMarketPtSeckillMerchant(new PCMerchMarketPtSeckillMerchantDTO.IdDTO(id)));
     }
 
-    @ApiOperation("新增秒杀商家参与记录")
+    @ApiOperation("新增秒杀商家参与记录-v1.1.0")
     @PostMapping("")
     public ResponseData<Void> add(@Valid @RequestBody PCMerchMarketPtSeckillMerchantDTO.ETO dto) {
     	pcMerchMarketPtSeckillMerchantRpc.addMarketPtSeckillMerchant(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("删除秒杀商家参与记录")
+    @ApiOperation("删除秒杀商家参与记录-v1.1.0")
     @DeleteMapping(value = "/{id}")
     public ResponseData<Void> delete(@PathVariable String id) {
         PCMerchMarketPtSeckillMerchantDTO.IdDTO dto = new PCMerchMarketPtSeckillMerchantDTO.IdDTO(id);
@@ -66,7 +66,7 @@ public class PCMerchMarketPtSeckillMerchantController {
     }
 
 
-    @ApiOperation("修改秒杀商家参与记录")
+    @ApiOperation("修改秒杀商家参与记录-v1.1.0")
     @PutMapping(value = "/{id}")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody PCMerchMarketPtSeckillMerchantDTO.ETO eto) {
         eto.setId(id);

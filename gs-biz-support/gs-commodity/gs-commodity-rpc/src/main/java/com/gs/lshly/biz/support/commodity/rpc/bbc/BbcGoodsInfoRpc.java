@@ -14,7 +14,8 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.IdDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
@@ -135,7 +136,7 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     }
 
 	@Override
-	public PageData<DetailVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
+	public PageData<ListVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
 		return bbcGoodsInfoService.pageInMemberGoodsInfo(qto);
 	}
 
@@ -147,6 +148,11 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	@Override
 	public SimpleListVO simpleListVO(IdDTO dto) {
 		return bbcGoodsInfoService.simpleListVO(dto);
+	}
+
+	@Override
+	public InMemberHomeVO inMemberHome() {
+		return bbcGoodsInfoService.inMemberHome();
 	}
 
 }

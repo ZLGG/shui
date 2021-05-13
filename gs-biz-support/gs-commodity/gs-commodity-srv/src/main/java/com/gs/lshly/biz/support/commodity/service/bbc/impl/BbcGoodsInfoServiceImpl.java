@@ -44,12 +44,14 @@ import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
+import com.gs.lshly.common.enums.InUserCouponPriceEnum;
 import com.gs.lshly.common.enums.MallCategoryEnum;
 import com.gs.lshly.common.enums.OrderByConditionEnum;
 import com.gs.lshly.common.enums.OrderByTypeEnum;
 import com.gs.lshly.common.enums.QueryIntegralGoodsEnum;
 import com.gs.lshly.common.enums.SingleStateEnum;
 import com.gs.lshly.common.enums.StockAddressTypeEnum;
+import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -63,11 +65,13 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
+import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
@@ -81,6 +85,7 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
@@ -160,6 +165,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @DubboReference
     private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
+    
+    @DubboReference
+    private IBbcSiteAdvertRpc bbcSiteAdvertRpc;
     
     
     @Override
@@ -1230,23 +1238,22 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
 	@Override
-	public PageData<DetailVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
+	public PageData<ListVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
 		QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("is_in_member_gift",TrueFalseEnum.是.getCode());
-        
+        if(qto.getInCouponType()!=null&&qto.getInCouponType()>0){
+        	wrapper.eq("in_coupon_type", qto.getInCouponType());
+        }
 		IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
 
-        List<BbcGoodsInfoVO.DetailVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.DetailVO.class,goodsInfoIPage.getRecords());
+        List<BbcGoodsInfoVO.ListVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.ListVO.class,goodsInfoIPage.getRecords());
         if(CollectionUtils.isNotEmpty(categoryGoodsVOS)){
-        	for(BbcGoodsInfoVO.DetailVO detailVO:categoryGoodsVOS){
-        		String goodsId = detailVO.getGoodsId();
-        		//查询标签
-                detailVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsId));
+        	for(BbcGoodsInfoVO.ListVO detailVO:categoryGoodsVOS){
+        		detailVO.setGoodsImage(ObjectUtils.isEmpty(getImage(detailVO.getGoodsImage())) ? "" : getImage(detailVO.getGoodsImage()));
         	}
         }
         return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());
-        
 	}
 
 	@Override
@@ -1290,6 +1297,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         //查询标签
         detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
         return detailVo;
+	}
+
+	@Override
+	public InMemberHomeVO inMemberHome() {
+		InMemberHomeVO vo = new InMemberHomeVO();
+		BbcSiteAdvertQTO.SubjectQTO qto = new BbcSiteAdvertQTO.SubjectQTO();
+		qto.setSubject(SubjectEnum.IN会员专区.getCode());
+		List<BbcSiteAdvertVO.AdvertDetailVO> adverts = bbcSiteAdvertRpc.listBySubject(qto);
+		
+		vo.setAdverts(adverts);
+		vo.setCouponTypes(InUserCouponPriceEnum.getAll());
+		return vo;
 	}
 
 }
