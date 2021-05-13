@@ -62,6 +62,7 @@ public abstract class BbcCtccCategoryGoodsVO implements Serializable {
 		private String remark;
 
 	}
+	
 	@Data
     @ApiModel("BbcCtccCategoryGoodsVO.CtccInternationalCategoryVO")
     @Accessors(chain = true)
