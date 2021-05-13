@@ -4,6 +4,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
+import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO.GetPhoneValidCodeDTO;
 import com.gs.lshly.common.struct.platadmin.user.qto.UserQTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
 import com.gs.lshly.biz.support.user.service.platadmin.IUserService;
@@ -119,6 +120,12 @@ public class UserRpc implements IUserRpc {
     public UserVO.ListVO innerSave2BUser(UserDTO.InnerETO eto) {
         return userService.innerSave2BUser(eto);
     }
+
+	@Override
+	public void getPhoneValidCode(GetPhoneValidCodeDTO dto) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

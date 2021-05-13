@@ -1,19 +1,23 @@
 package com.gs.lshly.common.struct.platadmin.user.dto;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.BaseDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
 * @author xxfc
 * @since 2020-10-05
 */
+@SuppressWarnings("serial")
 public abstract class UserDTO implements Serializable {
 
     @Data
@@ -192,6 +196,22 @@ public abstract class UserDTO implements Serializable {
 
         @ApiModelProperty(value = "状态 10=开启 20=禁用",hidden = true)
         private Integer state;
+    }
+    
+    /**
+     * 跟据手机号码获取验证码
+     *
+     * 
+     * @author yingjun
+     * @date 2021年5月13日 下午4:34:43
+     */
+	@Data
+	@EqualsAndHashCode(callSuper=false)
+    @ApiModel("UserDTO.GetPhoneValidCodeDTO")
+    @Accessors(chain = true)
+    public static class GetPhoneValidCodeDTO extends BaseDTO{
+    	 @ApiModelProperty(value = "手机号码")
+         private String phone;
     }
 
 }

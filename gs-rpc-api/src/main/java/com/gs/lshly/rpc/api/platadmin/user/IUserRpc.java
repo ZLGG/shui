@@ -1,11 +1,11 @@
 package com.gs.lshly.rpc.api.platadmin.user;
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.qto.UserQTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
-
-import java.util.List;
 
 /**
 *
@@ -84,5 +84,9 @@ public interface IUserRpc {
 
     UserVO.ListVO innerSave2BUser(UserDTO.InnerETO eto);
 
-
+    /**
+     * 跟据手机号码获取验证码
+     * @param dto
+     */
+    void getPhoneValidCode(UserDTO.GetPhoneValidCodeDTO dto);
 }
