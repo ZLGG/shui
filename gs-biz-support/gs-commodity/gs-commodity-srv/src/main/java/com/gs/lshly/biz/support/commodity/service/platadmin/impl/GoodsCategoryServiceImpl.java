@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +65,8 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     @Autowired
     private IGoodsParamsRepository paramsRepository;
     @Autowired
+    private GoodsInfoMapper goodsInfoMapper;
+    @Autowired
     private ICategoryBrandRepository categoryBrandRepository;
     @Autowired
     private IGoodsCategoryAttributeRepository categoryAttributeRepository;
@@ -118,6 +121,57 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         GoodsCategoryVO.Level3VO level3VO = new GoodsCategoryVO.Level3VO();
         BeanUtils.copyProperties(this.getCategory(dto), level3VO);
         return level3VO;
+    }
+
+    @Override
+    public List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTreeWithGoods() {
+        List<GoodsCategoryVO.CategoryTreeVO> list = new ArrayList<>();
+        //获取所有的分类数据
+        QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
+        boost.orderByAsc("idx", "id");
+        List<GoodsCategory> categories = categoryRepository.list(boost);
+        if (categories == null || categories.size() == 0) {
+            return new ArrayList<>();
+        }
+        for (GoodsCategory category : categories) {
+            GoodsCategoryVO.CategoryTreeVO categoryTreeVO = new GoodsCategoryVO.CategoryTreeVO();
+            List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
+            if (ObjectUtils.isNotEmpty(goodsIds)) {
+                BeanUtils.copyProperties(category, categoryTreeVO);
+                list.add(categoryTreeVO);
+            }
+        }
+        //声明一个容器存放树形结构数据
+        List<GoodsCategoryVO.CategoryTreeVO> listVOS = new ArrayList<>();
+        //获取下面的所有一级分类
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getGsCategoryLevel().intValue() == 1 && StringUtils.isEmpty(list.get(i).getParentId())) {
+                listVOS.add(list.get(i));
+            }
+        }
+        //获取二级分类
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < listVOS.size(); j++) {
+                //找到对应的父ID
+                if (list.get(i).getParentId().equals(listVOS.get(j).getId())) {
+                    //找到对应父ID。加入list中某一项对象底下的list
+                    listVOS.get(j).getList().add(list.get(i));
+                }
+            }
+        }
+        //添加三级
+        for (int i = 0; i < listVOS.size(); i++) {
+            for (int j = 0; j < listVOS.get(i).getList().size(); j++) {
+                //找到对应的父ID
+                for (int k = 0; k < list.size(); k++) {
+                    if (list.get(k).getParentId().equals(listVOS.get(i).getList().get(j).getId())) {
+                        //找到对应父ID。加入list中某一项对象底下的list
+                        listVOS.get(i).getList().get(j).getList().add(list.get(k));
+                    }
+                }
+            }
+        }
+        return listVOS;
     }
 
     @Override

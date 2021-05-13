@@ -6,11 +6,8 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
-import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -209,5 +206,7 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
 
     @Select("select gs.id from gs_goods_info gs where ${ew.sqlSegment}")
     List<String> getAllIds(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
-    
+
+    @Select("select id from gs_goods_info where flag = 0 and goods_state = 20 and category_id = #{categoryId} ")
+    List<String> getGoodsByCategory(@Param("categoryId") String categoryId);
 }

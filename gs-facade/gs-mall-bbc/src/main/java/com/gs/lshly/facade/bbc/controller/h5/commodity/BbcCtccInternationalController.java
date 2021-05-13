@@ -1,21 +1,13 @@
 package com.gs.lshly.facade.bbc.controller.h5.commodity;
-import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcCtccCategoryGoodsRpc;
-import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 /**
 * <p>

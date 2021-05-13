@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.foundation.service.bbc.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -86,6 +87,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.分类.getCode());
 		listVO.setIdx(PointHomeTypeEnum.分类.getIdx());
 		listVO.setName(PointHomeTypeEnum.分类.getRemark());
+		List<GoodsCategoryVO.CategoryTreeVO> treeVOList = goodsCategoryRpc.selectCategoryTree();
 		listVO.setList(goodsCategoryRpc.selectCategoryTree());
 		retList.add(listVO);
 		
