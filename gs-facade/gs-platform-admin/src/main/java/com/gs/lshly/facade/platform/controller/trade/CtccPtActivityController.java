@@ -53,6 +53,7 @@ public class CtccPtActivityController {
     @ApiOperation("添加商品")
     @PostMapping("/addActivityGoods")
     public ResponseData addActivityGoods(@RequestBody List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList) {
+        iCtccPtActivityRpc.addActivityGoods(activityGoodsDTOList);
         return ResponseData.success();
     }
 }

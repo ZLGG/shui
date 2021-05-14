@@ -161,10 +161,6 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
        
     }
 
-    public static void main(String[] args) {
-        System.out.println(IdWorker.getId());
-    }
-
     @Override
     public BbcUserVO.LoginVO loadUserByWxOpenid(String appid, String openid, String sessionKey, String unionid) {
 

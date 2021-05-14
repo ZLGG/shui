@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author yangxi
@@ -35,8 +36,15 @@ public class CtccPtActivityDTO implements Serializable {
         @ApiModelProperty("每人限购数量")
         private Integer limitCount;
 
-        @ApiModelProperty("banner图片组地址")
-        private String bannerImagesUrl;
+        @ApiModelProperty("banner图片")
+        List<ImageGroupDTO> imageGroupDTOList;
+    }
+
+    @ApiModel("CtccPtActivityDTO.ImageGroupDTO")
+    @Data
+    public static class ImageGroupDTO implements Serializable {
+        @ApiModelProperty("banner图片地址")
+        private String bannerImageUrl;
 
         @ApiModelProperty("跳转链接")
         private String jumpLinkUrl;
@@ -67,11 +75,8 @@ public class CtccPtActivityDTO implements Serializable {
         @ApiModelProperty("每人限购数量")
         private Integer limitCount;
 
-        @ApiModelProperty("banner图片组地址")
-        private String bannerImagesUrl;
-
-        @ApiModelProperty("跳转链接")
-        private String jumpLinkUrl;
+        @ApiModelProperty("banner图片")
+        List<ImageGroupDTO> imageGroupDTOList;
     }
 
     @ApiModel("CtccPtActivityDTO.CateGoryListDTO")
