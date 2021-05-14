@@ -87,8 +87,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.分类.getCode());
 		listVO.setIdx(PointHomeTypeEnum.分类.getIdx());
 		listVO.setName(PointHomeTypeEnum.分类.getRemark());
-		List<GoodsCategoryVO.CategoryTreeVO> treeVOList = goodsCategoryRpc.selectCategoryTree();
-		listVO.setList(goodsCategoryRpc.selectCategoryTree());
+		listVO.setList(goodsCategoryRpc.selectCategoryTreeWithGoods());
 		retList.add(listVO);
 		
 		PCBbbGoodsCategoryQTO.QTO qto1 = new PCBbbGoodsCategoryQTO.QTO();

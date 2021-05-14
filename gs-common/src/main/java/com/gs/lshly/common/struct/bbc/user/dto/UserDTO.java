@@ -80,6 +80,9 @@ public abstract class UserDTO implements Serializable {
 
         @ApiModelProperty(value = "会员状态[10=可用 20=禁用]",hidden = true)
         private Integer state;
+
+        @ApiModelProperty("删除标记")
+        private Boolean flag;
     }
 
     @Data

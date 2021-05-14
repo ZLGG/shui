@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.gs.lshly.common.utils.AESUtil;
-import com.twelvemonkeys.lang.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
@@ -255,6 +254,10 @@ public class User extends Model {
 	public String getPhone() {
 		if(StringUtils.isNotEmpty(phone)&&!phone.startsWith("1"))
 			phone = AESUtil.aesDecrypt(phone);
+		return phone;
+	}
+
+	public String getAESPhone() {
 		return phone;
 	}
 
