@@ -14,7 +14,4 @@ import org.springframework.stereotype.Service;
 @Service
 public class CtccPtActivityRepositoryImpl extends ServiceImpl<CtccPtActivityMapper,CtccPtActivity> implements ICtccPtActivityRepository {
 
-    @Autowired
-    private CtccPtActivityMapper ctccPtActivityMapper;
-
 }

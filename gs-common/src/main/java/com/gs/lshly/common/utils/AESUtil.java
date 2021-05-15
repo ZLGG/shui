@@ -8,6 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,6 +21,7 @@ public class AESUtil {
 	
 	public static void main(String args[]){
 		System.out.println(aesEncrypt("13675899916"));
+        System.out.println(aesDecrypt("ZZqMst7uTJBq4k4f9v5qBw=="));
 	}
 
     private AESUtil(){}

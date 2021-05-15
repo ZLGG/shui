@@ -3,6 +3,8 @@ package com.gs.lshly.rpc.api.platadmin.trade;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 
+import java.util.List;
+
 /**
  * @Author yangxi
  * @create 2021/5/8 9:35
@@ -27,4 +29,10 @@ public interface ICtccPtActivityRpc {
      * @return
      */
     CtccPtActivityVO.CategoryListVO getCategoryList(CtccPtActivityDTO.CateGoryListDTO listDTO);
+
+    /**
+     * 添加活动商品
+     * @param activityGoodsDTOList
+     */
+    void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList);
 }

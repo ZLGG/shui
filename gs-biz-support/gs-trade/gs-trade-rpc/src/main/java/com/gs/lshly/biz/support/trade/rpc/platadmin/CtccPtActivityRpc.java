@@ -7,6 +7,8 @@ import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * @Author yangxi
  * @create 2021/5/8 9:53
@@ -24,6 +26,11 @@ public class CtccPtActivityRpc implements ICtccPtActivityRpc {
     @Override
     public CtccPtActivityVO.CategoryListVO getCategoryList(CtccPtActivityDTO.CateGoryListDTO listDTO) {
         return ctccPtActivityService.getCategoryList(listDTO);
+    }
+
+    @Override
+    public void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList) {
+        ctccPtActivityService.addActivityGoods(activityGoodsDTOList);
     }
 
     @Override

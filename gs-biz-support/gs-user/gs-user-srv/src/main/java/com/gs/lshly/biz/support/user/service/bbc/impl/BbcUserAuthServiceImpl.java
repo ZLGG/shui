@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserThirdLogin;
@@ -17,6 +18,7 @@ import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.UserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -129,13 +131,15 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             if (vo != null) {
                 return vo;
             }
-            
+
             //1、获取加密对象
-            User user = repository.getOne(new QueryWrapper<User>().eq("phone", AESUtil.aesEncrypt(dto.getPhone())));
+            String AESPhone = AESUtil.aesEncrypt(dto.getPhone());
+            User user = repository.getOne(new QueryWrapper<User>().eq("phone", AESPhone));
             if (user == null) {
                 user = new User();
-                user.setState(UserStateEnum.启用.getCode()).setPhone(AESUtil.aesEncrypt(dto.getPhone())).setType(UserTypeEnum._2C用户.getCode());
-                repository.save(user);
+                UserDTO.ETO userDTO = new UserDTO.ETO();
+                userDTO.setState(UserStateEnum.启用.getCode()).setPhone(AESPhone).setType(UserTypeEnum._2C用户.getCode()).setId(String.valueOf(IdWorker.getId())).setFlag(false);
+                repository.saveUserInfo(userDTO);
             }
             vo = userToLoginVO(user, null);
             redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.mapper.UserMapper;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.common.struct.bbc.user.dto.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +18,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserRepositoryImpl extends ServiceImpl<UserMapper, User> implements IUserRepository {
+    @Autowired
+    private UserMapper userMapper;
 
-
+    @Override
+    public void saveUserInfo(UserDTO.ETO user) {
+        userMapper.saveUserInfo(user);
+    }
 }

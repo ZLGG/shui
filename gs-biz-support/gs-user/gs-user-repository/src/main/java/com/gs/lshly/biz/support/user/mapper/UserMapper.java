@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserView;
+import com.gs.lshly.common.struct.bbc.user.dto.UserDTO;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -29,4 +31,6 @@ public interface UserMapper extends BaseMapper<User> {
     IPage<UserView> pageList(IPage<UserView> page, @Param(value = "ew") QueryWrapper<UserView> qw);
 
 
+    @Insert("INSERT INTO gs_user ( id, state, type, phone, cdate, udate, flag ) VALUES(#{user.id},#{user.state},#{user.type},#{user.phone},now(),now(),#{user.flag}) ")
+    void saveUserInfo(@Param("user") UserDTO.ETO user);
 }

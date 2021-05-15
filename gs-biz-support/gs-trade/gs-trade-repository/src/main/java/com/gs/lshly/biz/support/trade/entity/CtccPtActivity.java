@@ -42,12 +42,6 @@ public class CtccPtActivity extends Model {
     @ApiModelProperty("每人限购数量")
     private Integer limitCount;
 
-    @ApiModelProperty("banner图片地址")
-    private String bannerImagesUrl;
-
-    @ApiModelProperty("跳转链接")
-    private String jumpLinkUrl;
-
     @ApiModelProperty("用户id")
     private String userId;
 
