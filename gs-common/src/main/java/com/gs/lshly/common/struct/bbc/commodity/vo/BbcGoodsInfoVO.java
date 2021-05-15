@@ -790,7 +790,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Integer telecomsIntegral;
 		
         @ApiModelProperty("是否为in会员(1-是 0-否)")
-        private Boolean isInUser;
+        private Integer isInUser;
     }
 
 }

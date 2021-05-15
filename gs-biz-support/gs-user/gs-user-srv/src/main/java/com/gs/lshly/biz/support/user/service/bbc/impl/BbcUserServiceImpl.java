@@ -157,16 +157,18 @@ public class BbcUserServiceImpl implements IBbcUserService {
         	detailVO.setTelecomsIntegral(ctccPoint.getPointBalance());
         	detailVO.setTelecomsPass(ctccPoint.getYearBalance());
         }
+        /**
         detailVO.setCountCard(bbcTradeRpc.myMerchantCard(dto));
         detailVO.setCountCard(10);
+        
         
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(dto.getJwtUserId());
         detailVO.setTradeStateList( bbcTradeRpc.tradeStateCount(idDTO));
         
-        /**
+        
          * 商城原积分
-         */
+        
         BbcUserVO.UserIntegralVO integral = iBbcUserIntegralService.integral(dto);
         if (ObjectUtils.isNotEmpty(integral)){
             detailVO.setIntegral(integral.getOkIntegral());
@@ -174,11 +176,11 @@ public class BbcUserServiceImpl implements IBbcUserService {
         
         /**
          * 微信信息
-         */
         BbcUserVO.ThirdVO thirdVO = iBbcUserAuthRpc.innerGetWXNickName(dto.getJwtUserId());
         if (ObjectUtils.isNotEmpty(thirdVO)){
             detailVO.setNickName(thirdVO.getNickName());
         }
+        */
         return detailVO;
 	}
 

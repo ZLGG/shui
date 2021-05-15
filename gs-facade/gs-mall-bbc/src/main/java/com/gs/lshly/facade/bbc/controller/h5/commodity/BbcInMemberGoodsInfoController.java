@@ -51,7 +51,7 @@ public class BbcInMemberGoodsInfoController {
 		InMemberHomeVO inMemberHomeVO = bbcGoodsInfoRpc.inMemberHome();
 		BbcUserVO.DetailVO detailVO = bbcUserRpc.getUserInfoNoLogin(dto);
 		BeanCopyUtils.copyProperties(detailVO, inMemberHomeVO);
-        return ResponseData.data(bbcGoodsInfoRpc.inMemberHome());
+        return ResponseData.data(inMemberHomeVO);
     }
 	
 	
