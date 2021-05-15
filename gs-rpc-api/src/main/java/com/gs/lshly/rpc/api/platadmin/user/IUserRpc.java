@@ -84,9 +84,4 @@ public interface IUserRpc {
 
     UserVO.ListVO innerSave2BUser(UserDTO.InnerETO eto);
 
-    /**
-     * 跟据手机号码获取验证码
-     * @param dto
-     */
-    void getPhoneValidCode(UserDTO.GetPhoneValidCodeDTO dto);
 }

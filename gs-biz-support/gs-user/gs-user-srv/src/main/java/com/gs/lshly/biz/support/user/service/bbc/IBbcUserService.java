@@ -25,4 +25,11 @@ public interface IBbcUserService {
     List<BbcUserVO.UserIntegralRecordVO> integralLog(BbcUserDTO.IntegralLogQTO qto);
 
     BbcUserVO.MyIntegralVO myIntegral(String userId);
+    
+    /**
+     * 获取用户信息，无需登录
+     * @param dto
+     * @return
+     */
+    BbcUserVO.DetailVO getUserInfoNoLogin(BaseDTO dto);
 }

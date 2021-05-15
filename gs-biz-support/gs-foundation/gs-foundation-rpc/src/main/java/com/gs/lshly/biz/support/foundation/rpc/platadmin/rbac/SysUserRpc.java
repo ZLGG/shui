@@ -1,17 +1,24 @@
 package com.gs.lshly.biz.support.foundation.rpc.platadmin.rbac;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.gs.lshly.biz.support.foundation.service.platadmin.rbac.ISysUserService;
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.CheckDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.GetPhoneValidCodeDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.LoginDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
 import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.platadmin.foundation.rbac.ISysUserRpc;
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * RPC里面不允许写业务代码：
@@ -88,4 +95,30 @@ public class SysUserRpc implements ISysUserRpc {
     public void deleteUserRolePermit(SysUserDTO.UserRoleETO eto) {
         sysUserService.deleteUserRolePermit(eto);
     }
+
+	@Override
+	public void getPhoneValidCode(GetPhoneValidCodeDTO dto) {
+		sysUserService.getPhoneValidCode(dto);
+		
+	}
+
+	@Override
+	public AuthDTO login(LoginDTO dto) {
+		if (dto==null) {
+            throw new BusinessException("参数错误");
+        }
+        if (StringUtils.isBlank(dto.getPhone())) {
+            throw new BusinessException("手机号不能为空");
+        }
+        if (StringUtils.isBlank(dto.getValidCode())) {
+            throw new BusinessException("验证码不能为空");
+        }
+		return sysUserService.login(dto);
+		
+	}
+
+	@Override
+	public Boolean checkPhoneCode(CheckDTO dto) {
+		return sysUserService.checkPhoneCode(dto);
+	}
 }

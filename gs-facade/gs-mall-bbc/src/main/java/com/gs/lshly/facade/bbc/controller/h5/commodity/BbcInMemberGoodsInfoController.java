@@ -4,14 +4,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gs.lshly.common.enums.InUserCouponPriceEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +33,9 @@ public class BbcInMemberGoodsInfoController {
 
     @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
+    
+    @DubboReference
+    private IBbcUserRpc bbcUserRpc;
 
 
 	@ApiOperation("IN会员商品列表-v1.1.0")
@@ -42,7 +47,10 @@ public class BbcInMemberGoodsInfoController {
 	
 	@ApiOperation("优惠券首页内容>广告位/分类数据-v1.1.0")
     @GetMapping("")
-    public ResponseData<InMemberHomeVO> inMemberHome() {
+    public ResponseData<InMemberHomeVO> inMemberHome(BaseDTO dto) {
+		InMemberHomeVO inMemberHomeVO = bbcGoodsInfoRpc.inMemberHome();
+		BbcUserVO.DetailVO detailVO = bbcUserRpc.getUserInfoNoLogin(dto);
+		BeanCopyUtils.copyProperties(detailVO, inMemberHomeVO);
         return ResponseData.data(bbcGoodsInfoRpc.inMemberHome());
     }
 	

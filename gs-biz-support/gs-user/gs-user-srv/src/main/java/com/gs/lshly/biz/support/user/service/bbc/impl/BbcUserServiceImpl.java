@@ -6,8 +6,10 @@ import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
+import com.gs.lshly.biz.support.user.repository.IUserCtccPointRepository;
 import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.biz.support.user.service.bbc.IBbcUserCtccPointService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserIntegralService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserService;
 import com.gs.lshly.common.exception.BusinessException;
@@ -15,7 +17,9 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO.DetailVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
@@ -45,6 +49,9 @@ public class BbcUserServiceImpl implements IBbcUserService {
     private IUserIntegralRepository userIntegralRepository;
 
     @Autowired
+    private IBbcUserCtccPointService bbcUserCtccPointService;
+    
+    @Autowired
     private IBbcUserIntegralService iBbcUserIntegralService;
 
     @DubboReference
@@ -53,6 +60,9 @@ public class BbcUserServiceImpl implements IBbcUserService {
     @DubboReference
     private IBbcUserAuthRpc iBbcUserAuthRpc;
 
+    /**
+     * 获取用户详情
+     */
     @Override
     public BbcUserVO.DetailVO getUserInfo(BbcUserQTO.QTO qto) {
         if(null == qto.getJwtUserId()){
@@ -60,12 +70,19 @@ public class BbcUserServiceImpl implements IBbcUserService {
         }
         User user =  repository.getById(qto.getJwtUserId());
         BbcUserVO.DetailVO detailVO = new BbcUserVO.DetailVO();
-        detailVO.setId(user.getId());
-        detailVO.setUserName(user.getUserName());
-        detailVO.setHeadImg(user.getHeadImg());
-        detailVO.setPhone(user.getPhone());
         detailVO.setCountCard(bbcTradeRpc.myMerchantCard(qto));
         BeanUtils.copyProperties(user,detailVO);
+        
+        /**
+         * 获取电信积分数据 DUBBO
+         */
+        BbcUserCtccPointVO.DetailVO ctccPoint = bbcUserCtccPointService.getCtccPointByUserId(qto.getJwtUserId());
+        
+        if(ctccPoint!=null){
+        	detailVO.setTelecomsIntegral(ctccPoint.getPointBalance());
+        	detailVO.setTelecomsPass(ctccPoint.getYearBalance());
+        }
+        
         detailVO.setCountCard(10);
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(qto.getJwtUserId());
@@ -118,5 +135,51 @@ public class BbcUserServiceImpl implements IBbcUserService {
         List<UserIntegral> userIntegralList =  userIntegralRepository.list(userIntegralQueryWrapper);
         return ListUtil.listCover(BbcUserVO.UserIntegralRecordVO.class,userIntegralList);
     }
+
+	@Override
+	public DetailVO getUserInfoNoLogin(BaseDTO dto) {
+		BbcUserVO.DetailVO detailVO = new BbcUserVO.DetailVO();
+		if(null == dto.getJwtUserId())
+			return detailVO;
+        
+        User user =  repository.getById(dto.getJwtUserId());
+        if(user == null)
+        	return detailVO;
+        
+        BeanUtils.copyProperties(user,detailVO);
+        
+        /**
+         * 获取电信积分数据 DUBBO
+         */
+        BbcUserCtccPointVO.DetailVO ctccPoint = bbcUserCtccPointService.getCtccPointByUserId(dto.getJwtUserId());
+        
+        if(ctccPoint!=null){
+        	detailVO.setTelecomsIntegral(ctccPoint.getPointBalance());
+        	detailVO.setTelecomsPass(ctccPoint.getYearBalance());
+        }
+        detailVO.setCountCard(bbcTradeRpc.myMerchantCard(dto));
+        detailVO.setCountCard(10);
+        
+        BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
+        idDTO.setJwtUserId(dto.getJwtUserId());
+        detailVO.setTradeStateList( bbcTradeRpc.tradeStateCount(idDTO));
+        
+        /**
+         * 商城原积分
+         */
+        BbcUserVO.UserIntegralVO integral = iBbcUserIntegralService.integral(dto);
+        if (ObjectUtils.isNotEmpty(integral)){
+            detailVO.setIntegral(integral.getOkIntegral());
+        }
+        
+        /**
+         * 微信信息
+         */
+        BbcUserVO.ThirdVO thirdVO = iBbcUserAuthRpc.innerGetWXNickName(dto.getJwtUserId());
+        if (ObjectUtils.isNotEmpty(thirdVO)){
+            detailVO.setNickName(thirdVO.getNickName());
+        }
+        return detailVO;
+	}
 
 }

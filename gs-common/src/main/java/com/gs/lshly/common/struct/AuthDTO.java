@@ -12,6 +12,9 @@ import java.util.List;
 @Accessors(chain = true)
 public class AuthDTO implements Serializable {
 
+	@ApiModelProperty("token")
+	private String token;
+	
     @ApiModelProperty("用户id")
     private String id;
 

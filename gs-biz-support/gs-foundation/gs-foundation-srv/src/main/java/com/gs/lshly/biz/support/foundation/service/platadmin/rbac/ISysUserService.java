@@ -1,12 +1,12 @@
 package com.gs.lshly.biz.support.foundation.service.platadmin.rbac;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
-
-import java.util.List;
 
 /**
  * <p>
@@ -43,4 +43,23 @@ public interface ISysUserService {
     void addUserRolePermit(SysUserDTO.UserRoleETO eto);
 
     void deleteUserRolePermit(SysUserDTO.UserRoleETO eto);
+    
+    /**
+     * 跟据手机号码获取验证码
+     * @param dto
+     */
+    void getPhoneValidCode(SysUserDTO.GetPhoneValidCodeDTO dto) ;
+    
+    /**
+     * 登录登录
+     * @param dto
+     */
+    AuthDTO login(SysUserDTO.LoginDTO dto);
+    
+    /**
+     * 验证手机号码，密码
+     * @param dto
+     * @return
+     */
+    Boolean checkPhoneCode(SysUserDTO.CheckDTO dto);
 }

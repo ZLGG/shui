@@ -1203,7 +1203,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 		ret.setId("inmembergoods");
 		ret.setName("IN会员精口专区");
 		ret.setImageUrl("https://lingang-app-bete.oss-cn-shanghai.aliyuncs.com/admin/2021/03/30/1617118074782.png");
-		ret.setTelecomsIntegral(0l);
+		ret.setTelecomsIntegral(0);
 		String userId = qto.getJwtUserId();
 		if(StringUtils.isNotEmpty(userId)){
 			BbcUserCtccPointVO.DetailVO detailvo= bbcUserCtccPointRpc.getCtccPointByUserId(userId);

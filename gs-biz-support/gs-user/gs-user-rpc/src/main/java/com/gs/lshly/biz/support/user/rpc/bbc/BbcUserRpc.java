@@ -4,6 +4,7 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO.DetailVO;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,12 @@ public class BbcUserRpc implements IBbcUserRpc {
     public List<BbcUserVO.UserIntegralRecordVO> integralLog(BbcUserDTO.IntegralLogQTO qto) {
         return bbcUserService.integralLog(qto);
     }
+
+	@Override
+	public DetailVO getUserInfoNoLogin(BaseDTO dto) {
+		// TODO Auto-generated method stub
+		return bbcUserService.getUserInfoNoLogin(dto);
+	}
 
 
 }

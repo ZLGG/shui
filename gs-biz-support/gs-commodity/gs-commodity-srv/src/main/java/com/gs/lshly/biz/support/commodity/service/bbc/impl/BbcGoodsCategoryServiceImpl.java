@@ -203,11 +203,13 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
     private List<BbcGoodsCategoryVO.CategoryTreeVO> goodsCategoryList(List<BbcGoodsCategoryVO.CategoryTreeVO> list,
                                                                       List<BbcGoodsCategoryVO.CategoryTreeVO> resultVO) {
-        for (BbcGoodsCategoryVO.CategoryTreeVO treeVO : list) {
-            resultVO.add(treeVO);
-            if (treeVO.getList() != null) {
-                goodsCategoryList(treeVO.getList(), resultVO);
-            }
+        if(CollectionUtils.isNotEmpty(list)){
+	    	for (BbcGoodsCategoryVO.CategoryTreeVO treeVO : list) {
+	            resultVO.add(treeVO);
+	            if (treeVO.getList() != null) {
+	                goodsCategoryList(treeVO.getList(), resultVO);
+	            }
+	        }
         }
         return resultVO;
     }

@@ -1,7 +1,18 @@
 package com.gs.lshly.biz.support.user.service.platadmin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
@@ -12,9 +23,16 @@ import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.mapper.UserMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
 import com.gs.lshly.biz.support.user.mapper.view.UserView;
-import com.gs.lshly.biz.support.user.repository.*;
+import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
+import com.gs.lshly.biz.support.user.repository.IUserLabelRepository;
+import com.gs.lshly.biz.support.user.repository.IUserLeveDictRepository;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.service.platadmin.IUserService;
-import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.BusinessTypeEnum;
+import com.gs.lshly.common.enums.EdAbleStateEnum;
+import com.gs.lshly.common.enums.LegalTypeEnum;
+import com.gs.lshly.common.enums.UserStateEnum;
+import com.gs.lshly.common.enums.UserTypeEnum;
 import com.gs.lshly.common.enums.user.TimePropEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -27,17 +45,6 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
-import io.swagger.annotations.ApiModelProperty;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * <p>

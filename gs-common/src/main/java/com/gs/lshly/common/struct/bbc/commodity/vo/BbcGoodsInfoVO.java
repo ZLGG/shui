@@ -138,7 +138,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private String imageUrl;
         
         @ApiModelProperty("积分值")
-        private Long telecomsIntegral;
+        private Integer telecomsIntegral;
 	}
 
     @Data
@@ -785,6 +785,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
 		@ApiModelProperty("优惠券分类列表")
 		private List<Map<String,Object>> couponTypes;
+		
+		@ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+		
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Boolean isInUser;
     }
 
 }

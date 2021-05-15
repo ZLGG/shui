@@ -1,10 +1,10 @@
 package com.gs.lshly.biz.support.user.service.platadmin;
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.qto.UserQTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
-
-import java.util.List;
 
 /**
  * @author xxfc
@@ -116,5 +116,5 @@ public interface IUserService {
     UserVO.ListVO innerByPhone(String phone);
 
     UserVO.ListVO innerSave2BUser(UserDTO.InnerETO eto);
-
+    
 }
