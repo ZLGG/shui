@@ -1,10 +1,13 @@
 package com.gs.lshly.facade.platform.controller.user;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.AuthDTO;
-import com.gs.lshly.common.struct.JwtUser;
-import com.gs.lshly.common.struct.PermitNode;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
-import com.gs.lshly.common.utils.JwtUtil;
-import com.gs.lshly.middleware.auth.rbac.RbacContants;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
+import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.log.Log;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.vcode.kaptcha.CaptchaService;
@@ -46,9 +47,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SysUserAuthController {
 	
 	
-    @Autowired
-    private RedisUtil redisUtil;
-
     @DubboReference
     private ISysAccountAuthRpc sysAccountAuthRpc;
 	
@@ -70,50 +68,46 @@ public class SysUserAuthController {
     @Value("${auth.prefixs}")
     private String[] authUriPrefix;
     
+    @Autowired
     private CaptchaService captchaService;
 
-	@ApiOperation("通过手机号码验证码-v1.1.0")
+	@ApiOperation("2、通过手机号码验证码-v1.1.0")
     @PostMapping("/getPhoneCheck")
     public ResponseData<Void> getPhoneCheck(@Valid @RequestBody SysUserDTO.GetPhoneValidCodeDTO dto) {
     	sysUserRpc.getPhoneValidCode(dto);
         return ResponseData.success("短信发送成功");
     }
 
-    @ApiOperation("登录-v1.1.0")
+    @ApiOperation("3、通过手机号码+验证码登录-v1.1.0")
     @PostMapping("/loginByPhone")
     @Log(module = "登陆", func = "后台管理员-手机验证码")
     public ResponseData<Void> login(@Valid @RequestBody SysUserDTO.LoginDTO dto) {
+    	
     	AuthDTO auth = sysUserRpc.login(dto);
-    	return ResponseData.data(UserDetailsService.loadUserByUsername(auth.getUsername()));
-    	
-    	/**
-    	 * 
-    	 
-    	PermitNode allPermitNode = (PermitNode)redisUtil.get(RbacContants.SESSION_PERMIT_PREFIX + terminal + RbacContants.ALL_PERMIT);
-
-    	String token = JwtUtil.createToken(new JwtUser(auth));
-    	auth.setToken(token);
-    	
-    	auth.setPermitFuncs(permitFuncs);
-    	
     	return ResponseData.data(auth);
-    	*/
-    	
     }
+
     
-    @ApiOperation("验证用户名+密码-v1.1.0")
-    @PostMapping("/loginByPhone")
+    @ApiOperation("1、验证用户名+密码是否正确-v1.1.0")
+    @PostMapping("/checkPhonePassword")
     @Log(module = "验证用户名+密码", func = "后台管理员-手机验证码")
-    public ResponseData<Boolean> checkPhoneCode(@Valid @RequestBody SysUserDTO.CheckDTO dto) {
+    public ResponseData<Boolean> checkPhonePassword(@Valid @RequestBody SysUserDTO.CheckDTO dto) {
     	String vcId = dto.getVcId();
         String vcode = dto.getVcode();
         
         if(captchaService.match(vcId, vcode)) {
-        	return ResponseData.data(sysUserRpc.checkPhoneCode(dto));
+        	SysUserVO.DetailVO userDetails = sysUserRpc.getSysUserByName(dto.getUsername());
+            if (userDetails == null || StringUtils.isEmpty(userDetails.getId())) {
+                throw new BusinessException("找不到该用户");
+            }
+            if(PwdUtil.matches(dto.getPassword(), userDetails.getPwd())){
+            	return ResponseData.data(true);
+            }else{
+            	throw new BusinessException("密码出错输入出错！");
+            }
         }else{
         	throw new BusinessException("验证码输入出错！");
         }
-    	
     }
 
 }

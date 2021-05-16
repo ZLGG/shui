@@ -29,6 +29,8 @@ import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.Login
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysFuncVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO.DetailVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
@@ -256,10 +258,24 @@ public class SysUserServiceImpl implements ISysUserService {
 		 * 验证验证码
 		 */
 		
-		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", dto.getUsername()).eq("pwd", PwdUtil.encode(dto.getPassword())));
+		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", dto.getUsername()));
         if(user!=null){
-        	return true;
+        	if(PwdUtil.matches(dto.getPassword(),user.getPwd())){
+        		return true;
+        	}else{
+        		throw new BusinessException("密码输入错误！");
+        	}
         }
-        throw new BusinessException("帐号密码输入出错");
+        throw new BusinessException("帐号不存在！");
+	}
+
+	@Override
+	public DetailVO getSysUserByName(String name) {
+		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", name));
+		DetailVO detailVO = new DetailVO();
+		if(user!=null){
+			BeanCopyUtils.copyProperties(user, detailVO);
+		}
+		return detailVO;
 	}
 }

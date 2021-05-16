@@ -25,6 +25,13 @@ public interface ISysUserService {
     void disable(SysUserDTO.IdDTO dto);
 
     SysUserVO.DetailVO detail(SysUserDTO.IdDTO dto);
+    
+    /**
+     * 跟据登录名查询用户信息
+     * @param name
+     * @return
+     */
+    SysUserVO.DetailVO getSysUserByName(String name);
 
     void changePassword(SysUserDTO.EditPasswordDTO dto);
 

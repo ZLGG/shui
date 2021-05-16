@@ -59,4 +59,11 @@ public interface ISysUserRpc {
      * @return
      */
     Boolean checkPhoneCode(SysUserDTO.CheckDTO dto);
+    
+    /**
+     * 跟据用户名查询用户
+     * @param name
+     * @return
+     */
+    SysUserVO.DetailVO getSysUserByName(String name);
 }

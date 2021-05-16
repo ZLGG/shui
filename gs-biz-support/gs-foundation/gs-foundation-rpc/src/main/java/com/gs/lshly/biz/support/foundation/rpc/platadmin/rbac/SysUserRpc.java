@@ -17,6 +17,7 @@ import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.GetPh
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.LoginDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO.DetailVO;
 import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.platadmin.foundation.rbac.ISysUserRpc;
 
@@ -120,5 +121,11 @@ public class SysUserRpc implements ISysUserRpc {
 	@Override
 	public Boolean checkPhoneCode(CheckDTO dto) {
 		return sysUserService.checkPhoneCode(dto);
+	}
+
+	@Override
+	public DetailVO getSysUserByName(String name) {
+		// TODO Auto-generated method stub
+		return sysUserService.getSysUserByName(name);
 	}
 }

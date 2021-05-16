@@ -56,9 +56,9 @@ public class PCMerchFrontController {
     @ApiOperation("检查用户名是否存在")
     @GetMapping("/checkUserName")
     public ResponseData<Boolean> checkUserName(String userName, String vcId, String vcode) {
-        if (!captchaService.match(vcId, vcode)) {
-            return ResponseData.fail("验证码错误");
-        }
+//        if (!captchaService.match(vcId, vcode)) {
+//            return ResponseData.fail("验证码错误");
+//        }
         return ResponseData.data(pcMerchMerchantAccountRpc.checkUserName(new PCMerchMerchantAccountDTO.CheckUserNameDTO(userName)));
     }
 
