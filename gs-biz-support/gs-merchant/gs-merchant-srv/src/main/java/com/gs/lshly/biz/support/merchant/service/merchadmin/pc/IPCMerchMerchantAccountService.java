@@ -22,6 +22,8 @@ public interface IPCMerchMerchantAccountService {
 
     PCMerchMerchantAccountVO.DetailVO detailMerchantAccount(PCMerchMerchantAccountDTO.IdDTO dto);
 
+    PCMerchMerchantAccountVO.AccountDetailVO getByPhone(String phone);
+    
     void updatePassworld(PCMerchMerchantAccountDTO.PassworldETO eto);
 
     PCMerchMerchantAccountVO.CheckShopVO checkShop(BaseDTO dto);

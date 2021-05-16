@@ -1,5 +1,14 @@
 package com.gs.lshly.biz.support.merchant.service.merchadmin.pc.impl;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -26,21 +35,19 @@ import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMerchantAccountQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
-import com.gs.lshly.common.utils.*;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO.AccountDetailVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.CheckEmailUtils;
+import com.gs.lshly.common.utils.JwtUtil;
+import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mail.Email;
 import com.gs.lshly.middleware.mail.IMailService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * <p>
@@ -96,12 +103,15 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
 
     @Override
     public String regMerchantAccount(PCMerchMerchantAccountDTO.RegDTO eto) {
-        //校验验证码
+        /**
+         * 校验验证码
+
         Object code = redisUtil.get(PhoneValidCodeGroup + eto.getPhone());
         String validCode = code != null ? code + "" : "";
         if (!StringUtils.equals(validCode, eto.getVcode())) {
             throw new BusinessException("验证码不匹配");
         }
+                 */
         if(!eto.getUserPwd().equals(eto.getUserPwdCfm())){
             throw new BusinessException("确认密码输入错误");
         }
@@ -467,6 +477,19 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
     static int randomCode() {
         return 100_000 + ThreadLocalRandom.current().nextInt(1_000_000 - 100_000);
     }
+
+
+	@Override
+	public AccountDetailVO getByPhone(String phone) {
+		QueryWrapper<MerchantAccount> userQueryWrapper = MybatisPlusUtil.query();
+        userQueryWrapper.eq("phone",phone);
+        MerchantAccount merchantAccount = repository.getOne(userQueryWrapper);
+        AccountDetailVO detailVO = new AccountDetailVO();
+        if(merchantAccount!=null){
+        	BeanCopyUtils.copyProperties(merchantAccount, detailVO);
+        }
+		return detailVO;
+	}
 
 
 

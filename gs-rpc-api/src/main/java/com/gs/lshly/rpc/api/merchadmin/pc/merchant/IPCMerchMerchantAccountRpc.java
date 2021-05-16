@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.merchadmin.pc.merchant;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantAccountDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchantAccountLoginDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMerchantAccountQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
 
@@ -41,4 +42,12 @@ public interface IPCMerchMerchantAccountRpc {
     String forgetByEmail(PCMerchMerchantAccountDTO.ForgetByEmailETO dto);
 
     void getEmailNum(String email);
+    
+    /**
+     * 跟据手机号码查询商户帐户
+     * @param phone
+     * @return
+     */
+    PCMerchMerchantAccountVO.AccountDetailVO getByPhone(String phone);
+    
 }

@@ -1,14 +1,16 @@
 package com.gs.lshly.biz.support.merchant.rpc.merchadmin.pc;
 
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.gs.lshly.biz.support.merchant.service.merchadmin.pc.IPCMerchMerchantAccountService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMerchantAccountQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO.AccountDetailVO;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountRpc;
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
 *
@@ -97,6 +99,11 @@ public class PCMerchMerchantAccountRpc implements IPCMerchMerchantAccountRpc{
     public void getEmailNum(String email) {
         pCMerchMerchantAccountService.getEmailNum(email);
     }
+
+	@Override
+	public AccountDetailVO getByPhone(String phone) {
+		return pCMerchMerchantAccountService.getByPhone(phone);
+	}
 
 
 }
