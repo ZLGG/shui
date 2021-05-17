@@ -3,8 +3,10 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.IdListDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SummationVO;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserShoppingCarService;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -72,5 +74,10 @@ public class BbcUserShoppingCarRpc implements IBbcUserShoppingCarRpc{
     public boolean innerClearShopCarList(List<String> shoppingCarList) {
         return bbcUserShoppingCarService.innerClearShopCarList(shoppingCarList);
     }
+
+	@Override
+	public SummationVO summationUserShoppingCar(IdListDTO dto) {
+		return bbcUserShoppingCarService.summationUserShoppingCar(dto);
+	}
 
 }

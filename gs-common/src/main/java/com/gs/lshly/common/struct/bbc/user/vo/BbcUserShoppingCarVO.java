@@ -1,20 +1,21 @@
 package com.gs.lshly.common.struct.bbc.user.vo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
 * @author xxfc
 * @since 2020-10-28
 */
+@SuppressWarnings("serial")
 public abstract class BbcUserShoppingCarVO implements Serializable {
 	
 	@Data
@@ -107,6 +108,24 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         private Integer count;
     }
 
+    /**
+     * 购物车总计
+     *
+     * 
+     * @author yingjun
+     * @date 2021年5月17日 下午12:47:25
+     */
+	@Data
+    @ApiModel("BbcUserShoppingCarVO.SummationVO")
+    public static class SummationVO implements Serializable{
+    	
+    	@ApiModelProperty("现金价格")
+        private BigDecimal price;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+        
+    }
 
 
     @Data

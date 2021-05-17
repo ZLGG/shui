@@ -28,4 +28,11 @@ public interface IBbcUserShoppingCarService {
     ResponseData<BbcUserShoppingCarVO.InnerSimpleVO> innerSimpleShoppingCarlist(BbcUserShoppingCarDTO.InnerIdListDTO dto);
 
     boolean innerClearShopCarList(List<String> shoppingCarList);
+    
+    /**
+     * 总计总价格
+     * @param dto
+     * @return
+     */
+    BbcUserShoppingCarVO.SummationVO summationUserShoppingCar(BbcUserShoppingCarDTO.IdListDTO dto);
 }

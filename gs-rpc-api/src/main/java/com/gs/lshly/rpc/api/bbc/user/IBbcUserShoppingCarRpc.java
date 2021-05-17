@@ -51,5 +51,12 @@ public interface IBbcUserShoppingCarRpc {
      * @return
      */
     boolean innerClearShopCarList(List<String> shoppingCarList);
+    
+    /**
+     * 购物车总计
+     * @param dto
+     * @return
+     */
+    BbcUserShoppingCarVO.SummationVO summationUserShoppingCar(BbcUserShoppingCarDTO.IdListDTO dto);
 
 }

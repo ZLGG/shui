@@ -1,10 +1,12 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,10 +14,10 @@ import org.springframework.stereotype.Component;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.UserShoppingCar;
 import com.gs.lshly.biz.support.user.mapper.UserShoppingCarMapper;
 import com.gs.lshly.biz.support.user.repository.IUserShoppingCarRepository;
+import com.gs.lshly.biz.support.user.service.bbc.IBbcUserService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserShoppingCarService;
 import com.gs.lshly.common.enums.QuantityLocationEnum;
 import com.gs.lshly.common.enums.StockCheckStateEnum;
@@ -27,9 +29,12 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.IdListDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShoppingCarItemVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SummationVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -56,6 +61,9 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
 
     @Autowired
     private UserShoppingCarMapper userShoppingCarMapper;
+    
+    @Autowired
+    private IBbcUserService bbcUserService;
 
     @DubboReference
     private IBbcShopRpc bbcShopRpc;
@@ -488,4 +496,59 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         }
         return false;
     }
+
+	@Override
+	public SummationVO summationUserShoppingCar(IdListDTO dto) {
+		if (null == dto.getJwtUserId()) {
+            throw new BusinessException("没有登录");
+        }
+		BigDecimal price = new BigDecimal("0.00");
+		BigDecimal pointPrice = new BigDecimal("0.00");
+		
+        if (ObjectUtils.isNotEmpty(dto.getIdList())) {
+        	UserShoppingCar userShoppingCar = null;
+        	for(String id:dto.getIdList()){
+        		userShoppingCar = userShoppingCarMapper.selectById(id);
+        		
+        		Boolean isPointGood = userShoppingCar.getIsPointGood();
+        		if(isPointGood!=null&&isPointGood){	//是积分商品
+        			BigDecimal goodsPointPrice = userShoppingCar.getGoodsPointPrice();
+        			if(goodsPointPrice!=null){
+        				pointPrice = pointPrice.add(goodsPointPrice);
+        			}
+        		}else{
+        			BigDecimal goodsPrice = userShoppingCar.getGoodsPrice();
+        			if(goodsPrice!=null){
+        				price = price.add(goodsPrice);
+        			}
+        		}
+        	}
+        }
+        
+        /**
+         * 判断当前用户的状态
+         * 100积分=1元钱
+         */
+        BbcUserVO.DetailVO detailVO = bbcUserService.getUserInfoNoLogin(dto);
+        if(detailVO!=null&&StringUtils.isNotEmpty(detailVO.getId())&&detailVO.getIsInUser().equals(1)){//积分用户
+        	Integer telecomsIntegralInt = detailVO.getTelecomsIntegral();
+        	BigDecimal telecomsIntegral = new BigDecimal(telecomsIntegralInt+"");
+        	if(pointPrice.compareTo(telecomsIntegral)>0){
+        		BigDecimal bigIntegral = pointPrice.subtract(telecomsIntegral);//需要多付这些积分
+        		BigDecimal bigPrice = bigIntegral.divide(new BigDecimal("100"));//还要多给的现金
+        		price =price.add(bigPrice);
+        		
+        		pointPrice = telecomsIntegral;
+        	}
+        }else{
+        	BigDecimal bigPrice = pointPrice.divide(new BigDecimal("100"));//还要多给的现金
+    		price =price.add(bigPrice);
+    		pointPrice = new BigDecimal("0.00");
+        }
+        SummationVO summationVO = new SummationVO();
+        summationVO.setPointPrice(pointPrice);
+        summationVO.setPrice(price);
+        
+        return summationVO;
+	}
 }
