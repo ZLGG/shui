@@ -41,12 +41,12 @@ public abstract class BbcUserCtccPointVO implements Serializable {
 		/**
 		 * 积分余额
 		 */
-		private Long pointBalance;
+		private Integer pointBalance;
 
 		/**
 		 * 年末到期积分
 		 */
-		private Long yearBalance;
+		private Integer yearBalance;
 
 		/**
 		 * 积分类型组编码

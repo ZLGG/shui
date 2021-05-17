@@ -42,9 +42,6 @@ import java.util.List;
 public class BbbH5ComplexHomeServiceImpl implements IBbbH5ComplexHomeService {
 
     @Autowired
-    private ISiteAdvertRepository siteAdvertRepository;
-
-    @Autowired
     private ISiteBannerRepository siteBannerRepository;
 
     @Autowired

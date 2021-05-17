@@ -23,7 +23,7 @@ public interface IPCMerchMerchantAccountAuthRpc {
     AuthDTO loadUserByWxOpenid(String sessionOpenid, String sessionKey);
 
     AuthDTO login(String openid, String username, String password);
-
+    
     void getPhoneValidCode(CommonPhoneLoginDTO.GetPhoneValidCode dto);
 
     BbbUserVO.LoginVO login(CommonPhoneLoginDTO.Login dto);

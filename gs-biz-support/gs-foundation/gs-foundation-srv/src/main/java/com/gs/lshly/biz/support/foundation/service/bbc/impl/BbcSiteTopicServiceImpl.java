@@ -402,6 +402,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
         wrapper.eq("is_default", TrueFalseEnum.是.getCode());
         wrapper.eq("onoff", TrueFalseEnum.是.getCode());
         wrapper.eq("category", category);
+        wrapper.orderByAsc("idx");
         List<SiteTopic> listDefault = repository.list(wrapper);
         if(CollectionUtils.isNotEmpty(listDefault))
         	retList = BeanUtils.copyList(CategoryDetailVO.class, listDefault);

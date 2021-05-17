@@ -29,6 +29,8 @@ public class PwdUtil {
         System.out.println(matches("123456", pwd1));
 
         System.out.println(matches("123456", pwd2));
+        
+        System.out.println(matches("123456qq", "$2a$10$8kruZbdH2iUprpUps3CAHusIL8oQCld62OJhE0h1abU3cNNID9BXq"));
     }
 
 }

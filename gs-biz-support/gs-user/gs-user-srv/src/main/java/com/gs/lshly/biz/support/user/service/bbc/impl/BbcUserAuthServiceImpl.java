@@ -85,6 +85,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     public static BbcUserVO.LoginVO userToLoginVO(User user, String openid) {
         BbcUserVO.LoginVO vo = new BbcUserVO.LoginVO();
         AuthDTO authDTO = userToAuthDTO(user);
+        log.info("[userToLoginVO][AuthDTO=>{}]",authDTO);
         JwtUser jwtUser = new JwtUser(authDTO);
         BeanCopyUtils.copyProperties(user, vo);
         jwtUser.setWxOpenid(openid);

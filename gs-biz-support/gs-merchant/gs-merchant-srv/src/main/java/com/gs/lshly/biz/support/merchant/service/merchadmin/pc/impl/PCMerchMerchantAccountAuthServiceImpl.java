@@ -20,6 +20,7 @@ import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.dto.CommonPhoneLoginDTO;
 import com.gs.lshly.common.struct.merchadmin.h5.merchant.dto.H5MerchMerchantAccountDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -44,6 +45,8 @@ import java.util.List;
 @Slf4j
 public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAccountAuthService {
 
+    private static final String PhoneValidCodeGroup = "PhoneValidCode_";
+    
     private static final String H5PhoneUser = "h5Phone_User_";
     private static final String WxOpenidUser = "wxOpenid_User_";
     private static final String WxOpenidSessionKey = "wxOpenid_SessionKey_";
@@ -175,11 +178,25 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     @Override
     public void getPhoneValidCode(CommonPhoneLoginDTO.GetPhoneValidCode dto) {
         //查询账号手机，如果有多个一样的手机则无法用手机号登陆
+    	smsService.sendLoginSMSCode(dto.getPhone());
     }
 
     @Override
     public BbbUserVO.LoginVO login(CommonPhoneLoginDTO.Login dto) {
-        return null;
+    	Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
+        String validCode = code != null ? code + "" : "";
+        if (!StringUtils.equals(validCode, dto.getValidCode())) {
+            throw new BusinessException("验证码不匹配");
+        }
+    	MerchantAccount user = repository.getOne(new QueryWrapper<MerchantAccount>().eq("phone", dto.getPhone()));
+    	BbbUserVO.LoginVO loginVO= new BbbUserVO.LoginVO();
+    	if (user != null) {
+            //返回登录所需信息
+    		AuthDTO authDTO = merchantUserToAuthDTO(user);
+    		BeanCopyUtils.copyProperties(authDTO, loginVO);
+    		return loginVO;
+        }
+    	throw new BusinessException("跟据手机号码未找到帐户");
     }
 
     @Override

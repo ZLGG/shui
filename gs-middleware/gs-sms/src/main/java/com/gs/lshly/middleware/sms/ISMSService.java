@@ -20,4 +20,5 @@ public interface ISMSService {
     String sendSettlementFaildSMSCode(String phone,String shopName,String siteName,String reason);
 
     String sendSettlementInformSMSCode(String phone,String shopName);
+    
 }

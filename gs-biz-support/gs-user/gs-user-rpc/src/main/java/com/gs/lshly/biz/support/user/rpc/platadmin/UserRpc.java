@@ -1,19 +1,18 @@
 package com.gs.lshly.biz.support.user.rpc.platadmin;
 
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.ExportDataDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
-import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
-import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO.GetPhoneValidCodeDTO;
-import com.gs.lshly.common.struct.platadmin.user.qto.UserQTO;
-import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
-import com.gs.lshly.biz.support.user.service.platadmin.IUserService;
-import com.gs.lshly.common.utils.ExcelUtil;
-import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import com.gs.lshly.biz.support.user.service.platadmin.IUserService;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.ExportDataDTO;
+import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
+import com.gs.lshly.common.struct.platadmin.user.qto.UserQTO;
+import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
+import com.gs.lshly.common.utils.ExcelUtil;
+import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
 
 /**
  * @author xxfc
@@ -120,12 +119,5 @@ public class UserRpc implements IUserRpc {
     public UserVO.ListVO innerSave2BUser(UserDTO.InnerETO eto) {
         return userService.innerSave2BUser(eto);
     }
-
-	@Override
-	public void getPhoneValidCode(GetPhoneValidCodeDTO dto) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 }

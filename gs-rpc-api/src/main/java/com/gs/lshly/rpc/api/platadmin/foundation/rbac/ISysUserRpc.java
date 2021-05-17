@@ -1,13 +1,14 @@
 package com.gs.lshly.rpc.api.platadmin.foundation.rbac;
 
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
-
-import java.util.List;
 
 /**
  *
@@ -39,4 +40,30 @@ public interface ISysUserRpc {
     void addUserRolePermit(SysUserDTO.UserRoleETO eto);
 
     void deleteUserRolePermit(SysUserDTO.UserRoleETO eto);
+    
+    /**
+     * 跟据手机号码获取验证码
+     * @param dto
+     */
+    void getPhoneValidCode(SysUserDTO.GetPhoneValidCodeDTO dto);
+    
+    /**
+     * 
+     * @param dto
+     */
+    AuthDTO login(SysUserDTO.LoginDTO dto);
+    
+    /**
+     * 验证手机号码密码验证码
+     * @param dto
+     * @return
+     */
+    Boolean checkPhoneCode(SysUserDTO.CheckDTO dto);
+    
+    /**
+     * 跟据用户名查询用户
+     * @param name
+     * @return
+     */
+    SysUserVO.DetailVO getSysUserByName(String name);
 }

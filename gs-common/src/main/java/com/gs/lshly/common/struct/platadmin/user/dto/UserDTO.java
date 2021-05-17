@@ -19,7 +19,8 @@ import lombok.experimental.Accessors;
 */
 @SuppressWarnings("serial")
 public abstract class UserDTO implements Serializable {
-
+	
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.AddETO")
     @Accessors(chain = true)
@@ -52,6 +53,7 @@ public abstract class UserDTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.ETO")
     @Accessors(chain = true)
@@ -74,6 +76,7 @@ public abstract class UserDTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.PassworldETO")
     @Accessors(chain = true)
@@ -90,6 +93,7 @@ public abstract class UserDTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.Integral")
     @Accessors(chain = true)
@@ -106,6 +110,7 @@ public abstract class UserDTO implements Serializable {
         private LocalDateTime endTime;
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.Leve")
     @Accessors(chain = true)
@@ -122,6 +127,7 @@ public abstract class UserDTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.IdDTO")
     @AllArgsConstructor
@@ -130,6 +136,7 @@ public abstract class UserDTO implements Serializable {
         private String id;
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.IdListDTO")
     public static class IdListDTO extends BaseDTO {
@@ -137,6 +144,7 @@ public abstract class UserDTO implements Serializable {
         private List<String> idList;
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.IdListDTO")
     @Accessors(chain = true)
@@ -149,6 +157,7 @@ public abstract class UserDTO implements Serializable {
         private String leveId;
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.SetLabelDTO")
     @Accessors(chain = true)
@@ -162,6 +171,7 @@ public abstract class UserDTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.ExportDTO")
     @Accessors(chain = true)
@@ -172,6 +182,7 @@ public abstract class UserDTO implements Serializable {
 
     }
 
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("UserDTO.InnerETO")
     @Accessors(chain = true)
@@ -198,20 +209,4 @@ public abstract class UserDTO implements Serializable {
         private Integer state;
     }
     
-    /**
-     * 跟据手机号码获取验证码
-     *
-     * 
-     * @author yingjun
-     * @date 2021年5月13日 下午4:34:43
-     */
-	@Data
-	@EqualsAndHashCode(callSuper=false)
-    @ApiModel("UserDTO.GetPhoneValidCodeDTO")
-    @Accessors(chain = true)
-    public static class GetPhoneValidCodeDTO extends BaseDTO{
-    	 @ApiModelProperty(value = "手机号码")
-         private String phone;
-    }
-
 }

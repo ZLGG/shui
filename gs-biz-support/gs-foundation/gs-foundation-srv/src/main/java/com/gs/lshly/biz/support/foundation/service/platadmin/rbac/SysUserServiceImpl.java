@@ -1,6 +1,13 @@
 package com.gs.lshly.biz.support.foundation.service.platadmin.rbac;
 
-import cn.hutool.core.util.StrUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gs.lshly.biz.support.foundation.entity.SysUser;
@@ -16,17 +23,21 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.CheckDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.GetPhoneValidCodeDTO;
+import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.LoginDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysFuncVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO.DetailVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.gs.lshly.middleware.redis.RedisUtil;
+import com.gs.lshly.middleware.sms.ISMSService;
 
-import java.util.ArrayList;
-import java.util.List;
+import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -35,8 +46,12 @@ import java.util.List;
  * @author lxus
  * @since 2020-09-14
  */
+@SuppressWarnings({"unchecked","rawtypes"})
+@Slf4j
 @Component
 public class SysUserServiceImpl implements ISysUserService {
+	
+    private static final String PhoneValidCodeGroup = "PlatformPhone_User_";
 
     @Autowired
     private ISysUserRepository repository;
@@ -49,12 +64,18 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private ISysFuncRepository funcRepository;
-
+    
+    @Autowired
+    private ISMSService smsService;
+    
+    @Autowired
+    private RedisUtil redisUtil;
+    
     @Override
     public PageData<SysUserVO.ListVO> pageData(SysUserQTO.QTO qoDTO) {
         QueryWrapper<SysUser> wq =  MybatisPlusUtil.query();
         MybatisPlusUtil.like(qoDTO, wq, "name");
-        IPage<SysUser> page = MybatisPlusUtil.pager(qoDTO);
+		IPage<SysUser> page = MybatisPlusUtil.pager(qoDTO);
         repository.page(page, wq);
         return MybatisPlusUtil.toPageData(qoDTO, SysUserVO.ListVO.class, page);
     }
@@ -117,7 +138,7 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Override
     public void uniqueCheck(SysUserDTO.ETO dto) {
-        QueryWrapper qw = new QueryWrapper<SysUser>().eq("name", dto.getName());
+		QueryWrapper qw = new QueryWrapper<SysUser>().eq("name", dto.getName());
         if (dto.getId() != null) {
             qw.ne("id", dto.getId());
         }
@@ -175,4 +196,86 @@ public class SysUserServiceImpl implements ISysUserService {
     public void deleteUserRolePermit(SysUserDTO.UserRoleETO eto) {
         userRoleRepository.remove(new QueryWrapper<SysUserRole>().eq("user_id", eto.getUserId()).in("role_id", eto.getRoleIds()));
     }
+
+	@Override
+	public void getPhoneValidCode(GetPhoneValidCodeDTO dto) {
+		//通过手机查找是已经注册了会员，如果已经注册，则发送用户登陆验证码，否则发送注册验证码
+        SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", dto.getPhone()));
+        String validCode = null;
+        try {
+            if (user != null) {
+                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+            } else {
+            	throw new BusinessException("跟据手机号码未获取到对应帐号");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
+        }
+        //验证码失效时间10分账
+        log.info("运营平台跟据手机号码获取验证码登录-手机号码："+dto.getPhone()+"-验证码："+validCode);
+        redisUtil.set(PhoneValidCodeGroup + dto.getPhone(), validCode, 10 * 60);
+		
+	}
+
+	@Override
+	public AuthDTO login(LoginDTO dto) {
+		
+		// 校验验证码
+		Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
+		String validCode = code != null ? code + "" : "";
+		log.info("获取-手机号码：" + dto.getPhone() + "-验证码：" + validCode);
+		if (!StringUtils.equals(validCode, dto.getValidCode())) {
+			throw new BusinessException("验证码不匹配");
+		}
+		
+		AuthDTO authDTO = new AuthDTO();
+		
+		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", dto.getPhone()));
+        authDTO = merchantUserToAuthDTO(user);
+        
+        return this.findByUserName(authDTO.getUsername());
+        
+	}
+	
+	private AuthDTO merchantUserToAuthDTO(SysUser user) {
+        if (user == null) {
+            return null;
+        }
+        AuthDTO authDTO =  new AuthDTO();
+        authDTO.setId(user.getId())
+                .setPassword(user.getPwd())
+                .setUsername(user.getName())
+                .setHeadImg(user.getHeadImg())
+                .setState(user.getState());
+        return authDTO;
+    }
+
+	@Override
+	public Boolean checkPhoneCode(CheckDTO dto) {
+		
+		/**
+		 * 验证验证码
+		 */
+		
+		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", dto.getUsername()));
+        if(user!=null){
+        	if(PwdUtil.matches(dto.getPassword(),user.getPwd())){
+        		return true;
+        	}else{
+        		throw new BusinessException("密码输入错误！");
+        	}
+        }
+        throw new BusinessException("帐号不存在！");
+	}
+
+	@Override
+	public DetailVO getSysUserByName(String name) {
+		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", name));
+		DetailVO detailVO = new DetailVO();
+		if(user!=null){
+			BeanCopyUtils.copyProperties(user, detailVO);
+		}
+		return detailVO;
+	}
 }

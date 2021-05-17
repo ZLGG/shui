@@ -59,8 +59,8 @@ public interface IBbcTradeRpc {
      * @return
      */
     int innerMonthSaleNum(String goodsId);
-    Integer myMerchantCard(BaseDTO dto);
 
+    Integer myMerchantCard(BaseDTO dto);
     /**
      * 获取商品数量
      * @param id
