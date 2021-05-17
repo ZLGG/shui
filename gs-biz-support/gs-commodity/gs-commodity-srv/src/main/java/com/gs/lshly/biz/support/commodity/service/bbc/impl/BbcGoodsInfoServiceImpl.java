@@ -462,7 +462,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (MallCategoryEnum.我能兑换.getCode().equals(qto.getSearchEntry())) {
             System.out.println(qto.getUserId());
             if (StringUtils.isBlank(qto.getUserId()) || qto.getOkIntegral() == null) {
-                throw new BusinessException("请登陆后查询我能兑换的积分商品");
+                throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
             boost.lt("point_price",qto.getOkIntegral());
             boost.eq("is_point_good",true);
