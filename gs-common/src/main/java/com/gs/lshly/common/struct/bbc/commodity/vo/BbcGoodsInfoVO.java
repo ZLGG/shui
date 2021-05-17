@@ -376,6 +376,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品id")
         private String goodsId;
 
+        @JsonIgnore
+        private String id;
+
         @ApiModelProperty("商品默认图片")
         private String goodsImage;
 
@@ -623,6 +626,33 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("积分价格")
         private Double pointPrice;
 
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoVO.RecommendGoodsVO")
+    public static class RecommendGoodsVO implements Serializable {
+
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("品牌id")
+        @JsonIgnore
+        private String brandId;
+
+        @ApiModelProperty("品牌名称")
+        private String brandName;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
     }
 
     @Data
