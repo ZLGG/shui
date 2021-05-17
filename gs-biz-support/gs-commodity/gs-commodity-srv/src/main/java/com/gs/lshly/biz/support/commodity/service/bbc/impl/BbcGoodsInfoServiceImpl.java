@@ -1222,6 +1222,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         List<BbcGoodsInfoVO.DetailVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.DetailVO.class,goodsInfoIPage.getRecords());
         if(CollectionUtils.isNotEmpty(categoryGoodsVOS)){
         	for(BbcGoodsInfoVO.DetailVO detailVO:categoryGoodsVOS){
+        	    detailVO.setGoodsId(detailVO.getId());
         		String goodsId = detailVO.getGoodsId();
         		//查询标签
                 detailVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsId));

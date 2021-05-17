@@ -2,6 +2,7 @@ package com.gs.lshly.facade.bbc.controller.h5.merchant;
 import com.gs.lshly.common.enums.PcH5Enum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopNavigationVO;
@@ -104,7 +105,6 @@ public class BbcShopController {
     public ResponseData<BbcShopVO.ShopIdName> getMerchantArticleDetail(@PathVariable String articleId) {
         return ResponseData.data(commonMerchantArticleRpc.detailMerchantArticle(new CommonMerchantArticleDTO.IdDTO(articleId)));
     }
-
 
 //
 //    @ApiOperation("店铺文本导航")

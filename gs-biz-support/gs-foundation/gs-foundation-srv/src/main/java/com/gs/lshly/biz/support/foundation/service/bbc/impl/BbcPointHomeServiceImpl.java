@@ -87,7 +87,8 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.分类.getCode());
 		listVO.setIdx(PointHomeTypeEnum.分类.getIdx());
 		listVO.setName(PointHomeTypeEnum.分类.getRemark());
-		listVO.setList(goodsCategoryRpc.selectCategoryTreeWithGoods());
+		listVO.setList(goodsCategoryRpc.selectCategoryTree());
+//		listVO.setList(goodsCategoryRpc.selectCategoryTreeWithGoods());
 		retList.add(listVO);
 		
 		PCBbbGoodsCategoryQTO.QTO qto1 = new PCBbbGoodsCategoryQTO.QTO();
@@ -173,7 +174,6 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		InMemberGoodsQTO inMemberGoodsQTO = new InMemberGoodsQTO();
 		inMemberGoodsQTO.setPageNum(1);
 		inMemberGoodsQTO.setPageSize(6);
-		bbcGoodsInfoRpc.inMemberGoodsHome(inMemberGoodsQTO).getList().getContent();
 		listVO.setList(bbcGoodsInfoRpc.inMemberGoodsHome(inMemberGoodsQTO).getList().getContent());
 		retList.add(listVO);
 		
