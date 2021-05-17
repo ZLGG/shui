@@ -182,6 +182,13 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.ShopGoodsIdQTO")
+    public static class ShopGoodsIdQTO implements Serializable {
+	    @ApiModelProperty("店铺id")
+        private String shopId;
+    }
+
 	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcGoodsInfoQTO.IntegralGoodsQTO")

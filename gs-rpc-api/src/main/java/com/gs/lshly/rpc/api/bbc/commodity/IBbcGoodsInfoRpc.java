@@ -172,4 +172,11 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     InMemberHomeVO inMemberHome();
+
+    /**
+     * 获取店铺推荐商品列表
+     * @param qto
+     * @return
+     */
+    List<BbcGoodsInfoVO.GoodsListVO> getShopRecommendGoods(BbcGoodsInfoQTO.ShopGoodsIdQTO qto);
 }
