@@ -2,16 +2,20 @@ package com.gs.lshly.common.struct.platadmin.merchant.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
 * @author xxfc
 * @since 2020-10-08
 */
+@SuppressWarnings("serial")
 public abstract class MerchantAccountVO implements Serializable {
 
-    @Data
+    @Setter
     @ApiModel("MerchantAccountVO.ListVO")
     @Accessors(chain = true)
     public static class ListVO implements Serializable{
@@ -43,6 +47,45 @@ public abstract class MerchantAccountVO implements Serializable {
         @ApiModelProperty("帐号状态[10=正常 20=禁用]")
         private Integer accountState;
 
+		public String getId() {
+			return id;
+		}
+
+		public String getUserName() {
+			if(StringUtils.isNotEmpty(userName)){
+				userName = userName.substring(0, 1)+"**"+userName.substring(userName.length()-1, userName.length());
+			}
+			return userName;
+		}
+
+		public Integer getAccountType() {
+			return accountType;
+		}
+
+		public String getShopName() {
+			return shopName;
+		}
+
+		public Integer getShopType() {
+			return shopType;
+		}
+
+		public String getPhone() {
+			return phone;
+		}
+
+		public String getRealName() {
+			return realName;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public Integer getAccountState() {
+			return accountState;
+		}
+        
     }
 
     @Data
@@ -63,4 +106,9 @@ public abstract class MerchantAccountVO implements Serializable {
 
     }
 
+    public static void main(String args[]){
+    	String userName = "YIn";
+    	userName = userName.substring(0, 1)+"**"+userName.substring(userName.length()-1, userName.length());
+		
+    }
 }

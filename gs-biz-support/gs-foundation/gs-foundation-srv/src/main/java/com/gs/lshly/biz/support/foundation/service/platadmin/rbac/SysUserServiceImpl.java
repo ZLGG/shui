@@ -165,17 +165,24 @@ public class SysUserServiceImpl implements ISysUserService {
 //        List<SysFuncVO.List> funcs = funcRepository.baseMapper().selectUserFuncs(user.getId());
 //        
         //先查询所有的跟目录
-        List<SysUserFuncVO.ListVO> funcs = funcRepository.baseMapper().selectUserFuncsParent(user.getId());
+        List<SysUserFuncVO.ListVO> funcs = funcRepository.baseMapper().selectUserFuncsParent(user.getId());//root
         for(SysUserFuncVO.ListVO listVO:funcs){
-        	String parentId = listVO.getId();
-        	List<SysUserFuncVO.ListVO> children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentId);
+        	String parentIdroot = listVO.getId();//root
+        	List<SysUserFuncVO.ListVO> children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentIdroot);
         	listVO.setChildren(children);
         	if(CollectionUtils.isNotEmpty(children)){
 	        	for(SysUserFuncVO.ListVO listVO1:children){
-	        		parentId = listVO1.getId();
-	        		children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentId);
+	        		String parentIdnext = listVO1.getId();
+	        		parentIdnext = parentIdnext.replace(parentIdroot+".", "");
+	        		children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentIdnext);
+	        		listVO1.setChildren(children);
 	        		if(CollectionUtils.isNotEmpty(children)){
-	        			listVO.setChildren(children);
+	        			for(SysUserFuncVO.ListVO listVO2:children){
+	        				String parentIdnext2 = listVO1.getId();
+	        				parentIdnext2 = parentIdnext.replace(parentIdroot+"."+parentIdnext+".", "");
+	        				children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentIdnext2);
+	        				listVO2.setChildren(children);
+	        			}
 	        		}
 	        	}
         	}
