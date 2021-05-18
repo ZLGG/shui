@@ -218,7 +218,6 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             throw new BusinessException("参数不能为空！");
         }
         GoodsInfo goodsInfo = repository.getById(dto.getId());
-        System.out.println(dto.getId()+"商品id");
         if (goodsInfo == null){
             throw new BusinessException("查询异常！");
         }

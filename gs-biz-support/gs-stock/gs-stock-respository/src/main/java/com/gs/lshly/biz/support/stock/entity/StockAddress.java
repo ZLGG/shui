@@ -97,6 +97,10 @@ public class StockAddress extends Model {
     private String reals;
 
     /**
+     * 完整地址
+     */
+    private String fullAddress;
+    /**
      * 联系人
      */
     private String contactsName;

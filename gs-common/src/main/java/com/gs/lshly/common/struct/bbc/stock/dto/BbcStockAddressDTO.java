@@ -51,11 +51,17 @@ public abstract class BbcStockAddressDTO implements Serializable {
         @ApiModelProperty("详细地址")
         private String reals;
 
+        @ApiModelProperty("完整地址")
+        private String fullAddress;
+
         @ApiModelProperty("联系人")
         private String contactsName;
 
         @ApiModelProperty("手机号")
         private String contactsPhone;
+
+        @ApiModelProperty("默认收货地址[0=否 1=是]")
+        private Integer isDefault;
 
     }
 
