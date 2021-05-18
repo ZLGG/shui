@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.AuthDTO;
+import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
+import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.log.Log;
 import com.gs.lshly.middleware.redis.RedisUtil;
@@ -84,6 +86,8 @@ public class SysUserAuthController {
     public ResponseData<Void> login(@Valid @RequestBody SysUserDTO.LoginDTO dto) {
     	
     	AuthDTO auth = sysUserRpc.login(dto);
+    	String createToken = JwtUtil.createToken(new JwtUser(auth));
+    	auth.setToken(createToken);
     	return ResponseData.data(auth);
     }
 

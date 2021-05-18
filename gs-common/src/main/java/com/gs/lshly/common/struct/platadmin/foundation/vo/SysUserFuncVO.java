@@ -33,7 +33,7 @@ public abstract class SysUserFuncVO implements Serializable {
         private String icon;
 
         @ApiModelProperty(value = "顺序")
-        private String index;
+        private String idx;
 
         @ApiModelProperty("路由")
         private String frontRouter;

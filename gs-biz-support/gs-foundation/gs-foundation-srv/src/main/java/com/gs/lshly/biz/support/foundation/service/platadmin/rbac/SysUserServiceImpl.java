@@ -178,8 +178,8 @@ public class SysUserServiceImpl implements ISysUserService {
 	        		listVO1.setChildren(children);
 	        		if(CollectionUtils.isNotEmpty(children)){
 	        			for(SysUserFuncVO.ListVO listVO2:children){
-	        				String parentIdnext2 = listVO1.getId();
-	        				parentIdnext2 = parentIdnext.replace(parentIdroot+"."+parentIdnext+".", "");
+	        				String parentIdnext2 = listVO2.getId();
+	        				parentIdnext2 = parentIdnext2.replace(parentIdroot+"."+parentIdnext+".", "");
 	        				children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentIdnext2);
 	        				listVO2.setChildren(children);
 	        			}
