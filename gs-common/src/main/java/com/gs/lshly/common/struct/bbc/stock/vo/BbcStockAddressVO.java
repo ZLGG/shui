@@ -62,13 +62,13 @@ public abstract class BbcStockAddressVO implements Serializable {
         private Integer isDefault;
 
         @ApiModelProperty("地址全路径")
-        private String fullAddres;
+        private String fullAddress;
 
-        public String getFullAddres(){
-            String streetO=StringUtils.isEmpty(street)?"":street;
-            String realsO=StringUtils.isEmpty(reals)?"":reals;
-            return province + city + county + streetO + realsO ;
-        }
+//        public String getFullAddress(){
+//            String streetO=StringUtils.isEmpty(street)?"":street;
+//            String realsO=StringUtils.isEmpty(reals)?"":reals;
+//            return province + city + county + streetO + realsO ;
+//        }
 
     }
 

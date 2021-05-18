@@ -194,6 +194,9 @@ CREATE TABLE `gs_goods_search_history` (
   KEY `idx_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='搜索历史记录表';
 
+ALTER TABLE `fy_mall`.`gs_stock_address`
+ADD COLUMN `full_address` varchar(255) COMMENT '完整地址' AFTER `reals`;
+
 
 -- 添中字段 from 上海
 child_trade_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0

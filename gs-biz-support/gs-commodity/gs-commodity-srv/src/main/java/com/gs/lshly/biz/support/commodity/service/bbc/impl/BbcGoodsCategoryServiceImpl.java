@@ -210,13 +210,13 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 		}
 		return ret;
 		/**
-		 * 
-		 * 
+		 *
+		 *
 		 * BbcGoodsCategoryQTO.ListQTO listQTO = new
 		 * BbcGoodsCategoryQTO.ListQTO(); listQTO.setShowAll(true);
 		 * listQTO.setParentId(categoryIdQTO.getCategoryId());
 		 * listQTO.setUseFiled(categoryIdQTO.getUseFiled());
-		 * 
+		 *
 		 * //获取树结构 List<BbcGoodsCategoryVO.CategoryTreeVO> categoryTreeVOS =
 		 * goodsCategoryTree(listQTO); //将树转换成列表 List
 		 * <BbcGoodsCategoryVO.CategoryTreeVO> treeVOList = new ArrayList<>();
