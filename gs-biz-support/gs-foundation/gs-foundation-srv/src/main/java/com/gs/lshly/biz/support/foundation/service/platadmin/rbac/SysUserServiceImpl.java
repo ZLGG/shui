@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.gs.lshly.biz.support.foundation.entity.SysUser;
 import com.gs.lshly.biz.support.foundation.entity.SysUserRole;
 import com.gs.lshly.biz.support.foundation.repository.ISysFuncRepository;
@@ -27,7 +28,7 @@ import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.Check
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.GetPhoneValidCodeDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO.LoginDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysUserQTO;
-import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysFuncVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SysUserFuncVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO.DetailVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -161,10 +162,27 @@ public class SysUserServiceImpl implements ISysUserService {
                 .setUsername(user.getName())
                 .setState(user.getState());
         //1，查询用户角色
-        List<SysFuncVO.List> funcs = funcRepository.baseMapper().selectUserFuncs(user.getId());
-        return authDTO.setPermitFuncs(funcs);
+//        List<SysFuncVO.List> funcs = funcRepository.baseMapper().selectUserFuncs(user.getId());
+//        
+        //先查询所有的跟目录
+        List<SysUserFuncVO.ListVO> funcs = funcRepository.baseMapper().selectUserFuncsParent(user.getId());
+        for(SysUserFuncVO.ListVO listVO:funcs){
+        	String parentId = listVO.getId();
+        	List<SysUserFuncVO.ListVO> children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentId);
+        	listVO.setChildren(children);
+        	if(CollectionUtils.isNotEmpty(children)){
+	        	for(SysUserFuncVO.ListVO listVO1:children){
+	        		parentId = listVO1.getId();
+	        		children = funcRepository.baseMapper().selectUserFuncsByParent(user.getId(),parentId);
+	        		if(CollectionUtils.isNotEmpty(children)){
+	        			listVO.setChildren(children);
+	        		}
+	        	}
+        	}
+        }
+        return authDTO.setPermitFuncsTree(funcs);
     }
-
+    
     /**
      * 账号角色列表
      * @param dto
@@ -221,14 +239,14 @@ public class SysUserServiceImpl implements ISysUserService {
 	@Override
 	public AuthDTO login(LoginDTO dto) {
 		
-		// 校验验证码
+		/**校验验证码
 		Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
 		String validCode = code != null ? code + "" : "";
 		log.info("获取-手机号码：" + dto.getPhone() + "-验证码：" + validCode);
 		if (!StringUtils.equals(validCode, dto.getValidCode())) {
 			throw new BusinessException("验证码不匹配");
 		}
-		
+		**/
 		AuthDTO authDTO = new AuthDTO();
 		
 		SysUser user = repository.getOne(new QueryWrapper<SysUser>().eq("name", dto.getPhone()));

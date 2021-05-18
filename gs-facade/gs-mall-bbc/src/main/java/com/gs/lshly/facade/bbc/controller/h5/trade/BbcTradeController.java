@@ -23,7 +23,9 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "交易订单管理-v1.1.0")
 @Slf4j
 public class BbcTradeController {
+	
+	@DubboReference
+	private IBbcUserAuthRpc bbcUserAuthRpc;
 
     @DubboReference
     private IBbcTradeRpc bbcTradeRpc;
@@ -69,12 +74,28 @@ public class BbcTradeController {
      * @param dto
      * @return
      */
-    @ApiOperation("2、提交订单")
+    @ApiOperation("2、提交订单-v1.1.0")
     @PostMapping("/userCenter/orderSubmit")
     public ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
         log.info("----------------------提交订单-----------------");
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.orderSubmit(dto);
+    }
+    
+    /**
+     * 提交订单
+     * 场景：用户选购多个店铺商品，点击提交订单
+     * 前端处理：每个店铺为一个订单请求，分开请求
+     * 后端逻辑：提交订单时，生成待付款订单，返回订单id
+     *
+     * @param dto
+     * @return
+     */
+    @ApiOperation("3、获取支付验证码-v1.1.0")
+    @PostMapping("/userCenter/getPhoneCheck")
+    public ResponseData<Void> getPhoneCheck(@Valid @RequestBody BbcUserDTO.GetPhoneValidCodeDTO dto) {
+        bbcUserAuthRpc.getPhoneValidCode(dto);
+        return ResponseData.success("短信发送成功");
     }
 
     /**
@@ -85,7 +106,7 @@ public class BbcTradeController {
      * @param dto
      * @return
      */
-    @ApiOperation("3、支付")
+    @ApiOperation("4、支付-v1.1.0")
     @PostMapping("/userCenter/doPay")
     public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
         return bbcTradeRpc.orderPay(dto);

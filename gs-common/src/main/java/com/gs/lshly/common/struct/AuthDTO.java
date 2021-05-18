@@ -1,12 +1,14 @@
 package com.gs.lshly.common.struct;
 
+import java.io.Serializable;
+import java.util.List;
+
+import com.gs.lshly.common.struct.platadmin.foundation.vo.SysUserFuncVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysFuncVO;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -45,4 +47,6 @@ public class AuthDTO implements Serializable {
     @ApiModelProperty("功能权限集")
     private List<SysFuncVO.List> permitFuncs;
 
+    @ApiModelProperty("功能权限集树")
+    private List<SysUserFuncVO.ListVO> permitFuncsTree;
 }
