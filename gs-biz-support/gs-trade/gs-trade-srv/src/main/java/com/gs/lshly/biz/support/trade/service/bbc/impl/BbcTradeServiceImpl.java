@@ -498,7 +498,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                     settlementVO.setRecvAddresId(addressVO.getId());
                     settlementVO.setRecvPersonName(addressVO.getContactsName());
                     settlementVO.setRecvPhone(addressVO.getContactsPhone());
-                    settlementVO.setRecvFullAddres(addressVO.getFullAddres());
+                    settlementVO.setRecvFullAddres(addressVO.getFullAddress());
                     //根据店铺的商品SKU ID获取快递配送运费模板，根据重量、件数计算运费.
 //                    BigDecimal deliveryAmount = getDeliveryAmount(settlementVO);
 //                    settlementVO.setDeliveryAmount(deliveryAmount);//运费
@@ -511,7 +511,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 settlementVO.setRecvAddresId(addressVO.getId());
                 settlementVO.setRecvPersonName(addressVO.getContactsName());
                 settlementVO.setRecvPhone(addressVO.getContactsPhone());
-                settlementVO.setRecvFullAddres(addressVO.getFullAddres());
+                settlementVO.setRecvFullAddres(addressVO.getFullAddress());
                 //根据店铺的商品SKU ID获取快递配送运费模板，根据重量、件数计算运费.
 //                BigDecimal deliveryAmount = getDeliveryAmount(settlementVO);
 //                settlementVO.setDeliveryAmount(deliveryAmount);//运费
