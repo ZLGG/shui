@@ -1,6 +1,8 @@
-package com.gs.lshly.common.struct.platadmin.foundation.vo.rbac;
+package com.gs.lshly.common.struct.platadmin.foundation.vo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,18 +10,20 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @author lxus
- * @since 2020/12/12
+ * 专题配置
+ *
+ * 
+ * @author yingjun
+ * @date 2021年3月10日 上午2:25:05
  */
-@SuppressWarnings("serial")
-public abstract class SysFuncVO implements Serializable {
+public abstract class SysUserFuncVO implements Serializable {
 
     @Data
+    @ApiModel("SysUserVO.ListVO")
     @Accessors(chain = true)
-    @ApiModel("设置前端路由显示对象")
-    public static class List implements Serializable {
+    public static class ListVO implements Serializable{
 
-        @ApiModelProperty(value = "菜单功能id")
+    	@ApiModelProperty(value = "菜单功能id")
         private String id;
 
         @ApiModelProperty(value = "名称")
@@ -33,7 +37,9 @@ public abstract class SysFuncVO implements Serializable {
 
         @ApiModelProperty("路由")
         private String frontRouter;
-
+        
+        @ApiModelProperty("子目录")
+        private List<ListVO> children;
     }
-
+    
 }
