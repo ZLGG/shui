@@ -4,6 +4,8 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
+
 import java.util.List;
 
 public interface IBbcUserShoppingCarService {
@@ -35,4 +37,11 @@ public interface IBbcUserShoppingCarService {
      * @return
      */
     BbcUserShoppingCarVO.SummationVO summationUserShoppingCar(BbcUserShoppingCarDTO.IdListDTO dto);
+    
+    /**
+     * 跟据购物车的skuid，获取所属的店铺id列表
+     * @param dto
+     * @return
+     */
+    List<ShopSkuVO> groupShopByCarId(BbcUserShoppingCarDTO.InnerIdListDTO dto);
 }

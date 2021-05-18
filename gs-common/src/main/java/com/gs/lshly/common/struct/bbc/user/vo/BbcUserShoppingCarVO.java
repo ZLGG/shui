@@ -262,4 +262,31 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         private Double inMemberPointPrice;
 
     }
+    
+	@Data
+    @ApiModel("BbcUserShoppingCarVO.ShopSkuVO")
+    public static class ShopSkuVO implements Serializable{
+    	
+    	@ApiModelProperty("店铺ID")
+        private String shopId;
+
+        @ApiModelProperty("SkuId")
+        private List<SkuQuantityVO> skuQuantity;
+        
+    }
+	
+	@Data
+    @ApiModel("BbcUserShoppingCarVO.SkuQuantityVO")
+    public static class SkuQuantityVO implements Serializable{
+    	
+    	@ApiModelProperty("SKUID")
+        private String skuId;
+
+        @ApiModelProperty("数量")
+        private Integer quantity;
+        
+        @ApiModelProperty("CarId")
+        private String carId;
+        
+    }
 }

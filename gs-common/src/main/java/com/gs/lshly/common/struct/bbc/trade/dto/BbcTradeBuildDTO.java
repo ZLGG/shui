@@ -19,29 +19,12 @@ import java.util.List;
 * @since 2020-10-28
 */
 public abstract class BbcTradeBuildDTO implements Serializable {
-
-    @Data
-    @ApiModel(value = "BbcTradeDTO.TradeBuildDTO")
-    @Accessors(chain = true)
-    public static class DTO  extends BaseDTO implements Serializable {
-
-        @ApiModelProperty(value = "店铺ID")
-        private String shopId;
-
-        @ApiModelProperty(value = "收货地址ID")
-        private String addressId;
-
-        @ApiModelProperty(value = "联系人")
-        private String contactsName;
-
-        @ApiModelProperty(value = "联系人电话")
-        private String contactsPhone;
-
-        @ApiModelProperty(value = "支付类型")
+	
+	@Data
+	@ApiModel(value="BbcTradeDTO.TradeBuildSingtonDTO") 
+	public static class SingtonDTO  extends BaseDTO implements Serializable {
+		@ApiModelProperty(value = "支付类型")
         private Integer payType;
-
-        @ApiModelProperty(value = "买家留言")
-        private String buyerRemark;
 
         @ApiModelProperty(value = "配送方式")
         private Integer deliveryType;
@@ -49,8 +32,6 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         @ApiModelProperty(value = "运费金额", hidden = true)
         private BigDecimal deliveryAmount;
 
-        @ApiModelProperty(value = "商品信息")
-        private List<ProductData> productData;
 
         @ApiModelProperty(value = "业务来源端", hidden = true)
         private ActivityTerminalEnum terminal;
@@ -72,6 +53,95 @@ public abstract class BbcTradeBuildDTO implements Serializable {
 
         @ApiModelProperty(value = "优惠券", hidden = true)
         private CommonMarketVO.UserCardVO userCardVO;
+    	
+    	@ApiModelProperty(value = "买家留言")
+        private String buyerRemark;
+    	
+		@ApiModelProperty(value = "店铺ID")
+		private String shopId;
+
+		@ApiModelProperty(value = "商品信息")
+		private List<ProductData> productData;
+		
+		@Data
+        public static class ProductData implements Serializable {
+            @ApiModelProperty(value = "购物车ID")
+            private String cartId;
+
+            @ApiModelProperty(value = "商品Id")
+            private String goodsId;
+
+            @ApiModelProperty(value = "sku商品Id")
+            private String goodsSkuId;
+
+            @ApiModelProperty(value = "购买数量")
+            private Integer quantity;
+            
+            @ApiModelProperty(value = "分配积分金额")
+            private Integer pointAmount;
+
+        }
+	}
+
+    @Data
+    @ApiModel(value = "BbcTradeDTO.TradeBuildDTO")
+    @Accessors(chain = true)
+    public static class DTO  extends BaseDTO implements Serializable {
+
+        @ApiModelProperty(value = "收货地址ID")
+        private String addressId;
+
+        @ApiModelProperty(value = "联系人")
+        private String contactsName;
+
+        @ApiModelProperty(value = "联系人电话")
+        private String contactsPhone;
+
+        @ApiModelProperty(value = "店铺信息")
+		private List<ShopData> shopData;
+       
+        @ApiModelProperty(value = "业务来源端", hidden = true)
+        private ActivityTerminalEnum terminal;
+        @Data
+        public static class ShopData implements Serializable {
+        	/**
+        	@ApiModelProperty(value = "支付类型",hidden=true)
+            private Integer payType;
+
+            @ApiModelProperty(value = "配送方式",hidden=true)
+            private Integer deliveryType;
+
+            @ApiModelProperty(value = "运费金额", hidden = true)
+            private BigDecimal deliveryAmount;
+
+
+            @ApiModelProperty(value = "订单支付金额", hidden = true)
+            BigDecimal shopProductAmount;
+
+            @ApiModelProperty(value = "积分商品，用户分配的现金支付金额")
+            private BigDecimal allocatedCashAmount;
+
+            @ApiModelProperty(value = "积分商品，用户分配的积分支付金额")
+            private BigDecimal allocatedPointAmount;
+
+            @ApiModelProperty("是否需要发票")
+            private Boolean isInvoice;
+
+            @ApiModelProperty(value = "营销活动", hidden = true)
+            private CommonMarketVO.ActiveVO marketActiveVO;
+
+            @ApiModelProperty(value = "优惠券", hidden = true)
+            private CommonMarketVO.UserCardVO userCardVO;
+        	**/
+        	@ApiModelProperty(value = "买家留言")
+            private String buyerRemark;
+        	
+			@ApiModelProperty(value = "店铺ID")
+			private String shopId;
+
+			@ApiModelProperty(value = "商品信息")
+			private List<ProductData> productData;
+        }
 
         @Data
         public static class ProductData implements Serializable {
@@ -86,6 +156,9 @@ public abstract class BbcTradeBuildDTO implements Serializable {
 
             @ApiModelProperty(value = "购买数量")
             private Integer quantity;
+            
+            @ApiModelProperty(value = "分配积分金额")
+            private Integer pointAmount;
 
         }
 
@@ -115,6 +188,4 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         @ApiModelProperty(value = "业务来源端", hidden = true)
         private ActivityTerminalEnum terminal;
     }
-
-
 }

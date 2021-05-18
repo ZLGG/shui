@@ -202,6 +202,12 @@ public class GoodsInfo extends Model {
      * 积分价格
      */
     private BigDecimal pointPrice;
+    
+    /**
+     * 原积分价格
+     */
+    private BigDecimal oldPointPrice;
+    
     /**
      * 办理备注
      */

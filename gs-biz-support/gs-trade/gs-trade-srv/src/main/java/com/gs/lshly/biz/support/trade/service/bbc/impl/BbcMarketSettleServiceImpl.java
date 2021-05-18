@@ -25,6 +25,7 @@ import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeGoodsDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO.ShopListVO;
 import com.gs.lshly.common.struct.common.dto.CommonMarketDTO;
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
 import com.gs.lshly.common.utils.JsonUtils;
@@ -57,9 +58,9 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
     @Autowired
     private IPCBbbMarketMerchantCardUsersService cardUsersService;
 
-    private List<CommonMarketDTO.SkuId> getIds(List<BbcTradeSettlementVO.ListVO.goodsInfoVO> goodsInfoVOS) {
+    private List<CommonMarketDTO.SkuId> getIds(List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS) {
         List<CommonMarketDTO.SkuId> skuIds = new ArrayList<>();
-        for (BbcTradeSettlementVO.ListVO.goodsInfoVO goods : goodsInfoVOS) {
+        for (BbcTradeSettlementVO.ShopListVO.goodsInfoVO goods : goodsInfoVOS) {
             skuIds.add(new CommonMarketDTO.SkuId().setSkuId(goods.getSkuId()).setSpuId(goods.getGoodsId())
                     .setSkuSalePrice(goods.getSalePrice()).setSkuActivePrice(goods.getSalePrice()).setQuantity(goods.getQuantity()));
         }
@@ -197,7 +198,9 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
 
     private void calcOrder(Set<BbcTradeGoodsDTO.ETO> tradeGoodsDTOSet, BbcTradeBuildDTO.DTO tradeGoodsDTO, CommonMarketDTO.MarketSku bestMarketSku,
                            BbcTradeGoodsDTO.ETO giftGiveSku, CommonMarketDTO.MarketSku skuCards) {
-        log.info("最优营销:{}", JsonUtils.toJson(bestMarketSku));
+        /**
+        
+    	log.info("最优营销:{}", JsonUtils.toJson(bestMarketSku));
         log.info("满赠:{}", JsonUtils.toJson(giftGiveSku));
         log.info("优惠券:{}", JsonUtils.toJson(skuCards));
         if (bestMarketSku != null && !bestMarketSku.getSkuPrice().isEmpty()) {
@@ -250,13 +253,20 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
         }
         if (giftGiveSku != null) {
             tradeGoodsDTOSet.add(giftGiveSku);
-        }
+        }**/
     }
 
     @Override
-    public void settlement(BbcTradeSettlementVO.ListVO settlementVO, BbcTradeBuildDTO.cartIdsDTO dto) {
-
-        List<CommonMarketDTO.SkuId> skuIds = getIds(settlementVO.getGoodsInfoVOS());
+    public void settlement(BbcTradeSettlementVO.DetailVO settlementVO, BbcTradeBuildDTO.cartIdsDTO dto) {
+    	List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<BbcTradeSettlementVO.ShopListVO.goodsInfoVO>();
+    	
+    	List<ShopListVO> shopListVO = settlementVO.getShopList();
+    	for(ShopListVO shoplistvo :shopListVO){
+    		List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsinfovos = shoplistvo.getGoodsInfoVOS();
+    		goodsInfoVOS.containsAll(goodsinfovos);
+    	}
+    	
+        List<CommonMarketDTO.SkuId> skuIds = getIds(goodsInfoVOS);
         //1,营销活动与购买产品的对应关系-MarketSku
         //1.1平台活动, 匹配到skuId
         CommonMarketDTO.MarketSku ptSkus =  ptActivityGoodsSkuService.activePtActivitySku(skuIds, dto.getTerminal());
@@ -277,14 +287,14 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
         CommonMarketDTO.SkuId giveSkuId = giftGoodsGiveService.activeGiveSku(skuIds, dto.getTerminal());
         BbcTradeSettlementVO.ListVO.goodsInfoVO giftGiveSku = giftGoodsGiveService.fillBbcGoodsInfoSettlementVO(giveSkuId);
 
-        //3,产品原价及合并后的sku活动价加上sku优惠券,并附上赠品,合并计算
-        calc(settlementVO, margeSkus, giftGiveSku, skuCards);
+        //3,产品原价及合并后的sku活动价加上sku优惠券,并附上赠品,合并计算 YINGJUN
+//        calc(settlementVO, margeSkus, giftGiveSku, skuCards);
 
     }
 
     @Override
     public void settlement(Set<BbcTradeGoodsDTO.ETO> tradeGoodsDTOSet, BbcTradeBuildDTO.DTO dto) {
-
+/**
         List<CommonMarketDTO.SkuId> skuIds = getIds(tradeGoodsDTOSet);
 
         //1,营销活动与购买产品的对应关系-MarketSku
@@ -308,7 +318,7 @@ public class BbcMarketSettleServiceImpl implements IBbcMarketSettleService {
         BbcTradeGoodsDTO.ETO giftGiveSku = giftGoodsGiveService.fillBbcGoodsInfoOrderVO(giveSkuId, dto);
 
         //3,产品原价及合并后的sku活动价加上sku优惠券,并附上赠品,合并计算
-        calcOrder(tradeGoodsDTOSet, dto, margeSkus, giftGiveSku, skuCards);
+        calcOrder(tradeGoodsDTOSet, dto, margeSkus, giftGiveSku, skuCards);**/
     }
 
 

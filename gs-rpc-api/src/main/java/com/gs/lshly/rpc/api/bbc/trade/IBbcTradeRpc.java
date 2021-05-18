@@ -1,5 +1,7 @@
 package com.gs.lshly.rpc.api.bbc.trade;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -12,8 +14,6 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 
-import java.util.List;
-
 /**
 *
 * @author oy
@@ -21,9 +21,9 @@ import java.util.List;
 */
 public interface IBbcTradeRpc {
 
-    ResponseData<BbcTradeSettlementVO.ListVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto);
+    ResponseData<BbcTradeSettlementVO.DetailVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto);
 
-    ResponseData<BbcTradeDTO.IdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
+    ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
 
     ResponseData<Void> orderPay(BbcTradePayBuildDTO.ETO dto);
 

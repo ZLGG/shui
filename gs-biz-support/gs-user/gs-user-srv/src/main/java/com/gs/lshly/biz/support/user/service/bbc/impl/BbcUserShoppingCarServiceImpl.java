@@ -30,11 +30,14 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.IdListDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.InnerIdListDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
-import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShoppingCarItemVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SkuQuantityVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SummationVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -44,6 +47,8 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsSkuRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * <p>
@@ -550,5 +555,44 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         summationVO.setPrice(price);
         
         return summationVO;
+	}
+
+	@Override
+	public List<ShopSkuVO> groupShopByCarId(InnerIdListDTO dto) {
+		QueryWrapper<UserShoppingCar> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.in("id", dto.getIdList());
+        queryWrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        List<UserShoppingCar> userShoppingCarList = repository.list(queryWrapper);
+        if (ObjectUtils.isEmpty(userShoppingCarList)) {
+        	throw new BusinessException("购物车数据不存在");
+        }
+        List<ShopSkuVO> shopIdList = new ArrayList<>();
+        ShopSkuVO shopSkuVO = null;
+        for (UserShoppingCar userShoppingCar : userShoppingCarList) {
+            if (!shopIdList.contains(userShoppingCar.getShopId())) {
+            	shopSkuVO = new ShopSkuVO();
+            	shopSkuVO.setShopId(userShoppingCar.getShopId());
+            	shopIdList.add(shopSkuVO);
+            }
+        }
+        
+        if(CollectionUtil.isNotEmpty(shopIdList)){
+        	for(ShopSkuVO shopskuvo:shopIdList){
+        		List<SkuQuantityVO> skuIds = new ArrayList<SkuQuantityVO>();
+        		for(UserShoppingCar userShoppingCar:userShoppingCarList){
+        			SkuQuantityVO skuQuantityVO = null;
+        			if(userShoppingCar.getShopId().equals(shopskuvo.getShopId())){
+        				skuQuantityVO = new SkuQuantityVO();
+        				skuQuantityVO.setSkuId(userShoppingCar.getSkuId());
+        				skuQuantityVO.setQuantity(userShoppingCar.getQuantity());
+        				skuQuantityVO.setCarId(userShoppingCar.getId());
+        				skuIds.add(skuQuantityVO);
+        			}
+        			shopskuvo.setSkuQuantity(skuIds);
+        		}
+        		
+        	}
+        }
+        return shopIdList;
 	}
 }

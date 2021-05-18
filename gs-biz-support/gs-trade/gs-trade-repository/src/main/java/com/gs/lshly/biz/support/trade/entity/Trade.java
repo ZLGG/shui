@@ -115,6 +115,11 @@ public class Trade extends Model {
      * 交易总金额
      */
     private BigDecimal tradeAmount;
+    
+    /**
+     * 交易总金额
+     */
+    private BigDecimal tradePointAmount;
 
     /**
      * 商家优惠金额

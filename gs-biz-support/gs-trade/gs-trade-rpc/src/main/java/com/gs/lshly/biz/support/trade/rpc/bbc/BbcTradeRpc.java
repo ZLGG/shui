@@ -29,12 +29,12 @@ public class BbcTradeRpc implements IBbcTradeRpc{
     private IBbcTradeService  bbcTradeService;
 
     @Override
-    public ResponseData<BbcTradeSettlementVO.ListVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
+    public ResponseData<BbcTradeSettlementVO.DetailVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
         return bbcTradeService.settlementVO(dto);
     }
 
     @Override
-    public ResponseData<BbcTradeDTO.IdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto) {
+    public ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto) {
         return bbcTradeService.orderSubmit(dto);
     }
 

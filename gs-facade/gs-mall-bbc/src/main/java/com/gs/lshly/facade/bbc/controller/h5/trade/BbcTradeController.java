@@ -39,16 +39,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping("/bbc")
-@Api(tags = "交易订单管理")
+@Api(tags = "交易订单管理-v1.1.0")
 @Slf4j
 public class BbcTradeController {
 
     @DubboReference
     private IBbcTradeRpc bbcTradeRpc;
 
-    @ApiOperation("去结算")
+    @ApiOperation("1、去结算-v1.1.0")
     @PostMapping("/userCenter/settlement")
-    public ResponseData<BbcTradeSettlementVO.ListVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
+    public ResponseData<BbcTradeSettlementVO.DetailVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.settlementVO(dto);
     }
@@ -69,9 +69,9 @@ public class BbcTradeController {
      * @param dto
      * @return
      */
-    @ApiOperation("提交订单")
+    @ApiOperation("2、提交订单")
     @PostMapping("/userCenter/orderSubmit")
-    public ResponseData<BbcTradeDTO.IdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
+    public ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
         log.info("----------------------提交订单-----------------");
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.orderSubmit(dto);
@@ -85,7 +85,7 @@ public class BbcTradeController {
      * @param dto
      * @return
      */
-    @ApiOperation("支付")
+    @ApiOperation("3、支付")
     @PostMapping("/userCenter/doPay")
     public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
         return bbcTradeRpc.orderPay(dto);

@@ -205,7 +205,7 @@ public class PCMerchMarketMerchantGiftGoodsGiveServiceImpl implements IPCMerchMa
         if (innerServiceGoodsVO == null) {
             return null;
         }
-        return fillTradeGoodsDTO(dto.getJwtUserId(), dto.getShopId(), giveSkuId.getQuantity(), innerServiceGoodsVO);
+        return fillTradeGoodsDTO(dto.getJwtUserId(), null, giveSkuId.getQuantity(), innerServiceGoodsVO);
     }
 
     private BbcGoodsInfoVO.InnerServiceVO giftGoodsInfoVO(CommonMarketDTO.SkuId giveSkuId) {
