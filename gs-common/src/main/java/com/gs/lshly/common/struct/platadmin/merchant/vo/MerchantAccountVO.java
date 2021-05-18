@@ -8,6 +8,8 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.gs.lshly.common.utils.StringManageUtil;
+
 /**
 * @author xxfc
 * @since 2020-10-08
@@ -52,10 +54,7 @@ public abstract class MerchantAccountVO implements Serializable {
 		}
 
 		public String getUserName() {
-			if(StringUtils.isNotEmpty(userName)){
-				userName = userName.substring(0, 1)+"**"+userName.substring(userName.length()-1, userName.length());
-			}
-			return userName;
+			return userName = StringManageUtil.hideUserName(userName);
 		}
 
 		public Integer getAccountType() {
@@ -71,15 +70,15 @@ public abstract class MerchantAccountVO implements Serializable {
 		}
 
 		public String getPhone() {
-			return phone;
+			return	phone = StringManageUtil.hidePhone(phone);
 		}
 
 		public String getRealName() {
-			return realName;
+			return StringManageUtil.hideUserName(realName);
 		}
 
 		public String getEmail() {
-			return email;
+			return StringManageUtil.hideMail(email);
 		}
 
 		public Integer getAccountState() {
@@ -109,6 +108,6 @@ public abstract class MerchantAccountVO implements Serializable {
     public static void main(String args[]){
     	String userName = "YIn";
     	userName = userName.substring(0, 1)+"**"+userName.substring(userName.length()-1, userName.length());
-		
+		System.out.println(userName);
     }
 }

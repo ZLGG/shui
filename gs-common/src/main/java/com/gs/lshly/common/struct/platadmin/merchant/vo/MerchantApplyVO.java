@@ -1,15 +1,18 @@
 package com.gs.lshly.common.struct.platadmin.merchant.vo;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gs.lshly.common.struct.common.CommonShopVO;
-import com.gs.lshly.common.struct.common.LegalDictVO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.common.CommonShopVO;
+import com.gs.lshly.common.struct.common.LegalDictVO;
+import com.gs.lshly.common.utils.StringManageUtil;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * @author xxfc
@@ -17,7 +20,7 @@ import java.util.List;
 */
 public abstract class MerchantApplyVO implements Serializable {
 
-    @Data
+    @Setter
     @ApiModel("MerchantApplyVO.ListVO")
     @Accessors(chain = true)
     public static class ListVO implements Serializable{
@@ -76,6 +79,75 @@ public abstract class MerchantApplyVO implements Serializable {
         @ApiModelProperty("店铺是否已经开通")
         private Integer isOpen;
 
+		public String getId() {
+			return id;
+		}
+
+		public Integer getState() {
+			return state;
+		}
+
+		public Integer getShopType() {
+			return shopType;
+		}
+
+		public Integer getShopMerchantFrom() {
+			return shopMerchantFrom;
+		}
+
+		public String getMerchantAccount() {
+			return StringManageUtil.hideUserName(merchantAccount);
+		}
+
+		public String getShopName() {
+			return shopName;
+		}
+
+		public String getShopManName() {
+			return shopManName;
+		}
+
+		public String getCorpName() {
+			return corpName;
+		}
+
+		public String getBrandId() {
+			return brandId;
+		}
+
+		public String getBrandName() {
+			return brandName;
+		}
+
+		public Integer getBrandIsNew() {
+			return brandIsNew;
+		}
+
+		public String getBrandCert() {
+			return brandCert;
+		}
+
+		public LocalDateTime getUdate() {
+			return udate;
+		}
+
+		public LocalDateTime getRejectTime() {
+			return rejectTime;
+		}
+
+		public LocalDateTime getOkpassTime() {
+			return okpassTime;
+		}
+
+		public String getRejectWhy() {
+			return rejectWhy;
+		}
+
+		public Integer getIsOpen() {
+			return isOpen;
+		}
+
+        
     }
 
     @Data

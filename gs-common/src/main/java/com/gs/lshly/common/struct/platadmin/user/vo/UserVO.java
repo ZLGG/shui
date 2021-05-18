@@ -1,12 +1,16 @@
 package com.gs.lshly.common.struct.platadmin.user.vo;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.utils.StringManageUtil;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * @author xxfc
@@ -14,7 +18,7 @@ import java.util.List;
 */
 public abstract class UserVO implements Serializable {
 
-    @Data
+    @Setter
     @ApiModel("UserVO.ListVO")
     @Accessors(chain = true)
     public static class ListVO implements Serializable{
@@ -64,6 +68,68 @@ public abstract class UserVO implements Serializable {
 
         @ApiModelProperty("真实姓名")
         private String realName;
+
+		public String getId() {
+			return id;
+		}
+
+		public List<UserLabelDictVO.UserLabelItemVO> getUserLabelList() {
+			return userLabelList;
+		}
+
+		public String getUserName() {
+			return StringManageUtil.hideUserName(userName);
+		}
+
+		public Integer getState() {
+			return state;
+		}
+
+		public String getFromShopId() {
+			return fromShopId;
+		}
+
+		public String getFromShopName() {
+			return fromShopName;
+		}
+
+		public String getEmail() {
+			return StringManageUtil.hideMail(email);
+		}
+
+		public String getPhone() {
+			return StringManageUtil.hidePhone(phone);
+		}
+
+		public String getBirthday() {
+			return birthday;
+		}
+
+		public Integer getSex() {
+			return sex;
+		}
+
+		public String getRegIp() {
+			return regIp;
+		}
+
+		public LocalDateTime getCdate() {
+			return cdate;
+		}
+
+		public String getLeveName() {
+			return leveName;
+		}
+
+		public Integer getType() {
+			return type;
+		}
+
+		public String getRealName() {
+			return StringManageUtil.hideUserName(realName);
+		}
+        
+        
     }
 
     @Data

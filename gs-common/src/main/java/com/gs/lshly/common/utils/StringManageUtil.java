@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -272,6 +273,28 @@ public class StringManageUtil {
       return phone;
     }
     
+	public static String hideUserName(String userName) {
+		if (StringUtils.isNotEmpty(userName)) {
+			userName = userName.substring(0, 1) + "**" + userName.substring(userName.length() - 1, userName.length());
+		} else {
+			userName = "**";
+		}
+		return userName;
+	}
+	
+	public static String hideMail(String mail) {
+		if (StringUtils.isNotEmpty(mail)&&mail.indexOf("@")>0) {
+			String mails[] = mail.split("@");
+			String name = mails[0];
+			
+			mail = name.substring(0, 1) + "**" + name.substring(name.length() - 1, name.length())+"@**.com";
+		} else {
+			mail = "**";
+		}
+		return mail;
+	}
+    
+	
     public static String hideCardNum(String cardNum){
     	if ((cardNum==null||"".equals(cardNum)) || (cardNum.length() < 8)) {
             return cardNum;
@@ -556,6 +579,8 @@ public class StringManageUtil {
 		System.out.println(addressResolution("浙江省湖州市吴兴区月河街道湖东府1幢502室"));
 		System.out.println(addressResolution("湖北省黄梅县大河会镇杨凼村四组"));
 		System.out.println(addressResolution("杭州市西湖区兰庭公寓3幢1单元703室"));
+		
+		System.out.println(hideMail("yingjun@126.com"));
 	}
 	
 	/**

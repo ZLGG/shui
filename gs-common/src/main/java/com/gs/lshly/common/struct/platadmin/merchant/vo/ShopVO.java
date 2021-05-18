@@ -1,14 +1,17 @@
 package com.gs.lshly.common.struct.platadmin.merchant.vo;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.utils.StringManageUtil;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * @author xxfc
@@ -16,7 +19,7 @@ import java.util.List;
 */
 public abstract class ShopVO implements Serializable {
 
-    @Data
+    @Setter
     @ApiModel("ShopVO.ListVO")
     @Accessors(chain = true)
     public static class ListVO implements Serializable{
@@ -82,6 +85,88 @@ public abstract class ShopVO implements Serializable {
 
         @ApiModelProperty(value = "POS店铺Id",position = 17)
         private String posShopId;
+
+		public String getId() {
+			return id;
+		}
+
+		public String getShopName() {
+			return shopName;
+		}
+
+		public String getShopDesc() {
+			return shopDesc;
+		}
+
+		public Integer getTerminal() {
+			return terminal;
+		}
+
+		public Integer getShopType() {
+			return shopType;
+		}
+
+		public Integer getShopState() {
+			return shopState;
+		}
+
+		public String getShopProvince() {
+			return shopProvince;
+		}
+
+		public String getShopProvinceText() {
+			return shopProvinceText;
+		}
+
+		public String getShopCity() {
+			return shopCity;
+		}
+
+		public String getShopCityText() {
+			return shopCityText;
+		}
+
+		public String getShopCounty() {
+			return shopCounty;
+		}
+
+		public String getShopCountyText() {
+			return shopCountyText;
+		}
+
+		public String getShopStreet() {
+			return shopStreet;
+		}
+
+		public String getShopAddress() {
+			return shopAddress;
+		}
+
+		public LocalDateTime getOpenTime() {
+			return openTime;
+		}
+
+		public LocalDateTime getCloseTime() {
+			return closeTime;
+		}
+
+		public String getCloseWhy() {
+			return closeWhy;
+		}
+
+		public String getSupperAccount() {
+			return StringManageUtil.hideUserName(supperAccount);
+		}
+
+		public Integer getShopMerchantFrom() {
+			return shopMerchantFrom;
+		}
+
+		public String getPosShopId() {
+			return posShopId;
+		}
+        
+        
 
     }
 
