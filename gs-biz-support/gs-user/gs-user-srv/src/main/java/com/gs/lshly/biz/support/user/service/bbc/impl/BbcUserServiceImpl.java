@@ -126,7 +126,8 @@ public class BbcUserServiceImpl implements IBbcUserService {
     @Override
     public BbcUserVO.MyIntegralVO myIntegral(String userId) {
         BbcUserVO.MyIntegralVO myIntegralVO = userIntegralMapper.myIntegral(userId);
-        myIntegralVO.setPhone(AESUtil.aesDecrypt(myIntegralVO.getPhone()));
+        String phone = AESUtil.aesDecrypt(myIntegralVO.getPhone());
+        myIntegralVO.setPhone(phone);
         return myIntegralVO;
     }
 

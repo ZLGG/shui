@@ -45,6 +45,7 @@ public abstract class GoodsBrandDTO implements Serializable  {
     @Data
     @AllArgsConstructor
     @ApiModel("GoodsBrandDTO.IdDTO")
+    @Accessors(chain = true)
     public static class IdDTO extends BaseDTO {
         @ApiModelProperty("品牌id")
         private String id;
