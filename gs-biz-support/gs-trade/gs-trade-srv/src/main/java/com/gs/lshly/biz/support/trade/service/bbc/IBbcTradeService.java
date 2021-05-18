@@ -16,9 +16,9 @@ import java.util.List;
 
 public interface IBbcTradeService {
 
-    ResponseData<BbcTradeSettlementVO.ListVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto);
+    ResponseData<BbcTradeSettlementVO.DetailVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto);
 
-    ResponseData<BbcTradeDTO.IdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
+    ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
 
     ResponseData<Void> orderPay(BbcTradePayBuildDTO.ETO dto);
 

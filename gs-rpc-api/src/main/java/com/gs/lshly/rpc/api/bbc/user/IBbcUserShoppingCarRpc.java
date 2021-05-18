@@ -1,13 +1,12 @@
 package com.gs.lshly.rpc.api.bbc.user;
-import com.gs.lshly.common.response.PageData;
+import java.util.List;
+
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
-
-import javax.validation.constraints.Null;
-import java.util.List;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
 
 /**
 *
@@ -58,5 +57,12 @@ public interface IBbcUserShoppingCarRpc {
      * @return
      */
     BbcUserShoppingCarVO.SummationVO summationUserShoppingCar(BbcUserShoppingCarDTO.IdListDTO dto);
+    
+    /**
+     * 跟据购物车的skuid，获取所属的店铺id列表
+     * @param dto
+     * @return
+     */
+    List<ShopSkuVO> groupShopByCarId(BbcUserShoppingCarDTO.InnerIdListDTO dto);
 
 }

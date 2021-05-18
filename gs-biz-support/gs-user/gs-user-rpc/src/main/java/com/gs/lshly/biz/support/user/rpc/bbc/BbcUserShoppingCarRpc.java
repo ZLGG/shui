@@ -1,18 +1,20 @@
 package com.gs.lshly.biz.support.user.rpc.bbc;
-import com.gs.lshly.common.response.PageData;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gs.lshly.biz.support.user.service.bbc.IBbcUserShoppingCarService;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.IdListDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.InnerIdListDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SummationVO;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
-import com.gs.lshly.biz.support.user.service.bbc.IBbcUserShoppingCarService;
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
 *
@@ -78,6 +80,11 @@ public class BbcUserShoppingCarRpc implements IBbcUserShoppingCarRpc{
 	@Override
 	public SummationVO summationUserShoppingCar(IdListDTO dto) {
 		return bbcUserShoppingCarService.summationUserShoppingCar(dto);
+	}
+
+	@Override
+	public List<ShopSkuVO> groupShopByCarId(InnerIdListDTO dto) {
+		return bbcUserShoppingCarService.groupShopByCarId(dto);
 	}
 
 }

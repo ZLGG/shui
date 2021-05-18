@@ -140,6 +140,12 @@ public class SkuGoodInfo extends Model {
 
     @ApiModelProperty("积分价格")
     private BigDecimal pointPrice;
+    
+    /**
+     * 原积分价格
+     */
+    @ApiModelProperty("原积分价格")
+    private BigDecimal oldPointPrice;
 
     @ApiModelProperty("办理备注")
     private String remarks;

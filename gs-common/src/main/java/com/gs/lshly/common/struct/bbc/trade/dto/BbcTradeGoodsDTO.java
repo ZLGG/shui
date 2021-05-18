@@ -74,6 +74,9 @@ public abstract class BbcTradeGoodsDTO implements Serializable {
 
         @ApiModelProperty("支付总金额")
         private BigDecimal payAmount;
+        
+        @ApiModelProperty("支付总积分金额")
+        private Integer payPointAmount;
 
         @ApiModelProperty("所得积分")
         private BigDecimal giftIntegral;

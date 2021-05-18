@@ -48,7 +48,7 @@ public class BbbH5TradeController {
 
     @ApiOperation("去结算")
     @PostMapping("/userCenter/settlement")
-    public ResponseData<BbcTradeSettlementVO.ListVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
+    public ResponseData<BbcTradeSettlementVO.DetailVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.settlementVO(dto);
     }
@@ -62,7 +62,7 @@ public class BbbH5TradeController {
 
     @ApiOperation("提交订单")
     @PostMapping("/userCenter/orderSubmit")
-    public ResponseData<BbcTradeDTO.IdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
+    public ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.orderSubmit(dto);
     }

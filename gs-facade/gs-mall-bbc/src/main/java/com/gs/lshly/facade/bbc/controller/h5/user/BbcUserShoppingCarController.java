@@ -67,8 +67,8 @@ public class BbcUserShoppingCarController {
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
     
-    @ApiOperation("购物车商品合计金额-v1.1.0")
-    @GetMapping(value = "/summation")
+    @ApiOperation("计算购物车商品合计金额-v1.1.0")
+    @PostMapping(value = "/summation")
     public ResponseData<BbcUserShoppingCarVO.SummationVO> summation(@Valid @RequestBody BbcUserShoppingCarDTO.IdListDTO dto) {
         return ResponseData.data(bbcUserShoppingCarRpc.summationUserShoppingCar(dto));
     }

@@ -1,26 +1,28 @@
 package com.gs.lshly.common.struct.bbc.trade.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.bbb.pc.trade.dto.BbbOrderDTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.BaseDTO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
 /**
 * @author oy
 * @since 2020-10-28
 */
+@SuppressWarnings("serial")
 public abstract class BbcTradeDTO implements Serializable {
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradeDTO.ETO")
     @Accessors(chain = true)
@@ -107,7 +109,7 @@ public abstract class BbcTradeDTO implements Serializable {
         @ApiModelProperty("是否隐藏订单:1:是")
         private Integer isHide;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradeDTO.IdDTO")
     @AllArgsConstructor
@@ -117,6 +119,24 @@ public abstract class BbcTradeDTO implements Serializable {
         @ApiModelProperty(value = "交易订单号(ID)")
         private String id;
     }
+    
+	@Data
+    @ApiModel("BbcTradeDTO.ListIdDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ListIdDTO implements Serializable {
+
+        @ApiModelProperty(value = "交易订单号(ID)")
+        private List<String> ids;
+        
+        @ApiModelProperty(value ="支付现金金额")
+        private BigDecimal tradeAmount;
+        
+        @ApiModelProperty(value ="支付积分金额")
+        private BigDecimal tradePointAmount;
+        
+    }
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradeDTO.innerCommpareTo")
     @AllArgsConstructor
@@ -130,6 +150,7 @@ public abstract class BbcTradeDTO implements Serializable {
         @ApiModelProperty("排序方式[10=升序 20=降序]")
         private Integer compareToMode;
     }
+    @EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradeDTO.UseCard")
     @AllArgsConstructor
@@ -155,6 +176,7 @@ public abstract class BbcTradeDTO implements Serializable {
         @ApiModelProperty("商品总价（单价*数量）值")
         private BigDecimal totalAmount;
     }
+    @EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradeDTO.OfflinePayDTO")
     @AllArgsConstructor
