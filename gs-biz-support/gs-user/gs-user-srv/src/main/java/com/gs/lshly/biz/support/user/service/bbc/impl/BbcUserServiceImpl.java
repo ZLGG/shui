@@ -20,6 +20,7 @@ import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO.DetailVO;
+import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
@@ -125,6 +126,7 @@ public class BbcUserServiceImpl implements IBbcUserService {
     @Override
     public BbcUserVO.MyIntegralVO myIntegral(String userId) {
         BbcUserVO.MyIntegralVO myIntegralVO = userIntegralMapper.myIntegral(userId);
+        myIntegralVO.setPhone(AESUtil.aesDecrypt(myIntegralVO.getPhone()));
         return myIntegralVO;
     }
 

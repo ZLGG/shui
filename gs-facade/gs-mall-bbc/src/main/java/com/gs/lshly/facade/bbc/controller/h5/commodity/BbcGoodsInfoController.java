@@ -54,7 +54,7 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(id)));
     }
 
-    @ApiOperation("搜素2C商城首页商品信息-v1.1.0")
+    @ApiOperation("搜索2C商城首页商品信息-v1.1.0")
     @PostMapping(value = "getHomeGoods")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getHomeGoods(@Valid @RequestBody BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(qto));
@@ -70,6 +70,12 @@ public class BbcGoodsInfoController {
     @GetMapping(value = "getRecommendGoodsList")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> getRecommendGoodsList(BbcGoodsInfoQTO.OrderGoodsListQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getRecommendGoodsList(qto));
+    }
+
+    @ApiOperation("获取店铺推荐商品列表-v1.10")
+    @GetMapping(value = "/getShopRecommendGoods")
+    public ResponseData<List<BbcGoodsInfoVO.GoodsListVO>> getShopRecommendGoods(BbcGoodsInfoQTO.ShopGoodsIdQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.getShopRecommendGoods(qto));
     }
 
     @ApiOperation("商品分享数据解析")

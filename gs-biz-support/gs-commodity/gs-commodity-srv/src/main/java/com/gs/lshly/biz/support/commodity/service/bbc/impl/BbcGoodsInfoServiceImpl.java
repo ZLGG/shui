@@ -462,7 +462,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (MallCategoryEnum.我能兑换.getCode().equals(qto.getSearchEntry())) {
             System.out.println(qto.getUserId());
             if (StringUtils.isBlank(qto.getUserId()) || qto.getOkIntegral() == null) {
-                throw new BusinessException("请登陆后查询我能兑换的积分商品");
+                throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
             boost.lt("point_price",qto.getOkIntegral());
             boost.eq("is_point_good",true);
@@ -1300,7 +1300,56 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         return detailVo;
 	}
 
-	@Override
+    @Override
+    public List<BbcGoodsInfoVO.GoodsListVO> getShopRecommendGoods(BbcGoodsInfoQTO.ShopGoodsIdQTO qto) {
+        // 随机查询四个店铺推荐商品
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("gs.is_point_good",true);
+        wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
+        wrapper.eq("gs.shop_id", qto.getShopId());
+        List<String> goodsIds = goodsInfoMapper.getAllIds(wrapper);
+        List<String> ranIds = new ArrayList<>();
+        QueryWrapper<GoodsInfo> boost = new QueryWrapper<>();
+        if (goodsIds.size() > 4 ) {
+            Random rand = new Random();
+            for (int i = 0; i < 4; i++) {
+                String ranNum = goodsIds.get(rand.nextInt(goodsIds.size()));
+                goodsIds.remove(ranNum);
+                ranIds.add(ranNum);
+            }
+            boost.in("id", ranIds);
+        }
+        else {
+            boost.in("id", goodsIds);
+        }
+
+        // 获取商品信息
+        List<GoodsInfo> goodsInfoList = repository.list(boost);
+
+        // 获取商品规格
+        List<BbcGoodsInfoVO.GoodsListVO> resultList = new ArrayList<>();
+        goodsInfoList.forEach(goods -> {
+            BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
+            BeanUtils.copyProperties(goods, goodsListVO);
+            goodsListVO.setGoodsId(goods.getId());
+            goodsListVO.setShopName(shopDetailVO(goods.getShopId()).getShopName());
+            if (ObjectUtils.isNotEmpty(getSpecInfoVO(goods))) {
+                goodsListVO.setSpecListVOS(getSpecInfoVO(goods));
+            }
+            if (goods.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+                BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(goods).get(0);
+                goodsListVO.setSkuId(skuVO.getSkuId());
+                goodsListVO.setSingleSkuStock(getSkuStockNum(goods.getShopId(), skuVO.getSkuId()));
+            }
+            goodsListVO.setLabelVOS(getGoodsLabelVO(goods.getId()));
+            goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goods.getGoodsImage())) ? "" : getImage(goods.getGoodsImage()));
+            resultList.add(goodsListVO);
+        });
+        return resultList;
+    }
+
+    @Override
 	public InMemberHomeVO inMemberHome() {
 		InMemberHomeVO vo = new InMemberHomeVO();
 		BbcSiteAdvertQTO.SubjectQTO qto = new BbcSiteAdvertQTO.SubjectQTO();

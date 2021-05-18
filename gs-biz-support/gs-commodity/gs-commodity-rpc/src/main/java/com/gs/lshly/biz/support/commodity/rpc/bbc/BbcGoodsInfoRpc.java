@@ -150,7 +150,12 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 		return bbcGoodsInfoService.simpleListVO(dto);
 	}
 
-	@Override
+    @Override
+    public List<BbcGoodsInfoVO.GoodsListVO> getShopRecommendGoods(BbcGoodsInfoQTO.ShopGoodsIdQTO qto) {
+        return bbcGoodsInfoService.getShopRecommendGoods(qto);
+    }
+
+    @Override
 	public InMemberHomeVO inMemberHome() {
 		return bbcGoodsInfoService.inMemberHome();
 	}

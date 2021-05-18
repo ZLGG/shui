@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysFuncVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -133,14 +134,28 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         if (categories == null || categories.size() == 0) {
             return new ArrayList<>();
         }
+        List<GoodsCategory> firstList = new ArrayList<>();
+        List<String> secondIds = new ArrayList<>();
         for (GoodsCategory category : categories) {
-            GoodsCategoryVO.CategoryTreeVO categoryTreeVO = new GoodsCategoryVO.CategoryTreeVO();
-            List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
-            if (ObjectUtils.isNotEmpty(goodsIds)) {
-                BeanUtils.copyProperties(category, categoryTreeVO);
-                list.add(categoryTreeVO);
+            // 查询有商品的三级节点
+            if (category.getGsCategoryLevel() == 3) {
+                List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
+                if (ObjectUtils.isNotEmpty(goodsIds)) {
+                    firstList.add(category);
+                    secondIds.add(category.getParentId());
+                }
             }
         }
+        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper();
+        queryWrapper.in("parent_id", secondIds);
+        List<GoodsCategory> secondList = categoryRepository.list(queryWrapper);
+        firstList.addAll(secondList);
+
+
+
+//        GoodsCategoryVO.CategoryTreeVO categoryTreeVO = new GoodsCategoryVO.CategoryTreeVO();
+//        BeanUtils.copyProperties(category, categoryTreeVO);
+//        list.add(categoryTreeVO);
         //声明一个容器存放树形结构数据
         List<GoodsCategoryVO.CategoryTreeVO> listVOS = new ArrayList<>();
         //获取下面的所有一级分类
@@ -171,6 +186,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
                 }
             }
         }
+//        List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(list.get(k).getId());
         return listVOS;
     }
 
