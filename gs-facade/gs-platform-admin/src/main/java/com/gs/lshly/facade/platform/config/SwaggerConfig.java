@@ -19,7 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2020/9/14
  */
 @Configuration
-@Profile(value = {"dev","hztest"})
+@Profile(value = {"dev","hztest","ctcctest"})
 @EnableSwagger2
 public class SwaggerConfig implements WebMvcConfigurer {
 
