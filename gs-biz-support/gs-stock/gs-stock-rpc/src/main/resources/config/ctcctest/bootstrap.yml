@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: ctcctest
+  application:
+    name: biz-support-stock
+  cloud:
+    nacos:
+      config:
+        group: biz-support
+        server-addr: 172.20.137.11:8848
+        file-extension: yml
+        namespace: hztest9ea3eab6-bf44-480b-8975-a03006fb8f84
+        username: nacos
+        password: nacos
+      discovery:
+        server-addr: 172.20.137.11:8848
+        username: nacos
+        password: nacos

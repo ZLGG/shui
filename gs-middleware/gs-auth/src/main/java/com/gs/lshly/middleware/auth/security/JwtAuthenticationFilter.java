@@ -5,6 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.constants.SecurityConstants;
 import com.gs.lshly.common.utils.AES;
 import com.gs.lshly.middleware.vcode.kaptcha.CaptchaService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -46,17 +48,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = this.obtainUsername(request)!=null ? this.obtainUsername(request).trim() : "";
         String password = this.obtainPassword(request)!=null ? this.obtainPassword(request) : "";
-        password = AES.Decrypt(password);
+        
+        if(StringUtils.isNotEmpty(password)&&password.length()>10&&!password.startsWith("12")){
+        	password = AES.Decrypt(password);
+        }
         String remember = request.getParameter("remember-me");
         rememberMe.set(StrUtil.isNotBlank(remember) && ("1".equals(remember) || "true".equals(remember)));
         String vcId = request.getParameter("vcId");
         String vcode = request.getParameter("vcode");
-        if(captchaService.match(vcId, vcode)) {
+//        if(captchaService.match(vcId, vcode)) {
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
             return this.getAuthenticationManager().authenticate(authRequest);
-        } else {
-            throw new CaptchaNotMatchException("验证码错误");
-        }
+//        } else {
+//            throw new CaptchaNotMatchException("验证码错误");
+//        }
 
     }
 
