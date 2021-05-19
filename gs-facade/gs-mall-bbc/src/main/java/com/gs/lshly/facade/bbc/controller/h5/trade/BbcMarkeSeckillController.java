@@ -49,9 +49,9 @@ public class BbcMarkeSeckillController {
 
     
     @ApiOperation("秒杀商品详情页-v1.1.0")
-    @GetMapping(value = "/seckill/goodsInfo/{id}")
-    public ResponseData<BbcGoodsInfoVO.DetailVO> get(@PathVariable String id) {
-        return ResponseData.data(bbcMarketSeckillRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(id)));
+    @GetMapping(value = "/seckill/getGoodsInfoDetail")
+    public ResponseData<BbcGoodsInfoVO.DetailVO> get(BbcMarketSeckillQTO.DetailQTO qto) {
+        return ResponseData.data(bbcMarketSeckillRpc.detailGoodsInfo(qto));
     }
 
 }

@@ -38,6 +38,6 @@ public interface IBbcMarketSeckillRpc {
      * @param dto
      * @return
      */
-    BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
+    BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto);
     
 }

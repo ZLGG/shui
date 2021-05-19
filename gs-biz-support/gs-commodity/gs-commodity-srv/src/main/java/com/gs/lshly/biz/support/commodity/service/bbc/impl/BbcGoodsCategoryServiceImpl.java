@@ -147,7 +147,12 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
     @Override
     public List<BbcGoodsCategoryVO.CategoryTreeVO> goodsCategoryTree(BbcGoodsCategoryQTO.ListQTO listQTO) {
         QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.ne("use_filed", GoodsUsePlatformEnums.B商城.getCode());
+        queryWrapper.and(q -> q.eq("use_filed", listQTO.getUseFiled())
+                .or()
+                .eq("use_filed", GoodsUsePlatformEnums.B商城和C商城.getCode())
+                .or()
+                .isNull("use_filed")
+        );
         queryWrapper.orderByDesc("idx");
         List<GoodsCategory> list = repository.list(queryWrapper);
         Map<String, List<GoodsCategory>> map = allGoodsCategoryMap(list);
@@ -174,7 +179,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
     @Override
     public PageData<GoodsBrandVO.ListVO> brandList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
-        List<String> cIds = getNewSubCategoryIds(categoryIdQTO);
+        List<String> cIds = getSubCategoryIds(categoryIdQTO);
         IPage<GoodsBrand> page = MybatisPlusUtil.pager(categoryIdQTO);
         QueryWrapper<GoodsBrand> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("category_id", cIds);
@@ -182,50 +187,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         return new PageData(goodsBrandIPage.getRecords(), categoryIdQTO.getPageNum(), categoryIdQTO.getPageSize(), goodsBrandIPage.getTotal());
     }
 
-    /**
-     * 跟据当前三级类目查询节点
-     * @param categoryIdQTO
-     * @return
-     */
-	private List<String> getSubCategoryIds(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
-		List<String> ret = new ArrayList<String>();
-		/**
-		 * 跟据类目查询对应的分类
-		 */
-		ret.add(categoryIdQTO.getCategoryId());
-		GoodsCategory goodsCategory = repository.getById(categoryIdQTO.getCategoryId());
-		if (StringUtils.isNotEmpty(goodsCategory.getParentId())) {
-			goodsCategory = repository.getById(goodsCategory.getParentId());
-
-			if (goodsCategory != null) {
-				ret.add(goodsCategory.getId());
-				if (StringUtils.isNotEmpty(goodsCategory.getParentId())) {
-					goodsCategory = repository.getById(goodsCategory.getParentId());
-
-					if (goodsCategory != null) {
-						ret.add(goodsCategory.getId());
-					}
-				}
-			}
-		}
-		return ret;
-		/**
-		 *
-		 *
-		 * BbcGoodsCategoryQTO.ListQTO listQTO = new
-		 * BbcGoodsCategoryQTO.ListQTO(); listQTO.setShowAll(true);
-		 * listQTO.setParentId(categoryIdQTO.getCategoryId());
-		 * listQTO.setUseFiled(categoryIdQTO.getUseFiled());
-		 *
-		 * //获取树结构 List<BbcGoodsCategoryVO.CategoryTreeVO> categoryTreeVOS =
-		 * goodsCategoryTree(listQTO); //将树转换成列表 List
-		 * <BbcGoodsCategoryVO.CategoryTreeVO> treeVOList = new ArrayList<>();
-		 * goodsCategoryList(categoryTreeVOS, treeVOList); return
-		 * treeVOList.stream().map(v -> v.getId()).collect(Collectors.toList());
-		 */
-	}
-
-    private List<String> getNewSubCategoryIds(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
+    private List<String> getSubCategoryIds(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
         BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
         listQTO.setShowAll(true);
         listQTO.setParentId(categoryIdQTO.getCategoryId());
@@ -241,13 +203,11 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
     private List<BbcGoodsCategoryVO.CategoryTreeVO> goodsCategoryList(List<BbcGoodsCategoryVO.CategoryTreeVO> list,
                                                                       List<BbcGoodsCategoryVO.CategoryTreeVO> resultVO) {
-        if(CollectionUtils.isNotEmpty(list)){
-	    	for (BbcGoodsCategoryVO.CategoryTreeVO treeVO : list) {
-	            resultVO.add(treeVO);
-	            if (treeVO.getList() != null) {
-	                goodsCategoryList(treeVO.getList(), resultVO);
-	            }
-	        }
+        for (BbcGoodsCategoryVO.CategoryTreeVO treeVO : list) {
+            resultVO.add(treeVO);
+            if (treeVO.getList() != null) {
+                goodsCategoryList(treeVO.getList(), resultVO);
+            }
         }
         return resultVO;
     }

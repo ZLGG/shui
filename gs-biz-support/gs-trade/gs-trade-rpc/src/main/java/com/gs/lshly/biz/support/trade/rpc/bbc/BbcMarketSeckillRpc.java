@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.rpc.bbc;
 
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,8 +38,8 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 	}
 
 	@Override
-	public SeckillDetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto) {
-		return bbcMarketSeckillService.detailGoodsInfo(dto);
+	public SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto) {
+		return bbcMarketSeckillService.detailGoodsInfo(qto);
 	}
 
 }

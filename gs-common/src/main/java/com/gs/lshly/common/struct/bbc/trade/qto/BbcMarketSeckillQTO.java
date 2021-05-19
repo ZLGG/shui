@@ -26,5 +26,17 @@ public abstract class BbcMarketSeckillQTO implements Serializable {
     	@ApiModelProperty("活动ID")
         private String id;
     }
+
+    @Data
+    @ApiModel("BbcMarketActivityQTO.DetailQTO")
+    @Accessors(chain = true)
+    public static class DetailQTO extends BaseQTO {
+
+        @ApiModelProperty("活动ID")
+        private String activityId;
+
+        @ApiModelProperty("商品id")
+        private String goodsId;
+    }
     
 }
