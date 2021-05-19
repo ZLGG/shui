@@ -95,7 +95,8 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         wrapper.le("seckill_start_time", now+" 23:59:59");
         wrapper.orderByAsc("time_quantum");
         List<MarketPtSeckill> nowList = marketPtSeckillRepository.list(wrapper);
-        
+
+        //查询昨天秒杀数据
         String before = DateUtils.getBeforeDay(1);
         wrapper = new QueryWrapper<>();
         wrapper.ge("seckill_start_time", before+" 00:00:00");

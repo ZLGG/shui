@@ -464,7 +464,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             if (StringUtils.isBlank(qto.getUserId()) || qto.getOkIntegral() == null) {
                 throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
-            boost.lt("point_price",qto.getOkIntegral());
             boost.eq("is_point_good",true);
             // in会员
             if(null != qto.getOrderByProperties() && qto.getOrderByProperties() == 50) {
