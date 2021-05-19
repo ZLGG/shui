@@ -131,7 +131,6 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		retList.add(listVO);
 		
 		BbcMarketActivityVO.SeckillHome seckill = bbcMarketSeckillRpc.seckillHome(new BbcMarketSeckillDTO.DTO());
-		
 		listVO = new ListVO();
 		listVO.setId(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setCode(PointHomeTypeEnum.秒杀.getCode());

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
-import com.gs.lshly.biz.support.user.mapper.view.UserLabelView;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -28,6 +27,6 @@ public interface UserIntegralMapper extends BaseMapper<UserIntegral> {
     @Select("SELECT SUM(quantity) quantity,user_id FROM gs_user_integral WHERE end_date > CURRENT_TIMESTAMP  and ${ew.sqlSegment} " )
     UserIntegralView sumCount(@Param(value = "ew") QueryWrapper<UserIntegral> qw);
 
-    @Select("select gs.direction_integral,gs.phone, SUM(gi.quantity) okIntegral from gs_user gs left join gs_user_integral gi on gs.id = gi.user_id where gs.id = #{userId} and gi.end_date > CURRENT_TIMESTAMP")
+    @Select("select gs.direction_integral,gs.phone, gi.point_balance as okIntegral from gs_user gs left join gs_user_ctcc_point gi on gs.id = gi.user_id where gs.id = #{userId}")
     BbcUserVO.MyIntegralVO myIntegral(@Param("userId") String userId);
 }
