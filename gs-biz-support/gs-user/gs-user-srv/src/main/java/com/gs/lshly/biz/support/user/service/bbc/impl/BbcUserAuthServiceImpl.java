@@ -160,7 +160,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             	throw new BusinessException("密码错误");
             }
     	}
-       
+
     }
 
     @Override
