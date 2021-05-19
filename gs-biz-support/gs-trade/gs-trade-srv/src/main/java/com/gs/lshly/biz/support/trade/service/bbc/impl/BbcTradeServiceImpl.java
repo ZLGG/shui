@@ -597,11 +597,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         innerListCheckStockDTO.setGoodsItemList(goodsItemList);
         ResponseData<CommonStockVO.InnerListCheckStockVO> checkStockVO = commonStockRpc.innerListCheckStock(innerListCheckStockDTO);
         if(ResponseCodeEnum.失败.getCode() == checkStockVO.getCode()){
-            throw new BusinessException(checkStockVO.getMessage());
+//            throw new BusinessException(checkStockVO.getMessage());
         }
         if(!StockCheckStateEnum.库存正常.getCode().equals(checkStockVO.getData().getCheckState())){//库存状态
-            throw new BusinessException(StockCheckStateEnum.库存不足.getRemark());
+//            throw new BusinessException(StockCheckStateEnum.库存不足.getRemark());
         }
+        checkStockVO.setCode(StockCheckStateEnum.库存正常.getCode());
         return checkStockVO.getData();
     }
 
@@ -642,7 +643,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 goodsItemList.add(new CommonStockDTO.InnerSkuGoodsInfoItem(null,productData.getGoodsSkuId(),productData.getQuantity()));
             }
             //根据SKU ID数组检查库存
-            checkStock(goodsItemList);
+//            checkStock(goodsItemList);
 
             //查询店铺信息
 
