@@ -101,6 +101,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         wrapper.ge("seckill_start_time", before+" 00:00:00");
         wrapper.le("seckill_start_time", before+" 23:59:59");
         wrapper.orderByDesc("time_quantum");
+        wrapper.last("limit 1");
         MarketPtSeckill beforeSeckill = marketPtSeckillRepository.getOne(wrapper);
         
         
