@@ -2023,7 +2023,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 		 */
 		BbcUserVO.DetailVO detailVO = iBbcUserRpc.getUserInfoNoLogin(dto);
 		if(detailVO==null||StringUtils.isEmpty(detailVO.getId())||!detailVO.getIsInUser().equals(1)){
-			
+			throw new BusinessException("无有效的用户信息");
 		}
 			
 		List<String> tradeIds = dto.getTradeIds();
