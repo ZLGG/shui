@@ -193,7 +193,11 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     	if (user != null) {
             //返回登录所需信息
     		AuthDTO authDTO = merchantUserToAuthDTO(user);
+    		
+    		String createToken = JwtUtil.createToken(new JwtUser(authDTO));
+    		authDTO.setToken(createToken);
     		BeanCopyUtils.copyProperties(authDTO, loginVO);
+    		loginVO.setAuthToken(createToken);
     		return loginVO;
         }
     	throw new BusinessException("跟据手机号码未找到帐户");

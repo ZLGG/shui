@@ -104,7 +104,7 @@ public class SysUserAuthController {
         	/**
         	 * 解码
         	 */
-        	String password = AES.Encrypt(dto.getPassword());
+        	String password = AES.Decrypt(dto.getPassword());
         	dto.setPassword(password);
         	SysUserVO.DetailVO userDetails = sysUserRpc.getSysUserByName(dto.getUsername());
             if (userDetails == null || StringUtils.isEmpty(userDetails.getId())) {

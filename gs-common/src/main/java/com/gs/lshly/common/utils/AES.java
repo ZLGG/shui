@@ -110,7 +110,7 @@ public class AES {
         System.out.println("加密后的字串是：" + enString);
 
         // 解密
-        String DeString = AES.Decrypt(enString, cKey);
+        String DeString = AES.Decrypt("zPgCsADyXtKWoNb3AtC0GQ==");
         System.out.println("解密后的字串是：" + DeString);
     }
 }
