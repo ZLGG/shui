@@ -58,7 +58,6 @@ import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.PayMethodTypeEnum;
 import com.gs.lshly.common.enums.ResponseCodeEnum;
 import com.gs.lshly.common.enums.StockAddressTypeEnum;
 import com.gs.lshly.common.enums.StockCheckStateEnum;
@@ -95,12 +94,14 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeGoodsDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO.CheckAndPointDoPayETO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO.ShopListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeVO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
@@ -115,7 +116,6 @@ import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
 import com.gs.lshly.common.utils.Base64;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.IpUtil;
-import com.gs.lshly.common.utils.JsonUtils;
 import com.gs.lshly.middleware.mq.aliyun.producerService.ProducerService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
@@ -123,6 +123,7 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockDeliveryRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserIntegralRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
@@ -141,7 +142,8 @@ import com.lakala.boss.api.entity.response.QRCodePaymentCommitResponse;
 import com.lakala.boss.api.utils.BossClient;
 import com.lakala.boss.api.utils.UuidUtil;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -176,6 +178,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     private ISettingsReceiptRpc iSettingsReceiptRpc;
     @DubboReference
     private IBbcUserRpc iBbcUserRpc;
+    @DubboReference
+    private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
 
@@ -1416,67 +1420,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return null;
     }
 
-    /**
-     * 根据交易订单编号修改状态
-     * @param tradeCode
-     * @return
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String paySuccess(String tradeCode) {
-        JSONObject responseJson = new JSONObject();
-        QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
-        tradeWrapper.eq("trade_code",tradeCode);
-        Trade trade = tradeRepository.getOne(tradeWrapper);
-        if(ObjectUtils.isEmpty(trade)){
-            log.error("trade is null");
-            responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
-            return responseJson.toString();
-        }
-
-        QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
-        tradePayWrapper.eq("trade_id",trade.getId());
-        TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
-        if(ObjectUtils.isEmpty(tradePay)){
-            log.error("tradePay is null");
-            responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
-            return responseJson.toString();
-        }
-
-        if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
-                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())){
-            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
-            return responseJson.toString();
-        }
-        //修改订单状态//修改支付状态
-        if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
-                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())){
-
-            trade.setTradeState(TradeStateEnum.待发货.getCode());
-            trade.setPayTime(LocalDateTime.now());
-            tradeRepository.saveOrUpdate(trade);
-            tradePay.setPayState(TradePayStateEnum.已支付.getCode());
-            tradePayRepository.saveOrUpdate(tradePay);
-            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
-                if (StringUtils.isNotEmpty(trade.getRecvPhone())&&ObjectUtils.isNotEmpty(trade.getRecvPersonName())&&StringUtils.isNotEmpty(trade.getTradeCode())) {
-                    BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(new BbcShopQTO.InnerShopQTO(trade.getShopId()));
-                    if (ObjectUtils.isNotEmpty(innerDetailVO)) {
-                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(),innerDetailVO.getShopName());
-                        log.info("支付成功发送自提码：{}",trade.getTakeGoodsCode());
-                    }else {
-                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName());
-                        log.info("支付成功使用旧的自提码模版发送自提码：{}",trade.getTakeGoodsCode());
-                    }
-                }
-            }
-            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
-            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
-
-            return responseJson.toString();
-        }
-        responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
-        return responseJson.toString();
-    }
 
     /**
      * 隐藏订单
@@ -2075,5 +2018,180 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             e.printStackTrace();
         }
         return null;
+    }
+
+	@Override
+	public ResponseData<Void> checkAndPointDoPay(CheckAndPointDoPayETO dto) {
+		JSONObject responseJson = new JSONObject();
+		/**
+		 * 判断用户积分帐户的钱够不够了
+		 */
+		BbcUserVO.DetailVO detailVO = iBbcUserRpc.getUserInfoNoLogin(dto);
+		if(detailVO==null||StringUtils.isEmpty(detailVO.getId())||!detailVO.getIsInUser().equals(1)){
+			throw new BusinessException("无有效的用户信息");
+		}
+		/**
+		 * 看看我积分的钱够不够
+		 */
+		Integer telecomsIntegral = detailVO.getTelecomsIntegral();
+		
+		List<String> tradeIds = dto.getTradeIds();
+		if(CollectionUtil.isNotEmpty(tradeIds)){
+			//跟据id查询要支付的订单
+			
+			/**
+			 * 算下我一共要付的积分是多少
+			 */
+			String idsStr = CollUtil.isNotEmpty(tradeIds) ? CollUtil.join(tradeIds, "','") : "-1";
+			Integer totalTelecomsIntegral = tradeMapper.sumTradePointAmount(idsStr);
+			if(totalTelecomsIntegral>telecomsIntegral){
+				throw new BusinessException("您的积分值不够！");
+			}
+			
+			/**
+			 * 减积分
+			 */
+			for(String tradeId:tradeIds){
+				Trade trade = tradeRepository.getById(tradeId);
+				JSONObject ret = this.paySuccessTrade(trade);
+				if(ret.getInteger("code")==1){
+					return ResponseData.fail(ret.toString());
+				}
+			}
+			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),telecomsIntegral);
+			bbcUserCtccPointRpc.subCtccPoint(subCtccPointDTO);
+			
+		}else{
+			
+			responseJson.put("code", 1);
+			responseJson.put("result", "没有找到对应订单");
+			return ResponseData.fail(responseJson.toString());
+		}
+		responseJson.put("result", "支付成功！");
+		return ResponseData.success(responseJson.toString());
+	}
+	
+	/**
+     * 根据交易订单编号修改状态
+     * @param tradeCode
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    private JSONObject paySuccessTrade(Trade trade) {
+        JSONObject responseJson = new JSONObject();
+        if(ObjectUtils.isEmpty(trade)){
+            log.error("trade is null");
+            responseJson.put("code", 1);
+            responseJson.put("result", "没有找到对应订单");
+            return responseJson;
+        }
+
+        QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
+        tradePayWrapper.eq("trade_id",trade.getId());
+        TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
+        if(ObjectUtils.isEmpty(tradePay)){
+            log.error("tradePay is null");
+            responseJson.put("code", 1);
+            responseJson.put("result","没有找到对应支付订单");
+            return responseJson;
+        }
+
+        if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())){
+        	responseJson.put("code", 1);
+            responseJson.put("result","您的订单已支付！");
+            return responseJson;
+        }
+        //修改订单状态//修改支付状态
+        if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())){
+
+            trade.setTradeState(TradeStateEnum.待发货.getCode());
+            trade.setPayTime(LocalDateTime.now());
+            tradeRepository.saveOrUpdate(trade);
+            tradePay.setPayState(TradePayStateEnum.已支付.getCode());
+            tradePayRepository.saveOrUpdate(tradePay);
+//            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+//                if (StringUtils.isNotEmpty(trade.getRecvPhone())&&ObjectUtils.isNotEmpty(trade.getRecvPersonName())&&StringUtils.isNotEmpty(trade.getTradeCode())) {
+//                    BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(new BbcShopQTO.InnerShopQTO(trade.getShopId()));
+//                    if (ObjectUtils.isNotEmpty(innerDetailVO)) {
+//                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(),innerDetailVO.getShopName());
+//                        log.info("支付成功发送自提码：{}",trade.getTakeGoodsCode());
+//                    }else {
+//                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName());
+//                        log.info("支付成功使用旧的自提码模版发送自提码：{}",trade.getTakeGoodsCode());
+//                    }
+//                }
+//            }
+//            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
+            responseJson.put("code", 0);
+            responseJson.put("result","支付成功！");
+
+            return responseJson;
+        }
+        responseJson.put("code", 1);
+        responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+        return responseJson;
+    }
+    /**
+     * 根据交易订单编号修改状态
+     * @param tradeCode
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String paySuccess(String tradeCode) {
+        JSONObject responseJson = new JSONObject();
+        QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
+        tradeWrapper.eq("trade_code",tradeCode);
+        Trade trade = tradeRepository.getOne(tradeWrapper);
+        if(ObjectUtils.isEmpty(trade)){
+            log.error("trade is null");
+            responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
+            return responseJson.toString();
+        }
+
+        QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
+        tradePayWrapper.eq("trade_id",trade.getId());
+        TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
+        if(ObjectUtils.isEmpty(tradePay)){
+            log.error("tradePay is null");
+            responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+            return responseJson.toString();
+        }
+
+        if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())){
+            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
+            return responseJson.toString();
+        }
+        //修改订单状态//修改支付状态
+        if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())){
+
+            trade.setTradeState(TradeStateEnum.待发货.getCode());
+            trade.setPayTime(LocalDateTime.now());
+            tradeRepository.saveOrUpdate(trade);
+            tradePay.setPayState(TradePayStateEnum.已支付.getCode());
+            tradePayRepository.saveOrUpdate(tradePay);
+            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+                if (StringUtils.isNotEmpty(trade.getRecvPhone())&&ObjectUtils.isNotEmpty(trade.getRecvPersonName())&&StringUtils.isNotEmpty(trade.getTradeCode())) {
+                    BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(new BbcShopQTO.InnerShopQTO(trade.getShopId()));
+                    if (ObjectUtils.isNotEmpty(innerDetailVO)) {
+                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(),innerDetailVO.getShopName());
+                        log.info("支付成功发送自提码：{}",trade.getTakeGoodsCode());
+                    }else {
+                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName());
+                        log.info("支付成功使用旧的自提码模版发送自提码：{}",trade.getTakeGoodsCode());
+                    }
+                }
+            }
+            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
+            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
+
+            return responseJson.toString();
+        }
+        responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+        return responseJson.toString();
     }
 }

@@ -8,6 +8,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO.CheckAndPointDoPayETO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
@@ -122,5 +123,10 @@ public class BbcTradeRpc implements IBbcTradeRpc{
     public Integer myMerchantCard(BaseDTO dto) {
         return bbcTradeService.myMerchantCard(dto);
     }
+
+	@Override
+	public ResponseData<Void> checkAndPointDoPay(CheckAndPointDoPayETO dto) {
+		return bbcTradeService.checkAndPointDoPay(dto);
+	}
 
 }

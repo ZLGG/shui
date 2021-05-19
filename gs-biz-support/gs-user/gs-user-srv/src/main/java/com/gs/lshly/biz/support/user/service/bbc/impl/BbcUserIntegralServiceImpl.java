@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbb.h5.user.dto.BbbH5UserIntegralDTO;
 import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO.SubIntergralDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsIntegralVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -71,4 +72,5 @@ public class BbcUserIntegralServiceImpl implements IBbcUserIntegralService {
         return userIntegralVO;
 
     }
+
 }

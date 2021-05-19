@@ -21,6 +21,13 @@ public interface IBbcTradeService {
     ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
 
     ResponseData<Void> orderPay(BbcTradePayBuildDTO.ETO dto);
+    
+    /**
+     * 手机号码验证+第三方验证
+     * @param dto
+     * @return
+     */
+    ResponseData<Void> checkAndPointDoPay(BbcTradePayBuildDTO.CheckAndPointDoPayETO dto);
 
     PageData<BbcTradeListVO.tradeVO> tradeListPageData(BbcTradeQTO.TradeList qto);
 

@@ -64,7 +64,7 @@ public interface SysFuncMapper extends BaseMapper<SysFunc> {
      * @param userId
      * @return
      */
-    @Select("select t.id,t.name,t.icon,t.idx,t.paths as frontRouter from (SELECT distinct f.id,f.name,f.icon,f.idx as index,f.paths as frontRouter FROM gs_sys_user_role ur" +
+    @Select("select t.id,t.name,t.icon,t.idx,t.paths as frontRouter from (SELECT distinct f.* FROM gs_sys_user_role ur" +
             " INNER JOIN gs_sys_role r ON ur.role_id = r.id" +
             " INNER JOIN gs_sys_role_func rf ON r.id = rf.role_id" +
             " INNER JOIN gs_sys_func f ON f.id = rf.func_id" +
