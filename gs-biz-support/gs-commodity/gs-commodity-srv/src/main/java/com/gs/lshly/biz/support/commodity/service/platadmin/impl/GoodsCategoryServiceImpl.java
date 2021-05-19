@@ -127,35 +127,46 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     @Override
     public List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTreeWithGoods() {
         List<GoodsCategoryVO.CategoryTreeVO> list = new ArrayList<>();
-        //获取所有的分类数据
+        //获取所有三级类目
         QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
+        boost.eq("gs_category_level",3);
         boost.orderByAsc("idx", "id");
-        List<GoodsCategory> categories = categoryRepository.list(boost);
-        if (categories == null || categories.size() == 0) {
+        List<GoodsCategory> thirdCategories = categoryRepository.list(boost);
+        if (thirdCategories == null || thirdCategories.size() == 0) {
             return new ArrayList<>();
         }
-        List<GoodsCategory> firstList = new ArrayList<>();
-        List<String> secondIds = new ArrayList<>();
-        for (GoodsCategory category : categories) {
-            // 查询有商品的三级节点
-            if (category.getGsCategoryLevel() == 3) {
+        // 查询三级类目有商品类目
+        List<GoodsCategory> removeThirdList = new ArrayList<>();
+        for (GoodsCategory category : thirdCategories) {
                 List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
                 if (ObjectUtils.isNotEmpty(goodsIds)) {
-                    firstList.add(category);
-                    secondIds.add(category.getParentId());
+                    removeThirdList.add(category);
                 }
-            }
         }
-        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper();
-        queryWrapper.in("parent_id", secondIds);
-        List<GoodsCategory> secondList = categoryRepository.list(queryWrapper);
-        firstList.addAll(secondList);
+        thirdCategories.removeAll(removeThirdList);
+        // 查询二级类目有商品类目
+        List<String> secondCategoryIds = new ArrayList<>();
+        thirdCategories.forEach(categories -> {
+            secondCategoryIds.add(categories.getParentId());
+        });
+        QueryWrapper<GoodsCategory> secondQuery = new QueryWrapper<>();
+        secondQuery.in("parent_id",secondCategoryIds);
+        List<GoodsCategory> secondCategories = categoryRepository.list(secondQuery);
+        // 查询一级类目有商品类目
+        List<String> categoryIds = new ArrayList<>();
+        secondCategories.forEach(categories -> {
+            categoryIds.add(categories.getParentId());
+        });
+        QueryWrapper<GoodsCategory> query = new QueryWrapper<>();
+        secondQuery.in("parent_id",categoryIds);
+        List<GoodsCategory> categories = categoryRepository.list(query);
 
-
-
-//        GoodsCategoryVO.CategoryTreeVO categoryTreeVO = new GoodsCategoryVO.CategoryTreeVO();
-//        BeanUtils.copyProperties(category, categoryTreeVO);
-//        list.add(categoryTreeVO);
+        // 组装类别树
+        List<GoodsCategory> allCategories = new ArrayList<>();
+        allCategories.addAll(categories);
+        allCategories.addAll(secondCategories);
+        allCategories.addAll(thirdCategories);
+        com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.CategoryTreeVO.class,list);
         //声明一个容器存放树形结构数据
         List<GoodsCategoryVO.CategoryTreeVO> listVOS = new ArrayList<>();
         //获取下面的所有一级分类
@@ -186,7 +197,6 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
                 }
             }
         }
-//        List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(list.get(k).getId());
         return listVOS;
     }
 

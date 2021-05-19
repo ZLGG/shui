@@ -174,7 +174,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
     @Override
     public PageData<GoodsBrandVO.ListVO> brandList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
-        List<String> cIds = getSubCategoryIds(categoryIdQTO);
+        List<String> cIds = getNewSubCategoryIds(categoryIdQTO);
         IPage<GoodsBrand> page = MybatisPlusUtil.pager(categoryIdQTO);
         QueryWrapper<GoodsBrand> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("category_id", cIds);
@@ -224,6 +224,20 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 		 * treeVOList.stream().map(v -> v.getId()).collect(Collectors.toList());
 		 */
 	}
+
+    private List<String> getNewSubCategoryIds(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
+        BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
+        listQTO.setShowAll(true);
+        listQTO.setParentId(categoryIdQTO.getCategoryId());
+        listQTO.setUseFiled(categoryIdQTO.getUseFiled());
+
+        //获取树结构
+        List<BbcGoodsCategoryVO.CategoryTreeVO> categoryTreeVOS = goodsCategoryTree(listQTO);
+        //将树转换成列表
+        List<BbcGoodsCategoryVO.CategoryTreeVO> treeVOList = new ArrayList<>();
+        goodsCategoryList(categoryTreeVOS, treeVOList);
+        return treeVOList.stream().map(v -> v.getId()).collect(Collectors.toList());
+    }
 
     private List<BbcGoodsCategoryVO.CategoryTreeVO> goodsCategoryList(List<BbcGoodsCategoryVO.CategoryTreeVO> list,
                                                                       List<BbcGoodsCategoryVO.CategoryTreeVO> resultVO) {
