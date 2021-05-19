@@ -626,6 +626,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("积分价格")
         private Double pointPrice;
 
+        @ApiModelProperty("历史积分价格")
+        private Double oldPointPrice;
+
     }
 
     @Data

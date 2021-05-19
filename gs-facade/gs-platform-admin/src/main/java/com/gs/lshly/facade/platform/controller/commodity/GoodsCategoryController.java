@@ -100,7 +100,6 @@ public class GoodsCategoryController {
     @ApiOperation("分类列表")
     @GetMapping(value = "/listCategory")
     @Func(code="view", name = "查看")
-    @PostConstruct
     public ResponseData<List<GoodsCategoryVO.CategoryTreeVO>> listCategory(){
         List<GoodsCategoryVO.CategoryTreeVO> categoryTree = goodsCategoryRpc.selectCategoryTree();
         return ResponseData.data(categoryTree);

@@ -235,16 +235,19 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         			seckillGoodsVO.setGoodsName(goodsDetail.getGoodsName());
         			seckillGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsDetail.getGoodsImage())) ? "" : getImage(goodsDetail.getGoodsImage()));
         			if(goodsDetail.getIsInMemberGift()){
+        				seckillGoodsVO.setSeckillId(id);
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getInMemberPointPrice());
         				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillInMemberPointPrice());
         				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillInMemberPointPrice());
         			}else if(goodsDetail.getIsPointGood()){
+						seckillGoodsVO.setSeckillId(id);
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getPointPrice());
         				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillPointPrice());
         				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillPointPrice());
         			}else{
+						seckillGoodsVO.setSeckillId(id);
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getSalePrice());
         				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSalePrice());

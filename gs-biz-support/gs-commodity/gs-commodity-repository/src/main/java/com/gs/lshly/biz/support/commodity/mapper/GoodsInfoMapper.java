@@ -197,7 +197,7 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
      * @param wrapper
      */
     @Select("SELECT DISTINCT\n" +
-            "gs.id,gs.goods_image,gs.goods_name,gs.goods_title,gb.brand_name,gs.point_price\n" +
+            "gs.id,gs.goods_image,gs.goods_name,gs.goods_title,gs.old_point_price, gb.brand_name,gs.point_price\n" +
             "from\n" +
             "gs_goods_info gs\n" +
             "left join gs_goods_brand gb on gs.brand_id = gb.id\n" +

@@ -68,7 +68,10 @@ public abstract class BbcMarketSeckillVO implements Serializable {
     @ApiModel("BbcMarketSeckillVO.SeckillGoodsVO")
     @Accessors(chain = true)
     public static class SeckillGoodsVO extends ListVO{
-		
+
+		@ApiModelProperty("秒杀id")
+		private String seckillId;
+
 		@ApiModelProperty("秒杀价->复用商城首页")
         private BigDecimal salePrice;
 		

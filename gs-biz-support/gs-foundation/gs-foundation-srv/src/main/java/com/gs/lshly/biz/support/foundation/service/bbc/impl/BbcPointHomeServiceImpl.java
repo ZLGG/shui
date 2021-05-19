@@ -87,8 +87,8 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.分类.getCode());
 		listVO.setIdx(PointHomeTypeEnum.分类.getIdx());
 		listVO.setName(PointHomeTypeEnum.分类.getRemark());
-		listVO.setList(goodsCategoryRpc.selectCategoryTree());
-//		listVO.setList(goodsCategoryRpc.selectCategoryTreeWithGoods());
+//		listVO.setList(goodsCategoryRpc.selectCategoryTree());
+		listVO.setList(goodsCategoryRpc.selectCategoryTreeWithGoods());
 		retList.add(listVO);
 		
 		PCBbbGoodsCategoryQTO.QTO qto1 = new PCBbbGoodsCategoryQTO.QTO();
@@ -131,7 +131,6 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		retList.add(listVO);
 		
 		BbcMarketActivityVO.SeckillHome seckill = bbcMarketSeckillRpc.seckillHome(new BbcMarketSeckillDTO.DTO());
-		
 		listVO = new ListVO();
 		listVO.setId(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setCode(PointHomeTypeEnum.秒杀.getCode());

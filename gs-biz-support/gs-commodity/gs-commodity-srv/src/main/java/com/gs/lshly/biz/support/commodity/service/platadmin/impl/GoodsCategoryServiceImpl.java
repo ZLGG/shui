@@ -130,6 +130,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         //获取所有三级类目
         QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
         boost.eq("gs_category_level",3);
+        boost.eq("flag", false);
         boost.orderByAsc("idx", "id");
         List<GoodsCategory> thirdCategories = categoryRepository.list(boost);
         if (thirdCategories == null || thirdCategories.size() == 0) {
@@ -139,7 +140,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         List<GoodsCategory> removeThirdList = new ArrayList<>();
         for (GoodsCategory category : thirdCategories) {
                 List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
-                if (ObjectUtils.isNotEmpty(goodsIds)) {
+                if (ObjectUtils.isEmpty(goodsIds)) {
                     removeThirdList.add(category);
                 }
         }
@@ -150,7 +151,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             secondCategoryIds.add(categories.getParentId());
         });
         QueryWrapper<GoodsCategory> secondQuery = new QueryWrapper<>();
-        secondQuery.in("parent_id",secondCategoryIds);
+        secondQuery.in("id",secondCategoryIds);
         List<GoodsCategory> secondCategories = categoryRepository.list(secondQuery);
         // 查询一级类目有商品类目
         List<String> categoryIds = new ArrayList<>();
@@ -158,7 +159,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             categoryIds.add(categories.getParentId());
         });
         QueryWrapper<GoodsCategory> query = new QueryWrapper<>();
-        secondQuery.in("parent_id",categoryIds);
+        query.in("id",categoryIds);
         List<GoodsCategory> categories = categoryRepository.list(query);
 
         // 组装类别树
@@ -166,7 +167,11 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         allCategories.addAll(categories);
         allCategories.addAll(secondCategories);
         allCategories.addAll(thirdCategories);
-        com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.CategoryTreeVO.class,list);
+        for (GoodsCategory category : allCategories) {
+            GoodsCategoryVO.CategoryTreeVO categoryTreeVO = new GoodsCategoryVO.CategoryTreeVO();
+            BeanUtils.copyProperties(category, categoryTreeVO);
+            list.add(categoryTreeVO);
+        }
         //声明一个容器存放树形结构数据
         List<GoodsCategoryVO.CategoryTreeVO> listVOS = new ArrayList<>();
         //获取下面的所有一级分类

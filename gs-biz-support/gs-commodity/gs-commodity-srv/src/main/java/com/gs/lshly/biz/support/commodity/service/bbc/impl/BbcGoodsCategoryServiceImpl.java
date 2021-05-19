@@ -166,7 +166,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 	@Override
     public PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
 
-        List<String> cIds = getSubCategoryIds(categoryIdQTO);
+        List<String> cIds = getNewSubCategoryIds(categoryIdQTO);
         //通过列表对产品表进行查询 返回品牌信息
 
         QueryWrapper<GoodsInfo> queryWrapper = new QueryWrapper<>();
@@ -199,6 +199,30 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         List<BbcGoodsCategoryVO.CategoryTreeVO> treeVOList = new ArrayList<>();
         goodsCategoryList(categoryTreeVOS, treeVOList);
         return treeVOList.stream().map(v -> v.getId()).collect(Collectors.toList());
+    }
+
+    private List<String> getNewSubCategoryIds(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
+        List<String> ret = new ArrayList<String>();
+        /**
+         * 跟据类目查询对应的分类
+         */
+        ret.add(categoryIdQTO.getCategoryId());
+        GoodsCategory goodsCategory = repository.getById(categoryIdQTO.getCategoryId());
+        if (StringUtils.isNotEmpty(goodsCategory.getParentId())) {
+            goodsCategory = repository.getById(goodsCategory.getParentId());
+
+            if (goodsCategory != null) {
+                ret.add(goodsCategory.getId());
+                if (StringUtils.isNotEmpty(goodsCategory.getParentId())) {
+                    goodsCategory = repository.getById(goodsCategory.getParentId());
+
+                    if (goodsCategory != null) {
+                        ret.add(goodsCategory.getId());
+                    }
+                }
+            }
+        }
+        return ret;
     }
 
     private List<BbcGoodsCategoryVO.CategoryTreeVO> goodsCategoryList(List<BbcGoodsCategoryVO.CategoryTreeVO> list,
