@@ -1,20 +1,40 @@
 package com.gs.lshly.common.struct.bbc.trade.dto;
-import com.gs.lshly.common.struct.BaseDTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+
+import com.gs.lshly.common.struct.BaseDTO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
 * @author oy
 * @since 2020-11-04
 */
+@SuppressWarnings("serial")
 public abstract class BbcTradePayBuildDTO implements Serializable {
 
+	@EqualsAndHashCode(callSuper=false)
+	@Data
+    @ApiModel("BbcTradePayOfflineDTO.CheckAndPointDoPayETO")
+    @Accessors(chain = true)
+    public static class CheckAndPointDoPayETO extends BaseDTO {
+
+        @ApiModelProperty("交易ID")
+        private List<String> tradeIds;
+
+        @ApiModelProperty(value = "手机号码")
+        private String phone;
+
+        @ApiModelProperty(value = "验证码")
+        private String validCode;
+
+    }
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradePayOfflineDTO.ETO")
     @Accessors(chain = true)

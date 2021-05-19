@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.enums.ActivityTerminalEnum;
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
@@ -24,6 +27,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
+import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 
@@ -50,6 +54,13 @@ public class BbcTradeController {
 
     @DubboReference
     private IBbcTradeRpc bbcTradeRpc;
+    
+    /**
+     * 验证码相关
+     */
+    private static final String PhoneValidCodeGroup = "PhoneValidCode_";
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation("1、去结算-v1.1.0")
     @PostMapping("/userCenter/settlement")
@@ -97,6 +108,22 @@ public class BbcTradeController {
         bbcUserAuthRpc.getPhoneValidCode(dto);
         return ResponseData.success("短信发送成功");
     }
+    
+    @ApiOperation("4、验证支付验证码+积分支付-v1.1.0")
+    @PostMapping("/userCenter/checkAndPointDoPay")
+    public ResponseData<Void> checkAndPointDoPay(@Valid @RequestBody BbcTradePayBuildDTO.CheckAndPointDoPayETO dto) {
+    	/**
+    	 * 验证支付密码
+    	 * 
+    	 */
+    	Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
+        String validCode = code != null ? code + "" : "";
+        log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
+        if (!StringUtils.equals(validCode, dto.getValidCode())) {
+            throw new BusinessException("验证码不匹配");
+        }
+    	return bbcTradeRpc.checkAndPointDoPay(dto);
+    }
 
     /**
      * 支付订单
@@ -106,7 +133,7 @@ public class BbcTradeController {
      * @param dto
      * @return
      */
-    @ApiOperation("4、支付-v1.1.0")
+    @ApiOperation("5、第三方支付-v1.1.0")
     @PostMapping("/userCenter/doPay")
     public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
         return bbcTradeRpc.orderPay(dto);
