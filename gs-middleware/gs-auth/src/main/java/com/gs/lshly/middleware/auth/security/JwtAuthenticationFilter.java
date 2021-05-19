@@ -3,6 +3,7 @@ package com.gs.lshly.middleware.auth.security;
 
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.constants.SecurityConstants;
+import com.gs.lshly.common.utils.AES;
 import com.gs.lshly.middleware.vcode.kaptcha.CaptchaService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,6 +46,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = this.obtainUsername(request)!=null ? this.obtainUsername(request).trim() : "";
         String password = this.obtainPassword(request)!=null ? this.obtainPassword(request) : "";
+        password = AES.Decrypt(password);
         String remember = request.getParameter("remember-me");
         rememberMe.set(StrUtil.isNotBlank(remember) && ("1".equals(remember) || "true".equals(remember)));
         String vcId = request.getParameter("vcId");
