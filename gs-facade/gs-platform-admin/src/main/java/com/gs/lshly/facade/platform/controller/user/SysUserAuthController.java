@@ -19,6 +19,7 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysUserDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysUserVO;
+import com.gs.lshly.common.utils.AES;
 import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.log.Log;
@@ -100,6 +101,10 @@ public class SysUserAuthController {
         String vcode = dto.getVcode();
         
         if(captchaService.match(vcId, vcode)) {
+        	/**
+        	 * 解码
+        	 */
+        	String password = AES.Encrypt(dto.getPassword());
         	SysUserVO.DetailVO userDetails = sysUserRpc.getSysUserByName(dto.getUsername());
             if (userDetails == null || StringUtils.isEmpty(userDetails.getId())) {
                 throw new BusinessException("找不到该用户");

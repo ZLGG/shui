@@ -1,21 +1,24 @@
 package com.gs.lshly.common.struct.bbc.user.dto;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 import com.gs.lshly.common.struct.BaseDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
 * @author zdf
 * @since 2021-01-13
 */
+@SuppressWarnings("serial")
 public abstract class BbcUserIntegralDTO implements Serializable {
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserIntegralDTO.ETO")
     @Accessors(chain = true)
@@ -33,13 +36,24 @@ public abstract class BbcUserIntegralDTO implements Serializable {
         @ApiModelProperty("业务ID")
         private String fromId;
     }
-
+    @EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserIntegralDTO.IdDTO")
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
         private String id;
     }
+    @EqualsAndHashCode(callSuper=false)
+	@Data
+    @ApiModel("BbcUserIntegralDTO.SubIntergralDTO")
+    @AllArgsConstructor
+    public static class SubIntergralDTO extends BaseDTO {
+    	@ApiModelProperty("会员ID")
+        private String userId;
 
+    	@ApiModelProperty("扣减的积分值")
+        private Integer Intergral;
+
+    }
 
 }

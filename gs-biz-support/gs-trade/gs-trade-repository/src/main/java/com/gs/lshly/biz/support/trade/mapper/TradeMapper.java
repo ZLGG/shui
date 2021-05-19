@@ -343,4 +343,14 @@ public interface TradeMapper extends BaseMapper<Trade> {
 
     @Select("select count(id) from gs_trade where id in (select trade_id from gs_trade_goods where goods_id = #{id} and flag = 0) and trade_state = 40 and flag = 0 and goods_source_type = #{code} and source_type = 20")
     Integer getSaleQuantity(@Param("id") String id, @Param("code") Integer code);
+
+    /**
+     * 计算总计要付的钱
+     * @param qw
+     * @return
+     */
+    @Select("select IFNULL(sum(trade_point_amount), 0) tradePointAmount \n" +
+            " from gs_trade  \n" +
+            " where flag= 0 AND id in ('${tradeIds}')" )
+    Integer sumTradePointAmount(@Param("tradeIds") String tradeIds);
 }

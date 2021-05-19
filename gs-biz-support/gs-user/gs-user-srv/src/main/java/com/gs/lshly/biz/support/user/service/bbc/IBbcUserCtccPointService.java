@@ -1,5 +1,7 @@
 package com.gs.lshly.biz.support.user.service.bbc;
 
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO.SubCtccPointDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO.SubIntergralDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 
 /**
@@ -17,4 +19,10 @@ public interface IBbcUserCtccPointService {
 	 * @return
 	 */
 	BbcUserCtccPointVO.DetailVO getCtccPointByUserId(String userId);
+	
+	/**
+	 * 减分扣减
+	 * @param dto
+	 */
+    void subCtccPoint(SubCtccPointDTO dto);
 }

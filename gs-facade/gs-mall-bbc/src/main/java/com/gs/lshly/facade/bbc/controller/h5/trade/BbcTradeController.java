@@ -115,13 +115,13 @@ public class BbcTradeController {
     	/**
     	 * 验证支付密码
     	 * 
-    	 */
+    	
     	Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
         String validCode = code != null ? code + "" : "";
         log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
         if (!StringUtils.equals(validCode, dto.getValidCode())) {
             throw new BusinessException("验证码不匹配");
-        }
+        } */
     	return bbcTradeRpc.checkAndPointDoPay(dto);
     }
 

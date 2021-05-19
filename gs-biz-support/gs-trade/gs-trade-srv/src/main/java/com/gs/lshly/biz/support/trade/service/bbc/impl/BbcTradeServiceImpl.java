@@ -101,6 +101,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO.ShopListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeVO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
@@ -122,6 +123,7 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockDeliveryRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserIntegralRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
@@ -140,6 +142,7 @@ import com.lakala.boss.api.entity.response.QRCodePaymentCommitResponse;
 import com.lakala.boss.api.utils.BossClient;
 import com.lakala.boss.api.utils.UuidUtil;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -175,6 +178,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     private ISettingsReceiptRpc iSettingsReceiptRpc;
     @DubboReference
     private IBbcUserRpc iBbcUserRpc;
+    @DubboReference
+    private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
 
@@ -2017,7 +2022,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
 	@Override
 	public ResponseData<Void> checkAndPointDoPay(CheckAndPointDoPayETO dto) {
-		
+		JSONObject responseJson = new JSONObject();
 		/**
 		 * 判断用户积分帐户的钱够不够了
 		 */
@@ -2025,16 +2030,45 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 		if(detailVO==null||StringUtils.isEmpty(detailVO.getId())||!detailVO.getIsInUser().equals(1)){
 			throw new BusinessException("无有效的用户信息");
 		}
-			
+		/**
+		 * 看看我积分的钱够不够
+		 */
+		Integer telecomsIntegral = detailVO.getTelecomsIntegral();
+		
 		List<String> tradeIds = dto.getTradeIds();
 		if(CollectionUtil.isNotEmpty(tradeIds)){
 			//跟据id查询要支付的订单
+			
+			/**
+			 * 算下我一共要付的积分是多少
+			 */
+			String idsStr = CollUtil.isNotEmpty(tradeIds) ? CollUtil.join(tradeIds, "','") : "-1";
+			Integer totalTelecomsIntegral = tradeMapper.sumTradePointAmount(idsStr);
+			if(totalTelecomsIntegral>telecomsIntegral){
+				throw new BusinessException("您的积分值不够！");
+			}
+			
+			/**
+			 * 减积分
+			 */
 			for(String tradeId:tradeIds){
 				Trade trade = tradeRepository.getById(tradeId);
-				this.paySuccessTrade(trade);
+				JSONObject ret = this.paySuccessTrade(trade);
+				if(ret.getInteger("code")==1){
+					return ResponseData.fail(ret.toString());
+				}
 			}
+			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),telecomsIntegral);
+			bbcUserCtccPointRpc.subCtccPoint(subCtccPointDTO);
+			
+		}else{
+			
+			responseJson.put("code", 1);
+			responseJson.put("result", "没有找到对应订单");
+			return ResponseData.fail(responseJson.toString());
 		}
-		return null;
+		responseJson.put("result", "支付成功！");
+		return ResponseData.success(responseJson.toString());
 	}
 	
 	/**
@@ -2043,12 +2077,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    private String paySuccessTrade(Trade trade) {
+    private JSONObject paySuccessTrade(Trade trade) {
         JSONObject responseJson = new JSONObject();
         if(ObjectUtils.isEmpty(trade)){
             log.error("trade is null");
-            responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
-            return responseJson.toString();
+            responseJson.put("code", 1);
+            responseJson.put("result", "没有找到对应订单");
+            return responseJson;
         }
 
         QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
@@ -2056,14 +2091,16 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
         if(ObjectUtils.isEmpty(tradePay)){
             log.error("tradePay is null");
-            responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
-            return responseJson.toString();
+            responseJson.put("code", 1);
+            responseJson.put("result","没有找到对应支付订单");
+            return responseJson;
         }
 
         if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
                 tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())){
-            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
-            return responseJson.toString();
+        	responseJson.put("code", 1);
+            responseJson.put("result","您的订单已支付！");
+            return responseJson;
         }
         //修改订单状态//修改支付状态
         if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
@@ -2087,12 +2124,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //                }
 //            }
 //            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
-            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
+            responseJson.put("code", 0);
+            responseJson.put("result","支付成功！");
 
-            return responseJson.toString();
+            return responseJson;
         }
+        responseJson.put("code", 1);
         responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
-        return responseJson.toString();
+        return responseJson;
     }
     /**
      * 根据交易订单编号修改状态
