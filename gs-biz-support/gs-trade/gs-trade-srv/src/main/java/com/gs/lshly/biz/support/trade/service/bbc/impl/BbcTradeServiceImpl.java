@@ -618,7 +618,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 			throw new BusinessException("用户不存在！");
 		}
 		Integer telecomsIntegral = userInfo.getTelecomsIntegral();
-		
+//		if(telecomsIntegral)
 		BigDecimal tradePointAmount = BigDecimal.ZERO;	//总分配金额
 		BigDecimal realTradePointAmount = BigDecimal.ZERO;	//实际应该付的积分值
 		BigDecimal diff = BigDecimal.ZERO;
@@ -693,6 +693,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 //商品应该付的积分值
                 realTradePointAmount = realTradePointAmount.add((innerServiceGoodsVO.getPointPrice()).multiply(new BigDecimal(productData.getQuantity()+"")));
             }
+            if(telecomsIntegral==null)
+            	throw new BusinessException("您占未开通积分帐户");
             if(new BigDecimal(telecomsIntegral).compareTo(tradePointAmount)<0){
             	throw new BusinessException("您的积分不够！");
             }
@@ -2059,7 +2061,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 					return ResponseData.fail(ret.toString());
 				}
 			}
-			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),telecomsIntegral);
+			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),totalTelecomsIntegral);
 			bbcUserCtccPointRpc.subCtccPoint(subCtccPointDTO);
 			
 		}else{
