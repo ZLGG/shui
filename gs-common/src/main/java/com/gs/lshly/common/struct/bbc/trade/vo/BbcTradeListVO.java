@@ -363,6 +363,9 @@ public abstract class BbcTradeListVO implements Serializable {
 			return tradeGoodsVOS;
 		}
 
+		public BigDecimal getTradePointAmount() {
+			return tradePointAmount;
+		}
     }
 
     @Data
