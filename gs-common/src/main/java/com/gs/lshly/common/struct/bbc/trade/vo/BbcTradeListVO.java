@@ -26,6 +26,9 @@ public abstract class BbcTradeListVO implements Serializable {
     @ApiModel("BbcTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
+    	
+    	@ApiModelProperty("數量")
+    	private Integer quantity;
 
         @ApiModelProperty("交易订单号(ID)")
         private String id;
@@ -373,6 +376,10 @@ public abstract class BbcTradeListVO implements Serializable {
 
 		public LocalDateTime getServerTime() {
 			return serverTime;
+		}
+
+		public Integer getQuantity() {
+			return quantity;
 		}
 		
     }

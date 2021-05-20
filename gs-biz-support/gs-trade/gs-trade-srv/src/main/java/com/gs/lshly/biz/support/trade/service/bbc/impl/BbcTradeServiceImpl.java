@@ -1871,12 +1871,16 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<BbcTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
+        Integer quantity = 0;
         for(TradeGoods tradeGoods : tradeGoodsList){
             BbcTradeListVO.TradeGoodsVO tradeGoodsVO = new BbcTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             tradeGoodsVO.setShopName(tradeVO.getShopName());
+            if(tradeGoods.getQuantity()!=null)
+            	quantity = quantity+tradeGoods.getQuantity();
             tradeGoodsVOS.add(tradeGoodsVO);
         }
+        tradeVO.setQuantity(quantity);
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
     }
 
