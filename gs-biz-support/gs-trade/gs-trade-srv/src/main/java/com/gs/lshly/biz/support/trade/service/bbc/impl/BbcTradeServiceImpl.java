@@ -879,11 +879,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         tradeGoodsDTO.setSkuGoodsNo(innerServiceGoodsVO.getSkuGoodsNo());
         tradeGoodsDTO.setQuantity(quantity);
         tradeGoodsDTO.setSalePrice(innerServiceGoodsVO.getSalePrice());
-        BigDecimal payPointAmountDecimal = new BigDecimal(payPointAmount+"");
+        BigDecimal payPointAmountDecimal = new BigDecimal(payPointAmount+"");	//支付金额
         if(payPointAmountDecimal.compareTo(innerServiceGoodsVO.getPointPrice())<0){
         	tradeGoodsDTO.setPayAmount(innerServiceGoodsVO.getPointPrice().subtract(payPointAmountDecimal));
+//        	tradeGoodsDTO.setPayPointAmount(payPointAmount);
         }
-        tradeGoodsDTO.setPayPointAmount(payPointAmount);
+
+        	tradeGoodsDTO.setPayPointAmount(payPointAmount);
+        
         tradeGoodsDTO.setCommentFlag(TradeTrueFalseEnum.是.getCode());
         return tradeGoodsDTO;
     }

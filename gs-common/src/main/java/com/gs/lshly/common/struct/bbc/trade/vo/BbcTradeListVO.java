@@ -102,6 +102,9 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("交易总金额（商城用）")
         private BigDecimal tradeAmount;
+        
+        @ApiModelProperty("交易总积分值金额（商城用）")
+        private BigDecimal tradePointAmount;
 
 
         @ApiModelProperty("实付积分（积分商城用）")
@@ -432,6 +435,9 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("支付总金额")
         private BigDecimal payAmount;
+        
+        @ApiModelProperty("支付总积分值")
+        private Integer payPointAmount;
 
 
         @ApiModelProperty("所得积分")
