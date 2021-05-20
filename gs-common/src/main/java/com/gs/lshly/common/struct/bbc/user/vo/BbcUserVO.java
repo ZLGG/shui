@@ -207,6 +207,9 @@ public abstract class BbcUserVO implements Serializable {
         @ApiModelProperty("电话号码")
         private String phone;
 
+        @ApiModelProperty("年底过期积分")
+        private Integer yearBalance;
+
     }
 
 

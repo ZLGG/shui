@@ -1805,6 +1805,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     }
 
     @Override
+    public void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto) {
+        tradeMapper.modifyOrderAddress(dto);
+    }
+
+    @Override
     public Integer getExchangeQuantity(String id) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("id", id);

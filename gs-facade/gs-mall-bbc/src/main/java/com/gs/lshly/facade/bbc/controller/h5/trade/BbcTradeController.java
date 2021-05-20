@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,6 +210,13 @@ public class BbcTradeController {
     public ResponseData<Void> offlinePay(@Valid @RequestBody BbcTradeDTO.OfflinePayDTO dto) {
         bbcTradeRpc.offlinePay(dto);
         return ResponseData.success(MsgConst.OFFLINEPAY_SUCCESS);
+    }
+
+    @ApiOperation("修改已下单订单地址")
+    @PostMapping("/modifyOrderAddress")
+    public ResponseData modifyOrderAddress(@Valid @RequestBody BbcTradeDTO.ModifyOrderAddressDTO dto ) {
+        bbcTradeRpc.modifyOrderAddress(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
 }

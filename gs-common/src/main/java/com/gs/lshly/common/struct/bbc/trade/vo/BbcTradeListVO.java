@@ -174,6 +174,8 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("是否超时取消")
         private Integer timeoutCancel;
 
+        @ApiModelProperty("是否修改过地址（0-否，1-是）")
+        private Integer isModifyAddress;
 
         @ApiModelProperty("买家留言")
         private String buyerRemark;

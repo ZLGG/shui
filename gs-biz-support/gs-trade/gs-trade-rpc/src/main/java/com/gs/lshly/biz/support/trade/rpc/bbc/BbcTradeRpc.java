@@ -115,6 +115,11 @@ public class BbcTradeRpc implements IBbcTradeRpc{
     }
 
     @Override
+    public void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto) {
+        bbcTradeService.modifyOrderAddress(dto);
+    }
+
+    @Override
     public Integer getSaleQuantity(String id, Integer code) {
         return bbcTradeService.getSaleQuantity(id, code);
     }
