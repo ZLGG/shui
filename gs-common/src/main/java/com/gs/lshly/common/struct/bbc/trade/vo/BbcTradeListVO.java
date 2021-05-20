@@ -187,6 +187,10 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("交易商品集合")
         List<TradeGoodsVO> tradeGoodsVOS;
+        
+        @ApiModelProperty("服务器时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime serverTime = LocalDateTime.now() ;
 
 		public String getId() {
 			return id;
@@ -366,6 +370,11 @@ public abstract class BbcTradeListVO implements Serializable {
 		public BigDecimal getTradePointAmount() {
 			return tradePointAmount;
 		}
+
+		public LocalDateTime getServerTime() {
+			return serverTime;
+		}
+		
     }
 
     @Data

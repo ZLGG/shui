@@ -102,14 +102,18 @@ public abstract class BbcTradeBuildDTO implements Serializable {
        
         @ApiModelProperty(value = "业务来源端", hidden = true)
         private ActivityTerminalEnum terminal;
+        
+        @ApiModelProperty(value = "配送方式",hidden=true)
+        private Integer deliveryType = 10;
+        
         @Data
         public static class ShopData implements Serializable {
+        	
         	/**
         	@ApiModelProperty(value = "支付类型",hidden=true)
             private Integer payType;
 
-            @ApiModelProperty(value = "配送方式",hidden=true)
-            private Integer deliveryType;
+
 
             @ApiModelProperty(value = "运费金额", hidden = true)
             private BigDecimal deliveryAmount;

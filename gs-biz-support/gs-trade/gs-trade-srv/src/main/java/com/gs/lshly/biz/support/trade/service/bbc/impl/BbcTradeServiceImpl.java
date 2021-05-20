@@ -627,13 +627,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         BbcStockAddressDTO.IdDTO idDto = new BbcStockAddressDTO.IdDTO(dto.getAddressId());
         idDto.setJwtUserId(dto.getJwtUserId());
         BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
-//        if(!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+        if(!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
             //根据id查询地址
             addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
             if(ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null){
                 throw new BusinessException("查询不到收货地址");
             }
-//        }
+        }
 
         List<BbcTradeBuildDTO.DTO.ShopData> shopDataList = dto.getShopData();
         for(BbcTradeBuildDTO.DTO.ShopData shopData:shopDataList){
@@ -885,7 +885,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //        	tradeGoodsDTO.setPayPointAmount(payPointAmount);
         }
 
-        	tradeGoodsDTO.setPayPointAmount(payPointAmount);
+        	tradeGoodsDTO.setTradePointAmount(payPointAmount);
         
         tradeGoodsDTO.setCommentFlag(TradeTrueFalseEnum.是.getCode());
         return tradeGoodsDTO;
