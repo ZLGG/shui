@@ -1244,8 +1244,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
             innerShopQTO.setShopId(tradeVO.getShopId());
             BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
-            System.out.println(innerDetailVO);
-            System.out.println(innerShopQTO);
             if (null != innerDetailVO){
                 tradeVO.setShopName(StringUtils.isBlank(innerDetailVO.getShopName())?"":innerDetailVO.getShopName());
             }

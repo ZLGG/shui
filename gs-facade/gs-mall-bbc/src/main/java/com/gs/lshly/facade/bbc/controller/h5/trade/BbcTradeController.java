@@ -155,7 +155,8 @@ public class BbcTradeController {
     @ApiOperation("订单列表")
     @PostMapping("/userCenter/orderList")
     public ResponseData<PageData<BbcTradeListVO.tradeVO>> orderList(@RequestBody BbcTradeQTO.TradeList qto) {
-        return ResponseData.data(bbcTradeRpc.tradeListPageData(qto));
+    	PageData<BbcTradeListVO.tradeVO> page = bbcTradeRpc.tradeListPageData(qto);
+    	return ResponseData.data(page);
     }
 
     @ApiOperation("订单详情")
