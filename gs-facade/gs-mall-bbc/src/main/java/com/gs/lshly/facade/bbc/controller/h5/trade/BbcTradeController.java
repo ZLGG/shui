@@ -213,11 +213,10 @@ public class BbcTradeController {
         return ResponseData.success(MsgConst.OFFLINEPAY_SUCCESS);
     }
 
-    @ApiOperation("修改已下单订单地址")
+    @ApiOperation("修改已下单订单地址-v1.1.0")
     @PostMapping("/modifyOrderAddress")
     public ResponseData modifyOrderAddress(@Valid @RequestBody BbcTradeDTO.ModifyOrderAddressDTO dto ) {
         bbcTradeRpc.modifyOrderAddress(dto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
-
 }

@@ -26,7 +26,7 @@ public abstract class BbcTradeListVO implements Serializable {
     @ApiModel("BbcTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
-    	
+
     	@ApiModelProperty("數量")
     	private Integer quantity;
 
@@ -105,7 +105,7 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("交易总金额（商城用）")
         private BigDecimal tradeAmount;
-        
+
         @ApiModelProperty("交易总积分值金额（商城用）")
         private BigDecimal tradePointAmount;
 
@@ -192,7 +192,7 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("交易商品集合")
         List<TradeGoodsVO> tradeGoodsVOS;
-        
+
         @ApiModelProperty("服务器时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime serverTime = LocalDateTime.now() ;
@@ -383,7 +383,11 @@ public abstract class BbcTradeListVO implements Serializable {
 		public Integer getQuantity() {
 			return quantity;
 		}
-		
+
+		public Integer getIsModifyAddress() {
+		    return isModifyAddress;
+        }
+
     }
 
     @Data
@@ -456,7 +460,7 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("支付总金额")
         private BigDecimal payAmount;
-        
+
         @ApiModelProperty("支付总积分值")
         private Integer payPointAmount;
 

@@ -356,6 +356,6 @@ public interface TradeMapper extends BaseMapper<Trade> {
             " where flag= 0 AND id in ('${tradeIds}')" )
     Integer sumTradePointAmount(@Param("tradeIds") String tradeIds);
 
-    @Update("update gs_trade set recv_addres_id = #{dto.recvAddressId}, recv_person_name = #{dto.recvPersonName}, recv_phone = #{dto.recv_phone}, recv_full_addres = #{dto.recvFullAddress}, udate = now() where id = #{dto.id}")
-    void modifyOrderAddress(@Param("dto") BbcTradeDTO.ModifyOrderAddressDTO dto);
+    @Update("update gs_trade set recv_addres_id = #{recvAddressId}, recv_person_name = #{recvPersonName}, recv_phone = #{recvPhone}, recv_full_addres = #{recvFullAddress}, is_modify_address = 1, udate = now() where id = #{id}")
+    void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
 }
