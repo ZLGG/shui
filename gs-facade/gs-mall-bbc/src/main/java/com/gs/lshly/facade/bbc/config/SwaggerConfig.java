@@ -34,7 +34,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket create2BFYApi() {
-        return DocketUtils.create2CFYApi("富友商城");
+        return DocketUtils.create2CFYApi("测试");
     }
 
     @Override
