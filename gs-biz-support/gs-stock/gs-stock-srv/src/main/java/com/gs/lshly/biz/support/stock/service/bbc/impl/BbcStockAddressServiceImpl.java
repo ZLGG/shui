@@ -195,7 +195,6 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         return null;
     }
 
-
     @Override
     public void setDefault(BbcStockAddressDTO.IdDTO dto,Integer addressType) {
         QueryWrapper<StockAddress> queryWrapper = MybatisPlusUtil.query();

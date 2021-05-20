@@ -16,6 +16,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+
 /**
 * @author oy
 * @since 2020-10-28
@@ -197,6 +199,28 @@ public abstract class BbcTradeDTO implements Serializable {
         private String transferRemarks;
         @ApiModelProperty(value = "凭证图片")
         private List<String> transImage;
+    }
+
+    @Data
+    @ApiModel("BbcStockAddressDTO.ModifyOrderAddressDTO")
+    public static class ModifyOrderAddressDTO implements Serializable{
+        @ApiModelProperty("订单id")
+        @NotBlank
+        private String id;
+
+        @ApiModelProperty("收货地址id")
+        @NotBlank
+        private String recvAddressId;
+
+        @ApiModelProperty("收货人姓名")
+        private String recvPersonName;
+
+        @ApiModelProperty("收货人电话")
+        private String recvPhone;
+
+        @ApiModelProperty("收货人新地址")
+        @NotBlank
+        private String recvFullAddress;
     }
 
 

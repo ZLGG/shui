@@ -75,4 +75,10 @@ public interface IBbcTradeRpc {
      * @return
      */
     Integer getSaleQuantity(String id, Integer code);
+
+    /**
+     * 修改订单收货地址
+     * @param dto
+     */
+    void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
 }

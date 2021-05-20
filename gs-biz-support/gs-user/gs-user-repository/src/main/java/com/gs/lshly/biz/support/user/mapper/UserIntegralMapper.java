@@ -27,6 +27,6 @@ public interface UserIntegralMapper extends BaseMapper<UserIntegral> {
     @Select("SELECT SUM(quantity) quantity,user_id FROM gs_user_integral WHERE end_date > CURRENT_TIMESTAMP  and ${ew.sqlSegment} " )
     UserIntegralView sumCount(@Param(value = "ew") QueryWrapper<UserIntegral> qw);
 
-    @Select("select gs.direction_integral,gs.phone, gi.point_balance as okIntegral from gs_user gs left join gs_user_ctcc_point gi on gs.id = gi.user_id where gs.id = #{userId}")
+    @Select("select gs.direction_integral,gs.phone, gi.point_balance as okIntegral, gi.year_balance from gs_user gs left join gs_user_ctcc_point gi on gs.id = gi.user_id where gs.id = #{userId}")
     BbcUserVO.MyIntegralVO myIntegral(@Param("userId") String userId);
 }

@@ -78,4 +78,10 @@ public interface IBbcTradeService {
      * @return
      */
     Integer getExchangeQuantity(String id);
+
+    /**
+     * 修改订单收货地址
+     * @param dto
+     */
+    void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
 }

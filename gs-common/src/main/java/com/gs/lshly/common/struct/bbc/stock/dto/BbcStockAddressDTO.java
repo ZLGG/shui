@@ -95,4 +95,5 @@ public abstract class BbcStockAddressDTO implements Serializable {
         @NotBlank
         private String address;
     }
+
 }

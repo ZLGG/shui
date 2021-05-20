@@ -197,6 +197,9 @@ CREATE TABLE `gs_goods_search_history` (
 ALTER TABLE `fy_mall`.`gs_stock_address`
 ADD COLUMN `full_address` varchar(255) COMMENT '完整地址' AFTER `reals`;
 
+ALTER TABLE `fy_mall`.`gs_trade`
+ADD COLUMN `is_modify_address` varchar(255) DEFAULT '0' COMMENT '是否修改过地址（0-否，1-是）' AFTER `timeout_cancel`;
+
 
 -- 添中字段 from 上海
 child_trade_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0

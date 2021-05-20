@@ -22,4 +22,5 @@ public interface IBbcStockAddressService {
     BbcStockAddressVO.DetailVO getDefault(BaseDTO dto,Integer addressType);
 
     void setDefault(BbcStockAddressDTO.IdDTO dto,Integer addressType);
+
 }

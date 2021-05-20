@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.bbb.h5.trade.qto.BbbH5TradeQTO;
 import com.gs.lshly.common.struct.bbb.h5.trade.vo.BbbH5TradeListVO;
 import com.gs.lshly.common.struct.bbb.pc.trade.qto.BbbOrderQTO;
 import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeListVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.merchadmin.h5.trade.qto.H5MerchTradeQTO;
@@ -24,6 +25,7 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -353,4 +355,7 @@ public interface TradeMapper extends BaseMapper<Trade> {
             " from gs_trade  \n" +
             " where flag= 0 AND id in ('${tradeIds}')" )
     Integer sumTradePointAmount(@Param("tradeIds") String tradeIds);
+
+    @Update("update gs_trade set recv_addres_id = #{recvAddressId}, recv_person_name = #{recvPersonName}, recv_phone = #{recvPhone}, recv_full_addres = #{recvFullAddress}, is_modify_address = 1, udate = now() where id = #{id}")
+    void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
 }

@@ -213,6 +213,11 @@ public class Trade extends Model {
     private Integer timeoutCancel;
 
     /**
+     * 是否修改过地址（0-否，1-是）
+     */
+    private Integer isModifyAddress;
+
+    /**
      * 买家留言
      */
     private String buyerRemark;
