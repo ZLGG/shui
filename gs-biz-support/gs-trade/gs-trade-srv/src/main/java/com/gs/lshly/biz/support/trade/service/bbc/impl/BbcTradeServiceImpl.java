@@ -618,7 +618,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 			throw new BusinessException("用户不存在！");
 		}
 		Integer telecomsIntegral = userInfo.getTelecomsIntegral();
-		
+//		if(telecomsIntegral)
 		BigDecimal tradePointAmount = BigDecimal.ZERO;	//总分配金额
 		BigDecimal realTradePointAmount = BigDecimal.ZERO;	//实际应该付的积分值
 		BigDecimal diff = BigDecimal.ZERO;
@@ -627,13 +627,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         BbcStockAddressDTO.IdDTO idDto = new BbcStockAddressDTO.IdDTO(dto.getAddressId());
         idDto.setJwtUserId(dto.getJwtUserId());
         BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
-//        if(!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+        if(!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
             //根据id查询地址
             addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
             if(ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null){
                 throw new BusinessException("查询不到收货地址");
             }
-//        }
+        }
 
         List<BbcTradeBuildDTO.DTO.ShopData> shopDataList = dto.getShopData();
         for(BbcTradeBuildDTO.DTO.ShopData shopData:shopDataList){
@@ -693,6 +693,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 //商品应该付的积分值
                 realTradePointAmount = realTradePointAmount.add((innerServiceGoodsVO.getPointPrice()).multiply(new BigDecimal(productData.getQuantity()+"")));
             }
+            if(telecomsIntegral==null)
+            	throw new BusinessException("您占未开通积分帐户");
             if(new BigDecimal(telecomsIntegral).compareTo(tradePointAmount)<0){
             	throw new BusinessException("您的积分不够！");
             }
@@ -877,11 +879,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         tradeGoodsDTO.setSkuGoodsNo(innerServiceGoodsVO.getSkuGoodsNo());
         tradeGoodsDTO.setQuantity(quantity);
         tradeGoodsDTO.setSalePrice(innerServiceGoodsVO.getSalePrice());
-        BigDecimal payPointAmountDecimal = new BigDecimal(payPointAmount+"");
+        BigDecimal payPointAmountDecimal = new BigDecimal(payPointAmount+"");	//支付金额
         if(payPointAmountDecimal.compareTo(innerServiceGoodsVO.getPointPrice())<0){
         	tradeGoodsDTO.setPayAmount(innerServiceGoodsVO.getPointPrice().subtract(payPointAmountDecimal));
+//        	tradeGoodsDTO.setPayPointAmount(payPointAmount);
         }
-        tradeGoodsDTO.setPayPointAmount(payPointAmount);
+
+        	tradeGoodsDTO.setTradePointAmount(payPointAmount);
+        
         tradeGoodsDTO.setCommentFlag(TradeTrueFalseEnum.是.getCode());
         return tradeGoodsDTO;
     }
@@ -1239,8 +1244,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
             innerShopQTO.setShopId(tradeVO.getShopId());
             BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
-            System.out.println(innerDetailVO);
-            System.out.println(innerShopQTO);
             if (null != innerDetailVO){
                 tradeVO.setShopName(StringUtils.isBlank(innerDetailVO.getShopName())?"":innerDetailVO.getShopName());
             }
@@ -1873,12 +1876,16 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<BbcTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
+        Integer quantity = 0;
         for(TradeGoods tradeGoods : tradeGoodsList){
             BbcTradeListVO.TradeGoodsVO tradeGoodsVO = new BbcTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             tradeGoodsVO.setShopName(tradeVO.getShopName());
+            if(tradeGoods.getQuantity()!=null)
+            	quantity = quantity+tradeGoods.getQuantity();
             tradeGoodsVOS.add(tradeGoodsVO);
         }
+        tradeVO.setQuantity(quantity);
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
     }
 
@@ -2064,7 +2071,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 					return ResponseData.fail(ret.toString());
 				}
 			}
-			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),telecomsIntegral);
+			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),totalTelecomsIntegral);
 			bbcUserCtccPointRpc.subCtccPoint(subCtccPointDTO);
 			
 		}else{

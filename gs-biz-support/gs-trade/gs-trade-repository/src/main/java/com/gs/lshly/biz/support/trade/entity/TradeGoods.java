@@ -118,6 +118,11 @@ public class TradeGoods extends Model {
      * 支付总金额
      */
     private BigDecimal payAmount;
+    
+    /**
+     * 支付总金额
+     */
+    private BigDecimal tradePointAmount;
 
     /**
      * 所得积分
@@ -157,6 +162,8 @@ public class TradeGoods extends Model {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;
+    
+    
 
 
 }
