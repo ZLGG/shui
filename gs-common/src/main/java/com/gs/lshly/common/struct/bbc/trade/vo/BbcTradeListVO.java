@@ -19,6 +19,7 @@ import lombok.experimental.Accessors;
  * @author oy
  * @since 2020-10-28
  */
+@SuppressWarnings("serial")
 public abstract class BbcTradeListVO implements Serializable {
 
 
@@ -196,6 +197,12 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("服务器时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime serverTime = LocalDateTime.now() ;
+        
+        @ApiModelProperty("优惠券金额")
+        private BigDecimal couponAmount = BigDecimal.ZERO;
+        
+        @ApiModelProperty("優惠券抵扣積分 金額")
+        private BigDecimal couponPointAmount = BigDecimal.ZERO;
 
 		public String getId() {
 			return id;
@@ -384,6 +391,13 @@ public abstract class BbcTradeListVO implements Serializable {
 			return quantity;
 		}
 
+		public BigDecimal getCouponAmount() {
+			return couponAmount;
+		}
+
+		public BigDecimal getCouponPointAmount() {
+			return couponPointAmount;
+		}
 		public Integer getIsModifyAddress() {
 		    return isModifyAddress;
         }
@@ -553,6 +567,7 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("是否隐藏[10=隐藏 20=不隐藏]")
         private Integer isHide;
 
+        
     }
 
     @Data
