@@ -40,7 +40,7 @@ public class BbcInMemberGoodsInfoController {
 
 	@ApiOperation("IN会员商品列表-v1.1.0")
     @GetMapping("/goodsinfo")
-    public ResponseData<PageData<BbcGoodsInfoVO.ListVO>> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
+    public ResponseData<PageData<BbcGoodsInfoVO.InVipListVO>> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageInMemberGoodsInfo(qto));
     }
 	

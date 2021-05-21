@@ -264,6 +264,55 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     }
 
     @Data
+    @ApiModel("BbcGoodsInfoVO.InVipListVO")
+    @Accessors(chain = true)
+    public static class InVipListVO implements Serializable{
+
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商家id")
+        private String merchantId;
+
+        @ApiModelProperty("店铺id")
+        private String shopId;
+
+        @ApiModelProperty("品牌id")
+        private String brandId;
+
+        @ApiModelProperty("类目id")
+        private String categoryId;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品货号")
+        private String goodsNo;
+
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty("移动端商品描述")
+        private String goodsH5Desc;
+
+        @ApiModelProperty("商品图片组")
+        private String goodsImage;
+
+        @ApiModelProperty("商品计价单位")
+        private String goodsPriceUnit;
+
+        @ApiModelProperty("会员券后价")
+        private BigDecimal priceUserCoupon;
+
+        @ApiModelProperty("可抵扣价格")
+        private BigDecimal deductionPrice;
+
+    }
+
+    @Data
     @ApiModel("BbcGoodsInfoVO.GoodsListVO")
     public static class GoodsListVO implements Serializable {
 

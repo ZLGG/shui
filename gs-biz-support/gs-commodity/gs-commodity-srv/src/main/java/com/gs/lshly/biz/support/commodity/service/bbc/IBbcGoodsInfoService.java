@@ -137,7 +137,7 @@ public interface IBbcGoodsInfoService {
      * @param qto
      * @return
      */
-    PageData<BbcGoodsInfoVO.ListVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
+    PageData<BbcGoodsInfoVO.InVipListVO> pageInMemberGoodsInfo(BbcGoodsInfoQTO.InMemberGoodsQTO qto);
     
     /**
      * 获取指定分类下的指定产品数

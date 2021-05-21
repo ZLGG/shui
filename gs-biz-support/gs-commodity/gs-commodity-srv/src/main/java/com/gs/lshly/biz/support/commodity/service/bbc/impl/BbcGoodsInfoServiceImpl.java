@@ -1238,19 +1238,24 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
 	@Override
-	public PageData<ListVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
+	public PageData<BbcGoodsInfoVO.InVipListVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
 		QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("is_in_member_gift",TrueFalseEnum.是.getCode());
+        wrapper.eq("flag",false);
+        wrapper.ne("use_platform",GoodsUsePlatformEnums.B商城.getCode());
+        wrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
         if(qto.getInCouponType()!=null&&qto.getInCouponType()>0){
         	wrapper.eq("in_coupon_type", qto.getInCouponType());
         }
 		IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page,wrapper);
 
-        List<BbcGoodsInfoVO.ListVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.ListVO.class,goodsInfoIPage.getRecords());
+        List<BbcGoodsInfoVO.InVipListVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.InVipListVO.class,goodsInfoIPage.getRecords());
         if(CollectionUtils.isNotEmpty(categoryGoodsVOS)){
-        	for(BbcGoodsInfoVO.ListVO detailVO:categoryGoodsVOS){
+        	for(BbcGoodsInfoVO.InVipListVO detailVO:categoryGoodsVOS){
         		detailVO.setGoodsImage(ObjectUtils.isEmpty(getImage(detailVO.getGoodsImage())) ? "" : getImage(detailVO.getGoodsImage()));
+        		detailVO.setDeductionPrice(new BigDecimal(qto.getInCouponType()));
+        		detailVO.setPriceUserCoupon(detailVO.getSalePrice().compareTo(new BigDecimal(qto.getInCouponType())) > 0 ? detailVO.getSalePrice().subtract(new BigDecimal(qto.getInCouponType())) : new BigDecimal(0));
         	}
         }
         return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());
