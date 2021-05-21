@@ -8,6 +8,7 @@ import com.gs.lshly.biz.support.stock.mapper.view.StockAddressView;
 import com.gs.lshly.biz.support.stock.mapper.view.StockDefaultAddressView;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -64,4 +65,7 @@ public interface StockAddressMapper extends BaseMapper<StockAddress> {
      */
     @Select("select count(*) from gs_stock_province_address where (name like concat(#{name},'&') or alias = #{name} and deleted = 0)")
     Integer fuzzyMatchingName(@Param("name") String name);
+
+    @Update("update gs_stock_address_child set is_default = 0 where id = #{addressId}")
+    void cancelDefault(@Param("addressId") String addressId);
 }
