@@ -1254,8 +1254,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if(CollectionUtils.isNotEmpty(categoryGoodsVOS)){
         	for(BbcGoodsInfoVO.InVipListVO detailVO:categoryGoodsVOS){
         		detailVO.setGoodsImage(ObjectUtils.isEmpty(getImage(detailVO.getGoodsImage())) ? "" : getImage(detailVO.getGoodsImage()));
-        		detailVO.setDeductionPrice(new BigDecimal(qto.getInCouponType()));
-        		detailVO.setPriceUserCoupon(detailVO.getSalePrice().compareTo(new BigDecimal(qto.getInCouponType())) > 0 ? detailVO.getSalePrice().subtract(new BigDecimal(qto.getInCouponType())) : new BigDecimal(0));
+        		detailVO.setInMemberPointPrice(detailVO.getPointPrice().compareTo(new BigDecimal(qto.getInCouponType())) > 0 ? detailVO.getPointPrice().subtract(new BigDecimal(qto.getInCouponType())) : new BigDecimal(0));
         	}
         }
         return new PageData<>(categoryGoodsVOS,qto.getPageNum(),qto.getPageSize(),goodsInfoIPage.getTotal());

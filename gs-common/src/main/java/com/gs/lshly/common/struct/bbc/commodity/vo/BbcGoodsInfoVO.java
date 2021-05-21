@@ -292,8 +292,8 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品货号")
         private String goodsNo;
 
-        @ApiModelProperty("商品售价")
-        private BigDecimal salePrice;
+        @ApiModelProperty("商品原价")
+        private BigDecimal pointPrice;
 
         @ApiModelProperty("移动端商品描述")
         private String goodsH5Desc;
@@ -305,10 +305,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private String goodsPriceUnit;
 
         @ApiModelProperty("会员券后价")
-        private BigDecimal priceUserCoupon;
-
-        @ApiModelProperty("可抵扣价格")
-        private BigDecimal deductionPrice;
+        private BigDecimal inMemberPointPrice;
 
     }
 
