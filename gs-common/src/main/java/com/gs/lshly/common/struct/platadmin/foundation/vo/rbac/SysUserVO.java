@@ -50,6 +50,9 @@ public abstract class SysUserVO implements Serializable {
         @ApiModelProperty("微信头像")
         @ExportProperty(hide = true)
         private String wxheadimg;
+
+        @ApiModelProperty(value = "手机号",position = 6)
+        private String phone;
     }
 
     @Data

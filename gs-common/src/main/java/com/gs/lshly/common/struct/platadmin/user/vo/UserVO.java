@@ -198,6 +198,9 @@ public abstract class UserVO implements Serializable {
 
         @ApiModelProperty("用户名")
         private String userName;
+
+        @ApiModelProperty("用户手机号")
+        private String phone;
     }
 
 

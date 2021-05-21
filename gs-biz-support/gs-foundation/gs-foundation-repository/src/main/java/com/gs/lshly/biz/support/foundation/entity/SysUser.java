@@ -37,6 +37,11 @@ public class SysUser extends Model {
     private String name;
 
     /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
      * 密码
      */
     private String pwd;

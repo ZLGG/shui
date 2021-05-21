@@ -170,6 +170,15 @@ public class TradePayServiceImpl implements ITradePayService {
             if (ObjectUtils.isNotEmpty(byId)){
                 relationDetailVO.setTradeCode(byId.getTradeCode());
             }
+            //add 用户手机号
+            UserVO.MiniVO mini=null;
+            if (StringUtils.isNotBlank(i.getUserId())){
+                mini = iUserRpc.mini(new UserDTO.IdDTO(i.getUserId()));
+            }
+            if (ObjectUtils.isNotEmpty(mini)){
+                relationDetailVO.setPhone(mini.getPhone());
+            }
+
             return relationDetailVO;
         }).collect(Collectors.toList());
         return new PageData<>(listVO,qto.getPageNum(),qto.getPageSize(),page.getTotal());

@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.foundation.rpc.platadmin.rbac;
 
 import java.util.List;
 
+import com.gs.lshly.common.utils.PwdUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class SysUserRpc implements ISysUserRpc {
 
     @Override
     public void addSysUser(SysUserDTO.ETO dto) {
+        //设置随机密码
+        String pwd = "123456";
+        dto.setPwd(PwdUtil.encode(pwd));
         sysUserService.saveUser(dto);
     }
 

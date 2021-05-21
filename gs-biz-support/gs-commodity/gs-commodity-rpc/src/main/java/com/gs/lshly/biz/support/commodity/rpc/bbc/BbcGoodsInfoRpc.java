@@ -136,7 +136,7 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     }
 
 	@Override
-	public PageData<ListVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
+	public PageData<BbcGoodsInfoVO.InVipListVO> pageInMemberGoodsInfo(InMemberGoodsQTO qto) {
 		return bbcGoodsInfoService.pageInMemberGoodsInfo(qto);
 	}
 

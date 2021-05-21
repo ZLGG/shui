@@ -176,6 +176,9 @@ public abstract class TradePayVO implements Serializable {
         @ApiModelProperty(value = "订单号",position = 9)
         private String tradeCode;
 
+        @ApiModelProperty(value = "用户手机号",position = 10)
+        private String phone;
+
     }
     @Data
     @ApiModel("TradePayVO.RelationDetailExport")

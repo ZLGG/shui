@@ -1177,6 +1177,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         QueryWrapper<PCMerchGoodsInfoVO.GoodsActiveVO> wrapper = MybatisPlusUtil.query();
         wrapper.eq("gs.shop_id",qto.getJwtShopId());
         wrapper.eq("gs.merchant_id",qto.getJwtMerchantId());
+        wrapper.eq("gs.goods_state",GoodsStateEnum.已上架);
         if (StringUtils.isNotBlank(qto.getGoodsNo())){
             wrapper.like("gs.goods_no",qto.getGoodsNo());
         }
@@ -1212,6 +1213,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         QueryWrapper<PCMerchGoodsInfoVO.SkuActivePageVO> wrapper = MybatisPlusUtil.query();
         wrapper.eq("gs.shop_id",qto.getJwtShopId());
         wrapper.eq("gs.merchant_id",qto.getJwtMerchantId());
+        wrapper.eq("gs.goods_state",GoodsStateEnum.已上架);
         if (StringUtils.isNotBlank(qto.getGoodsNo())){
             wrapper.like("gs.goods_no",qto.getGoodsNo());
         }

@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/bbc/userCenter/message")
-@Api(tags = "信息管理-v1.1.0")
+@Api(tags = "消息管理-v1.1.0")
 public class BbcMessageController {
     @DubboReference
     private IBbcMessageRpc messageRpc;
