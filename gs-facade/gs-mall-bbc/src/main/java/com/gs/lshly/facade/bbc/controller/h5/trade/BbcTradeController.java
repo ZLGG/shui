@@ -4,10 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +26,6 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
-import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 
@@ -48,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/bbc")
 @Api(tags = "交易订单管理-v1.1.0")
 @Slf4j
+@SuppressWarnings("unchecked")
 public class BbcTradeController {
 	
 	@DubboReference
@@ -56,23 +54,33 @@ public class BbcTradeController {
     @DubboReference
     private IBbcTradeRpc bbcTradeRpc;
     
-    /**
-     * 验证码相关
-     */
-    private static final String PhoneValidCodeGroup = "PhoneValidCode_";
-    @Autowired
-    private RedisUtil redisUtil;
+//    /**
+//     * 验证码相关
+//     */
+//    private static final String PhoneValidCodeGroup = "PhoneValidCode_";
+//    @Autowired
+//    private RedisUtil redisUtil;
 
     @ApiOperation("1、去结算-v1.1.0")
     @PostMapping("/userCenter/settlement")
     public ResponseData<BbcTradeSettlementVO.DetailVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
-        dto.setTerminal(ActivityTerminalEnum.wap端);
+        
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
+    	dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.settlementVO(dto);
     }
 
     @ApiOperation("计算运费")
     @PostMapping("/userCenter/deliveryAmount")
     public ResponseData<Void> deliveryAmount(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.deliveryAmount(dto);
     }
@@ -89,6 +97,11 @@ public class BbcTradeController {
     @ApiOperation("2、提交订单-v1.1.0")
     @PostMapping("/userCenter/orderSubmit")
     public ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(@Valid @RequestBody BbcTradeBuildDTO.DTO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         log.info("----------------------提交订单-----------------");
         dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.orderSubmit(dto);
@@ -106,6 +119,11 @@ public class BbcTradeController {
     @ApiOperation("3、获取支付验证码-v1.1.0")
     @PostMapping("/userCenter/getPhoneCheck")
     public ResponseData<Void> getPhoneCheck(@Valid @RequestBody BbcUserDTO.GetPhoneValidCodeDTO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         bbcUserAuthRpc.getPhoneValidCode(dto);
         return ResponseData.success("短信发送成功");
     }
@@ -113,6 +131,11 @@ public class BbcTradeController {
     @ApiOperation("4、验证支付验证码+积分支付-v1.1.0")
     @PostMapping("/userCenter/checkAndPointDoPay")
     public ResponseData<Void> checkAndPointDoPay(@Valid @RequestBody BbcTradePayBuildDTO.CheckAndPointDoPayETO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
     	/**
     	 * 验证支付密码
     	 * 
@@ -137,6 +160,11 @@ public class BbcTradeController {
     @ApiOperation("5、第三方支付-v1.1.0")
     @PostMapping("/userCenter/doPay")
     public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         return bbcTradeRpc.orderPay(dto);
     }
 
@@ -144,6 +172,7 @@ public class BbcTradeController {
     @PostMapping("/doPayNotify")
 //    public String doPayNotify(BbcTradeResultNotifyVO.notifyVO notifyVO) {
     public String doPayNotify(@Valid @RequestBody BbcTradeResultNotifyVO.notifyVO notifyVO) {
+    	
         return bbcTradeRpc.payNotify(notifyVO);
     }
 
@@ -156,6 +185,11 @@ public class BbcTradeController {
     @ApiOperation("订单列表")
     @PostMapping("/userCenter/orderList")
     public ResponseData<PageData<BbcTradeListVO.tradeVO>> orderList(@RequestBody BbcTradeQTO.TradeList qto) {
+    	
+    	if (StringUtils.isEmpty(qto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
     	PageData<BbcTradeListVO.tradeVO> page = bbcTradeRpc.tradeListPageData(qto);
     	return ResponseData.data(page);
     }
@@ -163,19 +197,32 @@ public class BbcTradeController {
     @ApiOperation("订单详情")
     @PostMapping("/userCenter/orderDetail")
     public ResponseData<BbcTradeListVO.tradeVO> orderDetail(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
-        return bbcTradeRpc.orderDetail(dto);
+        
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
+    	return bbcTradeRpc.orderDetail(dto);
     }
 
     @ApiOperation("订单确认收货")
     @PostMapping("/userCenter/orderConfirmReceipt")
     public ResponseData<Void> orderConfirmReceipt(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         return bbcTradeRpc.orderConfirmReceipt(dto);
     }
 
     @ApiOperation("隐藏订单")
     @PostMapping("/userCenter/orderHide")
     public ResponseData<Void> orderHide(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
-
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         return bbcTradeRpc.orderHide(dto);
     }
 
@@ -183,6 +230,10 @@ public class BbcTradeController {
     @PostMapping("/userCenter/orderCancel")
     public ResponseData<Void> orderCancel(@Valid @RequestBody BbcTradeCancelDTO.CancelDTO dto) {
 
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         System.out.println(dto);
         return bbcTradeRpc.orderCancel(dto);
     }
@@ -191,6 +242,10 @@ public class BbcTradeController {
     @PostMapping("/userCenter/tradeStateCount")
     public ResponseData<List<BbcTradeListVO.stateCountVO>> tradeStateCount(@RequestBody BbcTradeDTO.IdDTO dto) {
 
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         return ResponseData.data(bbcTradeRpc.tradeStateCount(dto));
     }
 
@@ -200,22 +255,37 @@ public class BbcTradeController {
         return ResponseData.data(bbcTradeRpc.myUserCard(qto));
     }
 
-    @ApiOperation("使用优惠卷列表")
+	@ApiOperation("使用优惠卷列表")
     @PostMapping("//userCenter/useCard")
     public ResponseData<List<BbcTradeListVO.UseCard>> useCard(@Valid @RequestBody BbcTradeDTO.UseCard dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         return ResponseData.data(bbcTradeRpc.useCard(dto));
     }
 
     @ApiOperation("线下支付")
     @PostMapping("/userCenter/offlinePay")
     public ResponseData<Void> offlinePay(@Valid @RequestBody BbcTradeDTO.OfflinePayDTO dto) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         bbcTradeRpc.offlinePay(dto);
         return ResponseData.success(MsgConst.OFFLINEPAY_SUCCESS);
     }
 
     @ApiOperation("修改已下单订单地址-v1.1.0")
     @PostMapping("/modifyOrderAddress")
-    public ResponseData modifyOrderAddress(@Valid @RequestBody BbcTradeDTO.ModifyOrderAddressDTO dto ) {
+    public ResponseData<String> modifyOrderAddress(@Valid @RequestBody BbcTradeDTO.ModifyOrderAddressDTO dto ) {
+    	
+    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+            throw new BusinessException("未登录！！");
+        }
+    	
         bbcTradeRpc.modifyOrderAddress(dto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }

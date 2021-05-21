@@ -76,6 +76,7 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.SeckillHomeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.GoodsActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.Seckill;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
@@ -1272,4 +1273,12 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
 	 public static void main(String args[]){
 		System.out.println(rangeInDefined(10,12,18)); 
 	 }
+	 
+	@Override
+	public GoodsActivityVO getActivityByGoodsId(String goodsId) {
+		//判断当前商品参于到不同的秒杀活动
+		
+		
+		return null;
+	}
 }

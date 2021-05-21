@@ -22,7 +22,47 @@ import lombok.experimental.Accessors;
 * @author zdf
 * @since 2020-12-17
 */
+@SuppressWarnings("serial")
 public abstract class BbcMarketActivityVO implements Serializable {
+	
+	
+	/**
+	 * 判断商品参于了哪个活动
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年5月20日 下午5:33:49
+	 */
+	@Data
+	@ApiModel("BbcMarketActivityVO.GoodsActivityVO")
+	@Accessors(chain = true)
+	public static class GoodsActivityVO implements Serializable{
+		
+		@ApiModelProperty("活动枚举(10=优惠卷 20=团购 30=满减 40=满赠 50=满折 60=活动 70=秒杀)")
+        private Integer activityType;
+    
+    	@ApiModelProperty("活动枚举(10=优惠卷 20=团购 30=满减 40=满赠 50=满折 60=活动 70=秒杀)")
+        private Integer activityTypeText;
+    	
+    	@ApiModelProperty("销售价")
+        private BigDecimal salePrice;
+        
+        @ApiModelProperty("原价格")
+        private BigDecimal oldPrice;
+        
+        @ApiModelProperty("折扣价")
+        private BigDecimal costPrice;
+        
+        @ApiModelProperty("积分价")
+        private BigDecimal pointPrice;
+        
+        @ApiModelProperty("原积分价")
+        private BigDecimal oldPointPrice;
+        
+        @ApiModelProperty("原IN会员积分价")
+        private BigDecimal inMemberPointPrice;
+        
+	}
 
     @Data
     @ApiModel("BbcMarketActivityVO.ListYiVO")

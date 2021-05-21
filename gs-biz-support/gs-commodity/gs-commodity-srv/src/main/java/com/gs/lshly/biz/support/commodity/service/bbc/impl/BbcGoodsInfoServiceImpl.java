@@ -76,6 +76,7 @@ import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
@@ -89,6 +90,7 @@ import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserFavoritesGoodsRpc;
@@ -168,6 +170,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     
     @DubboReference
     private IBbcSiteAdvertRpc bbcSiteAdvertRpc;
+    
+    @DubboReference
+    private IBbcMarketActivityRpc bbcMarketActivityRpc;
     
     
     @Override
@@ -338,7 +343,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @Override
     public BbcGoodsInfoVO.DetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto) {
-        if (dto == null) {
+        
+    	if (dto == null) {
             throw new BusinessException("参数不能为空！");
         }
         GoodsInfo goodsInfo = repository.getById(dto.getId());
@@ -346,6 +352,14 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             throw new BusinessException("数据异常");
         }
 
+        //判断当前商品参于了哪个活动
+        BbcMarketActivityVO.GoodsActivityVO goodsActivityVO = bbcMarketActivityRpc.getActivityByGoodsId(goodsInfo.getId());
+       
+        if(goodsActivityVO!=null){//有参于活动
+//        	GoodsActivityVO goodsactivityvo = new GoodsActivityVO();
+        	
+        	
+        }
 
         BbcGoodsInfoVO.DetailVO detailVo = new BbcGoodsInfoVO.DetailVO();
         BeanUtils.copyProperties(goodsInfo, detailVo);
@@ -353,14 +367,14 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
         BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(goodsInfo).get(0);
         //若是多规格填充默认规格信息
-        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.多规格.getCode().intValue()) {
+//        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.多规格.getCode().intValue()) {
             //获取默认规格商品信息
             detailVo.setSkuVO(skuVO);
 
             detailVo.setSkuId(skuVO.getSkuId());
 
             detailVo.setSalePrice(skuVO.getSkuSalePrice());
-        }
+//        }
 
         //填充spec规格列表信息
         if (ObjectUtils.isNotEmpty(getSpecInfoVO(goodsInfo))) {
@@ -408,6 +422,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         
         //查询标签
         detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
+        
         return detailVo;
     }
 

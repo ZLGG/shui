@@ -13,6 +13,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.SeckillHomeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.GoodsActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 
 
@@ -76,4 +77,11 @@ public interface IBbcMarketActivityService {
      * @return
      */
     SeckillHome seckillHome(SeckillHomeQTO qto);
+    
+    /**
+     * 查询当前商品参加了啥活动
+     * @param goodsId
+     * @return
+     */
+    GoodsActivityVO getActivityByGoodsId(String goodsId);
 }

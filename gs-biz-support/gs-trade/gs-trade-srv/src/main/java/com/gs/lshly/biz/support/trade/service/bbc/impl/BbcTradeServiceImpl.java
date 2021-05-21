@@ -1198,6 +1198,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Override
     public PageData<BbcTradeListVO.tradeVO> tradeListPageData(BbcTradeQTO.TradeList qto) {
+    	
         QueryWrapper<BbcTradeQTO.TradeList> wrapper = new QueryWrapper<>();
         wrapper.and(i -> i.eq("t.`user_id`",qto.getJwtUserId()));
         wrapper.isNull("t.`is_hide`");

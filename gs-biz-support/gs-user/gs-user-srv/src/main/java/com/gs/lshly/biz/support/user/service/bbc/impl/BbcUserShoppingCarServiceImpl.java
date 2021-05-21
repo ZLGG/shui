@@ -514,18 +514,19 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         	UserShoppingCar userShoppingCar = null;
         	for(String id:dto.getIdList()){
         		userShoppingCar = userShoppingCarMapper.selectById(id);
-        		
-        		Boolean isPointGood = userShoppingCar.getIsPointGood();
-        		if(isPointGood!=null&&isPointGood){	//是积分商品
-        			BigDecimal goodsPointPrice = userShoppingCar.getGoodsPointPrice();
-        			if(goodsPointPrice!=null){
-        				pointPrice = pointPrice.add(goodsPointPrice);
-        			}
-        		}else{
-        			BigDecimal goodsPrice = userShoppingCar.getGoodsPrice();
-        			if(goodsPrice!=null){
-        				price = price.add(goodsPrice);
-        			}
+        		if(userShoppingCar!=null){
+	        		Boolean isPointGood = userShoppingCar.getIsPointGood();
+	        		if(isPointGood!=null&&isPointGood){	//是积分商品
+	        			BigDecimal goodsPointPrice = userShoppingCar.getGoodsPointPrice();
+	        			if(goodsPointPrice!=null){
+	        				pointPrice = pointPrice.add(goodsPointPrice);
+	        			}
+	        		}else{
+	        			BigDecimal goodsPrice = userShoppingCar.getGoodsPrice();
+	        			if(goodsPrice!=null){
+	        				price = price.add(goodsPrice);
+	        			}
+	        		}
         		}
         	}
         }

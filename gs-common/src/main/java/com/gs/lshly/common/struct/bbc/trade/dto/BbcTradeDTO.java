@@ -203,7 +203,7 @@ public abstract class BbcTradeDTO implements Serializable {
 
     @Data
     @ApiModel("BbcStockAddressDTO.ModifyOrderAddressDTO")
-    public static class ModifyOrderAddressDTO implements Serializable{
+    public static class ModifyOrderAddressDTO extends BaseDTO{
         @ApiModelProperty("订单id")
         @NotBlank
         private String id;

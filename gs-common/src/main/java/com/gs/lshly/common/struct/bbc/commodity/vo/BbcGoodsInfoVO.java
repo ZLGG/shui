@@ -391,9 +391,6 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品标题")
         private String goodsTitle;
 
-        @ApiModelProperty("商品售价")
-        private BigDecimal salePrice;
-
         @ApiModelProperty(value = "店铺信息")
         private BbcGoodsInfoVO.GoodsShopDetailVO goodsShopDetailVO;
 
@@ -405,10 +402,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "spu月销量")
         private Integer spuStockNum;
-
-        @ApiModelProperty(value = "商品市场价")
-        private BigDecimal oldPrice;
-
+        
         @ApiModelProperty("移动端商品描述")
         private String goodsH5Desc;
 
@@ -420,22 +414,10 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("单规格的库存")
         private Integer singleSkuStock;
-
-        @ApiModelProperty("积分价格")
-        private BigDecimal pointPrice;
-
+        
         @ApiModelProperty("办理备注")
         private String remarks;
-
-        @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
-
-        @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
-
-        @ApiModelProperty("in会员积分价格")
-        private BigDecimal inMemberPointPrice;
-
+        
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;
 
@@ -456,9 +438,59 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("积分兑换数量")
         private Integer exchangeQuantity;
+        
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
 
+        @ApiModelProperty(value = "商品市场价/原价")
+        private BigDecimal oldPrice;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+        
+        @ApiModelProperty("活动")
+        private List<ActivityVO> activityVO;
+        
+        @ApiModelProperty("IN会员价格")
+        private BigDecimal inMemberPointPrice;
+        
     }
 
+    @Data
+    @ApiModel("BbcGoodsInfoVO.ActivityVO")
+    public static class ActivityVO implements Serializable{
+    	
+    	@ApiModelProperty("活动枚举(10=优惠卷 20=团购 30=满减 40=满赠 50=满折 60=活动 70=秒杀)")
+        private Integer activityType;
+    
+    	@ApiModelProperty("活动枚举(10=优惠卷 20=团购 30=满减 40=满赠 50=满折 60=活动 70=秒杀)")
+        private String activityTypeText;
+    	
+    	@ApiModelProperty("开售开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime startTime;
+
+        @ApiModelProperty("开售结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime endTime;
+        
+        @ApiModelProperty("活动名称")
+        private String name;
+        
+        @ApiModelProperty("活动标签")
+        private String label;
+        
+        @ApiModelProperty("描述")
+        private String activityDescribe;
+        
+    }
+    
     @Data
     @ApiModel("BbcGoodsInfoVO.GoodsShopDetailVO")
     public static class GoodsShopDetailVO implements Serializable{

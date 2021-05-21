@@ -17,6 +17,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.GoodsActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.Seckill;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
@@ -128,5 +129,10 @@ public class BbcMarketActivityRpc implements IBbcMarketActivityRpc {
 	@Override
 	public SeckillHome seckillHome(BbcMarketActivityQTO.SeckillHomeQTO qto) {
 		return iBbcMarketActivityService.seckillHome(qto);
+	}
+
+	@Override
+	public GoodsActivityVO getActivityByGoodsId(String goodsId) {
+		return iBbcMarketActivityService.getActivityByGoodsId(goodsId);
 	}
 }

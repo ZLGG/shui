@@ -69,4 +69,12 @@ public interface IBbcMarketActivityRpc {
      * @return
      */
     BbcMarketActivityVO.SeckillHome seckillHome(SeckillHomeQTO qto);
+    
+    
+    /**
+     * 跟据商品Id 查询当前商品参于的活动
+     * @param goodsId
+     * @return
+     */
+    BbcMarketActivityVO.GoodsActivityVO getActivityByGoodsId(String goodsId);
 }
