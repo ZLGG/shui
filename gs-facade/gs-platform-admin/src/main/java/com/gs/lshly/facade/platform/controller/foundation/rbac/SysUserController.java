@@ -51,10 +51,10 @@ public class SysUserController {
     @PostMapping("")
     public ResponseData<Void> add(@Valid @RequestBody SysUserDTO.ETO dto) {
         //新增用户,初始密码必填
-        String password = dto.getPwd();
+        /*String password = dto.getPwd();
         if(StrUtil.isBlank(password) || password.trim().length() < 6 || password.trim().length() > 32) {
             throw new BusinessException("密码长度需要在6至32位间");
-        }
+        }*/
         dto.setId(null);
         userRpc.addSysUser(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
