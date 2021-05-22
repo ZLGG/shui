@@ -568,11 +568,13 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         	throw new BusinessException("购物车数据不存在");
         }
         List<ShopSkuVO> shopIdList = new ArrayList<>();
+        List<String> shopIds = new ArrayList<String>();
         ShopSkuVO shopSkuVO = null;
         for (UserShoppingCar userShoppingCar : userShoppingCarList) {
-            if (!shopIdList.contains(userShoppingCar.getShopId())) {
+            if (!shopIds.contains(userShoppingCar.getShopId())) {
             	shopSkuVO = new ShopSkuVO();
             	shopSkuVO.setShopId(userShoppingCar.getShopId());
+            	shopIds.add(userShoppingCar.getShopId());
             	shopIdList.add(shopSkuVO);
             }
         }
@@ -589,9 +591,8 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         				skuQuantityVO.setCarId(userShoppingCar.getId());
         				skuIds.add(skuQuantityVO);
         			}
-        			shopskuvo.setSkuQuantity(skuIds);
         		}
-        		
+        		shopskuvo.setSkuQuantity(skuIds);
         	}
         }
         return shopIdList;

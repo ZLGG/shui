@@ -336,13 +336,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 			BigDecimal goodsAmountDetail = BigDecimal.ZERO;//商品总金额
 	        BigDecimal goodsPointAmountDetail = BigDecimal.ZERO;//商品总积分金额
 	        Integer goodsCountDetail = 0;//商品总数
+	        List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<BbcTradeSettlementVO.ShopListVO.goodsInfoVO>();
+
 			for (SkuQuantityVO skuQuantityVO : skuList) {
 
 				String skuId = skuQuantityVO.getSkuId();
 				Integer quantity = skuQuantityVO.getQuantity();
 				String carId = skuQuantityVO.getCarId();
-				List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<BbcTradeSettlementVO.ShopListVO.goodsInfoVO>();
-
+				
 				// 店铺商品
 				// for(BbcUserShoppingCarVO.InnerSimpleItem innerSimpleItem :
 				// itemList){
@@ -358,7 +359,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 						innerServiceGoodsVO);
 
 				goodsInfoVOS.add(goodsInfoVO);
-				shopListVO.setGoodsInfoVOS(goodsInfoVOS);
+				
 				// 计算总金额
 				if (goodsInfoVO.getIsPointGood()) { // 积分商品
 					// 判断用户是不是IN会员，如果是的话，就用IN会员价格
@@ -386,6 +387,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 				// }
 				
 			}
+			
+			shopListVO.setGoodsInfoVOS(goodsInfoVOS);
+			
 			shopListVO.setGoodsAmount(goodsAmountDetail);
 			shopListVO.setGoodsPointAmount(goodsPointAmountDetail);
 			

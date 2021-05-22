@@ -65,9 +65,9 @@ public class BbcTradeController {
     @PostMapping("/userCenter/settlement")
     public ResponseData<BbcTradeSettlementVO.DetailVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
         
-    	if (StringUtils.isEmpty(dto.getJwtUserId())){
-            throw new BusinessException("未登录！！");
-        }
+//    	if (StringUtils.isEmpty(dto.getJwtUserId())){
+//            throw new BusinessException("未登录！！");
+//        }
     	
     	dto.setTerminal(ActivityTerminalEnum.wap端);
         return bbcTradeRpc.settlementVO(dto);
