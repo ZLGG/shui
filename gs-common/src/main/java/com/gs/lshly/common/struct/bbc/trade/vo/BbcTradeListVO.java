@@ -28,21 +28,10 @@ public abstract class BbcTradeListVO implements Serializable {
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
 
-    	@ApiModelProperty("數量")
-    	private Integer quantity;
-
-        @ApiModelProperty("交易订单号(ID)")
-        private String id;
-
-
-        @ApiModelProperty("会员ID")
-        private String userId;
-
-        @ApiModelProperty("会员名称")
-        private String userName;
-
-
-        @ApiModelProperty("店铺ID")
+    	/**
+    	 * 店铺信息
+    	 */
+    	@ApiModelProperty("店铺ID")
         private String shopId;
 
         @ApiModelProperty("店铺名称")
@@ -69,11 +58,22 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("商家ID")
         private String merchantId;
+        
+    	
+    	@ApiModelProperty("购买总数量")
+    	private Integer quantity;
 
-
+        @ApiModelProperty("交易订单号(ID)")
+        private String id;
+        
         @ApiModelProperty("交易编号")
         private String tradeCode;
 
+        @ApiModelProperty("会员ID")
+        private String userId;
+
+        @ApiModelProperty("会员名称")
+        private String userName;
 
         @ApiModelProperty("退款状态")
         private Integer rightsState;
@@ -81,42 +81,42 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("交易状态")
         private Integer tradeState;
         
-        @ApiModelProperty("交易状态")
+        @ApiModelProperty("交易状态内容")
         private String tradeStateText;
 
         @ApiModelProperty("商品来源类型：1:商城商品，2:积分商品")
         private Integer goodsSourceType;
 
 
-        @ApiModelProperty("商品总金额（商城用）")
+        @ApiModelProperty("商品总金额")
         private BigDecimal goodsAmount;
 
 
-        @ApiModelProperty("商品总积分（积分商城用）")
+        @ApiModelProperty("商品总积分")
         private BigDecimal goodsPointAmount;
 
 
         @ApiModelProperty("优惠金额")
         private BigDecimal discountAmount;
-
-
-        @ApiModelProperty("运费金额")
-        private BigDecimal deliveryAmount;
-
-
+        
+        @ApiModelProperty("优惠积分金额")
+        private BigDecimal discountPointAmount;
+        
         @ApiModelProperty("交易总金额（商城用）")
         private BigDecimal tradeAmount;
 
         @ApiModelProperty("交易总积分值金额（商城用）")
         private BigDecimal tradePointAmount;
 
+        @ApiModelProperty("运费金额")
+        private BigDecimal deliveryAmount;
 
-        @ApiModelProperty("实付积分（积分商城用）")
-        private BigDecimal pointPriceActuallyPaid;
 
+        @ApiModelProperty("应付积分金额")
+        private BigDecimal payablePointAmount;
 
-        @ApiModelProperty("实付现金（积分商城用）")
-        private BigDecimal amountActuallyPaid;
+        @ApiModelProperty("应付金额")
+        private BigDecimal payableAmount;
 
 
         @ApiModelProperty("创建时间")
@@ -191,19 +191,13 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("发货备注")
         private String deliveryRemark;
 
-        @ApiModelProperty("交易商品集合")
-        List<TradeGoodsVO> tradeGoodsVOS;
-
         @ApiModelProperty("服务器时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime serverTime = LocalDateTime.now() ;
         
-        @ApiModelProperty("优惠券金额")
-        private BigDecimal couponAmount = BigDecimal.ZERO;
+        @ApiModelProperty("交易商品集合")
+        List<TradeGoodsVO> tradeGoodsVOS;
         
-        @ApiModelProperty("優惠券抵扣積分 金額")
-        private BigDecimal couponPointAmount = BigDecimal.ZERO;
-
 		public String getId() {
 			return id;
 		}
@@ -295,14 +289,6 @@ public abstract class BbcTradeListVO implements Serializable {
 			return tradeAmount;
 		}
 
-		public BigDecimal getPointPriceActuallyPaid() {
-			return pointPriceActuallyPaid;
-		}
-
-		public BigDecimal getAmountActuallyPaid() {
-			return amountActuallyPaid;
-		}
-
 		public LocalDateTime getCreateTime() {
 			return createTime;
 		}
@@ -391,17 +377,23 @@ public abstract class BbcTradeListVO implements Serializable {
 			return quantity;
 		}
 
-		public BigDecimal getCouponAmount() {
-			return couponAmount;
-		}
-
-		public BigDecimal getCouponPointAmount() {
-			return couponPointAmount;
-		}
+		
 		public Integer getIsModifyAddress() {
 		    return isModifyAddress;
         }
 
+		public BigDecimal getDiscountPointAmount() {
+			return discountPointAmount;
+		}
+
+		public BigDecimal getPayablePointAmount() {
+			return payablePointAmount;
+		}
+
+		public BigDecimal getPayableAmount() {
+			return payableAmount;
+		}
+		
     }
 
     @Data
@@ -415,21 +407,6 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("交易ID")
         private String tradeId;
-
-
-        @ApiModelProperty("会员ID")
-        private String userId;
-
-
-        @ApiModelProperty("店铺ID")
-        private String shopId;
-
-        @ApiModelProperty("店铺名称")
-        private String shopName;
-
-
-        @ApiModelProperty("商家ID")
-        private String merchantId;
 
 
         @ApiModelProperty("商品ID")
@@ -465,18 +442,23 @@ public abstract class BbcTradeListVO implements Serializable {
 
 
         @ApiModelProperty("销售价")
-        private BigDecimal salePrice;
+        private BigDecimal goodsAmount;
+        
+        @ApiModelProperty("积分价")
+        private BigDecimal goodsPointAmount;
 
 
         @ApiModelProperty("优惠金额")
         private BigDecimal discountAmount;
 
+        @ApiModelProperty("优惠积分金额")
+        private BigDecimal discountPointAmount;
 
         @ApiModelProperty("支付总金额")
-        private BigDecimal payAmount;
+        private BigDecimal tradeAmount;
 
         @ApiModelProperty("支付总积分值")
-        private Integer payPointAmount;
+        private Integer tradePointAmount;
 
 
         @ApiModelProperty("所得积分")

@@ -1260,6 +1260,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), count.size());
     }
 
+    /**
+     * 获取订单详情
+     */
     @Override
     public ResponseData<BbcTradeListVO.tradeVO> orderDetail(BbcTradeDTO.IdDTO dto) {
         BbcTradeListVO.tradeVO tradeVO = new BbcTradeListVO.tradeVO();
@@ -1270,6 +1273,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         BeanUtils.copyProperties(trade,tradeVO);
         //填充商家信息
         fillShop(tradeVO);
+        
         //填充商品集合
         fillTradeVO(tradeVO);
         if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
@@ -1335,6 +1339,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @DubboReference
     private IBbcUserIntegralRpc iBbcUserIntegralRpc;
+    
+    /**
+     * 订单确认
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<Void> orderConfirmReceipt(BbcTradeDTO.IdDTO dto) {
@@ -1885,7 +1893,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         for(TradeGoods tradeGoods : tradeGoodsList){
             BbcTradeListVO.TradeGoodsVO tradeGoodsVO = new BbcTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
-            tradeGoodsVO.setShopName(tradeVO.getShopName());
+//            tradeGoodsVO.setShopName(tradeVO.getShopName());
             if(tradeGoods.getQuantity()!=null)
             	quantity = quantity+tradeGoods.getQuantity();
             tradeGoodsVOS.add(tradeGoodsVO);

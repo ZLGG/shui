@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
  * @author oy
  * @since 2020-10-28
  */
+@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -105,6 +106,11 @@ public class Trade extends Model {
      * 优惠金额
      */
     private BigDecimal discountAmount;
+    
+    /**
+     * 优惠积分值
+     */
+    private BigDecimal discountPointAmount;
 
     /**
      * 运费金额
@@ -135,12 +141,12 @@ public class Trade extends Model {
     /**
      * 应付积分（积分商城用）
      */
-    private BigDecimal pointPricePayable;
+    private BigDecimal payablePointAmount;
 
     /**
      * 应付现金（积分商城用）
      */
-    private BigDecimal amountPayable;
+    private BigDecimal payableAmount;
 
     /**
      * 实付积分（积分商城用）
