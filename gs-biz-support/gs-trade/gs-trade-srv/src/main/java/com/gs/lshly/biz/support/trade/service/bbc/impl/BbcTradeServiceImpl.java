@@ -1276,6 +1276,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         
         //填充商品集合
         fillTradeVO(tradeVO);
+        
         if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
             tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
         }

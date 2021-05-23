@@ -33,6 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bbc/userCenter/userShoppingCar")
 @Api(tags = "会员购物车管理-v1.1.0")
+@SuppressWarnings("unchecked")
 public class BbcUserShoppingCarController {
 
     @DubboReference
@@ -41,7 +42,8 @@ public class BbcUserShoppingCarController {
     @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc; 
 
-    @ApiOperation("购物车商品列表-v1.1.0")
+
+	@ApiOperation("购物车商品列表-v1.1.0")
     @GetMapping("")
     public ResponseData<BbcUserShoppingCarVO.HomeVO> list(BbcUserShoppingCarQTO.QTO qto) {
         return ResponseData.data(bbcUserShoppingCarRpc.list(qto));
