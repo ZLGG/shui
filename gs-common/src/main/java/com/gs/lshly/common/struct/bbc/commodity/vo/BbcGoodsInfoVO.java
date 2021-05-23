@@ -418,6 +418,33 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     @ApiModel("BbcGoodsInfoVO.DetailVO")
     public static class DetailVO implements Serializable {
 
+    	@ApiModelProperty("规格列表")
+        private List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS;
+    	
+        @ApiModelProperty(value = "店铺信息")
+        private BbcGoodsInfoVO.GoodsShopDetailVO goodsShopDetailVO;
+        
+        @ApiModelProperty("多规格商品默认选择规格信息")
+        private BbcSkuGoodInfoVO.SkuVO skuVO;
+
+        @ApiModelProperty(value = "店铺客服信息")
+        private CommonShopVO.ShopServiceVO shopServiceVO;
+        
+        @ApiModelProperty("活动")
+        private List<ActivityVOS> activityVOS;
+        
+        @ApiModelProperty("优惠券")
+        private List<CouponVOS> couponVOS;
+        
+        @ApiModelProperty("参数信息")
+        private List<AttributeVOS> attributeVOS;
+        
+        @ApiModelProperty("标签")
+        private List<String> tags;
+        
+        @ApiModelProperty("承诺服务")
+        private List<PromiseVOS> promiseVOS;
+        
         @ApiModelProperty("商品id")
         private String goodsId;
 
@@ -433,20 +460,8 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty("规格列表")
-        private List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS;
-
         @ApiModelProperty("商品标题")
         private String goodsTitle;
-
-        @ApiModelProperty(value = "店铺信息")
-        private BbcGoodsInfoVO.GoodsShopDetailVO goodsShopDetailVO;
-
-        @ApiModelProperty(value = "店铺客服信息")
-        private CommonShopVO.ShopServiceVO shopServiceVO;
-
-        @ApiModelProperty("多规格商品默认选择规格信息")
-        private BbcSkuGoodInfoVO.SkuVO skuVO;
 
         @ApiModelProperty(value = "spu月销量")
         private Integer spuStockNum;
@@ -454,8 +469,8 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("移动端商品描述")
         private String goodsH5Desc;
 
-        @ApiModelProperty("用户默认收货地址")
-        private String userDefaultAddress;
+//        @ApiModelProperty("用户默认收货地址")
+//        private String userDefaultAddress;
 
         @ApiModelProperty("商品收藏状态")
         private Integer favoritesState;
@@ -478,8 +493,6 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("视频地址")
         private String videoUrl;
 
-        @ApiModelProperty("标签")
-        private List<String> tags;
 
         @ApiModelProperty("销售数量")
         private Integer saleQuantity;
@@ -505,12 +518,6 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("IN会员价格")
         private BigDecimal inMemberPointPrice;
         
-        @ApiModelProperty("活动")
-        private List<ActivityVOS> activityVOS;
-        
-        @ApiModelProperty("优惠券")
-        private List<CouponVOS> couponVOS;
-        
         @ApiModelProperty("当前登录的用户ID")
         private String userId;
         
@@ -521,10 +528,56 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Integer isInUser;
         
     }
+    
+    @Data
+    @ApiModel("BbcGoodsInfoVO.AttributeVOS")
+    public static class AttributeVOS implements Serializable{
+    	
+    	@ApiModelProperty("参数ID")
+        private String id;
+    	
+    	@ApiModelProperty("参数名称")
+        private String name;
+        
+        @ApiModelProperty("参数值")
+        private String value;
+        
+        @ApiModelProperty("排序")
+        private Integer idx;
+    }
+    
+    
+    
+    @Data
+    @ApiModel("BbcGoodsInfoVO.PromiseVOS")
+    public static class PromiseVOS implements Serializable{
+    	
+    	@ApiModelProperty("承诺服务说明ID")
+        private String Id;
+    	 
+    	 @ApiModelProperty("承诺服务说明名称")
+         private String name;
+         
+         @ApiModelProperty("承诺服务内容-详细描述")
+         private String content;
+         
+         @ApiModelProperty("图片地址")
+         private String imageUrl;
+         
+    }
+    
     @Data
     @ApiModel("BbcGoodsInfoVO.CouponVOS")
     public static class CouponVOS implements Serializable{
-    	
+    	 
+    	 @ApiModelProperty("参数名称")
+         private String name;
+         
+         @ApiModelProperty("参数值")
+         private String value;
+         
+         @ApiModelProperty("排序")
+         private Integer idx;
     }
     
     

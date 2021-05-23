@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
 import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
@@ -32,6 +33,7 @@ import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsSearchHistoryMapper;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
@@ -50,10 +52,8 @@ import com.gs.lshly.common.enums.OrderByConditionEnum;
 import com.gs.lshly.common.enums.OrderByTypeEnum;
 import com.gs.lshly.common.enums.QueryIntegralGoodsEnum;
 import com.gs.lshly.common.enums.SingleStateEnum;
-import com.gs.lshly.common.enums.StockAddressTypeEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TrueFalseEnum;
-import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -65,8 +65,9 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.AttributeVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.PromiseVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
@@ -74,9 +75,7 @@ import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
-import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
@@ -135,6 +134,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private GoodsCategoryMapper categoryMapper;
     @Autowired
     private GoodsSearchHistoryMapper searchHistoryMapper;
+    @Autowired
+    private IGoodsAttributeInfoRepository goodsAttributeInfoRepository;
     
     @Autowired
     private IBbcGoodsCategoryService bbcGoodsCategoryService;
@@ -406,12 +407,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 //        Integer exchangeQuantity = tradeRpc.getSaleQuantity(dto.getId(),GoodsSourceTypeEnum.积分商品.getCode());
 //        detailVo.setExchangeQuantity(exchangeQuantity);
 
-        //获取用户默认收货地址
+        /**获取用户默认收货地址
         BbcStockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(new BaseDTO(), StockAddressTypeEnum.收货.getCode());
         if (defaultAddresslVO != null) {
             detailVo.setUserDefaultAddress((StringUtils.isNotEmpty(defaultAddresslVO.getProvince()) ? defaultAddresslVO.getProvince() : "") + (StringUtils.isNotEmpty(defaultAddresslVO.getCity()) ? defaultAddresslVO.getCity() : "") + (StringUtils.isNotEmpty(defaultAddresslVO.getCounty()) ? defaultAddresslVO.getCity() : ""));
         }
-
+        **/
         //店铺客服信息
         BaseDTO baseDTO = new BaseDTO();
         baseDTO.setJwtShopId(goodsInfo.getShopId());
@@ -427,9 +428,64 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         //查询标签
         detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
         
+        /**
+         * 人工匹配服务承诺
+         */
+        fillPromiseVOS(detailVo);
+        
+        /**
+         * 匹配商品属性
+         */
+        fillAttributeVOS(detailVo);
+        
         return detailVo;
     }
+    /**
+     * 填充当前用户类型信息
+     * @param detailVO
+     */
+    private void fillAttributeVOS(BbcGoodsInfoVO.DetailVO detailVo){
+    	QueryWrapper<GoodsAttributeInfo> queryWrapper = MybatisPlusUtil.query();
+    	queryWrapper.eq("good_id", detailVo.getId());
+    	List<GoodsAttributeInfo> list = goodsAttributeInfoRepository.list(queryWrapper);
+    	List<AttributeVOS> attributeVOS = new ArrayList<AttributeVOS>();
+    	if(CollectionUtils.isNotEmpty(list)){
+    		AttributeVOS attributeVO = null;
+    		for(GoodsAttributeInfo info:list){
+    			attributeVO = new AttributeVOS();
+    			BeanCopyUtils.copyProperties(info, attributeVO);
+    			attributeVO.setName(info.getAttributeName());
+    			attributeVO.setValue(info.getAttributeValue());
+    			attributeVOS.add(attributeVO);
+    		}
+    	}
+    	detailVo.setAttributeVOS(attributeVOS);
+    }
     
+    /**
+     * 填充当前用户类型信息
+     * @param detailVO
+     */
+    private void fillPromiseVOS(BbcGoodsInfoVO.DetailVO detailVo){
+    	List<PromiseVOS> promiseVOS = new ArrayList<PromiseVOS>();
+        PromiseVOS promiseVO = new PromiseVOS();
+        promiseVO.setName("店铺发货＆售后");
+        promiseVO.setContent("由欧风蝶官方旗舰店从广东广州市发货并提供售后服务");
+        promiseVOS.add(promiseVO);
+        
+        promiseVO = new PromiseVOS();
+        promiseVO.setName("7天无理由退货");
+        promiseVO.setContent("支持7天无理由退货");
+        promiseVOS.add(promiseVO);
+        
+        promiseVO = new PromiseVOS();
+        promiseVO.setName("极速审核");
+        promiseVO.setContent("极速审核指商家为用户提供的针对售后退换货流程的专项服务，开通后售后服务单会在24H内审核完毕");
+        promiseVOS.add(promiseVO);
+        
+        
+        detailVo.setPromiseVOS(promiseVOS);;
+    }
     /**
      * 填充当前用户类型信息
      * @param detailVO
