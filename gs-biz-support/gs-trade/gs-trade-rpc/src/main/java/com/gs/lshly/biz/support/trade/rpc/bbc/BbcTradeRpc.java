@@ -120,8 +120,8 @@ public class BbcTradeRpc implements IBbcTradeRpc{
     }
 
     @Override
-    public Integer getSaleQuantity(String id, Integer code) {
-        return bbcTradeService.getSaleQuantity(id, code);
+    public Integer getSaleQuantity(String id) {
+        return bbcTradeService.getSaleQuantity(id);
     }
 
     @Override

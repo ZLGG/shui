@@ -1828,8 +1828,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     }
 
     @Override
-    public Integer getSaleQuantity(String id, Integer code) {
-        return tradeMapper.getSaleQuantity(id, code);
+    public Integer getSaleQuantity(String id) {
+        return tradeMapper.getSaleQuantity(id);
     }
 
     private TradePayOffline saveTradeOffline(BbcTradeDTO.OfflinePayDTO dto, Trade trade, TradePay tradePay) {

@@ -11,6 +11,7 @@ import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ActivityVOS;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteTopicVO.TopicVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketActivityDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketMerchantActivityDTO;
@@ -132,7 +133,8 @@ public class BbcMarketActivityRpc implements IBbcMarketActivityRpc {
 	}
 
 	@Override
-	public GoodsActivityVO getActivityByGoodsId(String goodsId) {
+	public ActivityVOS getActivityByGoodsId(String goodsId) {
 		return iBbcMarketActivityService.getActivityByGoodsId(goodsId);
 	}
+
 }

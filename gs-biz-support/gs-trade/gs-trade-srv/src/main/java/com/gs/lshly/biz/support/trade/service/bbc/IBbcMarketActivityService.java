@@ -83,5 +83,5 @@ public interface IBbcMarketActivityService {
      * @param goodsId
      * @return
      */
-    GoodsActivityVO getActivityByGoodsId(String goodsId);
+    BbcGoodsInfoVO.ActivityVOS getActivityByGoodsId(String goodsId);
 }

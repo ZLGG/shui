@@ -79,6 +79,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.utils.AesCbcUtil;
@@ -351,17 +352,20 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (ObjectUtils.isEmpty(goodsInfo)) {
             throw new BusinessException("数据异常");
         }
+        BbcGoodsInfoVO.DetailVO detailVo = new BbcGoodsInfoVO.DetailVO();
+        fillUserType(detailVo,dto);
 
         //判断当前商品参于了哪个活动
-        BbcMarketActivityVO.GoodsActivityVO goodsActivityVO = bbcMarketActivityRpc.getActivityByGoodsId(goodsInfo.getId());
+        BbcGoodsInfoVO.ActivityVOS activityVO = bbcMarketActivityRpc.getActivityByGoodsId(goodsInfo.getId());
        
-        if(goodsActivityVO!=null){//有参于活动
+        if(activityVO!=null){//有参于活动
 //        	GoodsActivityVO goodsactivityvo = new GoodsActivityVO();
-        	
+        	List<BbcGoodsInfoVO.ActivityVOS> activityVOS = new ArrayList<BbcGoodsInfoVO.ActivityVOS>();
+        	activityVOS.add(activityVO);
+        	detailVo.setActivityVOS(activityVOS);;
         	
         }
 
-        BbcGoodsInfoVO.DetailVO detailVo = new BbcGoodsInfoVO.DetailVO();
         BeanUtils.copyProperties(goodsInfo, detailVo);
         detailVo.setGoodsId(goodsInfo.getId());
 
@@ -396,11 +400,11 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         detailVo.setSpuStockNum(spuStockNum);
 
         //获取商品销售数量
-        Integer saleQuantity = tradeRpc.getSaleQuantity(dto.getId(), GoodsSourceTypeEnum.商城商品.getCode());
+        Integer saleQuantity = tradeRpc.getSaleQuantity(dto.getId());
         detailVo.setSaleQuantity(saleQuantity);
-        //获取积分兑换数量
-        Integer exchangeQuantity = tradeRpc.getSaleQuantity(dto.getId(),GoodsSourceTypeEnum.积分商品.getCode());
-        detailVo.setExchangeQuantity(exchangeQuantity);
+//        //获取积分兑换数量
+//        Integer exchangeQuantity = tradeRpc.getSaleQuantity(dto.getId(),GoodsSourceTypeEnum.积分商品.getCode());
+//        detailVo.setExchangeQuantity(exchangeQuantity);
 
         //获取用户默认收货地址
         BbcStockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(new BaseDTO(), StockAddressTypeEnum.收货.getCode());
@@ -424,6 +428,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
         
         return detailVo;
+    }
+    
+    /**
+     * 填充当前用户类型信息
+     * @param detailVO
+     */
+    private void fillUserType(BbcGoodsInfoVO.DetailVO detailVo,BaseDTO dto){
+    	//获取当前登录用户的基本信息
+    	BbcUserVO.UserTypeVO userTypeVO = userRpc.getUserType(dto);
+    	detailVo.setUserId(userTypeVO.getId());
+    	detailVo.setIsInUser(userTypeVO.getIsInUser());
+    	detailVo.setMemberType(userTypeVO.getMemberType());
     }
 
     @Override

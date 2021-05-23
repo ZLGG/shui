@@ -35,4 +35,9 @@ public interface MarketPtSeckillMapper extends BaseMapper<MarketPtSeckill> {
             "\tAND merchant.state = 10 AND ${ew.sqlSegment}")
     IPage<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods(IPage<BbcMarketSeckillVO.SeckillGoodsVO> pager,@Param(Constants.WRAPPER) QueryWrapper<BbcMarketSeckillQTO.QTO> qw);
     
+	@Select("select seckill.* from gs_market_pt_seckill_goods_spu spu " +
+			"left join gs_market_pt_seckill seckill on spu.seckill_id = seckill.id " +
+			"where spu.goods_id='${goodsId}' " +
+			"and seckill.seckill_start_time <= sysdate() and seckill.seckill_end_time >= sysdate() limit 1")
+	MarketPtSeckill getSeckillByGoodsId(@Param("goodsId") String goodsId);
 }

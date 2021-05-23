@@ -16,6 +16,27 @@ import lombok.Data;
 */
 @SuppressWarnings("serial")
 public abstract class BbcUserVO implements Serializable {
+	
+	/**
+	 * 获取当前登录用户的会员类型
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年5月23日 上午12:30:11
+	 */
+	@Data
+	@ApiModel("BbcUserVO.UserTypeVO")
+	public static class UserTypeVO implements Serializable {
+		
+		@ApiModelProperty("id")
+        private String id;
+		
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType = 1;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser = 0;
+	}
 
     @Data
     @ApiModel("BbcUserVO.DetailVO")

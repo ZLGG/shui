@@ -19,6 +19,13 @@ public interface IBbcUserRpc {
      * @return
      */
     BbcUserVO.DetailVO getUserInfo(BbcUserQTO.QTO qto);
+    
+    /**
+     * 会员信息
+     * @param qto
+     * @return
+     */
+    BbcUserVO.UserTypeVO getUserType(BaseDTO dto);
 
 
     /**

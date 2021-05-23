@@ -74,7 +74,7 @@ public interface IBbcTradeRpc {
      * @param code
      * @return
      */
-    Integer getSaleQuantity(String id, Integer code);
+    Integer getSaleQuantity(String id);
 
     /**
      * 修改订单收货地址

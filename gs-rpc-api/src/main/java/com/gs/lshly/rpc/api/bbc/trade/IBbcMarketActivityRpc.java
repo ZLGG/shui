@@ -76,5 +76,5 @@ public interface IBbcMarketActivityRpc {
      * @param goodsId
      * @return
      */
-    BbcMarketActivityVO.GoodsActivityVO getActivityByGoodsId(String goodsId);
+    BbcGoodsInfoVO.ActivityVOS getActivityByGoodsId(String goodsId);
 }

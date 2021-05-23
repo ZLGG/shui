@@ -15,6 +15,7 @@ import java.util.List;
  * @author lxus
  * @since 2020/9/14
  */
+@SuppressWarnings("serial")
 @Data
 @Accessors(chain = true)
 public class BaseDTO implements Serializable {

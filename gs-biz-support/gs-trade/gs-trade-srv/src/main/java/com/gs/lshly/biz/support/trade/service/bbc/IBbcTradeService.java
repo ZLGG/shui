@@ -70,7 +70,7 @@ public interface IBbcTradeService {
      * @param code
      * @return
      */
-    Integer getSaleQuantity(String id, Integer code);
+    Integer getSaleQuantity(String id);
 
     /**
      * 获取积分兑换数量

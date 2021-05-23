@@ -28,6 +28,38 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * 查询商品参加了哪个秒杀人活动
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年5月23日 上午1:13:41
+	 */
+	@Data
+    @ApiModel("BbcMarketSeckillVO.GoodsVO")
+    @Accessors(chain = true)
+    public static class GoodsVO implements Serializable {
+		@ApiModelProperty("id")
+		private String id;
+
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("备注")
+		private String remark;
+
+		@ApiModelProperty("排序")
+		private Integer idx;
+
+		@ApiModelProperty("开始秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillStartTime;
+
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillEndTime;
+	}
 
 	/**
 	 * 秒杀活动列表

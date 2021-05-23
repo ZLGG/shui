@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gs.lshly.common.enums.MarketCheckTypeEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
@@ -416,15 +418,15 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     @ApiModel("BbcGoodsInfoVO.DetailVO")
     public static class DetailVO implements Serializable {
 
-        @ApiModelProperty("sku商品id")
-        private String skuId;
-
         @ApiModelProperty("商品id")
         private String goodsId;
 
         @JsonIgnore
         private String id;
 
+        @ApiModelProperty("默认第一个sku商品id")
+        private String skuId;
+        
         @ApiModelProperty("商品默认图片")
         private String goodsImage;
 
@@ -482,8 +484,8 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("销售数量")
         private Integer saleQuantity;
 
-        @ApiModelProperty("积分兑换数量")
-        private Integer exchangeQuantity;
+//        @ApiModelProperty("积分兑换数量")
+//        private Integer exchangeQuantity;
         
         @ApiModelProperty("商品售价")
         private BigDecimal salePrice;
@@ -500,23 +502,41 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("是否是in会员礼品")
         private Boolean isInMemberGift;
         
-        @ApiModelProperty("活动")
-        private List<ActivityVO> activityVO;
-        
         @ApiModelProperty("IN会员价格")
         private BigDecimal inMemberPointPrice;
         
-    }
+        @ApiModelProperty("活动")
+        private List<ActivityVOS> activityVOS;
+        
+        @ApiModelProperty("优惠券")
+        private List<CouponVOS> couponVOS;
+        
+        @ApiModelProperty("当前登录的用户ID")
+        private String userId;
+        
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType;
 
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+        
+    }
     @Data
+    @ApiModel("BbcGoodsInfoVO.CouponVOS")
+    public static class CouponVOS implements Serializable{
+    	
+    }
+    
+    
+    @Setter
     @ApiModel("BbcGoodsInfoVO.ActivityVO")
-    public static class ActivityVO implements Serializable{
+    public static class ActivityVOS implements Serializable{
     	
     	@ApiModelProperty("活动枚举(10=优惠卷 20=团购 30=满减 40=满赠 50=满折 60=活动 70=秒杀)")
-        private Integer activityType;
+        private Integer type;
     
     	@ApiModelProperty("活动枚举(10=优惠卷 20=团购 30=满减 40=满赠 50=满折 60=活动 70=秒杀)")
-        private String activityTypeText;
+        private String typeText;
     	
     	@ApiModelProperty("开售开始时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -533,8 +553,65 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private String label;
         
         @ApiModelProperty("描述")
-        private String activityDescribe;
-        
+        private String describe;
+
+		public Integer getType() {
+			return type;
+		}
+
+		public void setType(Integer type) {
+			this.type = type;
+		}
+
+		public String getTypeText() {
+			if(type!=null)
+				typeText = MarketCheckTypeEnum.getRemarkByCode(type);
+			return typeText;
+		}
+
+		public void setTypeText(String typeText) {
+			this.typeText = typeText;
+		}
+
+		public LocalDateTime getStartTime() {
+			return startTime;
+		}
+
+		public void setStartTime(LocalDateTime startTime) {
+			this.startTime = startTime;
+		}
+
+		public LocalDateTime getEndTime() {
+			return endTime;
+		}
+
+		public void setEndTime(LocalDateTime endTime) {
+			this.endTime = endTime;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+
+		public String getDescribe() {
+			return describe;
+		}
+
+		public void setDescribe(String describe) {
+			this.describe = describe;
+		}
     }
     
     @Data

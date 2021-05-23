@@ -20,6 +20,7 @@ import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO.DetailVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO.UserTypeVO;
 import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -185,6 +186,20 @@ public class BbcUserServiceImpl implements IBbcUserService {
         }
         */
         return detailVO;
+	}
+
+	@Override
+	public UserTypeVO getUserType(BaseDTO dto) {
+		BbcUserVO.UserTypeVO userTypeVO = new BbcUserVO.UserTypeVO();
+		if(null == dto.getJwtUserId())
+			return userTypeVO;
+        
+        User user =  repository.getById(dto.getJwtUserId());
+        if(user == null)
+        	return userTypeVO;
+        
+        BeanUtils.copyProperties(user,userTypeVO);
+        return userTypeVO;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import com.gs.lshly.biz.support.trade.entity.MarketPtActivityJurisdiction;
 import com.gs.lshly.biz.support.trade.entity.MarketPtActivityMerchant;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
 import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
+import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillMapper;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardGoodsRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardUsersRepository;
@@ -54,6 +56,7 @@ import com.gs.lshly.biz.support.trade.repository.IMarketPtActivityRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketActivityService;
 import com.gs.lshly.common.enums.ActivitySignEnum;
+import com.gs.lshly.common.enums.MarketCheckTypeEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillStatusEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillTimeQuantumEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -76,10 +79,10 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.SeckillHomeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.GoodsActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.Seckill;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -91,6 +94,7 @@ import com.twelvemonkeys.lang.StringUtil;
 import cn.hutool.core.collection.CollectionUtil;
 
 @Component
+@SuppressWarnings({"unchecked","static-access"})
 public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
     @Autowired
     private IMarketPtActivityRepository iMarketPtActivityRepository;
@@ -136,6 +140,9 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
     @Autowired
     private IMarketPtSeckillRepository marketPtSeckillRepository;
     
+    @Autowired
+    private MarketPtSeckillMapper marketPtSeckillMapper;
+    
     @Value("${activity.pc.cut}")
     private String pcCut;
     @Value("${activity.pc.gift}")
@@ -153,7 +160,8 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
     private String h5Groupbuy;
     @Value("${activity.h5.discount}")
     private String h5Discount;
-    @Override
+
+	@Override
     public ResponseData<BbcMarketActivityVO.ListVO> activityList(BbcMarketActivityDTO.DTO dto) {
         BbcMarketActivityVO.ListVO listVO = new BbcMarketActivityVO.ListVO();
         //活动
@@ -1225,7 +1233,7 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
             	seckillTimeQuantum.setId(seckill.getId());
             	seckillTimeQuantum.setName(seckill.getName());
             	
-            	Integer status = this.rangeInDefined(minute, from, seckill.getTimeQuantum());
+				Integer status = this.rangeInDefined(minute, from, seckill.getTimeQuantum());
             	seckillTimeQuantum.setStatus(status);
             	seckillTimeQuantum.setStatusDesc(EnumUtil.getEnumByCode(status, MarketPtSeckillStatusEnum.class).getRemark());
             	seckillTimeQuantum.setTimeQuantum(EnumUtil.getEnumByCode(seckill.getTimeQuantum(), MarketPtSeckillTimeQuantumEnum.class).getRemark());
@@ -1275,10 +1283,19 @@ public class BbcMarketActivityServiceImpl implements IBbcMarketActivityService {
 	 }
 	 
 	@Override
-	public GoodsActivityVO getActivityByGoodsId(String goodsId) {
+	public BbcGoodsInfoVO.ActivityVOS getActivityByGoodsId(String goodsId) {
 		//判断当前商品参于到不同的秒杀活动
-		
-		
-		return null;
+		MarketPtSeckill marketPtSeckill = marketPtSeckillMapper.getSeckillByGoodsId(goodsId);
+		if(marketPtSeckill!=null&&StringUtils.isNotEmpty(marketPtSeckill.getId())){
+			BbcGoodsInfoVO.ActivityVOS activityVOS = new BbcGoodsInfoVO.ActivityVOS();
+			BeanCopyUtils.copyProperties(marketPtSeckill, activityVOS);
+			activityVOS.setType(MarketCheckTypeEnum.秒杀.getCode());
+			activityVOS.setStartTime(marketPtSeckill.getSeckillStartTime());
+			activityVOS.setEndTime(marketPtSeckill.getSeckillEndTime());
+			activityVOS.setDescribe(marketPtSeckill.getSeckillDescribe());
+			return activityVOS;
+		}else{
+			return null;
+		}
 	}
 }
