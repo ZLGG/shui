@@ -19,13 +19,16 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +74,30 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
     }
 
     @Override
+    public void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list) {
+        List<CtccCategoryGoods> categoryGoodsList = ListUtil.listCover(CtccCategoryGoods.class, list);
+        categoryGoodsList.forEach(category ->{
+            category.setSubject(SubjectEnum.电信国际.getCode())
+                    .setTerminal(20);
+        });
+        goodsRepository.saveBatch(categoryGoodsList);
+    }
+
+    @Override
+    public void addCategory(CtccPtActivityDTO.AddCategoryDTO dto) {
+        CtccCategory ctccCategory = new CtccCategory()
+                .setOperator(dto.getJwtUserId())
+                .setIdx(dto.getIdx())
+                .setImageUrl(dto.getImageUrl())
+                .setLevel(1)
+                .setName(dto.getName())
+                .setRemark(dto.getRemark())
+                .setSubject(SubjectEnum.电信国际.getCode())
+                .setTerminal(20);
+        repository.save(ctccCategory);
+    }
+
+    @Override
     public void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> list) {
 
     }
@@ -81,6 +108,13 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         QueryWrapper<CtccCategory> wrapper = MybatisPlusUtil.query();
         wrapper.eq("subject", SubjectEnum.电信国际.getCode());
         wrapper.orderByAsc("idx");
+
+        // 根据商品名称查询商品信息及对应类目
+        if (StringUtils.isNotBlank(listDTO.getGoodsName())) {
+            // 根据商品名称模糊匹配类目id
+            List<String> categoryIds = bbcGoodsInfoRpc.getCategoryIdsByName(listDTO.getGoodsName());
+            wrapper.in("id", categoryIds);
+        }
 
         CtccPtActivityVO.CategoryListVO categoryListVO = new CtccPtActivityVO.CategoryListVO();
 

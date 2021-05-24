@@ -1,10 +1,12 @@
 package com.gs.lshly.common.struct.platadmin.trade.dto;
 
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -94,5 +96,37 @@ public class CtccPtActivityDTO implements Serializable {
 
         @ApiModelProperty("类别id")
         private String categoryId;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.AddCategoryDTO")
+    public static class AddCategoryDTO extends BaseDTO {
+        @ApiModelProperty("类目名称")
+        @NotBlank(message = "类目名称不能为空")
+        private String name;
+
+        @ApiModelProperty("排序")
+        private Integer idx;
+
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+
+        @ApiModelProperty("备注")
+        private String remark;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.AddCategoryGoodsDTO")
+    public static class AddCategoryGoodsDTO implements Serializable {
+        @ApiModelProperty("类目id")
+        @NotBlank(message = "类目id不能为空")
+        private String categoryId;
+
+        @ApiModelProperty("商品id")
+        @NotBlank(message = "商品id不能为空")
+        private String goodsId;
+
+        @ApiModelProperty("排序")
+        private Integer idx;
     }
 }

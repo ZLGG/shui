@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.platform.controller.trade;
 
+import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
@@ -28,29 +29,47 @@ public class CtccPtActivityController {
 
     @ApiOperation("创建活动")
     @PostMapping("/addActivity")
-//    @Func(code = "add",name = "增")
     public ResponseData addActivity(@RequestBody CtccPtActivityDTO.AddDTO addDTO) {
         iCtccPtActivityRpc.addActivity(addDTO);
-        return ResponseData.success();
+        return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
     @ApiOperation("修改活动")
-    @PutMapping("/modifyActivity")
-//    @Func(code = "edit",name = "改")
+    @PutMapping("/modifyActivity/{id}")
     public ResponseData modifyActivity(@PathVariable String id,@RequestBody CtccPtActivityDTO.ModifyDTO modifyDTO) {
         modifyDTO.setId(id);
         iCtccPtActivityRpc.modifyActivity(modifyDTO);
-        return ResponseData.success();
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
-    @ApiOperation("商品类目列表展示")
+    @ApiOperation("电信国际类目-新增")
+    @PostMapping("/addCategory")
+    public ResponseData addCategory(@RequestBody CtccPtActivityDTO.AddCategoryDTO dto) {
+        iCtccPtActivityRpc.addCategory(dto);
+        return ResponseData.success(MsgConst.ADD_SUCCESS);
+    }
+
+    @ApiOperation("电信国际类目-新增类目商品")
+    @PostMapping("/addCategoryGoods")
+    public ResponseData addCategoryGoods(@RequestBody List<CtccPtActivityDTO.AddCategoryGoodsDTO> list) {
+        iCtccPtActivityRpc.addCategoryGoods(list);
+        return ResponseData.success(MsgConst.ADD_SUCCESS);
+    }
+
+    @ApiOperation("电信国际类目-列表展示")
     @GetMapping("/getCategoryList")
     public ResponseData<CtccPtActivityVO.CategoryListVO> getCategoryList(CtccPtActivityDTO.CateGoryListDTO listDTO) {
         CtccPtActivityVO.CategoryListVO categoryListVO = iCtccPtActivityRpc.getCategoryList(listDTO);
         return ResponseData.data(categoryListVO);
     }
 
-    @ApiOperation("添加商品")
+    @ApiOperation("根据类目查询商品信息")
+    @PutMapping("/getGoodsInfoByCategoryId/{id}")
+    public ResponseData getGoodsInfoByCategoryId(@PathVariable String categoryId) {
+        return ResponseData.success();
+    }
+
+    @ApiOperation("添加活动商品")
     @PostMapping("/addActivityGoods")
     public ResponseData addActivityGoods(@RequestBody List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList) {
         iCtccPtActivityRpc.addActivityGoods(activityGoodsDTOList);

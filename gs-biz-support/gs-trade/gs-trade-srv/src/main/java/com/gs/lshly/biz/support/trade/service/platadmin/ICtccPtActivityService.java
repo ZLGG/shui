@@ -34,4 +34,16 @@ public interface ICtccPtActivityService {
      * @param activityGoodsDTOList
      */
     void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList);
+
+    /**
+     * 添加电信国际类目
+     * @param dto
+     */
+    void addCategory(CtccPtActivityDTO.AddCategoryDTO dto);
+
+    /**
+     * 添加电信国际类目下商品
+     * @param list
+     */
+    void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list);
 }

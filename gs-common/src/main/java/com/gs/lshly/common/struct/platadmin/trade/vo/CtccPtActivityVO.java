@@ -46,10 +46,10 @@ public class CtccPtActivityVO implements Serializable {
     @Data
     @ApiModel("CtccPtActivityVO.CtccCategoryVO")
     public static class CtccCategoryVO implements Serializable {
-        @ApiModelProperty("电信国际分类ID")
+        @ApiModelProperty("电信国际类目id")
         private String id;
 
-        @ApiModelProperty("名称")
+        @ApiModelProperty("类目名称")
         private String name;
 
         @ApiModelProperty("封面图")
