@@ -576,12 +576,17 @@ public class StringManageUtil {
 //		String html = "<p>问哦我柔佛IE入会费&nbsp; 我为金额噢if胡伟方脑壳京东数科陆金所的&nbsp; 欧沃IE及品位和覅发货前二位我金融IP为妻儿 我温柔我我就开始大部分克里斯建安费</p>";
 //		System.out.print(patternHtml(html));
 		
-		System.out.println(addressResolution("浙江省湖州市吴兴区月河街道湖东府1幢502室"));
-		System.out.println(addressResolution("湖北省黄梅县大河会镇杨凼村四组"));
-		System.out.println(addressResolution("杭州市西湖区兰庭公寓3幢1单元703室"));
+//		System.out.println(addressResolution("浙江省湖州市吴兴区月河街道湖东府1幢502室"));
+//		System.out.println(addressResolution("湖北省黄梅县大河会镇杨凼村四组"));
+//		System.out.println(addressResolution("杭州市西湖区兰庭公寓3幢1单元703室"));
 		
 		System.out.println(hideMail("yingjun@126.com"));
+		BigDecimal price = new BigDecimal("0");
+		DecimalFormat df2 =new DecimalFormat("#.00"); 
+	    String str = df2.format(price);  
+	    System.out.println(new BigDecimal(str));  //13.15  
 	}
+	
 	
 	/**
 	 * 验证手机号码的合法性

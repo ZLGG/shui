@@ -125,6 +125,19 @@ public class BbcTradeController {
 	public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
 		return bbcTradeRpc.orderPay(dto);
 	}
+	
+	@ApiOperation("订单列表")
+	@PostMapping("/userCenter/orderList")
+	public ResponseData<PageData<BbcTradeListVO.tradeVO>> orderList(@RequestBody BbcTradeQTO.TradeList qto) {
+		PageData<BbcTradeListVO.tradeVO> page = bbcTradeRpc.tradeListPageData(qto);
+		return ResponseData.data(page);
+	}
+
+	@ApiOperation("订单详情")
+	@PostMapping("/userCenter/orderDetail")
+	public ResponseData<BbcTradeListVO.tradeVO> orderDetail(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
+		return bbcTradeRpc.orderDetail(dto);
+	}
 
 	@ApiOperation("支付回调")
 	@PostMapping("/doPayNotify")
@@ -137,19 +150,6 @@ public class BbcTradeController {
 	@PostMapping("/doPaySuccess")
 	public String doPaySuccess(@Valid @RequestBody String tradeCode) {
 		return bbcTradeRpc.paySuccess(tradeCode);
-	}
-
-	@ApiOperation("订单列表")
-	@PostMapping("/userCenter/orderList")
-	public ResponseData<PageData<BbcTradeListVO.tradeVO>> orderList(@RequestBody BbcTradeQTO.TradeList qto) {
-		PageData<BbcTradeListVO.tradeVO> page = bbcTradeRpc.tradeListPageData(qto);
-		return ResponseData.data(page);
-	}
-
-	@ApiOperation("订单详情")
-	@PostMapping("/userCenter/orderDetail")
-	public ResponseData<BbcTradeListVO.tradeVO> orderDetail(@Valid @RequestBody BbcTradeDTO.IdDTO dto) {
-		return bbcTradeRpc.orderDetail(dto);
 	}
 
 	@ApiOperation("订单确认收货")

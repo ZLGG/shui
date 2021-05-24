@@ -21,8 +21,9 @@ public enum TradePayTypeEnum {
     线下支付(90, "线下支付", false, null),
     积分支付(100, "积分支付", false, null),
 
-    混合支付积分_微信小程序(510, "混合支付积分_微信小程序", true, TradePayTypeEnum.微信小程序支付);
-
+    混合支付积分_微信小程序(510, "混合支付积分_微信小程序", true, TradePayTypeEnum.微信小程序支付),
+	混合支付积分_支付宝(511, "混合支付积分_支付宝", true, TradePayTypeEnum.支付宝APP);
+	
     TradePayTypeEnum(Integer code, String remark, Boolean mixedPayment, TradePayTypeEnum subType) {
         this.code = code;
         this.remark = remark;

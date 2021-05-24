@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import io.swagger.annotations.ApiModelProperty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -17,6 +17,7 @@ import lombok.experimental.Accessors;
  * @author xxfc
  * @since 2020-11-02
  */
+@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -119,6 +120,6 @@ public class UserShoppingCar extends Model {
     /**
      * in会员积分价格
      */
-    private Double inMemberPointPrice;
+    private BigDecimal inMemberPointPrice;
 
 }

@@ -242,6 +242,11 @@ public class Trade extends Model {
      * 改价原因
      */
     private String changePriceCause;
+    
+    /**
+     * 发货时间
+     */
+    private LocalDateTime deliveryTime;
 
     /**
      * 创建时间

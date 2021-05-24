@@ -259,7 +259,7 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
         /**
          * in会员积分价格
          */
-        private Double inMemberPointPrice;
+        private BigDecimal inMemberPointPrice;
 
     }
     
@@ -281,12 +281,28 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
     	
     	@ApiModelProperty("SKUID")
         private String skuId;
-
+    	
         @ApiModelProperty("数量")
         private Integer quantity;
         
         @ApiModelProperty("CarId")
         private String carId;
+        
+        @ApiModelProperty("商品销售价格")
+        private BigDecimal goodsPrice;
+        
+        @ApiModelProperty("积分价格")
+        private BigDecimal goodsPointPrice;
+        
+        @ApiModelProperty("积分价格")
+        private BigDecimal inMemberPointPrice;
+        
+        @ApiModelProperty("是否为积分商品")
+        private Boolean isPointGood;
+        
+        @ApiModelProperty("是否为IN会员商品")
+        private Boolean isInMemberGift;
+        
         
     }
 }

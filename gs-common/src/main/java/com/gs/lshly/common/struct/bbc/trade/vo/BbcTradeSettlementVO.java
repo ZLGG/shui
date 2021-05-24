@@ -1,19 +1,17 @@
 package com.gs.lshly.common.struct.bbc.trade.vo;
 
-import com.gs.lshly.common.struct.common.dto.CommonMarketDTO;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
 * @author oy
@@ -136,26 +134,32 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 
             @ApiModelProperty("是否是积分商品")
             private Boolean isPointGood;
+            
+            @ApiModelProperty("是否是in会员礼品")
+            private Boolean isInMemberGift;
 
             @ApiModelProperty("销售价")
             private BigDecimal salePrice;
 
             @ApiModelProperty("活动及券后价")
             private BigDecimal activePrice;
-
+            
             @ApiModelProperty("积分价格")
             private BigDecimal pointPrice;
-
-            @ApiModelProperty("是否是in会员礼品")
-            private Boolean isInMemberGift;
-
+            
             @ApiModelProperty("in会员积分价格")
             private BigDecimal inMemberPointPrice;
+            
+            @ApiModelProperty("应付金额")
+            private BigDecimal tradeAmount;
+            
+            @ApiModelProperty("应付积分金额")
+            private BigDecimal tradePointAmount;
 
         }
 	}
 
-	@Data
+	@Setter
     @ApiModel("BbcTradeSettlementVO.DetailVO")
     @Accessors(chain = true)
     public static class DetailVO implements Serializable {
@@ -203,7 +207,77 @@ public abstract class BbcTradeSettlementVO implements Serializable {
         
         @ApiModelProperty("用户电信积分")
         private Integer telecomsIntegral;
+        
+        @ApiModelProperty("优惠券抵扣金额")
+        private BigDecimal discountAmount;
+        
+        @ApiModelProperty("优惠券抵扣积分")
+        private BigDecimal discountPointAmount;
 
+		public String getRecvAddresId() {
+			return recvAddresId;
+		}
+
+		public String getRecvPersonName() {
+			return recvPersonName;
+		}
+
+		public String getRecvPhone() {
+			return recvPhone;
+		}
+
+		public String getRecvFullAddres() {
+			return recvFullAddres;
+		}
+
+		public String getContactsName() {
+			return contactsName;
+		}
+
+		public List<String> getShopDeliveryType() {
+			return shopDeliveryType;
+		}
+
+		public String getContactsPhone() {
+			return contactsPhone;
+		}
+
+		public List<ShopListVO> getShopList() {
+			return shopList;
+		}
+
+		public BigDecimal getGoodsAmount() {
+			return goodsAmount;
+		}
+
+		public BigDecimal getGoodsPointAmount() {
+			return goodsPointAmount;
+		}
+
+		public BigDecimal getTradeAmount() {
+			return tradeAmount;
+		}
+
+		public BigDecimal getTradePointAmount() {
+			return tradePointAmount;
+		}
+
+		public Integer getGoodsCount() {
+			return goodsCount;
+		}
+
+		public Integer getTelecomsIntegral() {
+			return telecomsIntegral;
+		}
+
+		public BigDecimal getDiscountAmount() {
+			return discountAmount;
+		}
+
+		public BigDecimal getDiscountPointAmount() {
+			return discountPointAmount;
+		}
+        
     }
 	
     @Data
