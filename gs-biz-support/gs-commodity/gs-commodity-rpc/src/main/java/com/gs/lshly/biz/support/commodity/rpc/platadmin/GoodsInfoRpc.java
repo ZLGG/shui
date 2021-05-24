@@ -42,7 +42,7 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
         GoodsFupinQTO.QTO qto = new GoodsFupinQTO.QTO();
         qto.setGoodsId(dto.getId());
         GoodsFupinVO.DetailVO fupin = fupinService.detailGoodsFupin(qto);
-        if (ObjectUtils.isNotEmpty(fupin)){
+        if (ObjectUtils.isNotEmpty(fupin)) {
             detailVO.setFupinInfo(fupin);
         }
         return detailVO;
@@ -82,7 +82,7 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     @Override
     public PageData<GoodsInfoVO.FupinFloorCommodityVO> getFupinFloorCommodityVO(GoodsInfoQTO.FupinFloorQTO qto) {
         List<String> goodsIdList = fupinService.listFuPinGoodsId(qto);
-        if (ObjectUtils.isEmpty(goodsIdList)){
+        if (ObjectUtils.isEmpty(goodsIdList)) {
             return new PageData<>();
         }
         qto.setGoodsId(goodsIdList);
@@ -129,14 +129,14 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
         goodsInfoService.innerServiceUnderShelfGoods(shopId);
     }
 
-	@Override
-	public List<ListVO> listGoodsData() {
-		return goodsInfoService.listGoodsData();
-	}
+    @Override
+    public List<ListVO> listGoodsData() {
+        return goodsInfoService.listGoodsData();
+    }
 
-	@Override
-	public PageData<ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto) {
-		return goodsInfoService.pageInGoods(qto);
-	}
+    @Override
+    public PageData<ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto) {
+        return goodsInfoService.pageInGoods(qto);
+    }
 
 }

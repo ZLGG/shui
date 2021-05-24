@@ -6,6 +6,7 @@ import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayQTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradePayVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
@@ -13,6 +14,8 @@ import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
 *
@@ -37,5 +40,10 @@ public class TradeRpc implements ITradeRpc{
     @Override
     public ExportDataDTO export(TradeQTO.IdListQTO qo) throws Exception{
         return ExcelUtil.treatmentBean(TradeService.export(qo),TradeVO.ListVOExport.class);
+    }
+
+    @Override
+    public TradeVO.TradeInfoVO findById(TradeGoodsVO.ListVO listVO) {
+        return TradeService.findById(listVO);
     }
 }

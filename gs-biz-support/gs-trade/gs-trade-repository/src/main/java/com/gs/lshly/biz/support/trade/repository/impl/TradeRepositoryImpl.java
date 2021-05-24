@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -19,6 +20,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
