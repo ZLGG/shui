@@ -49,6 +49,11 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     }
 
     @Override
+    public void upCarriageGoods(GoodsInfoDTO.IdListDTO dto) {
+        goodsInfoService.upCarriageGoods(dto);
+    }
+
+    @Override
     public void underCarriageGoods(GoodsInfoDTO.IdListDTO dto) {
         goodsInfoService.underCarriageGoods(dto);
     }

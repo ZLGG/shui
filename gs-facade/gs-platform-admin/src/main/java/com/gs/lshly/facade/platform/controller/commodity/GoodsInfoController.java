@@ -51,6 +51,14 @@ public class GoodsInfoController {
         return ResponseData.data(goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(id)));
     }
 
+    @ApiOperation("批量上架商品")
+    @PutMapping(value = "upCarriageBatch")
+    @Func(code="edit", name = "修改")
+    public ResponseData<Void> upCarriageBatch(GoodsInfoDTO.IdListDTO dto) {
+        goodsInfoRpc.upCarriageGoods(dto);
+        return ResponseData.success(MsgConst.GROUNDING_SUCCESS);
+    }
+
     @ApiOperation("批量下架商品")
     @PutMapping(value = "underCarriageBatch")
     @Func(code="edit", name = "修改")

@@ -31,6 +31,13 @@ public interface IGoodsInfoService {
     GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto);
 
     /**
+     * 批量上架商品
+     *
+     * @param dto
+     */
+    void upCarriageGoods(GoodsInfoDTO.IdListDTO dto);
+
+    /**
      * 批量下架商品
      *
      * @param dto
