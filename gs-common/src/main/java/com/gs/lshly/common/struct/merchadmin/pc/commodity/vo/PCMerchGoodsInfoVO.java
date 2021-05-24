@@ -131,6 +131,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("积分价格")
         private BigDecimal pointPrice;
 
+        @ApiModelProperty("原积分价格")
+        private BigDecimal oldPointPrice;
+
         @ApiModelProperty("办理备注")
         private String remarks;
 

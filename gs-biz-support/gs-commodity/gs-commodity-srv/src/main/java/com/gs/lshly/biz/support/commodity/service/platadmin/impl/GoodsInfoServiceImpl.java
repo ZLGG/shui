@@ -6,6 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
+import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -36,14 +43,6 @@ import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryServic
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsRelationLabelService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.ISkuGoodInfoService;
-import com.gs.lshly.common.enums.GoodAuditRecordEnum;
-import com.gs.lshly.common.enums.GoodsQueryTypeEnum;
-import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
-import com.gs.lshly.common.enums.ShopTypeEnum;
-import com.gs.lshly.common.enums.SingleStateEnum;
-import com.gs.lshly.common.enums.TerminalEnum;
-import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -104,6 +103,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     private IGoodsShopNavigationRepository navigationRepository;
     @Autowired
     private IGoodsTempalteRepository goodsTempalteRepository;
+
     @DubboReference
     private ICommonStockRpc commonStockRpc;
 
@@ -116,6 +116,11 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @DubboReference
     private ICommonStockTemplateRpc commonStockTemplateRpc;
 
+    @DubboReference
+    private ITradeRpc iTradeRpc;
+
+    @DubboReference
+    private ITradeGoodsRpc iTradeGoodsRpc;
 
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto) {
@@ -322,19 +327,30 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     }
 
     @Override
+    @Transactional
     public void deleteGoodsBatches(GoodsInfoDTO.IdListDTO dto) {
         if (dto == null || dto.getIdList() == null || dto.getIdList().size() == 0) {
             throw new BusinessException("参数不能为空！");
         }
         //TODO 如果sku商品是处于交易中并且订单的状态不是已完成那么不可以删除该商品
-
-
+        List<TradeGoodsVO.ListVO> listByGoodsId = iTradeGoodsRpc.findListByGoodsId(dto);
+        if (CollUtil.isNotEmpty(listByGoodsId)) {
+            for (TradeGoodsVO.ListVO listVO : listByGoodsId) {
+                TradeVO.TradeInfoVO tradeInfoVo = iTradeRpc.findById(listVO);
+                if (ObjectUtil.isNotEmpty(tradeInfoVo)) {
+                    if (!tradeInfoVo.getTradeState().equals(TradeStateEnum.已完成.getCode()) || tradeInfoVo.getTradeState().equals(TradeStateEnum.已取消.getCode())) {
+                        throw new BusinessException("商品有订单未完成,商品名:" + listVO.getGoodsName() + ",商品ID:" + listVO.getGoodsId());
+                    }
+                }
+            }
+        }
         //如果该商品是多规格商品则先删除sku商品然后再删除spu商品
         for (String goodsId : dto.getIdList()) {
             QueryWrapper<SkuGoodInfo> wrapper = new QueryWrapper<>();
             wrapper.eq("good_id", goodsId);
             List<SkuGoodInfo> infoList = skuGoodInfoRepository.list(wrapper);
             if (infoList != null && infoList.size() > 0) {
+
                 skuGoodInfoRepository.remove(wrapper);
             }
         }

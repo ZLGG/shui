@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -18,13 +19,14 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author oy
@@ -34,7 +36,7 @@ public interface ITradeRepository extends IService<Trade> {
 
     List<BbcTradeListVO.tradeVO> selectTradeListPage(@Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO.TradeList> qw);
 
-    List<BbbH5TradeListVO.tradeVO>  BbbH5selectTradeListPage( @Param(Constants.WRAPPER) QueryWrapper<BbbH5TradeQTO.TradeList> qw);
+    List<BbbH5TradeListVO.tradeVO> BbbH5selectTradeListPage(@Param(Constants.WRAPPER) QueryWrapper<BbbH5TradeQTO.TradeList> qw);
 
     List<BbcTradeListVO.stateCountVO> selectTradeStateCount(@Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO> qw);
 
@@ -50,7 +52,7 @@ public interface ITradeRepository extends IService<Trade> {
 
     List<Trade> yesterdayTrade(@Param(Constants.WRAPPER) QueryWrapper<MerchantHomeDashboardDTO.ETO> queryWrapper);
 
-    BbbTradeListVO.InnerGoodsScore selectShopScore( QueryWrapper<Object> queryWrapper);
+    BbbTradeListVO.InnerGoodsScore selectShopScore(QueryWrapper<Object> queryWrapper);
 
-    BbbTradeListVO.InnerGoodsScore selectGoodScore( QueryWrapper<Object> queryWrapper);
+    BbbTradeListVO.InnerGoodsScore selectGoodScore(QueryWrapper<Object> queryWrapper);
 }

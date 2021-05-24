@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,19 +53,21 @@ import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.lakala.boss.api.common.Common;
 
 /**
-* <p>
-*  服务实现类
-* </p>
-* @author oy
-* @since 2020-11-16
-*/
+ * <p>
+ * 服务实现类
+ * </p>
+ *
+ * @author oy
+ * @since 2020-11-16
+ */
 @Component
 public class TradeServiceImpl implements ITradeService {
 
     private final ITradeRepository tradeRepository;
     private final ITradeGoodsRepository tradeGoodsRepository;
     private final ITradeDeliveryRepository tradeDeliveryRepository;
-
+    @Autowired
+    private TradeMapper tradeMapper;
     @Autowired
     private ITradePayRepository iTradePayRepository;
     @Autowired
@@ -85,33 +91,33 @@ public class TradeServiceImpl implements ITradeService {
     @Override
     public PageData<TradeListVO.tradeVO> tradeListPageData(TradeQTO.TradeList qto) {
         QueryWrapper<TradeQTO.TradeList> wrapper = new QueryWrapper<>();
-        wrapper.and(i -> i.eq("1","1"));
-        if(ObjectUtils.isNotEmpty(qto.getCreateTime())){
-            wrapper.and(i -> i.eq("",qto.getCreateTime()));
+        wrapper.and(i -> i.eq("1", "1"));
+        if (ObjectUtils.isNotEmpty(qto.getCreateTime())) {
+            wrapper.and(i -> i.eq("", qto.getCreateTime()));
         }
-        if(StringUtils.isNotBlank(qto.getTradeCode())){
-            wrapper.and(i -> i.eq("t.`trade_code`",qto.getTradeCode()));
+        if (StringUtils.isNotBlank(qto.getTradeCode())) {
+            wrapper.and(i -> i.eq("t.`trade_code`", qto.getTradeCode()));
         }
-        if(StringUtils.isNotBlank(qto.getRecvPersonName())){
-            wrapper.and(i -> i.eq("t.`recv_person_name`",qto.getRecvPersonName()));
+        if (StringUtils.isNotBlank(qto.getRecvPersonName())) {
+            wrapper.and(i -> i.eq("t.`recv_person_name`", qto.getRecvPersonName()));
         }
-        if(StringUtils.isNotBlank(qto.getRecvPhone())){
-            wrapper.and(i -> i.eq("t.`recv_phone`",qto.getRecvPhone()));
+        if (StringUtils.isNotBlank(qto.getRecvPhone())) {
+            wrapper.and(i -> i.eq("t.`recv_phone`", qto.getRecvPhone()));
         }
-        if(ObjectUtils.isNotEmpty(qto.getTradeState())){
-            wrapper.and(i -> i.eq("t.`trade_state`",qto.getTradeState()));//交易状态,不传则查所有状态数据
+        if (ObjectUtils.isNotEmpty(qto.getTradeState())) {
+            wrapper.and(i -> i.eq("t.`trade_state`", qto.getTradeState()));//交易状态,不传则查所有状态数据
         }
-        if (ObjectUtils.isNotEmpty(qto.getSourceType())){
-            wrapper.and(i->i.eq("t.`source_type`",qto.getSourceType()));//2b2c来源
+        if (ObjectUtils.isNotEmpty(qto.getSourceType())) {
+            wrapper.and(i -> i.eq("t.`source_type`", qto.getSourceType()));//2b2c来源
         }
-        if(ObjectUtils.isNotEmpty(qto.getDeliveryType())){
-            wrapper.and(i -> i.eq("t.`delivery_type`",qto.getDeliveryType()));
+        if (ObjectUtils.isNotEmpty(qto.getDeliveryType())) {
+            wrapper.and(i -> i.eq("t.`delivery_type`", qto.getDeliveryType()));
         }
-        if(StringUtils.isNotBlank(qto.getUserName())){
+        if (StringUtils.isNotBlank(qto.getUserName())) {
             CommonUserVO.DetailVO userDetailVO = commonUserRpc.detailsByUserName(qto.getUserName());
-            if(ObjectUtils.isNotEmpty(userDetailVO) && StringUtils.isNotBlank(userDetailVO.getId())){
+            if (ObjectUtils.isNotEmpty(userDetailVO) && StringUtils.isNotBlank(userDetailVO.getId())) {
                 //查询用户id
-                wrapper.and(i -> i.eq("t.`user_id`",userDetailVO.getId()));
+                wrapper.and(i -> i.eq("t.`user_id`", userDetailVO.getId()));
             }
         }
 
@@ -119,28 +125,28 @@ public class TradeServiceImpl implements ITradeService {
 
         IPage<TradeListVO.tradeVO> page = MybatisPlusUtil.pager(qto);
 
-        tradeRepository.selectTradePage(page,wrapper);
+        tradeRepository.selectTradePage(page, wrapper);
 
         List<TradeListVO.tradeVO> voList = new ArrayList<>();
-        for(TradeListVO.tradeVO tradeVO : page.getRecords()){
+        for (TradeListVO.tradeVO tradeVO : page.getRecords()) {
             //查询店铺信息
             CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(tradeVO.getShopId());
             tradeVO.setShopName(simpleVO.getShopName());
             //查询会员信息
             CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
-            if (ObjectUtils.isNotEmpty(details)){
+            if (ObjectUtils.isNotEmpty(details)) {
                 tradeVO.setUserName(details.getUserName());
             }
             //根据交易ID查询交易商品集合
             QueryWrapper<TradePay> query = MybatisPlusUtil.query();
-            query.and(i->i.eq("trade_id",tradeVO.getId()));
+            query.and(i -> i.eq("trade_id", tradeVO.getId()));
             TradePay one = iTradePayRepository.getOne(query);
 
             fillTradeVO(tradeVO);
-            if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
+            if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
                 tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
-            }else {
-                if (ObjectUtils.isNotEmpty(one)){
+            } else {
+                if (ObjectUtils.isNotEmpty(one)) {
                     tradeVO.setPayTime(one.getUdate());
                 }
             }
@@ -164,8 +170,10 @@ public class TradeServiceImpl implements ITradeService {
         tradeCancel.setRemark(dto.getRemark());
         tradeCancel.setRefundState(cancelRefundState);
     }
+
     /**
      * 取消交易,回库存
+     *
      * @param tradeId
      * @return
      */
@@ -177,25 +185,27 @@ public class TradeServiceImpl implements ITradeService {
 
     /**
      * 填充skuId/购买数量
+     *
      * @param tradeId
      * @param goodsItemList
      */
     private void fillChangeStockItem(String tradeId, List<CommonStockDTO.InnerChangeStockItem> goodsItemList) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id",tradeId);
+        tradeGoodsQueryWrapper.eq("trade_id", tradeId);
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
-        for(TradeGoods tradeGoods : tradeGoodsList){
+        for (TradeGoods tradeGoods : tradeGoodsList) {
             CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
             innerChangeStockItem.setSkuId(tradeGoods.getSkuId());
             innerChangeStockItem.setQuantity(tradeGoods.getQuantity());
             goodsItemList.add(innerChangeStockItem);
         }
     }
+
     @Override
     public TradeListVO.tradeVO detail(TradeDTO.IdDTO dto) {
         TradeListVO.tradeVO tradeVO = new TradeListVO.tradeVO();
         Trade trade = tradeRepository.getById(dto.getId());
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("无订单数据");
         }
         BeanUtils.copyProperties(trade, tradeVO);
@@ -203,13 +213,13 @@ public class TradeServiceImpl implements ITradeService {
         //填充商家信息
         fillShop(tradeVO);
         fillTradeVO(tradeVO);
-        if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
+        if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
             tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
         }
         //查询物流信息
-        if(tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
+        if (tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
                 (tradeVO.getTradeState().equals(TradeStateEnum.待收货.getCode()) ||
-                        tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))){//快递配送/已发货/已收货
+                        tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))) {//快递配送/已发货/已收货
             //填充物流信息
             fillLogisticsCompany(tradeVO);
         }
@@ -221,14 +231,14 @@ public class TradeServiceImpl implements ITradeService {
 
     private void fillUserInfo(TradeListVO.tradeVO tradeVO) {
         CommonUserVO.DetailVO innerUserInfoVO = commonUserRpc.details(tradeVO.getUserId());
-        if(ObjectUtils.isNotEmpty(innerUserInfoVO)){
+        if (ObjectUtils.isNotEmpty(innerUserInfoVO)) {
             tradeVO.setUserName(innerUserInfoVO.getUserName());
         }
     }
 
     private void fillShop(TradeListVO.tradeVO tradeVO) {
         CommonShopVO.SimpleVO innerDetailVO = commonShopRpc.shopDetails(tradeVO.getShopId());
-        if(ObjectUtils.isNotEmpty(innerDetailVO)){
+        if (ObjectUtils.isNotEmpty(innerDetailVO)) {
             tradeVO.setShopName(innerDetailVO.getShopName());
         }
     }
@@ -237,9 +247,9 @@ public class TradeServiceImpl implements ITradeService {
         QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
         tradeDeliveryQueryWrapper.eq("trade_id", tradeVO.getId());
         TradeDelivery tradeDelivery = tradeDeliveryRepository.getOne(tradeDeliveryQueryWrapper);
-        if(ObjectUtils.isNotEmpty(tradeDelivery)){
+        if (ObjectUtils.isNotEmpty(tradeDelivery)) {
             CommonLogisticsCompanyVO.DetailVO logisticsDetailVO = commonLogisticsCompanyRpc.getLogisticsCompany(tradeDelivery.getLogisticsId());
-            if(ObjectUtils.isNotEmpty(logisticsDetailVO)){
+            if (ObjectUtils.isNotEmpty(logisticsDetailVO)) {
                 tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
                 tradeVO.setLogisticsCompanyCode(logisticsDetailVO.getCode());
                 tradeVO.setLogisticsCompanyName(logisticsDetailVO.getName());
@@ -249,14 +259,15 @@ public class TradeServiceImpl implements ITradeService {
 
     /**
      * 组装TradeVO、tradeGoodsVO数据
+     *
      * @param tradeVO
      */
     private void fillTradeVO(TradeListVO.tradeVO tradeVO) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
+        tradeGoodsQueryWrapper.eq("trade_id", tradeVO.getId());
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<TradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
-        for(TradeGoods tradeGoods : tradeGoodsList){
+        for (TradeGoods tradeGoods : tradeGoodsList) {
             TradeListVO.TradeGoodsVO tradeGoodsVO = new TradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             tradeGoodsVO.setShopName(tradeVO.getShopName());
@@ -267,10 +278,10 @@ public class TradeServiceImpl implements ITradeService {
 
     @Override
     public List<TradeVO.ListVOExport> export(TradeQTO.IdListQTO qo) {
-        QueryWrapper<Trade> wrapper =MybatisPlusUtil.query();
+        QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
 
-        if (ObjectUtils.isNotEmpty(qo.getIdList())){
-            wrapper.and(i->i.in("id",qo.getIdList()));
+        if (ObjectUtils.isNotEmpty(qo.getIdList())) {
+            wrapper.and(i -> i.in("id", qo.getIdList()));
         }
         wrapper.orderByDesc("cdate");
 
@@ -278,22 +289,22 @@ public class TradeServiceImpl implements ITradeService {
         List<Trade> list = tradeRepository.list(wrapper);
 
         List<TradeVO.ListVOExport> voList = new ArrayList<>();
-        if (ObjectUtils.isNotEmpty(list)){
-            for (Trade trade:list){
+        if (ObjectUtils.isNotEmpty(list)) {
+            for (Trade trade : list) {
                 TradeVO.ListVOExport listVOExport = new TradeVO.ListVOExport();
-                BeanUtils.copyProperties(trade,listVOExport);
+                BeanUtils.copyProperties(trade, listVOExport);
                 CommonUserVO.DetailVO details = commonUserRpc.details(trade.getUserId());
-                if (ObjectUtils.isNotEmpty(details)){
+                if (ObjectUtils.isNotEmpty(details)) {
                     listVOExport.setUserName(details.getUserName());
                 }
                 CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(trade.getShopId());
-                if (ObjectUtils.isNotEmpty(simpleVO)){
+                if (ObjectUtils.isNotEmpty(simpleVO)) {
                     listVOExport.setShopName(simpleVO.getShopName());
                 }
-                listVOExport.setTradeState(EnumUtil.getText(trade.getTradeState(),TradeStateEnum.class));
-                if (trade.getTradeState()==10){
+                listVOExport.setTradeState(EnumUtil.getText(trade.getTradeState(), TradeStateEnum.class));
+                if (trade.getTradeState() == 10) {
                     listVOExport.setPayType("未支付");
-                }else {
+                } else {
                     listVOExport.setPayType(TradePayTypeEnum.getEnum(trade.getPayType()).getRemark());
                 }
                 listVOExport.setDeliveryType(EnumUtil.getText(trade.getDeliveryType(), TradeDeliveryTypeEnum.class));
@@ -301,6 +312,14 @@ public class TradeServiceImpl implements ITradeService {
                 voList.add(listVOExport);
             }
         }
-       return voList;
+        return voList;
+    }
+
+    @Override
+    public TradeVO.TradeInfoVO findById(TradeGoodsVO.ListVO listVO) {
+        Trade trade1 = tradeMapper.selectById(listVO.getTradeId());
+            TradeVO.TradeInfoVO tradeInfoVO = new TradeVO.TradeInfoVO();
+            BeanUtils.copyProperties(trade1,tradeInfoVO);
+        return tradeInfoVO;
     }
 }
