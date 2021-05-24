@@ -587,6 +587,11 @@ public class StringManageUtil {
 	    System.out.println(new BigDecimal(str));  //13.15  
 	}
 	
+	public static BigDecimal formatBigDecimal2(BigDecimal price){
+		DecimalFormat df2 =new DecimalFormat("#.00"); 
+	    String str = df2.format(price);  
+	    return new BigDecimal(str);  //13.15  
+	}
 	
 	/**
 	 * 验证手机号码的合法性

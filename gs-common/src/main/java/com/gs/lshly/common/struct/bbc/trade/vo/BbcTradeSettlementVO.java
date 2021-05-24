@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
+import com.gs.lshly.common.utils.StringManageUtil;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,12 +15,12 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
-* @author oy
-* @since 2020-10-28
-*/
+ * @author oy
+ * @since 2020-10-28
+ */
 @SuppressWarnings("serial")
 public abstract class BbcTradeSettlementVO implements Serializable {
-	
+
 	/**
 	 * 购物车店铺列表
 	 *
@@ -27,192 +28,344 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 	 * @author yingjun
 	 * @date 2021年5月17日 下午4:01:25
 	 */
-	@Data
+	@Setter
 	@ApiModel("BbcTradeSettlementVO.ShopListVO")
 	@Accessors(chain = true)
-	public static class ShopListVO implements Serializable{
-		
-		//商家
-        @ApiModelProperty("配送类型")
-        private List<String> shopDeliveryType;
-        
+	public static class ShopListVO implements Serializable {
+
+		// 商家
+		@ApiModelProperty("配送类型")
+		private List<String> shopDeliveryType;
+
 		@ApiModelProperty("店铺ID")
-        private String shopId;
+		private String shopId;
 
-        @ApiModelProperty("店铺Logo")
-        private String shopLogo;
+		@ApiModelProperty("店铺Logo")
+		private String shopLogo;
 
-        @ApiModelProperty("店铺名称")
-        private String shopName;
+		@ApiModelProperty("店铺名称")
+		private String shopName;
 
-        @ApiModelProperty("门店配送范围")
-        private BigDecimal deliveryScope;
+		@ApiModelProperty("门店配送范围")
+		private BigDecimal deliveryScope;
 
-        @ApiModelProperty("省")
-        private String shopProvince;
+		@ApiModelProperty("省")
+		private String shopProvince;
 
-        @ApiModelProperty("市")
-        private String shopCity;
+		@ApiModelProperty("市")
+		private String shopCity;
 
-        @ApiModelProperty("县区")
-        private String shopCounty;
+		@ApiModelProperty("县区")
+		private String shopCounty;
 
-        @ApiModelProperty("街道")
-        private String shopStreet;
+		@ApiModelProperty("街道")
+		private String shopStreet;
 
-        @ApiModelProperty("经度")
-        private BigDecimal shopLongitude;
+		@ApiModelProperty("经度")
+		private BigDecimal shopLongitude;
 
-        @ApiModelProperty("纬度")
-        private BigDecimal shopLatitude;
+		@ApiModelProperty("纬度")
+		private BigDecimal shopLatitude;
 
-        @ApiModelProperty("店铺地址")
-        private String shopAddress;
+		@ApiModelProperty("店铺地址")
+		private String shopAddress;
 
-        @ApiModelProperty("店铺地址全文本")
-        private String shopFullAddres;
+		@ApiModelProperty("店铺地址全文本")
+		private String shopFullAddres;
 
-        // 商品总金额、商品数量、运费
-        @ApiModelProperty("商品总金额")
-        private BigDecimal goodsAmount;
+		// 商品总金额、商品数量、运费
+		@ApiModelProperty("商品总金额")
+		private BigDecimal goodsAmount;
 
-        @ApiModelProperty("商品总积分金额")
-        private BigDecimal goodsPointAmount;
-/**
-        @ApiModelProperty("运费金额")
-        private BigDecimal deliveryAmount;
-**/
-        @ApiModelProperty("交易总金额")
-        private BigDecimal tradeAmount;
+		@ApiModelProperty("商品总积分金额")
+		private BigDecimal goodsPointAmount;
+		/**
+		 * @ApiModelProperty("运费金额") private BigDecimal deliveryAmount;
+		 **/
+		@ApiModelProperty("交易总金额")
+		private BigDecimal tradeAmount;
 
-        @ApiModelProperty("交易总积分金额")
-        private BigDecimal tradePointAmount;
+		@ApiModelProperty("交易总积分金额")
+		private BigDecimal tradePointAmount;
 
-        @ApiModelProperty("商品合计数量")
-        private Integer goodsCount;
+		@ApiModelProperty("商品合计数量")
+		private Integer goodsCount;
 
-        // 商品（图片、名称、规格、单价）
-        @ApiModelProperty(value = "商品集合")
-        private List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS;
-/**
-        @ApiModelProperty(value = "营销活动")
-        private CommonMarketVO.ActiveVO marketActiveVO;
+		// 商品（图片、名称、规格、单价）
+		@ApiModelProperty(value = "商品集合")
+		private List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS;
 
-        @ApiModelProperty(value = "优惠券")
-        private CommonMarketVO.UserCardVO userCardVO;
-**/
+		/**
+		 * @ApiModelProperty(value = "营销活动") private CommonMarketVO.ActiveVO
+		 *                         marketActiveVO;
+		 * 
+		 * @ApiModelProperty(value = "优惠券") private CommonMarketVO.UserCardVO
+		 *                         userCardVO;
+		 **/
 
+		@Setter
+		@ApiModel("BbcTradeSettlementVO.goodsInfoVO")
+		@ToString
+		public static class goodsInfoVO implements Serializable {
 
-        @Data
-        @ApiModel("BbcTradeSettlementVO.goodsInfoVO")
-        @ToString
-        public static class goodsInfoVO implements Serializable {
+			@ApiModelProperty("购物车ID")
+			private String cartId;
 
-            @ApiModelProperty("购物车ID")
-            private String cartId;
+			@ApiModelProperty("商品ID")
+			private String goodsId;
 
-            @ApiModelProperty("商品ID")
-            private String goodsId;
+			@ApiModelProperty("商品名称")
+			private String goodsName;
 
-            @ApiModelProperty("商品名称")
-            private String goodsName;
+			@ApiModelProperty("商品标题")
+			private String goodsTitle;
 
-            @ApiModelProperty("商品标题")
-            private String goodsTitle;
+			@ApiModelProperty("SKU ID")
+			private String skuId;
 
-            @ApiModelProperty("SKU ID")
-            private String skuId;
+			@ApiModelProperty("格规值")
+			private String skuSpecValue;
 
-            @ApiModelProperty("格规值")
-            private String skuSpecValue;
+			@ApiModelProperty("SKU IMG")
+			private String skuImg;
 
-            @ApiModelProperty("SKU IMG")
-            private String skuImg;
+			@ApiModelProperty("数量")
+			private Integer quantity;
 
-            @ApiModelProperty("数量")
-            private Integer quantity;
+			@ApiModelProperty("是否是积分商品")
+			private Boolean isPointGood;
 
-            @ApiModelProperty("是否是积分商品")
-            private Boolean isPointGood;
-            
-            @ApiModelProperty("是否是in会员礼品")
-            private Boolean isInMemberGift;
+			@ApiModelProperty("是否是in会员礼品")
+			private Boolean isInMemberGift;
 
-            @ApiModelProperty("销售价")
-            private BigDecimal salePrice;
+			@ApiModelProperty("销售价")
+			private BigDecimal salePrice;
 
-            @ApiModelProperty("活动及券后价")
-            private BigDecimal activePrice;
-            
-            @ApiModelProperty("积分价格")
-            private BigDecimal pointPrice;
-            
-            @ApiModelProperty("in会员积分价格")
-            private BigDecimal inMemberPointPrice;
-            
-            @ApiModelProperty("应付金额")
-            private BigDecimal tradeAmount;
-            
-            @ApiModelProperty("应付积分金额")
-            private BigDecimal tradePointAmount;
+			@ApiModelProperty("活动及券后价")
+			private BigDecimal activePrice;
 
-        }
+			@ApiModelProperty("积分价格")
+			private BigDecimal pointPrice;
+
+			@ApiModelProperty("in会员积分价格")
+			private BigDecimal inMemberPointPrice;
+
+			@ApiModelProperty("应付金额")
+			private BigDecimal tradeAmount;
+
+			@ApiModelProperty("应付积分金额")
+			private BigDecimal tradePointAmount;
+
+			public String getCartId() {
+				return cartId;
+			}
+
+			public String getGoodsId() {
+				return goodsId;
+			}
+
+			public String getGoodsName() {
+				return goodsName;
+			}
+
+			public String getGoodsTitle() {
+				return goodsTitle;
+			}
+
+			public String getSkuId() {
+				return skuId;
+			}
+
+			public String getSkuSpecValue() {
+				return skuSpecValue;
+			}
+
+			public String getSkuImg() {
+				return skuImg;
+			}
+
+			public Integer getQuantity() {
+				return quantity;
+			}
+
+			public Boolean getIsPointGood() {
+				return isPointGood;
+			}
+
+			public Boolean getIsInMemberGift() {
+				return isInMemberGift;
+			}
+
+			public BigDecimal getSalePrice() {
+				if(salePrice!=null)
+					salePrice = StringManageUtil.formatBigDecimal2(salePrice);
+				return salePrice;
+			}
+
+			public BigDecimal getActivePrice() {
+				if(activePrice!=null)
+					activePrice = StringManageUtil.formatBigDecimal2(activePrice);
+				return activePrice;
+			}
+
+			public BigDecimal getPointPrice() {
+				if(pointPrice!=null)
+					pointPrice = StringManageUtil.formatBigDecimal2(pointPrice);
+				return pointPrice;
+			}
+
+			public BigDecimal getInMemberPointPrice() {
+				return inMemberPointPrice;
+			}
+
+			public BigDecimal getTradeAmount() {
+				if(tradeAmount!=null)
+					tradeAmount = StringManageUtil.formatBigDecimal2(tradeAmount);
+				return tradeAmount;
+			}
+
+			public BigDecimal getTradePointAmount() {
+				return tradePointAmount;
+			}
+			
+		}
+
+		public List<String> getShopDeliveryType() {
+			return shopDeliveryType;
+		}
+
+		public String getShopId() {
+			return shopId;
+		}
+
+		public String getShopLogo() {
+			return shopLogo;
+		}
+
+		public String getShopName() {
+			return shopName;
+		}
+
+		public BigDecimal getDeliveryScope() {
+			return deliveryScope;
+		}
+
+		public String getShopProvince() {
+			return shopProvince;
+		}
+
+		public String getShopCity() {
+			return shopCity;
+		}
+
+		public String getShopCounty() {
+			return shopCounty;
+		}
+
+		public String getShopStreet() {
+			return shopStreet;
+		}
+
+		public BigDecimal getShopLongitude() {
+			return shopLongitude;
+		}
+
+		public BigDecimal getShopLatitude() {
+			return shopLatitude;
+		}
+
+		public String getShopAddress() {
+			return shopAddress;
+		}
+
+		public String getShopFullAddres() {
+			return shopFullAddres;
+		}
+
+		public BigDecimal getGoodsAmount() {
+			if(goodsAmount!=null)
+				goodsAmount = StringManageUtil.formatBigDecimal2(goodsAmount);
+			return goodsAmount;
+		}
+
+		public BigDecimal getGoodsPointAmount() {
+			return goodsPointAmount;
+		}
+
+		public BigDecimal getTradeAmount() {
+			if(tradeAmount!=null)
+				tradeAmount = StringManageUtil.formatBigDecimal2(tradeAmount);
+			return tradeAmount;
+		}
+
+		public BigDecimal getTradePointAmount() {
+			return tradePointAmount;
+		}
+
+		public Integer getGoodsCount() {
+			return goodsCount;
+		}
+
+		public List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> getGoodsInfoVOS() {
+			return goodsInfoVOS;
+		}
+
 	}
 
 	@Setter
-    @ApiModel("BbcTradeSettlementVO.DetailVO")
-    @Accessors(chain = true)
-    public static class DetailVO implements Serializable {
-        //返回地址
+	@ApiModel("BbcTradeSettlementVO.DetailVO")
+	@Accessors(chain = true)
+	public static class DetailVO implements Serializable {
+		// 返回地址
 
-        @ApiModelProperty("收货地址ID")
-        private String recvAddresId;
+		@ApiModelProperty("收货地址ID")
+		private String recvAddresId;
 
-        @ApiModelProperty("收货人")
-        private String recvPersonName;
+		@ApiModelProperty("收货人")
+		private String recvPersonName;
 
-        @ApiModelProperty("收货人电话")
-        private String recvPhone;
+		@ApiModelProperty("收货人电话")
+		private String recvPhone;
 
-        @ApiModelProperty("收货地址全文本")
-        private String recvFullAddres;
+		@ApiModelProperty("收货地址全文本")
+		private String recvFullAddres;
 
-        @ApiModelProperty("联系人")
-        private String contactsName;
+		@ApiModelProperty("联系人")
+		private String contactsName;
 
-        @ApiModelProperty("配送类型")
-        private List<String> shopDeliveryType;
+		@ApiModelProperty("配送类型")
+		private List<String> shopDeliveryType;
 
-        @ApiModelProperty("联系人电话")
-        private String contactsPhone;
-        
-        @ApiModelProperty("商家列表")
-        private List<ShopListVO> shopList;
+		@ApiModelProperty("联系人电话")
+		private String contactsPhone;
 
-        // 商品总金额、商品数量、运费
-        @ApiModelProperty("商品总金额")
-        private BigDecimal goodsAmount;
+		@ApiModelProperty("商家列表")
+		private List<ShopListVO> shopList;
 
-        @ApiModelProperty("商品总积分金额")
-        private BigDecimal goodsPointAmount;
-        
-        @ApiModelProperty("交易总金额")
-        private BigDecimal tradeAmount;
+		// 商品总金额、商品数量、运费
+		@ApiModelProperty("商品总金额")
+		private BigDecimal goodsAmount;
 
-        @ApiModelProperty("交易总积分金额")
-        private BigDecimal tradePointAmount;
+		@ApiModelProperty("商品总积分金额")
+		private BigDecimal goodsPointAmount;
 
-        @ApiModelProperty("商品合计数量")
-        private Integer goodsCount;
-        
-        @ApiModelProperty("用户电信积分")
-        private Integer telecomsIntegral;
-        
-        @ApiModelProperty("优惠券抵扣金额")
-        private BigDecimal discountAmount;
-        
-        @ApiModelProperty("优惠券抵扣积分")
-        private BigDecimal discountPointAmount;
+		@ApiModelProperty("交易总金额")
+		private BigDecimal tradeAmount;
+
+		@ApiModelProperty("交易总积分金额")
+		private BigDecimal tradePointAmount;
+
+		@ApiModelProperty("商品合计数量")
+		private Integer goodsCount;
+
+		@ApiModelProperty("用户电信积分")
+		private Integer telecomsIntegral;
+
+		@ApiModelProperty("优惠券抵扣金额")
+		private BigDecimal discountAmount;
+
+		@ApiModelProperty("优惠券抵扣积分")
+		private BigDecimal discountPointAmount;
 
 		public String getRecvAddresId() {
 			return recvAddresId;
@@ -247,6 +400,8 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 		}
 
 		public BigDecimal getGoodsAmount() {
+			if (goodsAmount != null)
+				goodsAmount = StringManageUtil.formatBigDecimal2(goodsAmount);
 			return goodsAmount;
 		}
 
@@ -255,6 +410,8 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 		}
 
 		public BigDecimal getTradeAmount() {
+			if (tradeAmount != null)
+				tradeAmount = StringManageUtil.formatBigDecimal2(tradeAmount);
 			return tradeAmount;
 		}
 
@@ -271,157 +428,159 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 		}
 
 		public BigDecimal getDiscountAmount() {
+			if (discountAmount != null)
+				discountAmount = StringManageUtil.formatBigDecimal2(discountAmount);
 			return discountAmount;
 		}
 
 		public BigDecimal getDiscountPointAmount() {
 			return discountPointAmount;
 		}
-        
-    }
-	
-    @Data
-    @ApiModel("BbcTradeSettlementVO.ListVO")
-    @Accessors(chain = true)
-    public static class ListVO implements Serializable {
-        //返回地址
 
-        @ApiModelProperty("收货地址ID")
-        private String recvAddresId;
+	}
 
-        @ApiModelProperty("收货人")
-        private String recvPersonName;
+	@Data
+	@ApiModel("BbcTradeSettlementVO.ListVO")
+	@Accessors(chain = true)
+	public static class ListVO implements Serializable {
+		// 返回地址
 
-        @ApiModelProperty("收货人电话")
-        private String recvPhone;
+		@ApiModelProperty("收货地址ID")
+		private String recvAddresId;
 
-        @ApiModelProperty("收货地址全文本")
-        private String recvFullAddres;
+		@ApiModelProperty("收货人")
+		private String recvPersonName;
 
-        @ApiModelProperty("联系人")
-        private String contactsName;
+		@ApiModelProperty("收货人电话")
+		private String recvPhone;
 
-        @ApiModelProperty("配送类型")
-        private List<String> shopDeliveryType;
+		@ApiModelProperty("收货地址全文本")
+		private String recvFullAddres;
 
-        @ApiModelProperty("联系人电话")
-        private String contactsPhone;
-        
-        //商家
-        @ApiModelProperty("店铺ID")
-        private String shopId;
+		@ApiModelProperty("联系人")
+		private String contactsName;
 
-        @ApiModelProperty("店铺Logo")
-        private String shopLogo;
+		@ApiModelProperty("配送类型")
+		private List<String> shopDeliveryType;
 
-        @ApiModelProperty("店铺名称")
-        private String shopName;
+		@ApiModelProperty("联系人电话")
+		private String contactsPhone;
 
-        @ApiModelProperty("门店配送范围")
-        private BigDecimal deliveryScope;
+		// 商家
+		@ApiModelProperty("店铺ID")
+		private String shopId;
 
-        @ApiModelProperty("省")
-        private String shopProvince;
+		@ApiModelProperty("店铺Logo")
+		private String shopLogo;
 
-        @ApiModelProperty("市")
-        private String shopCity;
+		@ApiModelProperty("店铺名称")
+		private String shopName;
 
-        @ApiModelProperty("县区")
-        private String shopCounty;
+		@ApiModelProperty("门店配送范围")
+		private BigDecimal deliveryScope;
 
-        @ApiModelProperty("街道")
-        private String shopStreet;
+		@ApiModelProperty("省")
+		private String shopProvince;
 
-        @ApiModelProperty("经度")
-        private BigDecimal shopLongitude;
+		@ApiModelProperty("市")
+		private String shopCity;
 
-        @ApiModelProperty("纬度")
-        private BigDecimal shopLatitude;
+		@ApiModelProperty("县区")
+		private String shopCounty;
 
-        @ApiModelProperty("店铺地址")
-        private String shopAddress;
+		@ApiModelProperty("街道")
+		private String shopStreet;
 
-        @ApiModelProperty("店铺地址全文本")
-        private String shopFullAddres;
-        // 商品总金额、商品数量、运费
-        @ApiModelProperty("商品总金额")
-        private BigDecimal goodsAmount;
+		@ApiModelProperty("经度")
+		private BigDecimal shopLongitude;
 
-        @ApiModelProperty("商品总积分金额")
-        private BigDecimal goodsPointAmount;
+		@ApiModelProperty("纬度")
+		private BigDecimal shopLatitude;
 
-        @ApiModelProperty("运费金额")
-        private BigDecimal deliveryAmount;
+		@ApiModelProperty("店铺地址")
+		private String shopAddress;
 
-        @ApiModelProperty("交易总金额")
-        private BigDecimal tradeAmount;
+		@ApiModelProperty("店铺地址全文本")
+		private String shopFullAddres;
+		// 商品总金额、商品数量、运费
+		@ApiModelProperty("商品总金额")
+		private BigDecimal goodsAmount;
 
-        @ApiModelProperty("交易总积分金额")
-        private BigDecimal tradePointAmount;
+		@ApiModelProperty("商品总积分金额")
+		private BigDecimal goodsPointAmount;
 
-        @ApiModelProperty("商品合计数量")
-        private Integer goodsCount;
+		@ApiModelProperty("运费金额")
+		private BigDecimal deliveryAmount;
 
-        // 商品（图片、名称、规格、单价）
-        @ApiModelProperty(value = "商品集合")
-        private List<BbcTradeSettlementVO.ListVO.goodsInfoVO> goodsInfoVOS;
+		@ApiModelProperty("交易总金额")
+		private BigDecimal tradeAmount;
 
-        @ApiModelProperty(value = "营销活动")
-        private CommonMarketVO.ActiveVO marketActiveVO;
+		@ApiModelProperty("交易总积分金额")
+		private BigDecimal tradePointAmount;
 
-        @ApiModelProperty(value = "优惠券")
-        private CommonMarketVO.UserCardVO userCardVO;
+		@ApiModelProperty("商品合计数量")
+		private Integer goodsCount;
 
-        @ApiModelProperty("用户电信积分")
-        private Integer telecomsIntegral;
+		// 商品（图片、名称、规格、单价）
+		@ApiModelProperty(value = "商品集合")
+		private List<BbcTradeSettlementVO.ListVO.goodsInfoVO> goodsInfoVOS;
 
-        @Data
-        @ApiModel("BbcTradeSettlementVO.goodsInfoVO")
-        @ToString
-        public static class goodsInfoVO implements Serializable {
+		@ApiModelProperty(value = "营销活动")
+		private CommonMarketVO.ActiveVO marketActiveVO;
 
-            @ApiModelProperty("购物车ID")
-            private String cartId;
+		@ApiModelProperty(value = "优惠券")
+		private CommonMarketVO.UserCardVO userCardVO;
 
-            @ApiModelProperty("商品ID")
-            private String goodsId;
+		@ApiModelProperty("用户电信积分")
+		private Integer telecomsIntegral;
 
-            @ApiModelProperty("商品名称")
-            private String goodsName;
+		@Data
+		@ApiModel("BbcTradeSettlementVO.goodsInfoVO")
+		@ToString
+		public static class goodsInfoVO implements Serializable {
 
-            @ApiModelProperty("商品标题")
-            private String goodsTitle;
+			@ApiModelProperty("购物车ID")
+			private String cartId;
 
-            @ApiModelProperty("SKU ID")
-            private String skuId;
+			@ApiModelProperty("商品ID")
+			private String goodsId;
 
-            @ApiModelProperty("格规值")
-            private String skuSpecValue;
+			@ApiModelProperty("商品名称")
+			private String goodsName;
 
-            @ApiModelProperty("SKU IMG")
-            private String skuImg;
+			@ApiModelProperty("商品标题")
+			private String goodsTitle;
 
-            @ApiModelProperty("数量")
-            private Integer quantity;
+			@ApiModelProperty("SKU ID")
+			private String skuId;
 
-            @ApiModelProperty("是否是积分商品")
-            private Boolean isPointGood;
+			@ApiModelProperty("格规值")
+			private String skuSpecValue;
 
-            @ApiModelProperty("销售价")
-            private BigDecimal salePrice;
+			@ApiModelProperty("SKU IMG")
+			private String skuImg;
 
-            @ApiModelProperty("活动及券后价")
-            private BigDecimal activePrice;
+			@ApiModelProperty("数量")
+			private Integer quantity;
 
-            @ApiModelProperty("积分价格")
-            private BigDecimal pointPrice;
+			@ApiModelProperty("是否是积分商品")
+			private Boolean isPointGood;
 
-            @ApiModelProperty("是否是in会员礼品")
-            private Boolean isInMemberGift;
+			@ApiModelProperty("销售价")
+			private BigDecimal salePrice;
 
-            @ApiModelProperty("in会员积分价格")
-            private BigDecimal inMemberPointPrice;
+			@ApiModelProperty("活动及券后价")
+			private BigDecimal activePrice;
 
-        }
-    }
+			@ApiModelProperty("积分价格")
+			private BigDecimal pointPrice;
+
+			@ApiModelProperty("是否是in会员礼品")
+			private Boolean isInMemberGift;
+
+			@ApiModelProperty("in会员积分价格")
+			private BigDecimal inMemberPointPrice;
+
+		}
+	}
 }
