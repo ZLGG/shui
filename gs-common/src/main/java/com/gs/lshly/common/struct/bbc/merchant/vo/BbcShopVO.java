@@ -1,20 +1,22 @@
 package com.gs.lshly.common.struct.bbc.merchant.vo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import org.springframework.util.StringUtils;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
 /**
 * @author xxfc
 * @since 2020-10-13
 */
+@SuppressWarnings("serial")
 public abstract class BbcShopVO implements Serializable {
 
     @Data
@@ -115,7 +117,7 @@ public abstract class BbcShopVO implements Serializable {
         private String navName;
     }
 
-    @Data
+	@Data
     @ApiModel("BbcShopVO.DetailVO")
     public static class DetailVO implements Serializable{
 
@@ -136,6 +138,9 @@ public abstract class BbcShopVO implements Serializable {
 
         @ApiModelProperty("POS店铺ID")
         private String posShopId;
+        
+        @ApiModelProperty("商户ID")
+        private String merchantId;
 
     }
 

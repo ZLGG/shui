@@ -69,15 +69,9 @@ public abstract class BbcTradeGoodsDTO implements Serializable {
         @ApiModelProperty("销售价")
         private BigDecimal salePrice;
 
-        @ApiModelProperty("优惠金额")
-        private BigDecimal discountAmount;
-
         @ApiModelProperty("支付总金额")
         private BigDecimal payAmount;
         
-        @ApiModelProperty("支付总积分金额")
-        private Integer tradePointAmount;
-
         @ApiModelProperty("所得积分")
         private BigDecimal giftIntegral;
 
@@ -89,6 +83,32 @@ public abstract class BbcTradeGoodsDTO implements Serializable {
 
         @ApiModelProperty("优惠券类型")
         private Integer couponType;
+        
+        @ApiModelProperty("交易金额")
+        private BigDecimal tradeAmount;
+    
+        @ApiModelProperty("支付总积分金额")
+        private BigDecimal tradePointAmount;
+        
+        @ApiModelProperty("交易金额")
+        private BigDecimal discountAmount;
+    
+        @ApiModelProperty("支付总积分金额")
+        private BigDecimal discountPointAmount;
+        
+        @ApiModelProperty("商品金额")
+        private BigDecimal goodsAmount;
+        
+        @ApiModelProperty("商品金额")
+        private BigDecimal goodsPointAmount;
+        
+        @ApiModelProperty("商品积分金额")
+        private BigDecimal payablePointAmount;
+        
+        @ApiModelProperty("商品金额")
+        private BigDecimal payableAmount;
+
+        
     }
 
     @Data
