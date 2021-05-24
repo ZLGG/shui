@@ -1,17 +1,20 @@
 package com.gs.lshly.biz.support.trade.rpc.bbc;
 
-import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
 
 /**
@@ -40,6 +43,11 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 	@Override
 	public SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto) {
 		return bbcMarketSeckillService.detailGoodsInfo(qto);
+	}
+
+	@Override
+	public List<HomePageSeckill> homePageSeckill(BaseDTO dto) {
+		return bbcMarketSeckillService.homePageSeckill(dto);
 	}
 
 }

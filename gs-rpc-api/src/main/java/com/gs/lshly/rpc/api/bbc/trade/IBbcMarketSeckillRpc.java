@@ -3,7 +3,7 @@ package com.gs.lshly.rpc.api.bbc.trade;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
@@ -39,5 +39,12 @@ public interface IBbcMarketSeckillRpc {
      * @return
      */
     BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto);
+    
+    /**
+     * 商品首页秒杀列表
+     * @param dto
+     * @return
+     */
+    List<BbcMarketSeckillVO.HomePageSeckill> homePageSeckill(BaseDTO dto);
     
 }

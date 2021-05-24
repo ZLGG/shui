@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 
 import io.swagger.annotations.ApiModel;
@@ -241,5 +242,68 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 
 		@ApiModelProperty("商品列表")
 		private List<BbcGoodsInfoVO.DetailVO> goodsList;
+	}
+	
+	@Data
+	@ApiModel("BbcMarketActivityVO.HomePageSeckill")
+	@Accessors(chain = true)
+	public static class HomePageSeckill implements Serializable {
+		
+		@ApiModelProperty("id")
+		private String id;
+
+		@ApiModelProperty("状态 10抢购中 20 已开抢 30 昨日已开抢 40 即将开抢")
+		private Integer status;
+
+		@ApiModelProperty("状态描述")
+		private String statusText;
+		
+		@ApiModelProperty("时间段")
+		private String name;
+		
+		@ApiModelProperty("商品列表")
+		private List<HomePageSeckillGoods> goodsList;
+	}
+	
+	@Data
+	@ApiModel("BbcMarketActivityVO.HomePageSeckillGoods")
+	@Accessors(chain = true)
+	public static class HomePageSeckillGoods implements Serializable {
+
+		@ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("默认第一个sku商品id")
+        private String skuId;
+        
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+        
+        @ApiModelProperty("原价")
+        private BigDecimal oldPrice;
+        
+        @ApiModelProperty("销售价")
+        private BigDecimal salePrice;
+        
+        @ApiModelProperty("积分原价")
+        private BigDecimal pointPrice;
+        
+        @ApiModelProperty("原积分原价")
+        private BigDecimal oldPointPrice;
+        
+        @ApiModelProperty("是否是积分商品")
+        private BigDecimal isPointGood;
+
+        @ApiModelProperty("销售量")
+        private BigDecimal saleRate;
+        
+        @ApiModelProperty("备注信息")
+        private String remark = "100天历史最低价";
 	}
 }

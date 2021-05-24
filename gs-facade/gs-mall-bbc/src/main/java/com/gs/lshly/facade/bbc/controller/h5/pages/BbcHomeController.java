@@ -148,6 +148,11 @@ public class BbcHomeController {
     	return ResponseData.data(retList);
     }
     
+    @ApiOperation("秒杀专区-v1.1.0")
+    @GetMapping("/seckillList")
+    public ResponseData<List<BbcMarketSeckillVO.HomePageSeckill>> homePageSeckill(BaseDTO dto) {
+    	return ResponseData.data(bbcMarketSeckillRpc.homePageSeckill(dto));
+    }
     
     @ApiOperation("猜你喜欢-v1.1.0")
     @GetMapping("/enjoyList")
