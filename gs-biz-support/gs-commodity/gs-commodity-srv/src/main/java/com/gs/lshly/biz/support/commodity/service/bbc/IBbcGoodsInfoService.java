@@ -178,4 +178,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     List<BbcGoodsInfoVO.GoodsListVO> getGeneralGoodsInfo();
+
+    /**
+     * 根据商品名称模糊匹配商品id
+     * @param goodsName
+     * @return
+     */
+    List<String> getGoodsIdsByName(String goodsName);
 }

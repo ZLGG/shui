@@ -191,4 +191,10 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     List<BbcGoodsInfoVO.GoodsListVO> getGeneralGoodsInfo();
+
+    /**
+     * 根据商品名称模糊匹配商品id
+     * @param goodsName
+     */
+    List<String> getGoodsIdsByName(String goodsName);
 }

@@ -212,4 +212,7 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
 
     @Select("select distinct category_id from gs_ctcc_category_goods where flag =0 and goods_id in (select id from gs_goods_info where ${ew.sqlSegment} ) ")
     List<String> getCategoryIdsByName(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
+
+    @Select("select goods_id from gs_ctcc_category_goods where goods_id in (select id from gs_goods_info where ${ew.sqlSegment})")
+    List<String> getGoodsIdsByName(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfo> wrapper);
 }
