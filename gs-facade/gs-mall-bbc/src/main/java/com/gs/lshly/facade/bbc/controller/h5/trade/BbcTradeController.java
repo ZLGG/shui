@@ -120,8 +120,8 @@ public class BbcTradeController {
 	 * @param dto
 	 * @return
 	 */
-	@ApiOperation("5、第三方支付-v1.1.0")
-	@PostMapping("/userCenter/doPay")
+	@ApiOperation("5、第三方支付获取预支付订单-v1.1.0")
+	@PostMapping("/userCenter/preparePay")
 	public ResponseData<Void> doPay(@Valid @RequestBody BbcTradePayBuildDTO.ETO dto) {
 		return bbcTradeRpc.orderPay(dto);
 	}
