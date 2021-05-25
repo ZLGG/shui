@@ -239,9 +239,9 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
         if (filterSameName(dto) > 0){
             throw new BusinessException(dto.getBrandName()+"名称已存在！");
         }
-        if (ObjectUtils.isEmpty(dto.getCategoryIds())){
+        /*if (ObjectUtils.isEmpty(dto.getCategoryIds())){
             throw new BusinessException("请选择要关联的类目！！");
-        }
+        }*/
     }
     private int countBindGoods(String brandId,List<String> categoryIds){
         int totalCount = 0;
