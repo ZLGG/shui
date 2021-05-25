@@ -444,7 +444,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
     /**
      * 填充当前用户类型信息
-     * @param detailVO
      */
     private void fillAttributeVOS(BbcGoodsInfoVO.DetailVO detailVo){
     	QueryWrapper<GoodsAttributeInfo> queryWrapper = MybatisPlusUtil.query();
@@ -466,7 +465,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     
     /**
      * 填充当前用户类型信息
-     * @param detailVO
      */
     private void fillPromiseVOS(BbcGoodsInfoVO.DetailVO detailVo){
     	List<PromiseVOS> promiseVOS = new ArrayList<PromiseVOS>();
@@ -490,7 +488,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
     /**
      * 填充当前用户类型信息
-     * @param detailVO
      */
     private void fillUserType(BbcGoodsInfoVO.DetailVO detailVo,BaseDTO dto){
     	//获取当前登录用户的基本信息
@@ -1396,6 +1393,54 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
         return detailVo;
 	}
+
+    @Override
+    public List<BbcGoodsInfoVO.GoodsListVO> getGeneralGoodsInfo() {
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("gs.is_point_good",true);
+        wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
+        wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
+        wrapper.eq("gs.flag", false);
+        List<String> goodsIds = goodsInfoMapper.getAllIds(wrapper);
+        List<String> ranIds = new ArrayList<>();
+        QueryWrapper<GoodsInfo> boost = new QueryWrapper<>();
+        if (goodsIds.size() > 10 ) {
+            Random rand = new Random();
+            for (int i = 0; i < 10; i++) {
+                String ranNum = goodsIds.get(rand.nextInt(goodsIds.size()));
+                goodsIds.remove(ranNum);
+                ranIds.add(ranNum);
+            }
+            boost.in("id", ranIds);
+        }
+        else {
+            boost.in("id", goodsIds);
+        }
+
+        // 获取商品信息
+        List<GoodsInfo> goodsInfoList = repository.list(boost);
+
+        // 获取商品规格
+        List<BbcGoodsInfoVO.GoodsListVO> resultList = new ArrayList<>();
+        goodsInfoList.forEach(goods -> {
+            BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
+            BeanUtils.copyProperties(goods, goodsListVO);
+            goodsListVO.setGoodsId(goods.getId());
+            goodsListVO.setShopName(shopDetailVO(goods.getShopId()).getShopName());
+            if (ObjectUtils.isNotEmpty(getSpecInfoVO(goods))) {
+                goodsListVO.setSpecListVOS(getSpecInfoVO(goods));
+            }
+            if (goods.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+                BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(goods).get(0);
+                goodsListVO.setSkuId(skuVO.getSkuId());
+                goodsListVO.setSingleSkuStock(getSkuStockNum(goods.getShopId(), skuVO.getSkuId()));
+            }
+            goodsListVO.setLabelVOS(getGoodsLabelVO(goods.getId()));
+            goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goods.getGoodsImage())) ? "" : getImage(goods.getGoodsImage()));
+            resultList.add(goodsListVO);
+        });
+        return resultList;
+    }
 
     @Override
     public List<String> getCategoryIdsByName(String goodsName) {
