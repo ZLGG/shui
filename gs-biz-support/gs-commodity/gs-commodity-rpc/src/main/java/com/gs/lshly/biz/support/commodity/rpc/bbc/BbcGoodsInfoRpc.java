@@ -158,6 +158,11 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     }
 
     @Override
+    public List<String> getGoodsIdsByName(String goodsName) {
+        return bbcGoodsInfoService.getGoodsIdsByName(goodsName);
+    }
+
+    @Override
     public List<String> getCategoryIdsByName(String goodsName) {
         return bbcGoodsInfoService.getCategoryIdsByName(goodsName);
     }

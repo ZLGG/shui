@@ -25,6 +25,8 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -104,9 +106,25 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
 
     @Override
     public PageData<CtccPtActivityVO.ActivityListVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
+
+
         QueryWrapper<CtccPtActivity> queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("flag",false);
         queryWrapper.orderByDesc("end_time");
+        if (StringUtils.isNotBlank(dto.getGoodsName())) {
+            // 根据商品名称模糊匹配商品id
+            List<String> goodsIds = bbcGoodsInfoRpc.getGoodsIdsByName(dto.getGoodsName());
+            // 根据商品id查询活动id
+            List<CtccActivityGoods> activityIdsList = activityGoodsRepository.getActivityIdByGoodsId(goodsIds);
+            if (ObjectUtils.isEmpty(activityIdsList)) {
+                return null;
+            }
+            List<String> activityIds = new ArrayList<>();
+            activityIdsList.forEach(activityGoods -> {
+                activityIds.add(activityGoods.getActivityId());
+            });
+            queryWrapper.in("id",activityIds);
+        }
         IPage<CtccPtActivity> page = MybatisPlusUtil.pager(dto);
         // 查看活动信息
         IPage<CtccPtActivity> pageData = ctccPtActivityMapper.queryList(page,queryWrapper);
