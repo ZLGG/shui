@@ -20,7 +20,7 @@ public abstract class BbcTradePayBuildDTO implements Serializable {
 
 	@EqualsAndHashCode(callSuper=false)
 	@Data
-    @ApiModel("BbcTradePayOfflineDTO.CheckAndPointDoPayETO")
+    @ApiModel("BbcTradePayBuildDTO.CheckAndPointDoPayETO")
     @Accessors(chain = true)
     public static class CheckAndPointDoPayETO extends BaseDTO {
 
@@ -34,9 +34,10 @@ public abstract class BbcTradePayBuildDTO implements Serializable {
         private String validCode;
 
     }
+	
 	@EqualsAndHashCode(callSuper=false)
     @Data
-    @ApiModel("BbcTradePayOfflineDTO.ETO")
+    @ApiModel("BbcTradePayBuildDTO.ETO")
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
@@ -71,6 +72,5 @@ public abstract class BbcTradePayBuildDTO implements Serializable {
         private String payRemark;
 
     }
-
-
+	
 }

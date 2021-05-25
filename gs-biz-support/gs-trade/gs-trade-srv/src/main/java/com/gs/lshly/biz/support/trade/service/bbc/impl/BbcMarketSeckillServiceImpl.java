@@ -371,23 +371,24 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 
 		if (CollectionUtil.isNotEmpty(nowList)) {
 			for (MarketPtSeckill seckill : nowList) {
-				seckillTimeQuantum = new SeckillTimeQuantum();
-				seckillTimeQuantum.setId(seckill.getId());
-				seckillTimeQuantum.setName(beforeSeckill.getLabel());
+				homePageSeckill = new HomePageSeckill();
+				homePageSeckill.setId(seckill.getId());
+				homePageSeckill.setName(seckill.getLabel());
 
 				Integer fromTimeQuantumEnum = this.rangeInDefined(nowList);
 
 				if (seckill.getTimeQuantum().equals(fromTimeQuantumEnum) || seckill.getTimeQuantum().equals(10)) {
-					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
-					seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.抢购中.getRemark());
+					homePageSeckill.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
+					homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.抢购中.getRemark());
+					homePageSeckill.setChecked(true);
 				} else if (seckill.getTimeQuantum() > fromTimeQuantumEnum) {
-					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.即将开抢.getCode());
-					seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.即将开抢.getRemark());
+					homePageSeckill.setStatus(MarketPtSeckillStatusEnum.即将开抢.getCode());
+					homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.即将开抢.getRemark());
 				} else if (seckill.getTimeQuantum() < fromTimeQuantumEnum) {
-					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.已开抢.getCode());
-					seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.已开抢.getRemark());
+					homePageSeckill.setStatus(MarketPtSeckillStatusEnum.已开抢.getCode());
+					homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.已开抢.getRemark());
 				}
-				
+				homePageSeckill.setGoodsList(this.listGoodsBySeckillId(seckill.getId()));
 				retList.add(homePageSeckill);
 			}
 		}
@@ -421,7 +422,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     				homePageSeckillGoods.setOldPrice(goodsDetail.getSalePrice());
     				homePageSeckillGoods.setSalePrice(spu.getSeckillSalePrice());
     			}
-        		
+        		homePageSeckillGoods.setGoodsImage(ObjectUtils.isEmpty(getImage(homePageSeckillGoods.getGoodsImage())) ?"": getImage(homePageSeckillGoods.getGoodsImage()));
         		retList.add(homePageSeckillGoods);
         	}
         }

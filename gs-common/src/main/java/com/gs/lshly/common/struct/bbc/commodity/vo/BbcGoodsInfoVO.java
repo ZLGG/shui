@@ -508,6 +508,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("积分价格")
         private BigDecimal pointPrice;
+        
+        @ApiModelProperty("原积分价格")
+        private BigDecimal oldPointPrice;
 
         @ApiModelProperty("是否是积分商品")
         private Boolean isPointGood;

@@ -261,6 +261,9 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 		@ApiModelProperty("时间段")
 		private String name;
 		
+		@ApiModelProperty("是否选中")
+		private Boolean checked = false;
+		
 		@ApiModelProperty("商品列表")
 		private List<HomePageSeckillGoods> goodsList;
 	}
@@ -298,7 +301,7 @@ public abstract class BbcMarketSeckillVO implements Serializable {
         private BigDecimal oldPointPrice;
         
         @ApiModelProperty("是否是积分商品")
-        private BigDecimal isPointGood;
+        private Boolean isPointGood;
 
         @ApiModelProperty("销售量")
         private BigDecimal saleRate;
