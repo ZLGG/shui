@@ -108,4 +108,12 @@ public class BbcGoodsInfoController {
         bbcGoodsInfoRpc.emptySearchHistory(qto);
         return ResponseData.success();
     }
+
+    @ApiOperation("通用商品信息-v1.1.0")
+    @GetMapping("/getGeneralGoodsInfo")
+    public ResponseData<List<BbcGoodsInfoVO.GoodsListVO>> getGeneralGoodsInfo() {
+        List<BbcGoodsInfoVO.GoodsListVO> resultList = bbcGoodsInfoRpc.getGeneralGoodsInfo();
+        return ResponseData.data(resultList);
+    }
+
 }

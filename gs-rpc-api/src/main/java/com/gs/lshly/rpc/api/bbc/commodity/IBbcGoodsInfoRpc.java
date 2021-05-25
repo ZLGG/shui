@@ -185,4 +185,10 @@ public interface IBbcGoodsInfoRpc {
      * @param goodsName
      */
     List<String> getCategoryIdsByName(String goodsName);
+
+    /**
+     * 查询通用商品信息
+     * @return
+     */
+    List<BbcGoodsInfoVO.GoodsListVO> getGeneralGoodsInfo();
 }
