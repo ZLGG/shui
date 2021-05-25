@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
@@ -31,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 /**
 * <p>
@@ -129,6 +132,8 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
                 throw new BusinessException("验证码不匹配");
             }
             BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
+            UpdateWrapper wrapper = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
+            repository.update(wrapper);
             if (vo != null) {
                 return vo;
             }
@@ -145,6 +150,8 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             }
             vo = userToLoginVO(user, null);
             redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
+            UpdateWrapper eq = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
+            repository.update(eq);
             return vo;
     	}else{
     		
@@ -155,6 +162,8 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             if (PwdUtil.matches(dto.getValidCode(), user.getUserPwd())) {
 	            BbcUserVO.LoginVO vo = userToLoginVO(user, null);
 	            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
+                UpdateWrapper eq = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
+                repository.update(eq);
 	            return vo;
             }else{
             	throw new BusinessException("密码错误");
