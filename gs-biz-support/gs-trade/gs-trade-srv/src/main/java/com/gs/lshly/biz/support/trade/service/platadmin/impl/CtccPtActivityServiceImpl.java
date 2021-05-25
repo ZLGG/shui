@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.mapper.CtccCategoryMapper;
 import com.gs.lshly.biz.support.trade.mapper.CtccPtActivityImagesMapper;
@@ -207,11 +208,14 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         wrapper.orderByAsc("idx");
 
         // 根据商品名称查询商品信息及对应类目
-//        if (StringUtils.isNotBlank(listDTO.getGoodsName())) {
-//            // 根据商品名称模糊匹配类目id
-//            List<String> categoryIds = bbcGoodsInfoRpc.getCategoryIdsByName(listDTO.getGoodsName());
-//            wrapper.in("id", categoryIds);
-//        }
+        if (StringUtils.isNotBlank(listDTO.getGoodsName())) {
+            // 根据商品名称模糊匹配类目id
+            List<String> categoryIds = bbcGoodsInfoRpc.getCategoryIdsByName(listDTO.getGoodsName());
+            if (ObjectUtils.isEmpty(categoryIds)) {
+                return null;
+            }
+            wrapper.in("id", categoryIds);
+        }
 
         CtccPtActivityVO.CategoryListVO categoryListVO = new CtccPtActivityVO.CategoryListVO();
 
@@ -233,12 +237,19 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
                     for(CtccCategoryGoods ctccCategoryGood:ctccCategoryGoods){
                         BbcGoodsInfoVO.CtccGoodsDetailVO ctccGoodsDetailVO = new BbcGoodsInfoVO.CtccGoodsDetailVO();
                         String goodsId = ctccCategoryGood.getGoodsId();
-                        BbcGoodsInfoVO.DetailVO detailVO= bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
-                        BeanUtils.copyProperties(detailVO,ctccGoodsDetailVO);
-                        ctccGoodsDetailVOList.add(ctccGoodsDetailVO);
+                        BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+                        // 根据商品名称模糊匹配商品信息
+                        if (StringUtils.isNotBlank(listDTO.getGoodsName())) {
+                            if (detailVO.getGoodsName().contains(listDTO.getGoodsName())) {
+                                BeanUtils.copyProperties(detailVO,ctccGoodsDetailVO);
+                                ctccGoodsDetailVOList.add(ctccGoodsDetailVO);
+                            }
+                        }else {
+                            BeanUtils.copyProperties(detailVO,ctccGoodsDetailVO);
+                            ctccGoodsDetailVOList.add(ctccGoodsDetailVO);
+                        }
                     }
                 }
-
                 ctccCategoryVO.setGoodsList(ctccGoodsDetailVOList);
                 categorys.add(ctccCategoryVO);
             }
