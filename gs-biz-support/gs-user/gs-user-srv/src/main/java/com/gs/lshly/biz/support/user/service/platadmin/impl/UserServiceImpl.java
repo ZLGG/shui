@@ -111,6 +111,19 @@ public class UserServiceImpl implements IUserService {
         if(ObjectUtils.isNotEmpty(qto.getSex())){
             wrapper.eq("us.sex",qto.getSex());
         }
+        if(ObjectUtils.isNotEmpty(qto.getIsInUser())){
+            wrapper.eq("us.is_in_user",qto.getIsInUser());
+        }
+        if(ObjectUtils.isNotEmpty(qto.getLabelId())){
+            wrapper.eq("dict.id",qto.getLabelId());
+        }
+        if(ObjectUtils.isNotEmpty(qto.getTelecomsLevel())){
+            wrapper.eq("us.telecoms_level",qto.getTelecomsLevel());
+        }
+        if(ObjectUtils.isNotEmpty(qto.getCity())){
+            wrapper.eq("us.city",qto.getCity());
+        }
+
         wrapper.orderByDesc("us.cdate");
         IPage<UserView> page = MybatisPlusUtil.pager(qto);
         userMapper.pageList(page,wrapper);

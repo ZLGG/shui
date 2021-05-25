@@ -68,6 +68,21 @@ public abstract class UserQTO implements Serializable {
 
         @ApiModelProperty("地址")
         private String realAddress;
+
+        @ApiModelProperty("手机号")
+        private String phone;
+
+        @ApiModelProperty("星级")
+        private String telecomsLevel;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+
+        @ApiModelProperty("城市")
+        private String city;
+
+        @ApiModelProperty("标签id")
+        private String labelId;
     }
 
 }
