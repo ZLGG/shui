@@ -69,7 +69,49 @@ public abstract class UserVO implements Serializable {
         @ApiModelProperty("真实姓名")
         private String realName;
 
-		public String getId() {
+        @ApiModelProperty("电信积分")
+        private Integer telecomsIntegral;
+
+        @ApiModelProperty("星级")
+        private String telecomsLevel;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+
+        @ApiModelProperty("省名称")
+        private String provinceText;
+
+        @ApiModelProperty("市名称")
+        private String cityText;
+
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime loginDate;
+
+        public LocalDateTime getLoginDate() {
+            return loginDate;
+        }
+
+        public Integer getTelecomsIntegral() {
+            return telecomsIntegral;
+        }
+
+        public String getTelecomsLevel() {
+            return telecomsLevel;
+        }
+
+        public String getProvinceText() {
+            return provinceText;
+        }
+
+        public String getCityText() {
+            return cityText;
+        }
+
+        public Integer getIsInUser() {
+            return isInUser;
+        }
+
+        public String getId() {
 			return id;
 		}
 
