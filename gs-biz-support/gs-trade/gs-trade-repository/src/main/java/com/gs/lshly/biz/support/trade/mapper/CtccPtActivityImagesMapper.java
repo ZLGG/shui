@@ -3,6 +3,10 @@ package com.gs.lshly.biz.support.trade.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gs.lshly.biz.support.trade.entity.CtccPtActivityImages;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * @Author yangxi
@@ -10,4 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CtccPtActivityImagesMapper extends BaseMapper<CtccPtActivityImages> {
+    @Select("select * from gs_ctcc_pt_activity_images where activity_id = #{id}")
+    List<CtccPtActivityImages> selectByActivityId(@Param("id") String id);
 }

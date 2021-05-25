@@ -1,10 +1,12 @@
 package com.gs.lshly.common.struct.platadmin.trade.dto;
 
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,30 @@ import java.util.List;
  * @create 2021/5/7 16:17
  */
 public class CtccPtActivityDTO implements Serializable {
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.RemoveGoodsDTO")
+    public static class RemoveGoodsDTO implements Serializable {
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("活动id")
+        private String activityId;
+
+        @ApiModelProperty("商品状态（10-未上架，20-已上架）")
+        private Integer goodsState;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.DeleteGoodsDTO")
+    public static class DeleteGoodsDTO implements Serializable {
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("活动id")
+        private String activityId;
+
+    }
     @Data
     @ApiModel("CtccPtActivityDTO.AddDTO")
     public static class AddDTO extends BaseDTO {
@@ -94,5 +120,47 @@ public class CtccPtActivityDTO implements Serializable {
 
         @ApiModelProperty("类别id")
         private String categoryId;
+
+        @ApiModelProperty("活动id")
+        private String activityId;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.AddCategoryDTO")
+    public static class AddCategoryDTO extends BaseDTO {
+        @ApiModelProperty("类目名称")
+        @NotBlank(message = "类目名称不能为空")
+        private String name;
+
+        @ApiModelProperty("排序")
+        private Integer idx;
+
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+
+        @ApiModelProperty("备注")
+        private String remark;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.AddCategoryGoodsDTO")
+    public static class AddCategoryGoodsDTO implements Serializable {
+        @ApiModelProperty("类目id")
+        @NotBlank(message = "类目id不能为空")
+        private String categoryId;
+
+        @ApiModelProperty("商品id")
+        @NotBlank(message = "商品id不能为空")
+        private String goodsId;
+
+        @ApiModelProperty("排序")
+        private Integer idx;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.ActivityListDTO")
+    public static class ActivityListDTO extends BaseQTO {
+        @ApiModelProperty("商品名称")
+        private String goodsName;
     }
 }

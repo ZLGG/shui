@@ -1396,6 +1396,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 	}
 
     @Override
+    public List<String> getCategoryIdsByName(String goodsName) {
+        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("is_point_good",true);
+        wrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
+        wrapper.ne("use_platform",GoodsUsePlatformEnums.B商城.getCode());
+        wrapper.like("goods_name",goodsName);
+        wrapper.eq("flag", false);
+        List<String> categoryIds = goodsInfoMapper.getCategoryIdsByName(wrapper);
+        return categoryIds;
+    }
+
+    @Override
     public List<BbcGoodsInfoVO.GoodsListVO> getShopRecommendGoods(BbcGoodsInfoQTO.ShopGoodsIdQTO qto) {
         // 随机查询四个店铺推荐商品
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
@@ -1403,6 +1415,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         wrapper.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
         wrapper.ne("gs.use_platform",GoodsUsePlatformEnums.B商城.getCode());
         wrapper.eq("gs.shop_id", qto.getShopId());
+        wrapper.eq("gs.flag", false);
         List<String> goodsIds = goodsInfoMapper.getAllIds(wrapper);
         List<String> ranIds = new ArrayList<>();
         QueryWrapper<GoodsInfo> boost = new QueryWrapper<>();

@@ -165,4 +165,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     List<BbcGoodsInfoVO.GoodsListVO> getShopRecommendGoods(BbcGoodsInfoQTO.ShopGoodsIdQTO qto);
+
+    /**
+     * 根据商品名称模糊匹配类别id
+     * @param goodsName
+     * @return
+     */
+    List<String> getCategoryIdsByName(String goodsName);
 }
