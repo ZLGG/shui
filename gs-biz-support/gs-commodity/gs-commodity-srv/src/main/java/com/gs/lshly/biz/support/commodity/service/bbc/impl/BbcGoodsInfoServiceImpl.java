@@ -63,10 +63,12 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCo
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.IdDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SkuIdListQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.AttributeVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.PromiseVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
@@ -1467,6 +1469,65 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 		vo.setAdverts(adverts);
 		vo.setCouponTypes(InUserCouponPriceEnum.getAll());
 		return vo;
+	}
+
+	@Override
+	public List<InnerServiceVO> innerServiceShopGoods(SkuIdListQTO qto) {
+		if (qto == null) {
+            throw new BusinessException("参数不能为空！");
+        }
+        List<BbcGoodsInfoVO.InnerServiceVO> innerServiceVOS = new ArrayList<>();
+        for (String skuId : qto.getSkuIdList()) {
+
+            BbcGoodsInfoVO.InnerServiceVO serviceVO = new BbcGoodsInfoVO.InnerServiceVO();
+
+            QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
+            boost.eq("id", skuId);
+            SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getOne(boost);
+            if (skuGoodInfo == null) {
+                continue;
+            }
+
+            //获取spu的id
+            String goodsId = skuGoodInfo.getGoodId();
+            GoodsInfo goodsInfo = repository.getById(goodsId);
+            if (goodsInfo == null) {
+                continue;
+            }
+            //判断是否是单品
+            if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+                BeanUtils.copyProperties(goodsInfo, serviceVO);
+                serviceVO.setShopId(goodsInfo.getShopId());
+                serviceVO.setGoodsId(goodsInfo.getId());
+                serviceVO.setSkuId(skuId);
+                serviceVO.setSkuGoodsNo(goodsInfo.getGoodsNo());
+                serviceVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
+            } else {
+                serviceVO.setShopId(goodsInfo.getShopId());
+                serviceVO.setSkuId(skuId);
+                serviceVO.setGoodsId(goodsInfo.getId());
+                serviceVO.setGoodsName(goodsInfo.getGoodsName());
+                serviceVO.setSalePrice(skuGoodInfo.getSalePrice());
+                serviceVO.setPointPrice(skuGoodInfo.getPointPrice());
+                serviceVO.setGoodsImage(skuGoodInfo.getImage());
+                serviceVO.setGoodsState(skuGoodInfo.getState());
+                serviceVO.setSkuSpecValue(StringUtils.isEmpty(skuGoodInfo.getSpecsValue()) ? "" : skuGoodInfo.getSpecsValue());
+                serviceVO.setGoodsTitle(goodsInfo.getGoodsTitle());
+                serviceVO.setGoodsNo(goodsInfo.getGoodsNo());
+                serviceVO.setSkuGoodsNo(skuGoodInfo.getSkuGoodsNo());
+                serviceVO.setIsPointGood(skuGoodInfo.getIsPointGood());
+                serviceVO.setExchangeType(goodsInfo.getExchangeType());
+                serviceVO.setIsInMemberGift(skuGoodInfo.getIsInMemberGift());
+                
+                
+                serviceVO.setGoodsAmount(skuGoodInfo.getSalePrice());
+                serviceVO.setGoodsPointAmount(skuGoodInfo.getPointPrice());
+                serviceVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
+                
+            }
+            innerServiceVOS.add(serviceVO);
+        }
+        return innerServiceVOS;
 	}
 
 }

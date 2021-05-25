@@ -19,6 +19,7 @@ import com.gs.lshly.biz.support.user.mapper.UserShoppingCarMapper;
 import com.gs.lshly.biz.support.user.repository.IUserShoppingCarRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserShoppingCarService;
+import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.QuantityLocationEnum;
 import com.gs.lshly.common.enums.StockCheckStateEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -120,7 +121,7 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         List<BbcUserShoppingCarVO.ShoppingCarItemVO> tempList = new ArrayList<>();
         List<String> skuIdList = new ArrayList<>();
         // 遍历用户购物车信息
-        for (UserShoppingCar shoppingCarItem : userShoppingCarList) {
+        for (UserShoppingCar shoppingCarItem : userShoppingCarList) {	//
             BbcUserShoppingCarVO.ListVO listVO = voMap.get(shoppingCarItem.getShopId());
             // 首次出现的商家，初始化
             if (null == listVO) {
@@ -129,7 +130,7 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
                 listVO.setShopName(shoppingCarItem.getShopName());
                 voMap.put(shoppingCarItem.getShopId(), listVO);
             }
-            // 商品项信息
+            // 商品项信息 
             BbcUserShoppingCarVO.ShoppingCarItemVO shoppingCarItemVO = new BbcUserShoppingCarVO.ShoppingCarItemVO();
             shoppingCarItemVO.setId(shoppingCarItem.getId());
             shoppingCarItemVO.setGoodsId(shoppingCarItem.getGoodsId());
@@ -137,16 +138,16 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
             shoppingCarItemVO.setQuantity(shoppingCarItem.getQuantity());
             shoppingCarItemVO.setIsSelect(shoppingCarItem.getIsSelect());
             shoppingCarItemVO.setShopId(shoppingCarItem.getShopId());
-            tempList.add(shoppingCarItemVO);
-            skuIdList.add(shoppingCarItem.getSkuId());
+            tempList.add(shoppingCarItemVO);	//所有商品
+            skuIdList.add(shoppingCarItem.getSkuId());	//所有SKU
         }
 
         List<ShoppingCarItemVO> deleteIdList = new ArrayList<>();
-        if (ObjectUtils.isNotEmpty(skuIdList)) {
+        if (ObjectUtils.isNotEmpty(skuIdList)) {	//sku列表
             // 获取商品最新的信息
-            List<BbcGoodsInfoVO.InnerServiceVO> innerSkuGoodsList = bbcGoodsInfoRpc.innerServicePageShopGoods(new BbcGoodsInfoQTO.SkuIdListQTO().setSkuIdList(skuIdList));
+            List<BbcGoodsInfoVO.InnerServiceVO> innerSkuGoodsList = bbcGoodsInfoRpc.innerServiceShopGoods(new BbcGoodsInfoQTO.SkuIdListQTO().setSkuIdList(skuIdList));
             if (ObjectUtils.isNotEmpty(innerSkuGoodsList)) {
-                for (BbcUserShoppingCarVO.ShoppingCarItemVO shoppingCarItemVO : tempList) {
+                for (BbcUserShoppingCarVO.ShoppingCarItemVO shoppingCarItemVO : tempList) { //店铺
                     //组装购物车里的数据
                     for (BbcGoodsInfoVO.InnerServiceVO innerSkuGoodVo : innerSkuGoodsList) {
                         if (shoppingCarItemVO.getSkuId().equals(innerSkuGoodVo.getSkuId())) {
@@ -161,24 +162,25 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
                             shoppingCarItemVO.setExchangeType(innerSkuGoodVo.getExchangeType());
                             shoppingCarItemVO.setIsInMemberGift(innerSkuGoodVo.getIsInMemberGift());
                             shoppingCarItemVO.setInMemberPointPrice(innerSkuGoodVo.getInMemberPointPrice());
+                            
+                            if(innerSkuGoodVo.getGoodsState().equals(GoodsStateEnum.已上架.getCode())){
+	                            BbcUserShoppingCarVO.ListVO listVO = voMap.get(shoppingCarItemVO.getShopId());
+	                            if (null != listVO) {
+	                                listVO.getGoodsList().add(shoppingCarItemVO);
+	                            }
+                            }else{
+                            	deleteIdList.add(shoppingCarItemVO);
+                            }
+                            
                             break;
                         }
                     }
-                    //购物车里有数据，没有找到商品
-                    if (StringUtils.isNotBlank(shoppingCarItemVO.getGoodsId())) {
-                        BbcUserShoppingCarVO.ListVO listVO = voMap.get(shoppingCarItemVO.getShopId());
-                        if (null != listVO) {
-                            listVO.getGoodsList().add(shoppingCarItemVO);
-                        }
-                    } else {
-                        deleteIdList.add(shoppingCarItemVO);
-                    }
+                    
                 }
             }
         }
         //清理数据库无效的购物车数据
         if (ObjectUtils.isNotEmpty(deleteIdList)) {
-            //userShoppingCarMapper.deleteBatchIds(deleteIdList);
         	homeVO.setLoseList(deleteIdList);
         }
         //获取最终前效的购物车数据
