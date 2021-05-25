@@ -200,6 +200,57 @@ ADD COLUMN `full_address` varchar(255) COMMENT '完整地址' AFTER `reals`;
 ALTER TABLE `fy_mall`.`gs_trade`
 ADD COLUMN `is_modify_address` varchar(255) DEFAULT '0' COMMENT '是否修改过地址（0-否，1-是）' AFTER `timeout_cancel`;
 
+DROP TABLE IF EXISTS `gs_ctcc_pt_activity`;
+CREATE TABLE `gs_ctcc_pt_activity` (
+  `id` varchar(32) NOT NULL COMMENT '主键id',
+  `name` varchar(120) DEFAULT NULL COMMENT '活动名称',
+  `start_time` datetime DEFAULT NULL COMMENT '活动开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '活动结束时间',
+  `deduction_type` tinyint(1) DEFAULT NULL COMMENT '抵扣类型（0-电信积分 1-in会员抵扣券）',
+  `limit_type` tinyint(1) DEFAULT NULL COMMENT '限购类型（0-不限购 1-限购）',
+  `limit_count` int(20) DEFAULT NULL COMMENT '每人限购数量',
+  `user_id` varchar(32) DEFAULT NULL COMMENT '用户id',
+  `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
+  `gmt_modify` datetime DEFAULT NULL COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT NULL COMMENT '删除标记（0-否，1-是）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='电信国际运营平台活动表';
+
+DROP TABLE IF EXISTS `gs_ctcc_pt_activity_goods_relation`;
+CREATE TABLE `gs_ctcc_pt_activity_goods_relation` (
+  `id` varchar(32) NOT NULL COMMENT '主键id',
+  `activity_id` varchar(32) DEFAULT NULL COMMENT '活动id',
+  `category_id` varchar(32) DEFAULT NULL COMMENT '类目id',
+  `goods_id` varchar(32) DEFAULT NULL COMMENT '商品id',
+  `goods_state` int(11) DEFAULT NULL COMMENT '商品状态（10-未上架，20-已上架）',
+  `cdate` datetime DEFAULT NULL COMMENT '创建时间',
+  `udate` datetime DEFAULT NULL COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT NULL COMMENT '是否删除（0-未删除，1-已删除）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运营平台电信国际活动商品关联表';
+
+DROP TABLE IF EXISTS `gs_ctcc_pt_activity_goods_relation`;
+CREATE TABLE `gs_ctcc_pt_activity_goods_relation` (
+  `id` varchar(32) NOT NULL COMMENT '主键id',
+  `activity_id` varchar(32) DEFAULT NULL COMMENT '活动id',
+  `category_id` varchar(32) DEFAULT NULL COMMENT '类目id',
+  `goods_id` varchar(32) DEFAULT NULL COMMENT '商品id',
+  `goods_state` int(11) DEFAULT NULL COMMENT '商品状态（10-未上架，20-已上架）',
+  `cdate` datetime DEFAULT NULL COMMENT '创建时间',
+  `udate` datetime DEFAULT NULL COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT NULL COMMENT '是否删除（0-未删除，1-已删除）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运营平台电信国际活动商品关联表';
+
+DROP TABLE IF EXISTS `gs_ctcc_pt_activity_images`;
+CREATE TABLE `gs_ctcc_pt_activity_images` (
+  `activity_id` varchar(32) NOT NULL COMMENT '活动id',
+  `image_url` varchar(120) DEFAULT NULL COMMENT 'banner图片地址',
+  `jump_url` varchar(120) DEFAULT NULL COMMENT '跳转地址',
+  `id` varchar(32) NOT NULL COMMENT '主键id',
+  PRIMARY KEY (`id`),
+  KEY `idx_activity_id` (`activity_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='电信国际banner图片地址及跳转地址表';
 
 -- 添中字段 from 上海
 child_trade_id	varchar	32	0	-1	0	0	0	0		0		utf8mb4	utf8mb4_general_ci		0	0

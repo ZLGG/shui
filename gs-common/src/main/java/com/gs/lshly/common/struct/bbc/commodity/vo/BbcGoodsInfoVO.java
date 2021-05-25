@@ -882,11 +882,32 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
+        @ApiModelProperty("商品类别名称")
+        private String categoryName;
+
+        @ApiModelProperty("商品状态（10-未上架，20-已上架）")
+        private Integer goodsState;
+
+        @ApiModelProperty("品牌名称")
+        private String brandName;
+
+        @ApiModelProperty("店铺名称")
+        private String shopName;
+
+        @ApiModelProperty("库存")
+        private Integer stockQuantity;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+        @ApiModelProperty("in会员价格")
+        private BigDecimal inMemberPointPrice;
+
+        @ApiModelProperty("实际销量")
+        private Integer saleQuantity;
+
         @ApiModelProperty("规格列表")
         private List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS;
-
-//        @ApiModelProperty("多规格商品默认选择规格信息")
-//        private BbcSkuGoodInfoVO.SkuVO skuVO;
 
     }
 

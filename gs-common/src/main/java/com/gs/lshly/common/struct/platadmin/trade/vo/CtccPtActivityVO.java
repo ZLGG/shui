@@ -1,11 +1,15 @@
 package com.gs.lshly.common.struct.platadmin.trade.vo;
 
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,5 +65,62 @@ public class CtccPtActivityVO implements Serializable {
         @ApiModelProperty("商品列表")
         private List<BbcGoodsInfoVO.CtccGoodsDetailVO> goodsList;
 
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityVO.ActivityListVO")
+    public static class ActivityListVO implements Serializable {
+        @ApiModelProperty("活动id")
+        private String id;
+
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("活动开始时间")
+        private Date startTime;
+
+        @ApiModelProperty("活动结束时间")
+        private Date endTime;
+
+        @ApiModelProperty("抵扣类型（0-电信积分 1-in会员抵扣券）")
+        private Integer deductionType;
+
+        @ApiModelProperty("限购类型（0-不限购 1-限购）")
+        private Integer limitType;
+
+        @ApiModelProperty("每人限购数量")
+        private Integer limitCount;
+
+        @ApiModelProperty("商品列表")
+        private List<BbcGoodsInfoVO.CtccGoodsDetailVO> goodsList;
+    }
+
+    @ApiModel("CtccPtActivityVO.DetailVO")
+    @Data
+    public static class DetailVO {
+
+        @ApiModelProperty("活动id")
+        private String id;
+
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("活动开始时间")
+        private Date startTime;
+
+        @ApiModelProperty("活动结束时间")
+        private Date endTime;
+
+        @ApiModelProperty("抵扣类型（0-电信积分 1-in会员抵扣券）")
+        private Integer deductionType;
+
+        @ApiModelProperty("限购类型（0-不限购 1-限购）")
+        private Integer limitType;
+
+        @ApiModelProperty("每人限购数量")
+        private Integer limitCount;
+
+        @ApiModelProperty("banner图片")
+        List<CtccPtActivityDTO.ImageGroupDTO> imageGroupDTOList;
     }
 }

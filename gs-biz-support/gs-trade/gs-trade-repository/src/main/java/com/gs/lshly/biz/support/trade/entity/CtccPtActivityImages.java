@@ -19,6 +19,9 @@ public class CtccPtActivityImages extends Model {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("主键id")
+    private String id;
+
     @ApiModelProperty("活动id")
     private String activityId;
 

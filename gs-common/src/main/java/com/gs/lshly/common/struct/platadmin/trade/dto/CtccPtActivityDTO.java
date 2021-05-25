@@ -16,6 +16,30 @@ import java.util.List;
  * @create 2021/5/7 16:17
  */
 public class CtccPtActivityDTO implements Serializable {
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.RemoveGoodsDTO")
+    public static class RemoveGoodsDTO implements Serializable {
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("活动id")
+        private String activityId;
+
+        @ApiModelProperty("商品状态（10-未上架，20-已上架）")
+        private Integer goodsState;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.DeleteGoodsDTO")
+    public static class DeleteGoodsDTO implements Serializable {
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("活动id")
+        private String activityId;
+
+    }
     @Data
     @ApiModel("CtccPtActivityDTO.AddDTO")
     public static class AddDTO extends BaseDTO {
@@ -96,6 +120,9 @@ public class CtccPtActivityDTO implements Serializable {
 
         @ApiModelProperty("类别id")
         private String categoryId;
+
+        @ApiModelProperty("活动id")
+        private String activityId;
     }
 
     @Data
@@ -128,5 +155,12 @@ public class CtccPtActivityDTO implements Serializable {
 
         @ApiModelProperty("排序")
         private Integer idx;
+    }
+
+    @Data
+    @ApiModel("CtccPtActivityDTO.ActivityListDTO")
+    public static class ActivityListDTO extends BaseQTO {
+        @ApiModelProperty("商品名称")
+        private String goodsName;
     }
 }

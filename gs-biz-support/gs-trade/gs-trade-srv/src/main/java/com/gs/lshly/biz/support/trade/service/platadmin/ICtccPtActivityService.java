@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.service.platadmin;
 
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 
@@ -46,4 +47,30 @@ public interface ICtccPtActivityService {
      * @param list
      */
     void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list);
+
+    /**
+     * 查看活动详情
+     * @param id
+     * @return
+     */
+    CtccPtActivityVO.DetailVO getActivityDetail(String id);
+
+    /**
+     * 获取活动列表信息
+     * @param dto
+     * @return
+     */
+    PageData<CtccPtActivityVO.ActivityListVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto);
+
+    /**
+     * 修改商品上下架状态
+     * @param list
+     */
+    void updateGoodsState(List<CtccPtActivityDTO.RemoveGoodsDTO> list);
+
+    /**
+     * 批量商城商品
+     * @param list
+     */
+    void deleteGoods(List<CtccPtActivityDTO.DeleteGoodsDTO> list);
 }

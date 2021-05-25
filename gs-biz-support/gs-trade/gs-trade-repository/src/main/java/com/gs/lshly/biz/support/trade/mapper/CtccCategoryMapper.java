@@ -3,6 +3,8 @@ package com.gs.lshly.biz.support.trade.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gs.lshly.biz.support.trade.entity.CtccCategory;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -14,4 +16,6 @@ import com.gs.lshly.biz.support.trade.entity.CtccCategory;
  */
 public interface CtccCategoryMapper extends BaseMapper<CtccCategory> {
 
+    @Select("select name from gs_ctcc_category where id = (select category_id from gs_ctcc_category_goods where goods_id = #{goodsId})")
+    String getCtccCategoryName(@Param("goodsId") String goodsId);
 }
