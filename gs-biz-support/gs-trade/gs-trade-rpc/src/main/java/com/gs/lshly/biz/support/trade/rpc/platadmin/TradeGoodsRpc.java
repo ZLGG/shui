@@ -2,12 +2,15 @@ package com.gs.lshly.biz.support.trade.rpc.platadmin;
 
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeGoodsService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeGoodsDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeGoodsQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
 *
@@ -43,6 +46,11 @@ public class TradeGoodsRpc implements ITradeGoodsRpc{
     @Override
     public TradeGoodsVO.DetailVO detailTradeGoods(TradeGoodsDTO.IdDTO dto){
         return  TradeGoodsService.detailTradeGoods(dto);
+    }
+
+    @Override
+    public List<TradeGoodsVO.ListVO> findListByGoodsId(GoodsInfoDTO.IdListDTO dto) {
+        return TradeGoodsService.findListByGoodsId(dto);
     }
 
 }

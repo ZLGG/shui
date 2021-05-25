@@ -217,6 +217,15 @@ public class User extends Model {
      */
     private Integer directionIntegral;
 
+	/**
+	 * 最近登录时间
+	 */
+	private LocalDateTime loginDate;
+
+	public LocalDateTime getLoginDate() {
+		return loginDate;
+	}
+
 	public String getId() {
 		return id;
 	}

@@ -16,6 +16,7 @@ public interface IGoodsInfoRpc {
 
     /**
      * 分页查询商品列表
+     *
      * @param qto
      * @return
      */
@@ -23,25 +24,36 @@ public interface IGoodsInfoRpc {
 
     /**
      * 查询商品详情
+     *
      * @param dto
      * @return
      */
     GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto);
 
     /**
+     * 批量上架商品
+     *
+     * @param dto
+     */
+    void upCarriageGoods(GoodsInfoDTO.IdListDTO dto);
+
+    /**
      * 批量下架商品
+     *
      * @param dto
      */
     void underCarriageGoods(GoodsInfoDTO.IdListDTO dto);
 
     /**
      * 批量删除商品
+     *
      * @param dto
      */
     void deleteGoodsBatches(GoodsInfoDTO.IdListDTO dto);
 
     /**
      * 审核商品
+     *
      * @param dto
      */
     void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto);
@@ -56,6 +68,7 @@ public interface IGoodsInfoRpc {
 
     /**
      * 提供店铺楼层选择的商品列表
+     *
      * @param qto
      * @return
      */
@@ -63,6 +76,7 @@ public interface IGoodsInfoRpc {
 
     /**
      * 提供扶贫楼层选择的商品列表
+     *
      * @param qto
      * @return
      */
@@ -70,11 +84,11 @@ public interface IGoodsInfoRpc {
 
     /**
      * 查看三级类目下绑定的商品列表
+     *
      * @param qto
      * @return
      */
     PageData<GoodsInfoVO.BindCategoryGoodsVO> getBindCategoryGoodsVO(GoodsInfoQTO.CategoryIdQTO qto);
-
 
 
     //-------------内部服务--------------------
@@ -133,19 +147,22 @@ public interface IGoodsInfoRpc {
 
     /**
      * 提供下架商品服务
+     *
      * @param shopId
      */
     void innerServiceUnderShelfGoods(List<String> shopId);
-    
+
     /**
      * 获取所有商品列表
+     *
      * @return
      */
     List<GoodsInfoVO.ListVO> listGoodsData();
-    
-    
+
+
     /**
      * 获取IN会员商品
+     *
      * @return
      */
     PageData<GoodsInfoVO.ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto);

@@ -1,27 +1,31 @@
 package com.gs.lshly.common.struct.bbc.trade.dto;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.gs.lshly.common.enums.ActivityTerminalEnum;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
 * @author oy
 * @since 2020-10-28
 */
+@SuppressWarnings("serial")
 public abstract class BbcTradeBuildDTO implements Serializable {
 	
 	@Data
-	@ApiModel(value="BbcTradeDTO.TradeBuildSingtonDTO") 
+	@EqualsAndHashCode(callSuper=false)
+	@ApiModel(value="BbcTradeDTO.SingtonDTO") 
 	public static class SingtonDTO  extends BaseDTO implements Serializable {
 		@ApiModelProperty(value = "支付类型")
         private Integer payType;
@@ -59,6 +63,9 @@ public abstract class BbcTradeBuildDTO implements Serializable {
     	
 		@ApiModelProperty(value = "店铺ID")
 		private String shopId;
+		
+		@ApiModelProperty(value="商户ID")
+		private String merchantId;
 
 		@ApiModelProperty(value = "商品信息")
 		private List<ProductData> productData;
@@ -82,7 +89,8 @@ public abstract class BbcTradeBuildDTO implements Serializable {
 
         }
 	}
-
+	
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel(value = "BbcTradeDTO.TradeBuildDTO")
     @Accessors(chain = true)
@@ -142,12 +150,15 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         	
 			@ApiModelProperty(value = "店铺ID")
 			private String shopId;
-
+			
+			@ApiModelProperty(value = "店铺名称",hidden=true)
+			private String shopName;
+			
 			@ApiModelProperty(value = "商品信息")
 			private List<ProductData> productData;
         }
 
-        @Data
+		@Data
         public static class ProductData implements Serializable {
             @ApiModelProperty(value = "购物车ID")
             private String cartId;
@@ -162,12 +173,13 @@ public abstract class BbcTradeBuildDTO implements Serializable {
             private Integer quantity;
             
             @ApiModelProperty(value = "分配积分金额")
-            private Integer pointAmount;
+            private BigDecimal pointAmount;
 
         }
 
     }
-
+	
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcTradeDTO.cartIdsDTO")
     @AllArgsConstructor

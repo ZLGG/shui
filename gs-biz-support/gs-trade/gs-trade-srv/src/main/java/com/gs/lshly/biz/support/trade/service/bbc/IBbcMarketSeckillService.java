@@ -1,8 +1,9 @@
 package com.gs.lshly.biz.support.trade.service.bbc;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketActivityQTO.SeckillHomeQTO;
-import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
@@ -39,5 +40,12 @@ public interface IBbcMarketSeckillService {
      * @return
      */
     BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto);
+    
+    /**
+     * 首页秒杀
+     * @param dto
+     * @return
+     */
+    List<BbcMarketSeckillVO.HomePageSeckill> homePageSeckill(BaseDTO dto);
     
 }

@@ -852,7 +852,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 serviceVO.setIsPointGood(skuGoodInfo.getIsPointGood());
                 serviceVO.setExchangeType(goodsInfo.getExchangeType());
                 serviceVO.setIsInMemberGift(skuGoodInfo.getIsInMemberGift());
+                
+                
+                serviceVO.setGoodsAmount(skuGoodInfo.getSalePrice());
+                serviceVO.setGoodsPointAmount(skuGoodInfo.getPointPrice());
                 serviceVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
+                
             }
             innerServiceVOS.add(serviceVO);
         }

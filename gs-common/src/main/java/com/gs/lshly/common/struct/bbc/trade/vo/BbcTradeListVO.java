@@ -6,7 +6,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.enums.TradePayTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsStateEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.enums.TradeStateRemarkEnum;
+import com.gs.lshly.common.enums.TradeStateTitleEnum;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -27,7 +31,7 @@ public abstract class BbcTradeListVO implements Serializable {
     @ApiModel("BbcTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
-
+    	
     	/**
     	 * 店铺信息
     	 */
@@ -78,11 +82,21 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("退款状态")
         private Integer rightsState;
 
+        @ApiModelProperty("退款状态内容")
+        private String rightsStateText;
+        
         @ApiModelProperty("交易状态")
         private Integer tradeState;
         
         @ApiModelProperty("交易状态内容")
         private String tradeStateText;
+        
+        @ApiModelProperty("交易状态内容标题")
+        private String tradeStateTitle;
+        
+        @ApiModelProperty("交易状态备注")
+        private String tradeStateRemark;
+        
 
         @ApiModelProperty("商品来源类型：1:商城商品，2:积分商品")
         private Integer goodsSourceType;
@@ -140,7 +154,9 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("支付类型")
         private Integer payType;
-
+        
+        @ApiModelProperty("支付类型内容")
+        private String payTypeText;
 
         @ApiModelProperty("配送类型")
         private Integer deliveryType;
@@ -197,6 +213,10 @@ public abstract class BbcTradeListVO implements Serializable {
         
         @ApiModelProperty("交易商品集合")
         List<TradeGoodsVO> tradeGoodsVOS;
+        
+        @ApiModelProperty("发货时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime deliveryTime ;
         
 		public String getId() {
 			return id;
@@ -393,6 +413,38 @@ public abstract class BbcTradeListVO implements Serializable {
 		public BigDecimal getPayableAmount() {
 			return payableAmount;
 		}
+
+		public String getRightsStateText() {
+			if(rightsState!=null){
+				rightsStateText = TradeRightsStateEnum.getRemarkByCode(rightsState);
+			}
+			return rightsStateText;
+		}
+
+		public String getPayTypeText() {
+			if(payType!=null)
+				payTypeText = TradePayTypeEnum.getEnum(payType).getRemark();
+			return payTypeText;
+		}
+
+		public LocalDateTime getDeliveryTime() {
+			return deliveryTime;
+		}
+
+		public String getTradeStateTitle() {
+			if(tradeState!=null){
+				tradeStateTitle = TradeStateTitleEnum.getRemarkByCode(tradeState);
+			}
+			return tradeStateTitle;
+			
+		}
+
+		public String getTradeStateRemark() {
+			if(tradeState!=null){
+				tradeStateRemark = TradeStateRemarkEnum.getRemarkByCode(tradeState);
+			}
+			return tradeStateRemark;
+		}
 		
     }
 
@@ -401,11 +453,11 @@ public abstract class BbcTradeListVO implements Serializable {
     @Accessors(chain = true)
     public static class TradeGoodsVO implements Serializable {
 
-        @ApiModelProperty("交易商品ID")
+        @ApiModelProperty("交易ID")
         private String id;
 
 
-        @ApiModelProperty("交易ID")
+        @ApiModelProperty("主交易ID")
         private String tradeId;
 
 
@@ -458,7 +510,7 @@ public abstract class BbcTradeListVO implements Serializable {
         private BigDecimal tradeAmount;
 
         @ApiModelProperty("支付总积分值")
-        private Integer tradePointAmount;
+        private BigDecimal tradePointAmount;
 
 
         @ApiModelProperty("所得积分")
@@ -470,6 +522,13 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
+        
+        @ApiModelProperty("应付积分金额")
+        private BigDecimal payablePointAmount;
+        
+        @ApiModelProperty("应付金额")
+        private BigDecimal payableAmount;
+
 
     }
 

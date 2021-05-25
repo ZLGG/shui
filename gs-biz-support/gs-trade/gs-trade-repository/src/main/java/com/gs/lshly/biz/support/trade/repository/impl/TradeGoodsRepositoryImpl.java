@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gs.lshly.biz.support.trade.entity.TradeGoods;
 import com.gs.lshly.biz.support.trade.mapper.TradeGoodsMapper;
@@ -7,6 +8,7 @@ import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.MerchantHomeDashboardDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.MerchantHomeDashboardVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

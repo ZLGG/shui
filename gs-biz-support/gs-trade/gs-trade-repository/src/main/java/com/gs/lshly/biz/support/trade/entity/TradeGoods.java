@@ -1,17 +1,17 @@
 package com.gs.lshly.biz.support.trade.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import io.swagger.annotations.ApiModelProperty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
  * @author oy
  * @since 2020-10-30
  */
+@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -163,7 +164,17 @@ public class TradeGoods extends Model {
     @TableLogic
     private Boolean flag;
     
+    private BigDecimal goodsAmount;
     
+    private BigDecimal goodsPointAmount;
+    
+    private BigDecimal discountPointAmount;
+    
+    private BigDecimal tradeAmount;
+    
+    private BigDecimal payablePointAmount;
+    
+    private BigDecimal payableAmount;
 
 
 }

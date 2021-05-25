@@ -21,12 +21,14 @@ import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSpu;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillGoodsSpuMapper;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillMapper;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSpuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.enums.GoodsPointTypeEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillStatusEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillTimeQuantumEnum;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
@@ -35,7 +37,7 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
@@ -66,6 +68,9 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     
     @Autowired
     private IMarketPtSeckillRepository marketPtSeckillRepository;
+    
+    @Autowired
+    private IMarketPtSeckillGoodsSpuRepository marketPtSeckillGoodsSpuRepository;
     
     @Value("${activity.pc.cut}")
     private String pcCut;
@@ -327,4 +332,99 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		return seckillDetailVO;
 	}
 
+	@Override
+	public List<HomePageSeckill> homePageSeckill(BaseDTO dto) {
+		
+		List<HomePageSeckill> retList = new ArrayList<HomePageSeckill>();
+		//查询今天所有开售数据
+		String now = DateUtils.fomatDate(new Date(), DateUtils.dateFormatStr);
+		QueryWrapper<MarketPtSeckill> wrapper = new QueryWrapper<>();
+		wrapper.ge("seckill_start_time", now + " 00:00:00");
+		wrapper.le("seckill_start_time", now + " 23:59:59");
+		wrapper.orderByAsc("time_quantum");
+		List<MarketPtSeckill> nowList = marketPtSeckillRepository.list(wrapper);
+
+		// 查询昨天秒杀数据
+		String before = DateUtils.getBeforeDay(1);
+		wrapper = new QueryWrapper<>();
+		wrapper.ge("seckill_start_time", before + " 00:00:00");
+		wrapper.le("seckill_start_time", before + " 23:59:59");
+		wrapper.orderByDesc("time_quantum");
+		wrapper.last("limit 1");
+		MarketPtSeckill beforeSeckill = marketPtSeckillRepository.getOne(wrapper);
+
+		SeckillHome seckillHome = new SeckillHome();
+		SeckillTimeQuantum seckillTimeQuantum = null;
+		HomePageSeckill homePageSeckill = null;
+		if (seckillHome != null && beforeSeckill != null) {
+			
+			homePageSeckill = new HomePageSeckill();
+			
+			homePageSeckill.setId(beforeSeckill.getId());
+			homePageSeckill.setName(beforeSeckill.getLabel());
+			homePageSeckill.setStatus(MarketPtSeckillStatusEnum.昨日已开抢.getCode());
+			homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.昨日已开抢.getRemark());
+			homePageSeckill.setGoodsList(this.listGoodsBySeckillId(beforeSeckill.getId()));
+
+			retList.add(homePageSeckill);
+		}
+
+		if (CollectionUtil.isNotEmpty(nowList)) {
+			for (MarketPtSeckill seckill : nowList) {
+				seckillTimeQuantum = new SeckillTimeQuantum();
+				seckillTimeQuantum.setId(seckill.getId());
+				seckillTimeQuantum.setName(beforeSeckill.getLabel());
+
+				Integer fromTimeQuantumEnum = this.rangeInDefined(nowList);
+
+				if (seckill.getTimeQuantum().equals(fromTimeQuantumEnum) || seckill.getTimeQuantum().equals(10)) {
+					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
+					seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.抢购中.getRemark());
+				} else if (seckill.getTimeQuantum() > fromTimeQuantumEnum) {
+					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.即将开抢.getCode());
+					seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.即将开抢.getRemark());
+				} else if (seckill.getTimeQuantum() < fromTimeQuantumEnum) {
+					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.已开抢.getCode());
+					seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.已开抢.getRemark());
+				}
+				
+				retList.add(homePageSeckill);
+			}
+		}
+		return retList;
+	}
+
+	private List<BbcMarketSeckillVO.HomePageSeckillGoods> listGoodsBySeckillId(String seckillId){
+		
+		QueryWrapper<MarketPtSeckillGoodsSpu> wrapper = new QueryWrapper<>();
+		wrapper.eq("seckill_id", seckillId);
+		wrapper.orderByAsc("idx");
+		wrapper.last("LIMIT 0,4");
+		List<MarketPtSeckillGoodsSpu> nowList =marketPtSeckillGoodsSpuRepository.list(wrapper);
+		List<BbcMarketSeckillVO.HomePageSeckillGoods> retList = new ArrayList<BbcMarketSeckillVO.HomePageSeckillGoods>();
+        if(CollectionUtil.isNotEmpty(nowList)){
+        	BbcMarketSeckillVO.HomePageSeckillGoods homePageSeckillGoods = null;
+        	BbcGoodsInfoVO.DetailVO goodsDetail = null;
+        	for(MarketPtSeckillGoodsSpu spu:nowList){
+        		homePageSeckillGoods = new BbcMarketSeckillVO.HomePageSeckillGoods();
+        		
+        		String goodsId = spu.getGoodsId();
+        		goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+        		
+        		BeanCopyUtils.copyProperties(goodsDetail, homePageSeckillGoods);
+        		homePageSeckillGoods.setGoodsId(goodsDetail.getId());
+        		
+        		if(goodsDetail.getIsPointGood()){
+    				homePageSeckillGoods.setPointPrice(spu.getSeckillPointPrice());
+    				homePageSeckillGoods.setOldPointPrice(goodsDetail.getPointPrice());
+    			}else{
+    				homePageSeckillGoods.setOldPrice(goodsDetail.getSalePrice());
+    				homePageSeckillGoods.setSalePrice(spu.getSeckillSalePrice());
+    			}
+        		
+        		retList.add(homePageSeckillGoods);
+        	}
+        }
+        return retList;
+	}
 }
