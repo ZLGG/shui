@@ -82,6 +82,12 @@ public interface IBbcGoodsInfoService {
 
 
     /**
+     * 购物车商品
+     * @param qto
+     * @return
+     */
+    List<BbcGoodsInfoVO.InnerServiceVO> innerServiceShopGoods(BbcGoodsInfoQTO.SkuIdListQTO qto);
+    /**
      * 提供通过商品id列表查询这些店铺下所有商品信息服务
      * @param qto
      * @return
