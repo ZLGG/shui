@@ -506,25 +506,42 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
 
 	@Override
 	public SummationVO summationUserShoppingCar(IdListDTO dto) {
+		
 		if (null == dto.getJwtUserId()) {
             throw new BusinessException("没有登录");
         }
-		BigDecimal price = new BigDecimal("0.00");
-		BigDecimal pointPrice = new BigDecimal("0.00");
 		
-        if (ObjectUtils.isNotEmpty(dto.getIdList())) {
+		BbcUserVO.DetailVO detailVO = bbcUserService.getUserInfoNoLogin(dto);
+		
+		BigDecimal price = BigDecimal.ZERO;
+		BigDecimal pointPrice = BigDecimal.ZERO;
+		
+        if (ObjectUtils.isNotEmpty(dto.getIdList())) {	//购物车ID
         	UserShoppingCar userShoppingCar = null;
         	for(String id:dto.getIdList()){
         		userShoppingCar = userShoppingCarMapper.selectById(id);
         		if(userShoppingCar!=null){
-	        		Boolean isPointGood = userShoppingCar.getIsPointGood();
-	        		if(isPointGood!=null&&isPointGood){	//是积分商品
-	        			BigDecimal goodsPointPrice = userShoppingCar.getGoodsPointPrice();
-	        			if(goodsPointPrice!=null){
-	        				pointPrice = pointPrice.add(goodsPointPrice);
+	        		Boolean isPointGood = userShoppingCar.getIsPointGood();//是否为积分商品
+	        		Boolean isInMemberGift = userShoppingCar.getIsInMemberGift();//是否为IN会员商品
+	        		if(isInMemberGift!=null&&isInMemberGift){
+	        			BigDecimal inMemberGoodsPrice = userShoppingCar.getGoodsPrice()
+	        					.multiply(new BigDecimal(userShoppingCar.getQuantity()));
+	        			if(inMemberGoodsPrice!=null){
+	        				price = price.add(inMemberGoodsPrice);
 	        			}
+	        		}else if(isPointGood!=null&&isPointGood){	//是积分商品
+	        			BigDecimal goodsPointPrice = BigDecimal.ZERO;
+	        			if(detailVO.getIsInUser().equals(1)){
+	        				goodsPointPrice = userShoppingCar.getInMemberPointPrice()
+		        					.multiply(new BigDecimal(userShoppingCar.getQuantity()));
+	        			}else{
+	        				goodsPointPrice = userShoppingCar.getGoodsPointPrice()
+		        					.multiply(new BigDecimal(userShoppingCar.getQuantity()));
+	        			}
+	        			pointPrice = pointPrice.add(goodsPointPrice);
 	        		}else{
-	        			BigDecimal goodsPrice = userShoppingCar.getGoodsPrice();
+	        			BigDecimal goodsPrice = userShoppingCar.getGoodsPrice()
+	        					.multiply(new BigDecimal(userShoppingCar.getQuantity()));
 	        			if(goodsPrice!=null){
 	        				price = price.add(goodsPrice);
 	        			}
@@ -537,8 +554,8 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
          * 判断当前用户的状态
          * 100积分=1元钱
          */
-        BbcUserVO.DetailVO detailVO = bbcUserService.getUserInfoNoLogin(dto);
-        if(detailVO!=null&&StringUtils.isNotEmpty(detailVO.getId())&&detailVO.getIsInUser().equals(1)){//积分用户
+        
+        if(detailVO.getMemberType().equals(2)){//积分用户
         	Integer telecomsIntegralInt = detailVO.getTelecomsIntegral();
         	BigDecimal telecomsIntegral = new BigDecimal(telecomsIntegralInt+"");
         	if(pointPrice.compareTo(telecomsIntegral)>0){
@@ -551,7 +568,7 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         }else{
         	BigDecimal bigPrice = pointPrice.divide(new BigDecimal("100"));//还要多给的现金
     		price =price.add(bigPrice);
-    		pointPrice = new BigDecimal("0.00");
+    		pointPrice = BigDecimal.ZERO;
         }
         SummationVO summationVO = new SummationVO();
         summationVO.setPointPrice(pointPrice);
