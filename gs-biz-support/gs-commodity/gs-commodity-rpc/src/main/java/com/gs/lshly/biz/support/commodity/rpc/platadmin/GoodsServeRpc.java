@@ -6,12 +6,14 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsServeRpc;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Author hanly
  * @Date 17:12 2021/5/25
  */
+@DubboService
 public class GoodsServeRpc implements IGoodsServeRpc {
 
     @Autowired
@@ -55,7 +57,7 @@ public class GoodsServeRpc implements IGoodsServeRpc {
      * @param eto
      */
     @Override
-    public void editGoodsServe(GoodsServeDTO.ETO eto) {
+    public void editGoodsServe(GoodsServeDTO.EditDTO eto) {
         goodsServeService.editGoodsServe(eto);
     }
 

@@ -1,4 +1,4 @@
-package com.gs.lshly.common.struct.platadmin.commodity.dto;
+package com.gs.lshly.common.struct.merchadmin.pc.commodity.dto;
 
 import com.gs.lshly.common.struct.BaseDTO;
 import io.swagger.annotations.ApiModel;
@@ -14,9 +14,9 @@ import java.util.List;
  * @Author hanly
  * @Date 14:12 2021/05/25
  */
-public abstract class GoodsServeDTO implements Serializable {
+public abstract class PCMerchGoodsServeDTO implements Serializable {
     @Data
-    @ApiModel("GoodsServeDTO.ETO")
+    @ApiModel("PCMerchGoodsServeDTO.ETO")
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
         /**
@@ -51,7 +51,7 @@ public abstract class GoodsServeDTO implements Serializable {
     }
 
     @Data
-    @ApiModel("GoodsServeDTO.IdDTO")
+    @ApiModel("PCMerchGoodsServeDTO.IdDTO")
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
 
@@ -60,7 +60,7 @@ public abstract class GoodsServeDTO implements Serializable {
     }
 
     @Data
-    @ApiModel("GoodsServeDTO.IdListDTO")
+    @ApiModel("PCMerchGoodsServeDTO.IdListDTO")
     public static class IdListDTO extends BaseDTO {
 
         @ApiModelProperty(value = "服务id")
@@ -68,7 +68,7 @@ public abstract class GoodsServeDTO implements Serializable {
     }
 
     @Data
-    @ApiModel("GoodsServeDTO.EditDTO")
+    @ApiModel("PCMerchGoodsServeDTO.EditDTO")
     public static class EditDTO extends BaseDTO {
 
         @ApiModelProperty(value = "服务id")

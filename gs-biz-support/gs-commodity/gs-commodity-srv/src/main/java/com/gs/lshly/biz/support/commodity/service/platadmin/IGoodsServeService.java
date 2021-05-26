@@ -15,7 +15,7 @@ public interface IGoodsServeService {
 
     void addGoodsServe(GoodsServeDTO.ETO eto);
 
-    void editGoodsServe(GoodsServeDTO.ETO eto);
+    void editGoodsServe(GoodsServeDTO.EditDTO eto);
 
     void deleteGoodsServe(GoodsServeDTO.IdListDTO dto);
 }
