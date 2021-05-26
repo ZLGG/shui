@@ -70,7 +70,7 @@ public abstract class BbbSiteNavigationVO implements Serializable {
         private String name;
 
         @ApiModelProperty("链接地址")
-        private String url;
+        private String jumpUrl;
 
         @ApiModelProperty("排序")
         private Integer idx;

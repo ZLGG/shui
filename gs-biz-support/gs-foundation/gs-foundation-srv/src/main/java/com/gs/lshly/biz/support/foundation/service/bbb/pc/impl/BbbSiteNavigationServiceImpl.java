@@ -57,6 +57,8 @@ public class BbbSiteNavigationServiceImpl implements IBbbSiteNavigationService {
                 }else if(siteNavigation.getType().equals(SiteNavigationEnum.菜单导航.getCode())){
                     BbbSiteNavigationVO.MenuVO menuVO = new BbbSiteNavigationVO.MenuVO();
                     BeanUtils.copyProperties(siteNavigation,menuVO);
+                    
+                    menuVO.setJumpUrl(siteNavigation.getUrl());
                     detailVO.getMenuList().add(menuVO);
                 }
             }
