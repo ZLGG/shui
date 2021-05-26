@@ -1,6 +1,8 @@
-package com.gs.lshly.rpc.api.merchadmin.pc.commodity;
+package com.gs.lshly.rpc.api.bbc.commodity;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
@@ -13,13 +15,7 @@ import java.util.List;
  * @since 2021-05-25
  */
 @DubboService
-public interface IPCMerchGoodsServeRpc {
-    /**
-     * 分页查询商品服务列表
-     *
-     * @return
-     */
-    PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto);
+public interface IBbcGoodsServeRpc {
 
     /**
      * 根据商品id查询商品服务详情
@@ -27,5 +23,5 @@ public interface IPCMerchGoodsServeRpc {
      * @param dto
      * @return
      */
-    List<GoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(GoodsServeDTO.IdDTO dto);
+    List<BbcGoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(BbcGoodsServeQTO.GoodsInfoQTO qto);
 }

@@ -38,10 +38,10 @@ public class GoodsServeServiceImpl implements IGoodsServeService {
     public PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto) {
         QueryWrapper<GoodsServe> query = MybatisPlusUtil.query();
         if (StrUtil.isNotEmpty(qto.getServeName())) {
-            query.like("serveName", qto.getServeName());
+            query.like("serve_name", qto.getServeName());
         }
         if (StrUtil.isNotEmpty(qto.getServeContext())) {
-            query.like("serveContext", qto.getServeContext());
+            query.like("serve_context", qto.getServeContext());
         }
         query.orderByDesc("cdate");
         IPage page = MybatisPlusUtil.pager(qto);
@@ -76,8 +76,13 @@ public class GoodsServeServiceImpl implements IGoodsServeService {
      */
     @Override
     public void addGoodsServe(GoodsServeDTO.ETO eto) {
-        if (!StrUtil.isAllNotEmpty(eto.getServeName(), eto.getServeContext(), eto.getImageUrl())) {
+        if (StrUtil.isEmpty(eto.getServeName())) {
             throw new BusinessException("参数不能为空！");
+        }
+        //判断是否存在相同名字的服务
+        GoodsServe sameName = filterSameName(eto);
+        if (ObjectUtil.isNotEmpty(sameName)) {
+            throw new BusinessException(eto.getServeName() + "已存在");
         }
         GoodsServe goodsServe = new GoodsServe();
         BeanUtils.copyProperties(eto, goodsServe);
@@ -90,8 +95,8 @@ public class GoodsServeServiceImpl implements IGoodsServeService {
      * @param eto
      */
     @Override
-    public void editGoodsServe(GoodsServeDTO.ETO eto) {
-        if (!StrUtil.isAllNotEmpty(eto.getServeName(), eto.getServeContext(), eto.getImageUrl())) {
+    public void editGoodsServe(GoodsServeDTO.EditDTO eto) {
+        if (StrUtil.isEmpty(eto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
         GoodsServe goodsServe = new GoodsServe();
@@ -114,5 +119,12 @@ public class GoodsServeServiceImpl implements IGoodsServeService {
         for (String id : dto.getIdList()) {
             repository.removeById(id);
         }
+    }
+
+    private GoodsServe filterSameName(GoodsServeDTO.ETO eto) {
+        QueryWrapper<GoodsServe> wrapper = new QueryWrapper<>();
+        wrapper.eq("serve_name", eto.getServeName());
+        GoodsServe serve = repository.getOne(wrapper);
+        return serve;
     }
 }

@@ -11,8 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gs.lshly.biz.support.commodity.entity.*;
+import com.gs.lshly.biz.support.commodity.repository.*;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
+import org.apache.bcel.generic.NEW;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,30 +35,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
-import com.gs.lshly.biz.support.commodity.entity.GoodsExtendParams;
-import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
-import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
-import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsExtendParamsRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
-import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsBrandService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsCategoryService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsStockService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
@@ -158,8 +148,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     private IPCMerchGoodsBrandService merchGoodsBrandService;
     @Autowired
     private GoodsCategoryMapper categoryMapper;
-
-
+    @Autowired
+    private IGoodsServeCorRepository goodsServeCorRepository;
     @DubboReference
     private IPCMerchShopRpc shopRpc;
 
@@ -180,6 +170,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @DubboReference
     private ISettingsRpc settingsRpc;
+
+    @DubboReference
+    private IPCMerchGoodsServeRpc goodsServeRpc;
 
     @Override
     public PageData<PCMerchGoodsInfoVO.SpuListVO> pageGoodsData(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto) {
@@ -221,7 +214,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             //填充商品库存数量
             spuListVO.setStockNum(getSpuStockNum(spuListVO.getId(), qto.getJwtShopId()));
             spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
-
         }
         return MybatisPlusUtil.toPageData(qto, PCMerchGoodsInfoVO.SpuListVO.class, spuListVOIPage);
     }
@@ -421,11 +413,20 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             createGoodsShopNaigationBind(eto.getJwtMerchantId(), eto.getJwtShopId(), goodsInfo.getId(), eto.getShop2cNavigationId(), TerminalEnum.BBC.getCode());
         }
 
-
         initGoodsStock(eto, items);
 
         PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = new PCMerchGoodsInfoVO.GoodsIdVO();
         goodsIdVO.setGoodsId(goodsInfo.getId());
+        //添加商品与服务关联数据
+        GoodsServeCor goodsServeCor = new GoodsServeCor();
+        goodsServeCor.setGoodsId(goodsInfo.getId());
+        StringBuilder sb = new StringBuilder();
+        for (String goodsServeId : eto.getGoodsServeIdS()) {
+            sb.append(goodsServeId + ",");
+        }
+        String serveIds = sb.toString();
+        goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
+        goodsServeCorRepository.save(goodsServeCor);
         return goodsIdVO;
     }
 
@@ -636,7 +637,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setIsPointGood(eto.getIsPointGood());
                 skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
                 if (skuInfo.getCostPrice() != null) {
-                    skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
+                    if (ObjectUtil.isEmpty(skuInfo.getPointPrice())) {
+                        skuGoodInfo.setPointPrice(new BigDecimal(0));
+                    } else {
+                        skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
+                    }
                 }
 
                 if (skuInfo.getInMemberPointPrice() != null) {
@@ -689,6 +694,28 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
         if (StringUtils.isNotBlank(eto.getShop2cNavigationId())) {
             createGoodsShopNaigationBind(eto.getJwtMerchantId(), eto.getJwtShopId(), goodsInfo.getId(), eto.getShop2cNavigationId(), TerminalEnum.BBC.getCode());
+        }
+        //添加商品与服务关联数据
+        GoodsServeCor one = goodsServeCorRepository.getOne(Wrappers.<GoodsServeCor>lambdaQuery().eq(GoodsServeCor::getGoodsId, eto.getId()));
+        if (ObjectUtil.isEmpty(one)) {
+            one = new GoodsServeCor();
+            one.setGoodsId(eto.getId());
+            StringBuilder sb = new StringBuilder();
+            for (String goodsServeId : eto.getGoodsServeIdS()) {
+                sb.append(goodsServeId + ",");
+            }
+            String serveIds = sb.toString();
+            one.setServeId(serveIds.substring(0, sb.length() - 1));
+            goodsServeCorRepository.save(one);
+        } else {
+            one.setGoodsId(eto.getId());
+            StringBuilder sb = new StringBuilder();
+            for (String goodsServeId : eto.getGoodsServeIdS()) {
+                sb.append(goodsServeId + ",");
+            }
+            String serveIds = sb.toString();
+            one.setServeId(serveIds.substring(0, sb.length() - 1));
+            goodsServeCorRepository.updateById(one);
         }
 
 
@@ -1115,6 +1142,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
         // spu库存
         detailVO.setSpuStock(getSpuStockNum(goodsInfo.getId(), dto.getJwtShopId()));
+        GoodsServeDTO.IdDTO idDTO = new GoodsServeDTO.IdDTO(dto.getId());
+        List<GoodsServeVO.ListVO> serveListVO = goodsServeRpc.getGoodsServeDetailByGoodsId(idDTO);
+        detailVO.setGoodsServeList(serveListVO);
         return detailVO;
     }
 

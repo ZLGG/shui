@@ -1,4 +1,5 @@
 package com.gs.lshly.common.struct.merchadmin.pc.commodity.dto;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
-* @author Starry
-* @since 2020-10-08
-*/
+ * @author Starry
+ * @since 2020-10-08
+ */
 public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
     @Data
@@ -25,7 +26,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
-        @ApiModelProperty(value = "商品id",hidden = true)
+        @ApiModelProperty(value = "商品id", hidden = true)
         private String id;
 
         @ApiModelProperty("商家id")
@@ -130,7 +131,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoDTO.AddGoodsETO")
-    public static class AddGoodsETO extends ETO{
+    public static class AddGoodsETO extends ETO {
         @ApiModelProperty(value = "sku商品列表")
         private List<PCMerchSkuGoodInfoDTO.AddETO> etoList = new ArrayList<>();
 
@@ -166,7 +167,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "pos店铺spuid")
         private String posSpuId;
-        
+
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
 
@@ -178,6 +179,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty("in会员优惠券类型（20,30,50,99,200）")
         private Integer inCouponType;
+
+        @ApiModelProperty("服务列表")
+        private List<String> goodsServeIdS = new ArrayList<>();
 
     }
 
@@ -205,7 +209,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty(value = "商品id")
         private List<String> idList;
 
-        @ApiModelProperty(value = "扶贫商品id",hidden = true)
+        @ApiModelProperty(value = "扶贫商品id", hidden = true)
         private List<String> fuPinGoodsIdList;
     }
 
@@ -234,62 +238,62 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoDTO.ExcelGoodsDataETO")
-    public static class ExcelGoodsDataETO extends BaseDTO{
-        @ApiModelProperty(value = "一级类目",position = 1)
+    public static class ExcelGoodsDataETO extends BaseDTO {
+        @ApiModelProperty(value = "一级类目", position = 1)
         private String categoryLevel1Name;
 
-        @ApiModelProperty(value = "二级类目",position = 2)
+        @ApiModelProperty(value = "二级类目", position = 2)
         private String categoryLevel2Name;
 
-        @ApiModelProperty(value = "三级类目",position = 3)
+        @ApiModelProperty(value = "三级类目", position = 3)
         private String categoryLevel3Name;
 
-        @ApiModelProperty(value = "商品标题",position = 4)
+        @ApiModelProperty(value = "商品标题", position = 4)
         private String goodsName;
 
-        @ApiModelProperty(value = "商品副标题",position = 5)
+        @ApiModelProperty(value = "商品副标题", position = 5)
         private String goodsTitle;
 
-        @ApiModelProperty(value = "品牌",position =6)
+        @ApiModelProperty(value = "品牌", position = 6)
         private String brandName;
 
-        @ApiModelProperty(value = "sku销售价",position = 7)
+        @ApiModelProperty(value = "sku销售价", position = 7)
         private BigDecimal salePrice;
 
-        @ApiModelProperty(value = "sku原价",position = 8)
+        @ApiModelProperty(value = "sku原价", position = 8)
         private BigDecimal oldPrice;
 
-        @ApiModelProperty(value = "sku成本价",position = 9)
+        @ApiModelProperty(value = "sku成本价", position = 9)
         private BigDecimal costPrice;
 
-        @ApiModelProperty(value = "sku商品库存",position = 10)
+        @ApiModelProperty(value = "sku商品库存", position = 10)
         private Integer stockNum;
 
-        @ApiModelProperty(value = "库存计数方式",position = 11)
+        @ApiModelProperty(value = "库存计数方式", position = 11)
         private Integer stockSubtractType;
 
-        @ApiModelProperty(value = "重量",position = 12)
+        @ApiModelProperty(value = "重量", position = 12)
         private BigDecimal goodsWeight;
 
-        @ApiModelProperty(value = "计价单位",position = 13)
+        @ApiModelProperty(value = "计价单位", position = 13)
         private String chargeUnit;
 
-        @ApiModelProperty(value = "商品有效期",position = 14)
+        @ApiModelProperty(value = "商品有效期", position = 14)
         private Integer goodsValidDays;
 
-        @ApiModelProperty(value = "规格值",position = 15)
+        @ApiModelProperty(value = "规格值", position = 15)
         private String specValue;
 
-        @ApiModelProperty(value = "属性值",position = 16)
+        @ApiModelProperty(value = "属性值", position = 16)
         private String attributeValue;
 
-        @ApiModelProperty(value = "运费模板名称",position =17)
+        @ApiModelProperty(value = "运费模板名称", position = 17)
         private String templateName;
 
-        @ApiModelProperty(value = "店铺自定义类目名称",position =18)
+        @ApiModelProperty(value = "店铺自定义类目名称", position = 18)
         private String shopNavigationName;
 
-        @ApiModelProperty(value = "同一商品标识",position =19)
+        @ApiModelProperty(value = "同一商品标识", position = 19)
         private String goodsNo;
 
         @ApiModelProperty("积分价格")

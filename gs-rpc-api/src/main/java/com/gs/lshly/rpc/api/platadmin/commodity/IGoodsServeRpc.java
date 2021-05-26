@@ -26,7 +26,7 @@ public interface IGoodsServeRpc {
     PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto);
 
     /**
-     * 查询商品详情
+     * 查询商品服务详情
      *
      * @param dto
      * @return
@@ -45,7 +45,7 @@ public interface IGoodsServeRpc {
      *
      * @param eto
      */
-    void editGoodsServe(GoodsServeDTO.ETO eto);
+    void editGoodsServe(GoodsServeDTO.EditDTO eto);
 
     /**
      * 删除服务

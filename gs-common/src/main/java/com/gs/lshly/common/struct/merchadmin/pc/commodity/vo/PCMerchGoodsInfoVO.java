@@ -1,12 +1,15 @@
 package com.gs.lshly.common.struct.merchadmin.pc.commodity.vo;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gs.lshly.common.annotation.ExportProperty;
 import com.gs.lshly.common.struct.merchadmin.pc.commodityfupin.vo.PCMerchGoodsFupinVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,15 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* @author Starry
-* @since 2020-10-08
-*/
+ * @author Starry
+ * @since 2020-10-08
+ */
 public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ListVO")
     @Accessors(chain = true)
-    public static class ListVO implements Serializable{
+    public static class ListVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -125,7 +128,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private String operator;
 
         @ApiModelProperty(value = "发布时间")
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime publishTime;
 
         @ApiModelProperty("积分价格")
@@ -293,11 +296,13 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("扶贫信息")
         private PCMerchGoodsFupinVO.DetailVO fuPinDetailVO;
 
+        @ApiModelProperty(value = "服务数据")
+        private List<GoodsServeVO.ListVO> goodsServeList;
     }
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.SpuListVO")
-    public static class SpuListVO extends ListVO{
+    public static class SpuListVO extends ListVO {
         @ApiModelProperty(value = "库存数量")
         private Integer stockNum;
 
@@ -305,80 +310,80 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private Boolean hasTemplate;
 
         @ApiModelProperty(value = "修改时间")
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime udate;
     }
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.StockAlarmGoodsVO")
-    public static class StockAlarmGoodsVO extends SpuListVO{
+    public static class StockAlarmGoodsVO extends SpuListVO {
 
     }
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ExcelGoodsDataVO")
-    public static class ExcelGoodsDataVO implements Serializable{
-        @ApiModelProperty(value = "一级类目",position = 1)
+    public static class ExcelGoodsDataVO implements Serializable {
+        @ApiModelProperty(value = "一级类目", position = 1)
         private String categoryLevel1Name;
 
-        @ApiModelProperty(value = "二级类目",position = 2)
+        @ApiModelProperty(value = "二级类目", position = 2)
         private String categoryLevel2Name;
 
-        @ApiModelProperty(value = "三级类目",position = 3)
+        @ApiModelProperty(value = "三级类目", position = 3)
         private String categoryLevel3Name;
 
-        @ApiModelProperty(value = "店铺分类",position = 4)
+        @ApiModelProperty(value = "店铺分类", position = 4)
         private String shopNavigation;
 
-        @ApiModelProperty(value = "商品标题",position = 5)
+        @ApiModelProperty(value = "商品标题", position = 5)
         private String goodsName;
 
-        @ApiModelProperty(value = "商品副标题",position = 6)
+        @ApiModelProperty(value = "商品副标题", position = 6)
         private String goodsTitle;
 
-        @ApiModelProperty(value = "品牌",position = 7)
+        @ApiModelProperty(value = "品牌", position = 7)
         private String brandName;
 
-        @ApiModelProperty(value = "商品货号",position = 8)
+        @ApiModelProperty(value = "商品货号", position = 8)
         private String goodsNo;
 
-        @ApiModelProperty(value = "条形码",position = 9)
+        @ApiModelProperty(value = "条形码", position = 9)
         private String goodsBarcode;
 
-        @ApiModelProperty(value = "发布平台",position = 10)
+        @ApiModelProperty(value = "发布平台", position = 10)
         private String publishPlatform;
 
-        @ApiModelProperty(value = "销售价",position = 11)
+        @ApiModelProperty(value = "销售价", position = 11)
         private BigDecimal salePrice;
 
-        @ApiModelProperty(value = "库存",position = 12)
+        @ApiModelProperty(value = "库存", position = 12)
         private Integer stockNum;
 
-        @ApiModelProperty(value = "库存计数方式",position = 13)
+        @ApiModelProperty(value = "库存计数方式", position = 13)
         private String stockSubtractType;
 
-        @ApiModelProperty(value = "原价",position = 14)
+        @ApiModelProperty(value = "原价", position = 14)
         private BigDecimal oldPrice;
 
-        @ApiModelProperty(value = "是否显示原价",position = 15)
+        @ApiModelProperty(value = "是否显示原价", position = 15)
         private String showOrNoOldPrice;
 
-        @ApiModelProperty(value = "成本价",position = 16)
+        @ApiModelProperty(value = "成本价", position = 16)
         private BigDecimal costPrice;
 
-        @ApiModelProperty(value = "重量",position = 17)
+        @ApiModelProperty(value = "重量", position = 17)
         private BigDecimal goodsWeight;
 
-        @ApiModelProperty(value = "计价单位",position = 18)
+        @ApiModelProperty(value = "计价单位", position = 18)
         private String chargeUnit;
 
-        @ApiModelProperty(value = "运费模板名称",position = 19)
+        @ApiModelProperty(value = "运费模板名称", position = 19)
         private String templateName;
 
-        @ApiModelProperty(value = "规格值",position = 20)
+        @ApiModelProperty(value = "规格值", position = 20)
         private String specValue;
 
-        @ApiModelProperty(value = "商品有效期",position = 21)
+        @ApiModelProperty(value = "商品有效期", position = 21)
         private Integer goodsValidDays;
 
         @ApiModelProperty("办理备注")
@@ -406,96 +411,96 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ImportGoodsDataVO")
-    public static class ImportGoodsDataVO implements Serializable{
-        @ApiModelProperty(value = "一级类目",position = 1)
+    public static class ImportGoodsDataVO implements Serializable {
+        @ApiModelProperty(value = "一级类目", position = 1)
         private String categoryLevel1Name;
 
-        @ApiModelProperty(value = "二级类目",position = 2)
+        @ApiModelProperty(value = "二级类目", position = 2)
         private String categoryLevel2Name;
 
-        @ApiModelProperty(value = "三级类目",position = 3)
+        @ApiModelProperty(value = "三级类目", position = 3)
         private String categoryLevel3Name;
 
-        @ApiModelProperty(value = "商品标题",position = 4)
+        @ApiModelProperty(value = "商品标题", position = 4)
         private String goodsName;
 
-        @ApiModelProperty(value = "商品副标题",position = 5)
+        @ApiModelProperty(value = "商品副标题", position = 5)
         private String goodsTitle;
 
-        @ApiModelProperty(value = "品牌",position =6)
+        @ApiModelProperty(value = "品牌", position = 6)
         private String brandName;
 
-        @ApiModelProperty(value = "sku销售价",position = 7)
+        @ApiModelProperty(value = "sku销售价", position = 7)
         private String salePrice;
 
-        @ApiModelProperty(value = "sku原价",position = 8)
+        @ApiModelProperty(value = "sku原价", position = 8)
         private String oldPrice;
 
-        @ApiModelProperty(value = "sku成本价",position = 9)
+        @ApiModelProperty(value = "sku成本价", position = 9)
         private String costPrice;
 
-        @ApiModelProperty(value = "sku商品库存",position = 10)
+        @ApiModelProperty(value = "sku商品库存", position = 10)
         private String stockNum;
 
-        @ApiModelProperty(value = "库存计数方式",position = 11)
+        @ApiModelProperty(value = "库存计数方式", position = 11)
         private String stockSubtractType;
 
-        @ApiModelProperty(value = "重量",position = 12)
+        @ApiModelProperty(value = "重量", position = 12)
         private String goodsWeight;
 
-        @ApiModelProperty(value = "计价单位",position = 13)
+        @ApiModelProperty(value = "计价单位", position = 13)
         private String chargeUnit;
 
-        @ApiModelProperty(value = "商品有效期",position = 14)
+        @ApiModelProperty(value = "商品有效期", position = 14)
         private String goodsValidDays;
 
-        @ApiModelProperty(value = "规格值",position = 15)
+        @ApiModelProperty(value = "规格值", position = 15)
         private String specValue;
 
-        @ApiModelProperty(value = "属性值",position = 16)
+        @ApiModelProperty(value = "属性值", position = 16)
         private String attributeValue;
 
-        @ApiModelProperty(value = "运费模板名称",position =17)
+        @ApiModelProperty(value = "运费模板名称", position = 17)
         private String templateName;
 
-        @ApiModelProperty(value = "店铺自定义2b类目名称",position =18)
+        @ApiModelProperty(value = "店铺自定义2b类目名称", position = 18)
         private String shopNavigationName;
 
-        @ApiModelProperty(value = "店铺自定义2c类目名称",position = 19)
+        @ApiModelProperty(value = "店铺自定义2c类目名称", position = 19)
         private String shopNavigation2cName;
 
-        @ApiModelProperty(value = "同一商品标识",position =20)
+        @ApiModelProperty(value = "同一商品标识", position = 20)
         private String goodsNo;
 
-        @ApiModelProperty(value ="办理备注",position =21)
+        @ApiModelProperty(value = "办理备注", position = 21)
         private String remarks;
 
-        @ApiModelProperty(value ="是否是积分商品",position =22)
+        @ApiModelProperty(value = "是否是积分商品", position = 22)
         private String isPointGood;
 
-        @ApiModelProperty(value ="积分价格",position =23)
+        @ApiModelProperty(value = "积分价格", position = 23)
         private String pointPrice;
 
-        @ApiModelProperty(value ="是否是in会员礼品",position =24)
+        @ApiModelProperty(value = "是否是in会员礼品", position = 24)
         private String isInMemberGift;
 
-        @ApiModelProperty(value ="in会员积分价格",position =25)
+        @ApiModelProperty(value = "in会员积分价格", position = 25)
         private String inMemberPointPrice;
 
-        @ApiModelProperty(value ="出售类型（0普通，1活动）",position =26)
+        @ApiModelProperty(value = "出售类型（0普通，1活动）", position = 26)
         private String saleType;
 
-        @ApiModelProperty(value ="信天游产品号",position =27)
+        @ApiModelProperty(value = "信天游产品号", position = 27)
         private String thirdProductId;
 
-        @ApiModelProperty(value ="兑换类型（0实物，1虚拟）",position =28)
+        @ApiModelProperty(value = "兑换类型（0实物，1虚拟）", position = 28)
         private String exchangeType;
     }
 
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ShopFloorCommodityVO")
-    public static class ShopFloorCommodityVO implements Serializable{
+    public static class ShopFloorCommodityVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -538,7 +543,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ShopNavigationCommodityVO")
-    public static class ShopNavigationCommodityVO implements Serializable{
+    public static class ShopNavigationCommodityVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -556,7 +561,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ShopCategoryGoodsVO")
-    public static class ShopCategoryGoodsVO implements Serializable{
+    public static class ShopCategoryGoodsVO implements Serializable {
         @ApiModelProperty("分类id")
         private String levelId;
 
@@ -572,7 +577,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ShopLevel2CategoryGoodsVO")
-    public static class ShopLevel2CategoryGoodsVO implements Serializable{
+    public static class ShopLevel2CategoryGoodsVO implements Serializable {
         @ApiModelProperty("分类2id")
         private String level2Id;
 
@@ -588,7 +593,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.ShopCategoryVO")
-    public static class ShopLevel3CategoryVO implements Serializable{
+    public static class ShopLevel3CategoryVO implements Serializable {
         @ApiModelProperty("分类3id")
         private String level3Id;
 
@@ -604,7 +609,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.CategorySkuGoodsVO")
-    public static class CategorySkuGoodsVO implements Serializable{
+    public static class CategorySkuGoodsVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String goodsId;
@@ -620,10 +625,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
     }
 
 
-
     @Data
     @ApiModel("PCMerchGoodsInfoVO.InnerServiceGoodsVO")
-    public static class InnerServiceGoodsVO implements Serializable{
+    public static class InnerServiceGoodsVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -635,7 +639,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO")
-    public static class InnerServiceGoodsInfoVO extends ListVO{
+    public static class InnerServiceGoodsInfoVO extends ListVO {
 
         @ApiModelProperty(value = "sku列表")
         private List<PCMerchSkuGoodInfoVO.ListVO> skuList;
@@ -644,7 +648,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.HomeCountGoodsVO")
-    public static class HomeCountGoodsVO implements Serializable{
+    public static class HomeCountGoodsVO implements Serializable {
         @ApiModelProperty("未上架商品数量")
         private Integer underGoodsNum;
 
@@ -661,7 +665,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
     @Data
     @ApiModel("PCMerchGoodsInfoVO.SkuIdByGoodsNoVO")
     @Accessors(chain = true)
-    public static class SkuIdByGoodsNoVO implements Serializable{
+    public static class SkuIdByGoodsNoVO implements Serializable {
         @ApiModelProperty("skuId")
         private String skuId;
 
@@ -673,7 +677,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
     @Data
     @ApiModel("PCMerchGoodsInfoVO.SkuIdByGoodsNoPosVO")
     @Accessors(chain = true)
-    public static class SkuIdByGoodsNoPosVO implements Serializable{
+    public static class SkuIdByGoodsNoPosVO implements Serializable {
         @ApiModelProperty("skuId")
         private String skuId;
 

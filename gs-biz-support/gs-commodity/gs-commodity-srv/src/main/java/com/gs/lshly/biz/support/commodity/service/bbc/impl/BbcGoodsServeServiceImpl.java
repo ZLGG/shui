@@ -1,21 +1,20 @@
-package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
+package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.commodity.entity.GoodsServe;
 import com.gs.lshly.biz.support.commodity.entity.GoodsServeCor;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsServeCorMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsServeMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsServeCorRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsServeRepository;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsServeService;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsServeService;
 import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,41 +23,27 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author hanly
- */
 @Component
-public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
-
+public class BbcGoodsServeServiceImpl implements IBbcGoodsServeService {
     @Autowired
-    private IGoodsServeRepository repository;
-
+    private IGoodsServeRepository goodsServeRepository;
     @Autowired
     private IGoodsServeCorRepository goodsServeCorRepository;
 
     @Override
-    public PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto) {
-        QueryWrapper<GoodsServe> query = MybatisPlusUtil.query();
-        query.orderByDesc("cdate");
-        IPage page = MybatisPlusUtil.pager(qto);
-        repository.page(page, query);
-        return MybatisPlusUtil.toPageData(qto, GoodsServeVO.ListVO.class, page);
-    }
-
-    @Override
-    public List<GoodsServeVO.ListVO> getGoodsServeDetail(GoodsServeDTO.IdDTO dto) {
-        if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
+    public List<BbcGoodsServeVO.ListVO> getGoodsServeDetail(BbcGoodsServeQTO.GoodsInfoQTO qto) {
+        if (ObjectUtil.isEmpty(qto) || StrUtil.isEmpty(qto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
         QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
-        query.eq("goods_id", dto.getId());
+        query.eq("goods_id", qto.getId());
         GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
         List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-        List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-        List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
+        List<GoodsServe> goodsServeList = goodsServeRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+        List<BbcGoodsServeVO.ListVO> listVOS = new ArrayList<>();
         for (GoodsServe goodsServe : goodsServeList) {
-            GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
-            BeanUtil.copyProperties(goodsServe,listVO);
+            BbcGoodsServeVO.ListVO listVO = new BbcGoodsServeVO.ListVO();
+            BeanUtil.copyProperties(goodsServe, listVO);
             listVOS.add(listVO);
         }
         return listVOS;
