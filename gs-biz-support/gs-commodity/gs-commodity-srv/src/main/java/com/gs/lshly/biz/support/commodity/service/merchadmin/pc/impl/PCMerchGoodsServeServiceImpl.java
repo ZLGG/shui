@@ -14,6 +14,9 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsServeRepository;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsServeService;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
@@ -37,7 +40,7 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
     private IGoodsServeCorRepository goodsServeCorRepository;
 
     @Override
-    public PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto) {
+    public PageData<PCMerchGoodsServeVO.ListVO> pageGoodsServeData(PCMerchGoodsServeQTO.QTO qto) {
         QueryWrapper<GoodsServe> query = MybatisPlusUtil.query();
         query.orderByDesc("cdate");
         IPage page = MybatisPlusUtil.pager(qto);
@@ -46,7 +49,7 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
     }
 
     @Override
-    public List<GoodsServeVO.ListVO> getGoodsServeDetail(GoodsServeDTO.IdDTO dto) {
+    public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetail(PCMerchGoodsServeDTO.IdDTO dto) {
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
@@ -55,9 +58,9 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
         List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
         List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-        List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
+        List<PCMerchGoodsServeVO.ListVO> listVOS = new ArrayList<>();
         for (GoodsServe goodsServe : goodsServeList) {
-            GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
+            PCMerchGoodsServeVO.ListVO listVO = new PCMerchGoodsServeVO.ListVO();
             BeanUtil.copyProperties(goodsServe,listVO);
             listVOS.add(listVO);
         }

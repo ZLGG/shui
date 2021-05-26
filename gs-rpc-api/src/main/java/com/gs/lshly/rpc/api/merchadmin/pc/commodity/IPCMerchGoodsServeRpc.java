@@ -1,6 +1,9 @@
 package com.gs.lshly.rpc.api.merchadmin.pc.commodity;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
@@ -19,7 +22,7 @@ public interface IPCMerchGoodsServeRpc {
      *
      * @return
      */
-    PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto);
+    PageData<PCMerchGoodsServeVO.ListVO> pageGoodsServeData(PCMerchGoodsServeQTO.QTO qto);
 
     /**
      * 根据商品id查询商品服务详情
@@ -27,5 +30,5 @@ public interface IPCMerchGoodsServeRpc {
      * @param dto
      * @return
      */
-    List<GoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(GoodsServeDTO.IdDTO dto);
+    List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(PCMerchGoodsServeDTO.IdDTO dto);
 }

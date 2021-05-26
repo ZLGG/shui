@@ -2,6 +2,8 @@ package com.gs.lshly.facade.merchant.controller.pc.commodity;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
 import com.gs.lshly.middleware.auth.rbac.Func;
@@ -31,7 +33,7 @@ public class PCMerchGoodsServeController {
     @ApiOperation("商品服务列表")
     @GetMapping("")
     @Func(code = "view", name = "查看")
-    public ResponseData<PageData<GoodsServeVO.ListVO>> pageGoodsServeData(@RequestBody GoodsServeQTO.QTO qto) {
+    public ResponseData<PageData<PCMerchGoodsServeVO.ListVO>> pageGoodsServeData(@RequestBody PCMerchGoodsServeQTO.QTO qto) {
         return ResponseData.data(goodsServeRpc.pageGoodsServeData(qto));
     }
 }

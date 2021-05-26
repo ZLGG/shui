@@ -2,6 +2,9 @@ package com.gs.lshly.biz.support.commodity.rpc.merchadmin.pc;
 
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsServeService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
@@ -18,12 +21,12 @@ public class PCMerchAdminGoodsServeRpc implements IPCMerchGoodsServeRpc {
     private IPCMerchGoodsServeService goodsServeService;
 
     @Override
-    public PageData<GoodsServeVO.ListVO> pageGoodsServeData(GoodsServeQTO.QTO qto) {
+    public PageData<PCMerchGoodsServeVO.ListVO> pageGoodsServeData(PCMerchGoodsServeQTO.QTO qto) {
         return goodsServeService.pageGoodsServeData(qto);
     }
 
     @Override
-    public List<GoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(GoodsServeDTO.IdDTO dto) {
+    public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(PCMerchGoodsServeDTO.IdDTO dto) {
         return goodsServeService.getGoodsServeDetail(dto);
     }
 }
