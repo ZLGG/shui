@@ -132,9 +132,9 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
                 throw new BusinessException("验证码不匹配");
             }
             BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
-            UpdateWrapper wrapper = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
-            repository.update(wrapper);
             if (vo != null) {
+                UpdateWrapper wrapper = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
+                repository.update(wrapper);
                 return vo;
             }
 

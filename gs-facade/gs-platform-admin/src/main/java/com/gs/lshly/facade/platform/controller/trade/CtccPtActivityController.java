@@ -6,16 +6,13 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
-import com.gs.lshly.middleware.auth.rbac.Func;
-import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityRpc;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,15 +74,15 @@ public class CtccPtActivityController {
 
 
     @ApiOperation("批量删除商品")
-    @GetMapping("/deleteGoods")
-    public ResponseData deleteGoods(List<CtccPtActivityDTO.DeleteGoodsDTO> list) {
+    @PostMapping("/deleteGoods")
+    public ResponseData deleteGoods(@RequestBody List<CtccPtActivityDTO.DeleteGoodsDTO> list) {
         iCtccPtActivityRpc.deleteGoods(list);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
 
-    @ApiModelProperty("上架/下架活动商品")
-    @GetMapping("/updateGoodsState")
-    public ResponseData updateGoodsState(List<CtccPtActivityDTO.RemoveGoodsDTO> list) {
+    @ApiOperation("上架/下架活动商品")
+    @PostMapping("/updateGoodsState")
+    public ResponseData updateGoodsState(@RequestBody List<CtccPtActivityDTO.RemoveGoodsDTO> list) {
         iCtccPtActivityRpc.updateGoodsState(list);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
