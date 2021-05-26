@@ -39,10 +39,10 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
 
     @Override
     public List<PCBBBInUserCouponVO> queryInUserCouponList(BbbInUserCouponQTO.QTO qto) {
-        List<PCBBBInUserCouponVO> userCouponList = inUserCouponMapper.selectList(new QueryWrapper<PCBBBInUserCouponVO>()
-        .eq("user_id",qto.getUserId())
-        .eq("coupon_status",0));
-        return userCouponList;
+//        List<PCBBBInUserCouponVO> userCouponList = inUserCouponMapper.selectList(new QueryWrapper<PCBBBInUserCouponVO>()
+//        .eq("user_id",qto.getUserId())
+//        .eq("coupon_status",0));
+        return null;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
     private InUserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
         // 判断in会员类型 0-年 1-月
         LocalDate startTime = LocalDate.now();
-        LocalDate endTime =  DateUtils.getNextYearDate(startTime);
+        LocalDate endTime =  DateUtils.getHalfNextYearDate(startTime);
         if (1 == qto.getVipType()) {
             endTime = DateUtils.getNextMonthDate(startTime);
         }

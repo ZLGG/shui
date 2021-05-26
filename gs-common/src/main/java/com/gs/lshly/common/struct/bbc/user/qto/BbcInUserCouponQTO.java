@@ -1,5 +1,7 @@
 package com.gs.lshly.common.struct.bbc.user.qto;
 
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,9 +18,6 @@ public class BbcInUserCouponQTO implements Serializable {
     @Data
     @ApiModel("BbcInUserCouponQTO.QTO")
     @Accessors(chain = true)
-    public static class QTO implements Serializable {
-        @ApiModelProperty("in会员userId")
-        @NotBlank(message = "userId不能为空")
-        private String userId;
+    public static class QTO extends BaseDTO {
     }
 }

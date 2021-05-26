@@ -20,8 +20,15 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("gs_in_vip_coupon")
 public class InUserCoupon extends Model {
+    private static final long serialVersionUID = 1L;
+
     /**
-     * 优惠券id
+     * id
+     */
+    private String id;
+
+    /**
+     * 运营配置优惠券id
      */
     private Long couponId;
 
@@ -44,6 +51,11 @@ public class InUserCoupon extends Model {
      * 优惠券抵扣金额
      */
     private BigDecimal couponPrice;
+
+    /**
+     * 使用门槛
+     */
+    private BigDecimal minPrice;
 
     /**
      * 优惠券类型（0-成为会员赠送 1-会员每月分享赠送

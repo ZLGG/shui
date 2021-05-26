@@ -16,7 +16,7 @@ public interface IBbcInUserCouponService {
      * @param qto
      * @return
      */
-    List<BbcInUserCouponVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto);
+    List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto);
 
     /**
      * 购买in会员获得优惠券
@@ -29,4 +29,11 @@ public interface IBbcInUserCouponService {
      * @param qto
      */
     void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto);
+
+    /**
+     * 获取会员卡列表
+     * @param qto
+     * @return
+     */
+    List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto);
 }

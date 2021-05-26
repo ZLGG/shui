@@ -12,10 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,12 +30,16 @@ public class BbcInUserCouponController {
     private IBbcInUserCouponRpc inUserCouponRpc;
 
     @ApiOperation("in会员优惠券列表")
-    @PostMapping("/list")
-    public ResponseData<List<BbcInUserCouponVO>> queryInUserCouponList(@Valid @RequestBody BbcInUserCouponQTO.QTO qto) {
-        if (StringUtils.isEmpty(qto.getUserId())) {
-            throw new BusinessException("用户未登陆");
-        }
+    @GetMapping("/list")
+    public ResponseData<List<BbcInUserCouponVO.ListVO>> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
         return ResponseData.data(inUserCouponRpc.queryInUserCouponList(qto));
+    }
+
+    @ApiOperation("in会员会员卡列表")
+    @GetMapping("/getCardList")
+    public ResponseData<List<BbcInUserCouponVO.CardList>> getCardList(BbcInUserCouponQTO.QTO qto) {
+        List<BbcInUserCouponVO.CardList> resultList = inUserCouponRpc.getCardList(qto);
+        return ResponseData.data(resultList);
     }
 
     @PostMapping("/couponByBuy")
