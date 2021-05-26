@@ -555,21 +555,21 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
          * 100积分=1元钱
          */
         
-        if(detailVO.getMemberType().equals(2)){//积分用户
-        	Integer telecomsIntegralInt = detailVO.getTelecomsIntegral();
-        	BigDecimal telecomsIntegral = new BigDecimal(telecomsIntegralInt+"");
-        	if(pointPrice.compareTo(telecomsIntegral)>0){
-        		BigDecimal bigIntegral = pointPrice.subtract(telecomsIntegral);//需要多付这些积分
-        		BigDecimal bigPrice = bigIntegral.divide(new BigDecimal("100"));//还要多给的现金
-        		price =price.add(bigPrice);
-        		
-        		pointPrice = telecomsIntegral;
-        	}
-        }else{
-        	BigDecimal bigPrice = pointPrice.divide(new BigDecimal("100"));//还要多给的现金
-    		price =price.add(bigPrice);
-    		pointPrice = BigDecimal.ZERO;
-        }
+//        if(detailVO.getMemberType().equals(2)){//积分用户
+//        	Integer telecomsIntegralInt = detailVO.getTelecomsIntegral();
+//        	BigDecimal telecomsIntegral = new BigDecimal(telecomsIntegralInt+"");
+//        	if(pointPrice.compareTo(telecomsIntegral)>0){
+//        		BigDecimal bigIntegral = pointPrice.subtract(telecomsIntegral);//需要多付这些积分
+//        		BigDecimal bigPrice = bigIntegral.divide(new BigDecimal("100"));//还要多给的现金
+//        		price =price.add(bigPrice);
+//        		
+//        		pointPrice = telecomsIntegral;
+//        	}
+//        }else{
+//        	BigDecimal bigPrice = pointPrice.divide(new BigDecimal("100"));//还要多给的现金
+//    		price =price.add(bigPrice);
+//    		pointPrice = BigDecimal.ZERO;
+//        }
         SummationVO summationVO = new SummationVO();
         summationVO.setPointPrice(pointPrice);
         summationVO.setPrice(price);
