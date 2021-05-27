@@ -27,10 +27,10 @@ public interface InUserCouponMapper extends BaseMapper<InUserCoupon> {
     @Select("select end_time, type from gs_user_ctcc_in where user_id = #{userId} and status = 1")
     List<BbcInUserCouponVO.CardList> getCardList(@Param("userId") String userId);
 
-    @Select("select coupon_id, coupon_desc, after_date, effective_date, deduction_amount, use_threshold where coupon_type = 1 and audit_status = 1 and type = '购买'")
+    @Select("select coupon_id, coupon_desc, after_date, effective_date, deduction_amount, use_threshold where coupon_type = 1 and audit_status = 1 and coupon_label = 1")
     List<BbcInUserCouponVO.Coupon> queryCouponByBought();
 
-    @Select("select coupon_id, coupon_desc, after_date, effective_date, deduction_amount, use_threshold where coupon_type = 1 and audit_status = 1 and type = '分享'")
+    @Select("select coupon_id, coupon_desc, after_date, effective_date, deduction_amount, use_threshold where coupon_type = 1 and audit_status = 1 and coupon_label = 2")
     List<BbcInUserCouponVO.Coupon> queryCouponByShare();
 }
 
