@@ -20,4 +20,6 @@ public interface ICouponService {
     CouponVO.CouponDetailVO getDetail(Long id);
 
     PageData<CouponVO.CouponListVO> queryCouponList(CouponQTO.CouponListQTO couponListQTO);
+
+    Boolean updateCouponByCondition(CouponDTO.UpdateCouponByConDTO updateCouponByConDTO);
 }

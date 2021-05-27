@@ -1,15 +1,16 @@
 package com.gs.lshly.biz.support.commodity.service.bbc;
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.CategoryIdCountDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SpecInfoByGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO.SpecListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
-
-import java.util.List;
 
 
 public interface IBbcGoodsInfoService {
@@ -191,6 +192,13 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     List<String> getGoodsIdsByName(String goodsName);
+
+    /**
+     * 跟据商品ID查询SKU
+     * @param qto
+     * @return
+     */
+	List<SpecListVO> listSpecInfoByGoods(SpecInfoByGoodsQTO qto);
 
     /**
      * 是否收藏过商品

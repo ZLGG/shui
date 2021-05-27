@@ -135,4 +135,48 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
     }
+    
+    @Data
+    @ApiModel("BbcGoodsInfoVO.SkuVO")
+    public static  class  SkuByGoodsVO implements  Serializable{
+        
+    	@ApiModelProperty(value = "skuId")
+        private String skuId;
+
+        @ApiModelProperty(value = "规格值")
+        private String specValue;
+
+        @ApiModelProperty("sku商品货号")
+        private String skuGoodsNo;
+
+        @ApiModelProperty("sku商品图片")
+        private String image;
+
+        @ApiModelProperty("sku商品售价")
+        private BigDecimal skuSalePrice;
+
+        @ApiModelProperty("sku库存")
+        private Integer skuStock;
+
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
+
+        @ApiModelProperty("办理备注")
+        private String remarks;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
+
+        @ApiModelProperty("出售类型（0普通，1活动）")
+        private Integer saleType;
+
+        @ApiModelProperty("信天游产品号")
+        private Integer thirdProductId;
+    }
 }

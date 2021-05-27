@@ -323,4 +323,15 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         @NotNull(message = "搜索入口不能为空")
         private Integer searchEntry;
     }
+    
+	@EqualsAndHashCode(callSuper=false)
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.SpecInfoByGoodsQTO")
+    @Accessors(chain = true)
+    public static class SpecInfoByGoodsQTO implements Serializable {
+
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+    }
 }

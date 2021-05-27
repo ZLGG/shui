@@ -70,4 +70,25 @@ public class CouponController {
         PageData<CouponVO.CouponListVO> pageData = iCouponRpc.queryCouponList(qto);
         return ResponseData.data(pageData);
     }
+
+    @ApiOperation("修改优惠券库存数量")
+    @PostMapping("/updateCouponStockNum")
+    public ResponseData updateCouponStockNum(@RequestBody CouponQTO.CouponStockQTO qto) {
+        iCouponRpc.updateStockNum(qto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+
+    @ApiOperation("停止发送")
+    @GetMapping("/stopSendCoupon")
+    public ResponseData stopSendCoupon(@RequestParam("couponId") Long couponId) {
+        iCouponRpc.stopSend(couponId);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+
+    @ApiOperation("审核优惠券")
+    @PostMapping("/dealAduitCoupon")
+    public ResponseData dealAduitCoupon(@RequestBody CouponQTO.CouponAduitQTO qto) {
+        iCouponRpc.dealAduitCoupon(qto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
 }

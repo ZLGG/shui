@@ -47,6 +47,9 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "优惠券描述")
         private String couponDesc;
 
+        @ApiModelProperty(value = "券标题")
+        private String couponLabel;
+
         /**
          * 1-固定时间 2-领取后生效
          */
@@ -77,6 +80,9 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "生效天数")
         private Integer effectiveDate;
 
+        @ApiModelProperty(value = "库存数量限制 1-数量限制 0-无限制")
+        private Integer stockType;
+
         /**
          * 库存数
          */
@@ -88,6 +94,9 @@ public abstract class CouponQTO implements Serializable {
          */
         @ApiModelProperty(value = "减免金额")
         private BigDecimal deductionAmount;
+
+        @ApiModelProperty(value = "减免积分")
+        private Integer deductionPoints;
 
         /**
          * 使用门槛
@@ -155,6 +164,9 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "优惠券描述")
         private String couponDesc;
 
+        @ApiModelProperty(value = "券标题")
+        private String couponLabel;
+
         @ApiModelProperty(value = "1-固定时间 2-领取后生效")
         private Integer useTime;
 
@@ -170,11 +182,17 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "生效天数")
         private Integer effectiveDate;
 
+        @ApiModelProperty(value = "库存数量限制 1-数量限制 0-无限制")
+        private Integer stockType;
+
         @ApiModelProperty(value = "库存数")
         private Integer stockNum;
 
         @ApiModelProperty(value = "减免金额")
         private BigDecimal deductionAmount;
+
+        @ApiModelProperty(value = "减免积分")
+        private Integer deductionPoints;
 
         @ApiModelProperty(value = "使用门槛")
         private BigDecimal useThreshold;
@@ -220,5 +238,29 @@ public abstract class CouponQTO implements Serializable {
 
         @ApiModelProperty(value = "优惠券标题")
         private String couponName;
+    }
+
+    @Data
+    @ApiModel("CouponQTO.CouponStockQTO")
+    @Accessors(chain = true)
+    public static class CouponStockQTO{
+
+        @ApiModelProperty(value = "优惠券id")
+        private Long couponId;
+
+        @ApiModelProperty(value = "库存数")
+        private Integer stockNum;
+    }
+
+    @Data
+    @ApiModel("CouponQTO.CouponAduitQTO")
+    @Accessors(chain = true)
+    public static class CouponAduitQTO{
+
+        @ApiModelProperty(value = "优惠券id")
+        private Long couponId;
+
+        @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
+        private Integer auditStatus;
     }
 }

@@ -14,11 +14,12 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO.IdDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SkuIdListQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SpecInfoByGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 
@@ -185,6 +186,12 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	@Override
 	public List<InnerServiceVO> innerServiceShopGoods(SkuIdListQTO qto) {
 		return bbcGoodsInfoService.innerServiceShopGoods(qto);
+	}
+
+	@Override
+	public List<BbcGoodsSpecInfoVO.SpecListVO> listSpecInfoByGoods(SpecInfoByGoodsQTO qto) {
+		// TODO Auto-generated method stub
+		return bbcGoodsInfoService.listSpecInfoByGoods(qto);
 	}
 
 }

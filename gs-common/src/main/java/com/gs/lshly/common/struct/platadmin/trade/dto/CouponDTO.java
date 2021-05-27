@@ -31,6 +31,9 @@ public class CouponDTO implements Serializable {
         @ApiModelProperty(value = "优惠券描述")
         private String couponDesc;
 
+        @ApiModelProperty(value = "券标题")
+        private String couponLabel;
+
         @ApiModelProperty(value = "1-固定时间 2-领取后生效")
         private Integer useTime;
 
@@ -46,11 +49,17 @@ public class CouponDTO implements Serializable {
         @ApiModelProperty(value = "生效天数")
         private Integer effectiveDate;
 
+        @ApiModelProperty(value = "库存数量限制 1-数量限制 0-无限制")
+        private Integer stockType;
+
         @ApiModelProperty(value = "库存数")
         private Integer stockNum;
 
         @ApiModelProperty(value = "减免金额")
         private BigDecimal deductionAmount;
+
+        @ApiModelProperty(value = "减免积分")
+        private Integer deductionPoints;
 
         @ApiModelProperty(value = "使用门槛")
         private BigDecimal useThreshold;
@@ -99,6 +108,9 @@ public class CouponDTO implements Serializable {
         @ApiModelProperty(value = "优惠券描述")
         private String couponDesc;
 
+        @ApiModelProperty(value = "券标题")
+        private String couponLabel;
+
         @ApiModelProperty(value = "1-固定时间 2-领取后生效")
         private Integer useTime;
 
@@ -114,11 +126,17 @@ public class CouponDTO implements Serializable {
         @ApiModelProperty(value = "生效天数")
         private Integer effectiveDate;
 
+        @ApiModelProperty(value = "库存数量限制 1-数量限制 0-无限制")
+        private Integer stockType;
+
         @ApiModelProperty(value = "库存数")
         private Integer stockNum;
 
         @ApiModelProperty(value = "减免金额")
         private BigDecimal deductionAmount;
+
+        @ApiModelProperty(value = "减免积分")
+        private Integer deductionPoints;
 
         @ApiModelProperty(value = "使用门槛")
         private BigDecimal useThreshold;
@@ -146,6 +164,23 @@ public class CouponDTO implements Serializable {
 
         @ApiModelProperty(value = "适用商品ids")
         private List<String> goodIds;
+    }
+
+    @Data
+    @ApiModel("CouponDTO.UpdateCouponByConDTO")
+    public static class UpdateCouponByConDTO implements Serializable {
+
+        @ApiModelProperty(value = "优惠券id")
+        private Long couponId;
+
+        @ApiModelProperty(value = "优惠券状态（0-未过期 1-已过期 2-停止发放）")
+        private Integer couponStatus;
+
+        @ApiModelProperty(value = "库存数")
+        private Integer stockNum;
+
+        @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
+        private Integer auditStatus;
     }
 
 }
