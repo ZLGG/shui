@@ -6,6 +6,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -157,7 +159,6 @@ public  class DateUtils {
     }
     /**
      * 判断某一日期是否大于当前日期
-     * @param date
      * @return
      */
 //    public static Boolean isLessNowDate(Date date) {
@@ -190,7 +191,6 @@ public  class DateUtils {
     /**
      * 获取当前时间的前一天时间
      *
-     * @param cl
      * @return
      */
     public static String getBeforeDay(int num) {
@@ -204,9 +204,10 @@ public  class DateUtils {
         return qyt;
     }
 
-    /**
-     * 获取当前日期后
-     */
+    public static Integer betweenStartAndEnd(LocalDate startTime, LocalDate endTime) {
+        Long days = startTime.until(endTime, ChronoUnit.DAYS);
+        return Integer.parseInt(days.toString());
+    }
 
     /**
      * 计算两个日期之差

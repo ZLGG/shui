@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
@@ -63,7 +64,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         if (1 == qto.getVipType()) {
             endTime = DateUtils.getNextMonthDate(startTime);
         }
-        // todo 去运营平台获取可发放的优惠券
+        // 去运营平台获取可发放的优惠券
         List<BbcInUserCouponVO.Coupon> couponList = inUserCouponMapper.queryCouponByBought();
         // 根据运营平台发放规则发放优惠券
         List<InUserCoupon> list = new ArrayList<>();
