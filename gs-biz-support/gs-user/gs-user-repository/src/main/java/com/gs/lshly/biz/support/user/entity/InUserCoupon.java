@@ -18,7 +18,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("gs_in_vip_coupon")
+@TableName("gs_user_coupon")
 public class InUserCoupon extends Model {
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +58,7 @@ public class InUserCoupon extends Model {
     private BigDecimal minPrice;
 
     /**
-     * 优惠券类型（0-成为会员赠送 1-会员每月分享赠送
+     * 优惠券类型（优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）
      */
     private Integer couponType;
 
@@ -68,9 +68,13 @@ public class InUserCoupon extends Model {
     private Integer couponStatus;
 
     /**
+     * 优惠券名称
+     */
+    private String couponName;
+
+    /**
      * 优惠券说明
      */
-    @ApiModelProperty("优惠券说明")
     private String couponDesc;
 
     /**

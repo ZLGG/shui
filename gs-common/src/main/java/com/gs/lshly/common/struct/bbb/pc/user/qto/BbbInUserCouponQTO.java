@@ -46,4 +46,12 @@ public class BbbInUserCouponQTO implements Serializable {
         private String userId;
     }
 
+    @Data
+    @ApiModel("BbbInUserCouponQTO.MyCouponQTO")
+    public static class MyCouponQTO implements Serializable {
+        @ApiModelProperty("in会员userId")
+        @NotBlank(message = "userId不能为空")
+        private String userId;
+    }
+
 }

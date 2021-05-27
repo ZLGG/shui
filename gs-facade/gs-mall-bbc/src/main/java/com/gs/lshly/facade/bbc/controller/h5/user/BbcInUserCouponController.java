@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.bbc.controller.h5.user;
 
+import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
@@ -22,14 +23,14 @@ import java.util.List;
  * @create 2021/3/18 10:31
  */
 @RestController
-@RequestMapping("/bbc/userCenter/inUserCoupon")
-@Api(tags = "in会员优惠券管理-v1.1.0")
+@RequestMapping("/bbc/userCenter/userCoupon")
+@Api(tags = "会员卡券中心管理-v1.1.0")
 public class BbcInUserCouponController {
 
     @DubboReference
     private IBbcInUserCouponRpc inUserCouponRpc;
 
-    @ApiOperation("in会员优惠券列表")
+    @ApiOperation("会员优惠券列表")
     @GetMapping("/list")
     public ResponseData<List<BbcInUserCouponVO.ListVO>> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
         return ResponseData.data(inUserCouponRpc.queryInUserCouponList(qto));
@@ -44,15 +45,22 @@ public class BbcInUserCouponController {
 
     @PostMapping("/couponByBuy")
     @ApiOperation("通过购买in会员获得优惠券")
-    public ResponseData getCouponByBuy(@Valid @RequestBody BbbInUserCouponQTO.BuyCouponQTO qto) {
+    public ResponseData getCouponByBuy(@Valid @RequestBody BbcInUserCouponQTO.BuyCouponQTO qto) {
         inUserCouponRpc.getCouponByBuy(qto);
-        return ResponseData.success();
+        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
     @PostMapping("/couponByShare")
     @ApiOperation("通过分享小程序获得优惠券")
-    public ResponseData getCouponByShare(@Valid @RequestBody BbbInUserCouponQTO.ShareCouponQTO qto) {
+    public ResponseData getCouponByShare(@Valid @RequestBody BbcInUserCouponQTO.ShareCouponQTO qto) {
         inUserCouponRpc.getCouponByShare(qto);
-        return ResponseData.success();
+        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
+    }
+
+    @ApiOperation("查看个人可用优惠券")
+    @GetMapping("/getMyCouponToUse")
+    public ResponseData<List<BbcInUserCouponVO.MyCouponListVO>> getMyCouponToUse(@Valid @RequestBody BbcInUserCouponQTO.MyCouponQTO qto) {
+        List<BbcInUserCouponVO.MyCouponListVO> couponVOList = inUserCouponRpc.getMyCouponToUse(qto);
+        return ResponseData.data(couponVOList);
     }
 }

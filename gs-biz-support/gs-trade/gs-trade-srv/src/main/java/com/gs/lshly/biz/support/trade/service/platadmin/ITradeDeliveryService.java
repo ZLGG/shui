@@ -14,7 +14,6 @@ public interface ITradeDeliveryService {
 
     void deleteTradeDelivery(TradeDeliveryDTO.IdDTO dto);
 
-
     void editTradeDelivery(TradeDeliveryDTO.ETO eto);
 
     TradeDeliveryVO.DetailVO detailTradeDelivery(TradeDeliveryDTO.IdDTO dto);

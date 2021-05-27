@@ -14,9 +14,9 @@ import java.util.List;
 public interface IBbcInUserCouponRpc {
     List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto);
 
-    void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
+    void getCouponByBuy(BbcInUserCouponQTO.BuyCouponQTO qto);
 
-    void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto);
+    void getCouponByShare(BbcInUserCouponQTO.ShareCouponQTO qto);
 
     /**
      * 获取会员卡列表
@@ -24,4 +24,11 @@ public interface IBbcInUserCouponRpc {
      * @return
      */
     List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto);
+
+    /**
+     * 获取当前可用优惠券列表
+     * @param qto
+     * @return
+     */
+    List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto);
 }

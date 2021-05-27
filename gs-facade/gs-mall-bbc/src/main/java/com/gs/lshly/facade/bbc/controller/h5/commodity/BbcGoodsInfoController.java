@@ -11,6 +11,9 @@ import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -118,10 +121,10 @@ public class BbcGoodsInfoController {
         List<BbcGoodsSpecInfoVO.SpecListVO> resultList = bbcGoodsInfoRpc.listSpecInfoByGoods(qto);
         return ResponseData.data(resultList);
     }
+
     @ApiOperation("是否收藏商品-v1.1.0")
     @GetMapping("/isCollectGoods")
     public ResponseData isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.isCollectGoods(qto));
     }
-
 }

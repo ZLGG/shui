@@ -22,13 +22,13 @@ public interface IBbcInUserCouponService {
      * 购买in会员获得优惠券
      * @param qto
      */
-    void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
+    void getCouponByBuy(BbcInUserCouponQTO.BuyCouponQTO qto);
 
     /**
      * in会员分享小程序获得优惠券
      * @param qto
      */
-    void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto);
+    void getCouponByShare(BbcInUserCouponQTO.ShareCouponQTO qto);
 
     /**
      * 获取会员卡列表
@@ -36,4 +36,11 @@ public interface IBbcInUserCouponService {
      * @return
      */
     List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto);
+
+    /**
+     * 获取当前可用优惠券列表
+     * @param qto
+     * @return
+     */
+    List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto);
 }
