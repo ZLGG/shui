@@ -1074,4 +1074,11 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Integer isInUser;
     }
 
+    @Data
+    @ApiModel("BbcGoodsInfoVO.isCollectionGoodsVO")
+    public static class isCollectionGoodsVO implements Serializable {
+        @ApiModelProperty("是否收藏（0-未收藏 1-已收藏）")
+        private Integer isCollect;
+    }
+
 }

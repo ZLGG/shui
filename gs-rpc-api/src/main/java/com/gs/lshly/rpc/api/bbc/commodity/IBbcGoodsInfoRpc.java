@@ -204,4 +204,11 @@ public interface IBbcGoodsInfoRpc {
      * @param goodsName
      */
     List<String> getGoodsIdsByName(String goodsName);
+
+    /**
+     * 判断是否收藏过商品
+     * @param qto
+     * @return
+     */
+    BbcGoodsInfoVO.isCollectionGoodsVO isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto);
 }

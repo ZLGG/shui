@@ -116,4 +116,10 @@ public class BbcGoodsInfoController {
         return ResponseData.data(resultList);
     }
 
+    @ApiOperation("是否收藏商品-v1.1.0")
+    @GetMapping("/isCollectGoods")
+    public ResponseData isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.isCollectGoods(qto));
+    }
+
 }

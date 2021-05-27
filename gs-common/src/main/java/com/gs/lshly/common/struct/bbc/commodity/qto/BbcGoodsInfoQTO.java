@@ -215,6 +215,13 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
         private Integer orderByType;
     }
 
+    @Data
+    @ApiModel("BbcGoodsInfoQTO.GoodsIdQTO")
+    public static class GoodsIdQTO extends BaseDTO {
+	    @ApiModelProperty("商品id")
+        private String goodsId;
+    }
+
     //-------------------------------内部服务-------------------------
 
 	@EqualsAndHashCode(callSuper=false)

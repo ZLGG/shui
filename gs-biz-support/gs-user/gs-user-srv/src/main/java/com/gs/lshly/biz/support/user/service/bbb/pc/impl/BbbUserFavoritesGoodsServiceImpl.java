@@ -47,8 +47,6 @@ public class BbbUserFavoritesGoodsServiceImpl implements IBbbUserFavoritesGoodsS
     @DubboReference
     private IPCBbbGoodsInfoRpc bbbGoodsInfoRpc;
 
-
-
     @Override
     public PageData<BbbUserFavoritesGoodsVO.ListVO> pageData(BbbUserFavoritesGoodsQTO.QTO qto) {
         if(null == qto.getJwtUserId()){

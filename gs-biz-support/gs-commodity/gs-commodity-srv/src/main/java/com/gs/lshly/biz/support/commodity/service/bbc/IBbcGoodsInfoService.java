@@ -191,4 +191,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     List<String> getGoodsIdsByName(String goodsName);
+
+    /**
+     * 是否收藏过商品
+     * @param qto
+     * @return
+     */
+    BbcGoodsInfoVO.isCollectionGoodsVO isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto);
 }
