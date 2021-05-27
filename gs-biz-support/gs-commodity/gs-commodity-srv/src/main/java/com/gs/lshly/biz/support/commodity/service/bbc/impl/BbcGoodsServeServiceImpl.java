@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -38,8 +39,14 @@ public class BbcGoodsServeServiceImpl implements IBbcGoodsServeService {
         QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
         query.eq("goods_id", qto.getId());
         GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
+            return null;
+        }
         List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
         List<GoodsServe> goodsServeList = goodsServeRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+        if (CollUtil.isEmpty(goodsServeList)) {
+            return null;
+        }
         List<BbcGoodsServeVO.ListVO> listVOS = new ArrayList<>();
         for (GoodsServe goodsServe : goodsServeList) {
             BbcGoodsServeVO.ListVO listVO = new BbcGoodsServeVO.ListVO();
