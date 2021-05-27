@@ -9,14 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-<<<<<<< HEAD
-=======
-import cn.hutool.core.collection.CollUtil;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
-import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsServeRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
->>>>>>> f2c9f4e9bb454689bd90ebcb5a2301432696b082
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -111,6 +103,7 @@ import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 
