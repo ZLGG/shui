@@ -60,20 +60,33 @@ public abstract class TradeDeliveryVO implements Serializable {
         @ApiModelProperty("操作员id")
         private String operatorId;
 
-
         @ApiModelProperty("操作员姓名")
         private String operatorName;
-
 
         @ApiModelProperty("发货时间")
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime deliveryTime;
 
-
         @ApiModelProperty("发货备注")
         private String deliveryRemark;
 
+        @ApiModelProperty("单据创建时间")
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime cdate;
 
+        @ApiModelProperty("单据确认时间")
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime confirmTime;
+
+        @ApiModelProperty("单据结束时间")
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime endTime;
+
+        @ApiModelProperty("物流费用")
+        private BigDecimal deliveryAmount;
+
+        @ApiModelProperty("手机号码")
+        private String phone;
 
 
     }

@@ -33,11 +33,13 @@ public interface TradeDeliveryMapper extends BaseMapper<TradeDelivery> {
             "WHERE td.`flag`=0 AND t.`flag`=0 AND ${ew.sqlSegment}")
     IPage<PCMerchTradeDeliveryVO.ListVO> selectListPage(IPage<PCMerchTradeDeliveryVO.ListVO> page, @Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeDeliveryQTO.QTO> qw);
 
-    @Select("SELECT td.*,t.`trade_code` trade_code,t.`trade_state` trade_state " +
+    @Select("SELECT td.*,t.`trade_code` trade_code,t.`trade_state` trade_state ,t.`delivery_amount` delivery_amount,t.`recv_time` confirm_time,t.`recv_time` end_time,u.phone phone " +
             "FROM `gs_trade_delivery` td " +
             "LEFT JOIN `gs_trade` t ON t.id=td.`trade_id` " +
+            "LEFT JOIN `gs_user` u ON u.`id`=td.`user_id` " +
             "WHERE td.`flag`=0 AND t.`flag`=0 AND ${ew.sqlSegment}")
     IPage<TradeDeliveryVO.ListVO> selectListPageForPlatform(IPage<TradeDeliveryVO.ListVO> page, @Param(Constants.WRAPPER) QueryWrapper<TradeDeliveryQTO.QTO> qw);
+
     @Select("SELECT td.*,t.`trade_code`,t.`trade_state` " +
             "FROM `gs_trade_delivery` td " +
             "LEFT JOIN `gs_trade` t ON t.id=td.`trade_id` " +
