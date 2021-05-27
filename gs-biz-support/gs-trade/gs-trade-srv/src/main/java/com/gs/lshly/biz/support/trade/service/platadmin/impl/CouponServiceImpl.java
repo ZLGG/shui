@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.Coupon;
@@ -159,5 +160,24 @@ public class CouponServiceImpl implements ICouponService {
         IPage<Coupon> pageData = couponMapper.queryList(page,wrapper);
         List<CouponVO.CouponListVO> activityListVOList = ListUtil.listCover(CouponVO.CouponListVO.class, pageData.getRecords());
         return new PageData<>(activityListVOList, couponListQTO.getPageNum(), couponListQTO.getPageSize(), pageData.getTotal());
+    }
+
+    @Override
+    public Boolean updateCouponByCondition(CouponDTO.UpdateCouponByConDTO updateCouponByConDTO) {
+        UpdateWrapper<Coupon> wrapper = MybatisPlusUtil.update();
+
+        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getAuditStatus())){
+            wrapper.set("audit_status",updateCouponByConDTO.getAuditStatus());
+        }
+
+        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getCouponStatus())){
+            wrapper.set("coupon_status",updateCouponByConDTO.getCouponStatus());
+        }
+
+        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getStockNum())){
+            wrapper.set("stock_num",updateCouponByConDTO.getStockNum());
+        }
+        wrapper.eq("coupon_id", updateCouponByConDTO.getCouponId());
+        return iCouponRepository.update(wrapper);
     }
 }

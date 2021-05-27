@@ -44,4 +44,22 @@ public interface ICouponRpc {
      * @return
      */
     PageData<CouponVO.CouponListVO> queryCouponList(CouponQTO.CouponListQTO couponListQTO);
+
+    /**
+     * 停止发放
+     * @return
+     */
+    Boolean stopSend(Long id);
+
+    /**
+     * 修改库存
+     * @return
+     */
+    Boolean updateStockNum(CouponQTO.CouponStockQTO qto);
+
+    /**
+     * 审核优惠券
+     * @return
+     */
+    Boolean dealAduitCoupon(CouponQTO.CouponAduitQTO qto);
 }
