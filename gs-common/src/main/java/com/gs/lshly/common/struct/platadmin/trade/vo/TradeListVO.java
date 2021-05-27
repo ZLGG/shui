@@ -239,6 +239,22 @@ public abstract class TradeListVO implements Serializable {
         private Integer tradeCount;
 
     }
+    @Data
+    @ApiModel("TradeListVO.TradeRightsGoodsDetailViewVO")
+    public static class TradeRightsGoodsDetailViewVO implements Serializable {
+        @ApiModelProperty("订单号")
+        private String tradeCode;
 
+        @ApiModelProperty("商品名称")
+        private String goodsName;
 
+        @ApiModelProperty("商品数量")
+        private Integer quantity;
+
+        @ApiModelProperty("商品总金额")
+        private BigDecimal goodsAmount;
+
+        @ApiModelProperty("商品单价")
+        private BigDecimal goodsOnePrice;
+    }
 }

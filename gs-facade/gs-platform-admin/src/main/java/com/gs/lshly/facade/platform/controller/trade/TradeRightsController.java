@@ -62,7 +62,7 @@ public class TradeRightsController {
 
     @ApiOperation("退款单列表")
     @PostMapping("/rightsRefunList")
-    public ResponseData<PageData<TradeRightsRefundVO.DetailVO>> rightsRefunList(@Valid @RequestBody TradeRightsQTO.QTO qto) {
+    public ResponseData<PageData<TradeRightsRefundVO.DetailVO>> rightsRefunList(@Valid @RequestBody TradeRightsQTO.NewQTO qto) {
         return ResponseData.data(iTradeRightsRpc.rightsRefunList(qto));
     }
     @ApiOperation("退款单详情")

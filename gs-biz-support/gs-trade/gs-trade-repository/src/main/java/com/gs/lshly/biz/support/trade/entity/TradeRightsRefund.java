@@ -13,13 +13,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
-* <p>
-* 售后退款表
-* </p>
-*
-* @author oy
-* @since 2020-12-06
-*/
+ * <p>
+ * 售后退款表
+ * </p>
+ *
+ * @author oy
+ * @since 2020-12-06
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -29,28 +29,28 @@ public class TradeRightsRefund extends Model {
     private static final long serialVersionUID = 1L;
 
     /**
-    * 售后退款表ID
-    */
+     * 售后退款表ID
+     */
     private String id;
 
     /**
-    * 售后表ID
-    */
+     * 售后表ID
+     */
     private String rightsId;
 
     /**
-    * 订单ID
-    */
+     * 订单ID
+     */
     private String tradeId;
 
     /**
-    * 退款金额
-    */
+     * 退款金额
+     */
     private BigDecimal refundAmount;
 
     /**
-    * 退款结果(10:成功,20:失败)
-    */
+     * 退款结果(10:成功,20:失败)
+     */
     private Integer state;
 
     /**
@@ -58,8 +58,8 @@ public class TradeRightsRefund extends Model {
      */
     private String operationName;
     /**
-    * 退款结果信息
-    */
+     * 退款结果信息
+     */
     private String resultInfo;
     /**
      * 退款银行名字
@@ -90,22 +90,41 @@ public class TradeRightsRefund extends Model {
      */
     private Integer refundType;
 
+    /**
+     * 支付方式
+     */
+    private Integer payType;
 
     /**
-    * 创建时间
-    */
+     * 订单编号
+     */
+    private String tradeCode;
+
+    /**
+     * 电话号码
+     */
+    private String phone;
+
+    /**
+     * 退款积分
+     */
+    private BigDecimal refundPoint;
+
+    /**
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdate;
 
     /**
-    * 更新时间
-    */
+     * 更新时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime udate;
 
     /**
-    * 逻辑删除标记
-    */
+     * 逻辑删除标记
+     */
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;

@@ -68,7 +68,7 @@ public class TradeRightsRpc implements ITradeRightsRpc{
     }
 
     @Override
-    public PageData<TradeRightsRefundVO.DetailVO> rightsRefunList(TradeRightsQTO.QTO qto) {
+    public PageData<TradeRightsRefundVO.DetailVO> rightsRefunList(TradeRightsQTO.NewQTO qto) {
         return TradeRightsService.rightsRefunList(qto);
     }
 

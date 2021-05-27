@@ -11,16 +11,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 
 /**
-* <p>
-*  前端控制器
-* </p>
-*
-* @author 陈奇
-* @since 2020-10-12
-*/
+ * <p>
+ * 前端控制器
+ * </p>
+ *
+ * @author 陈奇
+ * @since 2020-10-12
+ */
 @RestController
 @RequestMapping("/platform/settings")
 @Api(tags = "基本设置管理")
@@ -65,7 +66,7 @@ public class SettingsController {
     @ApiOperation("货到付款设置详情")
     @GetMapping("/detailGetPay")
     public ResponseData<SettingsVO.GetPayVO> detailGetPay() {
-       return ResponseData.data( settingsRpc.detailGetPay(new BaseDTO()));
+        return ResponseData.data(settingsRpc.detailGetPay(new BaseDTO()));
     }
 
     @ApiOperation("货到付款设置编辑")
@@ -154,7 +155,7 @@ public class SettingsController {
     @GetMapping("/rightsSettingsView")
     public ResponseData<SettingsVO.Rights> rightsSettingsView() {
 
-        return ResponseData.data( settingsRpc.rightsSettingsView());
+        return ResponseData.data(settingsRpc.rightsSettingsView());
     }
 
     @ApiOperation("活动开售提醒")
@@ -163,7 +164,6 @@ public class SettingsController {
         settingsRpc.activityStartRemind(dto);
         return ResponseData.data(MsgConst.OPERATOR_SUCCESS);
     }
-
 
 
 }

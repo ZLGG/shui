@@ -109,4 +109,21 @@ public abstract class TradeRightsQTO implements Serializable {
         @ApiModelProperty("售后编号")
         private String id;
     }
+
+    @Data
+    @ApiModel("TradeRightsQTO.NewQTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class NewQTO extends BaseQTO {
+
+        @ApiModelProperty("支付方式[空为全部 10=支付宝 20=微信扫码 30=积分支付]")
+        private Integer payType;
+
+        @ApiModelProperty("手机号码")
+        private String phone;
+
+        @ApiModelProperty("订单编号")
+        private String tradeCode;
+    }
+
 }

@@ -129,7 +129,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         List<GoodsCategoryVO.CategoryTreeVO> list = new ArrayList<>();
         //获取所有三级类目
         QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
-        boost.eq("gs_category_level",3);
+        boost.eq("gs_category_level", 3);
         boost.eq("flag", false);
         boost.orderByAsc("idx", "id");
         List<GoodsCategory> thirdCategories = categoryRepository.list(boost);
@@ -139,10 +139,10 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         // 查询三级类目有商品类目
         List<GoodsCategory> removeThirdList = new ArrayList<>();
         for (GoodsCategory category : thirdCategories) {
-                List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
-                if (ObjectUtils.isEmpty(goodsIds)) {
-                    removeThirdList.add(category);
-                }
+            List<String> goodsIds = goodsInfoMapper.getGoodsByCategory(category.getId());
+            if (ObjectUtils.isEmpty(goodsIds)) {
+                removeThirdList.add(category);
+            }
         }
         thirdCategories.removeAll(removeThirdList);
         // 查询二级类目有商品类目
@@ -151,7 +151,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             secondCategoryIds.add(categories.getParentId());
         });
         QueryWrapper<GoodsCategory> secondQuery = new QueryWrapper<>();
-        secondQuery.in("id",secondCategoryIds);
+        secondQuery.in("id", secondCategoryIds);
         List<GoodsCategory> secondCategories = categoryRepository.list(secondQuery);
         // 查询一级类目有商品类目
         List<String> categoryIds = new ArrayList<>();
@@ -159,7 +159,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             categoryIds.add(categories.getParentId());
         });
         QueryWrapper<GoodsCategory> query = new QueryWrapper<>();
-        query.in("id",categoryIds);
+        query.in("id", categoryIds);
         List<GoodsCategory> categories = categoryRepository.list(query);
 
         // 组装类别树
@@ -399,7 +399,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         }
 
         //判断品牌是否已经关联了商品
-        if (countBindGoods(brandIdListDTO.getIdList(),dto.getId()) > 0){
+        if (countBindGoods(brandIdListDTO.getIdList(), dto.getId()) > 0) {
             throw new BusinessException("品牌已经关联商品不可以直接取消！");
         }
 
@@ -617,12 +617,12 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 
     @Override
     public List<GoodsCategoryVO.ListVO> level2Categories(GoodsCategoryDTO.ApplyIdDTO dto) {
-        if (null == dto || StringUtils.isBlank(dto.getApplyId())){
+        if (null == dto || StringUtils.isBlank(dto.getApplyId())) {
             throw new BusinessException("参数为空异常！！");
         }
-       List<String> idList = categoryApplyRpc.innerGetApplyCategoryIdList(dto.getApplyId());
+        List<String> idList = categoryApplyRpc.innerGetApplyCategoryIdList(dto.getApplyId());
         QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
-        boost.in("parent_id",idList);
+        boost.in("parent_id", idList);
         boost.eq("gs_category_level", GoodsCategoryLevelEnum.TWO.getCode());
         List<GoodsCategory> categories = categoryRepository.list(boost);
         if (ObjectUtils.isEmpty(categories)) {
@@ -664,29 +664,33 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     @Transactional
     public void innerRightsCategorySettings(GoodsCategoryDTO.RightsSetting dto) {
         GoodsCategory goodsCategory = new GoodsCategory();
-        if (ObjectUtils.isNotEmpty(dto.getRefundDays())){
+        if (ObjectUtils.isNotEmpty(dto.getRefundDays())) {
             goodsCategory.setRefundDays(dto.getRefundDays());
-        }else if (ObjectUtils.isNotEmpty(dto.getReturnDays())){
+        } else if (ObjectUtils.isNotEmpty(dto.getReturnDays())) {
             goodsCategory.setReturnDays(dto.getReturnDays());
+        } else if (ObjectUtils.isNotEmpty(dto.getWaitDays())) {
+            goodsCategory.setWaitDays(dto.getWaitDays());
+        } else if (ObjectUtils.isNotEmpty(dto.getAutoDays())) {
+            goodsCategory.setAutoDays(dto.getAutoDays());
         }
         QueryWrapper<GoodsCategory> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("gs_category_level",3));
-        categoryRepository.update(goodsCategory,query);
+        query.and(i -> i.eq("gs_category_level", 3));
+        categoryRepository.update(goodsCategory, query);
     }
 
     @Override
     public List<GoodsCategoryVO.CategoryJoinSearchVO> innerGetIdAndName(List<String> categoryIds) {
-        if (ObjectUtils.isEmpty(categoryIds)){
+        if (ObjectUtils.isEmpty(categoryIds)) {
             return new ArrayList<>();
         }
         QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
-        wrapper.in("id",categoryIds);
-        wrapper.select("id","gs_category_name");
+        wrapper.in("id", categoryIds);
+        wrapper.select("id", "gs_category_name");
         List<GoodsCategory> categories = categoryRepository.list(wrapper);
-        if (ObjectUtils.isEmpty(categories)){
+        if (ObjectUtils.isEmpty(categories)) {
             return new ArrayList<>();
         }
-        List<GoodsCategoryVO.CategoryJoinSearchVO> searchVOList = com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.CategoryJoinSearchVO.class,categories);
+        List<GoodsCategoryVO.CategoryJoinSearchVO> searchVOList = com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.CategoryJoinSearchVO.class, categories);
         return searchVOList;
     }
 
@@ -695,8 +699,8 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         List<GoodsCategoryVO.InnerListVO> innerListVOS = new ArrayList<>();
         QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
         List<GoodsCategory> categories = categoryRepository.list(wrapper);
-        if (ObjectUtils.isNotEmpty(categories)){
-            innerListVOS = com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.InnerListVO.class,categories);
+        if (ObjectUtils.isNotEmpty(categories)) {
+            innerListVOS = com.gs.lshly.common.utils.ListUtil.listCover(GoodsCategoryVO.InnerListVO.class, categories);
         }
         return innerListVOS;
     }
@@ -738,7 +742,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     }
 
     private void checkData(GoodsCategoryDTO.ETO eto) {
-        if (ObjectUtils.isEmpty(eto)){
+        if (ObjectUtils.isEmpty(eto)) {
             throw new BusinessException("参数为空！，异常！！");
         }
         if (StringUtils.isBlank(eto.getGsCategoryName())) {
@@ -768,30 +772,30 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         return count;
     }
 
-    private int countBindGoods(List<String> brandIdList,String categoryId){
+    private int countBindGoods(List<String> brandIdList, String categoryId) {
         int totalCount = 0;
         QueryWrapper<CategoryBrand> categoryBrandQueryWrapper = MybatisPlusUtil.query();
-        categoryBrandQueryWrapper.eq("category_id",categoryId);
+        categoryBrandQueryWrapper.eq("category_id", categoryId);
         List<CategoryBrand> categoryBrands = categoryBrandRepository.list(categoryBrandQueryWrapper);
-        if (ObjectUtils.isEmpty(categoryBrands)){
+        if (ObjectUtils.isEmpty(categoryBrands)) {
             return totalCount;
         }
-        List<String> brandIds = com.gs.lshly.common.utils.ListUtil.getIdList(CategoryBrand.class,categoryBrands,"brandId");
+        List<String> brandIds = com.gs.lshly.common.utils.ListUtil.getIdList(CategoryBrand.class, categoryBrands, "brandId");
         List<String> reduceIds = brandIds.stream().filter(item -> !brandIdList.contains(item)).collect(toList());
-        if (ObjectUtils.isEmpty(reduceIds)){
+        if (ObjectUtils.isEmpty(reduceIds)) {
             return totalCount;
         }
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
-        wrapper.in("brand_id",reduceIds);
-        wrapper.eq("category_id",categoryId);
-        int count =  goodsInfoRepository.count(wrapper);
+        wrapper.in("brand_id", reduceIds);
+        wrapper.eq("category_id", categoryId);
+        int count = goodsInfoRepository.count(wrapper);
 
         QueryWrapper<GoodsMaterialLibrary> wrapper1 = MybatisPlusUtil.query();
-        wrapper1.in("brand_id",reduceIds);
-        wrapper1.eq("category_id",categoryId);
-        int count2 =  goodsMaterialLibraryRepository.count(wrapper1);
+        wrapper1.in("brand_id", reduceIds);
+        wrapper1.eq("category_id", categoryId);
+        int count2 = goodsMaterialLibraryRepository.count(wrapper1);
 
-        totalCount = count+ count2;
+        totalCount = count + count2;
         return totalCount;
     }
 }
