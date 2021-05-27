@@ -36,6 +36,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/bbc/goodsInfo")
 @Api(tags = "2C商城商品信息管理管理-v1.1.0")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class BbcGoodsInfoController {
 
     @DubboReference
@@ -43,7 +44,7 @@ public class BbcGoodsInfoController {
     @DubboReference
     private IBbcShopRpc bbcShopRpc;
 
-    @ApiOperation("2C商城商品信息管理列表-v1.1.0")
+	@ApiOperation("2C商城商品信息管理列表-v1.1.0")
     @GetMapping("")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> pageDataResponseData(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.pageGoodsListVO(qto));
@@ -109,7 +110,7 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.getSearchHistory(qto));
     }
 
-    @ApiOperation("清空历史搜索记录-v1.1.0")
+	@ApiOperation("清空历史搜索记录-v1.1.0")
     @PostMapping("/emptySearchHistory")
     public ResponseData emptySearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         bbcGoodsInfoRpc.emptySearchHistory(qto);
@@ -124,7 +125,7 @@ public class BbcGoodsInfoController {
     }
 
     @ApiOperation("跟据商品ID获取SKU规格列表-v1.1.0")
-    @GetMapping("/listSkuByGoodsId")
+    @GetMapping("/listSpecInfoByGoods")
     public ResponseData<List<BbcGoodsSpecInfoVO.SpecListVO>> listSpecInfoByGoods(BbcGoodsInfoQTO.SpecInfoByGoodsQTO qto) {
         List<BbcGoodsSpecInfoVO.SpecListVO> resultList = bbcGoodsInfoRpc.listSpecInfoByGoods(qto);
         return ResponseData.data(resultList);

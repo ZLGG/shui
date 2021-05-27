@@ -43,6 +43,7 @@ import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
+import com.gs.lshly.common.enums.GoodsBuyRemarkEnum;
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
@@ -370,7 +371,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             activityVOS.add(activityVO);
             detailVo.setActivityVOS(activityVOS);
             ;
-
         }
 
         BeanUtils.copyProperties(goodsInfo, detailVo);
@@ -444,6 +444,11 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
          */
         fillAttributeVOS(detailVo);
 
+        if(!(goodsInfo.getGoodsState()).equals(GoodsStateEnum.已上架.getCode())){
+        	detailVo.setIsBuy(0);
+        	detailVo.setBuyRemark(GoodsBuyRemarkEnum.getRemark(goodsInfo.getGoodsState()));
+        }
+        
         return detailVo;
     }
 

@@ -528,6 +528,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("是否为in会员(1-是 0-否)")
         private Integer isInUser;
+        
+        @ApiModelProperty("商品是否可购买 1:是  0：否")
+        private Integer isBuy = 1;
+        
+        @ApiModelProperty("不能够买原因")
+        private String buyRemark;
 
     }
 

@@ -134,6 +134,12 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
+        
+        @ApiModelProperty("商品是否可购买 1:是  0：否")
+        private Integer isBuy = 1;
+        
+        @ApiModelProperty("不能够买原因")
+        private String buyRemark;
     }
     
     @Data
