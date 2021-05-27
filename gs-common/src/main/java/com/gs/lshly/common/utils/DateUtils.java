@@ -1,5 +1,8 @@
 package com.gs.lshly.common.utils;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.xmlgraphics.util.DateFormatUtil;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -148,7 +151,8 @@ public  class DateUtils {
      * 获取传入日期明年的日期
      * 格式：yyyy-mm-dd
      */
-    public static LocalDate getNextYearDate(LocalDate date) {
+    public static LocalDate getHalfNextYearDate(LocalDate date) {
+        date.plusMonths(6L);
         return date.minusYears(-1);
     }
 
@@ -203,8 +207,50 @@ public  class DateUtils {
         String qyt= format.format(start);//前一天
         return qyt;
     }
+
+    /**
+     * 获取当前日期后
+     */
+
+    /**
+     * 计算两个日期之差
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public static Integer betweenStartAndEnd(Date startTime, Date endTime) {
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(startTime);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(endTime);
+        int day1 = calendar1.get(Calendar.DAY_OF_YEAR);
+        int day2 = calendar2.get(Calendar.DAY_OF_YEAR);
+        int year1 = calendar1.get(Calendar.YEAR);
+        int year2 = calendar2.get(Calendar.YEAR);
+
+        // 不同年
+        if (year1 != year2) {
+            int timeDistance = 0;
+            // 闰年
+            for (int i = year1 ; i < year2 ;i++) {
+                if (i%4==0 && i%100!=0||i%400==0) {
+                    timeDistance += 366;
+                // 不是闰年
+                }else {
+                    timeDistance += 365;
+                }
+            }
+            return  timeDistance + (day2-day1);
+        // 同年
+        }else{
+            return day2-day1;
+        }
+    }
     
     public static void main(String args[]){
     	System.out.println(getBeforeDay(1));
+    	Date startTime = parseDate("yyyy-MM-dd","2021-05-26");
+        Date endTime = parseDate("yyyy-MM-dd","2021-05-27");
+        System.out.println(betweenStartAndEnd(startTime,endTime));
     }
 }

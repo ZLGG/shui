@@ -23,7 +23,6 @@ public class BbcUserFavoritesGoodsRpc implements IBbcUserFavoritesGoodsRpc{
 
     @Override
     public PageData<BbcUserFavoritesGoodsVO.ListVO> pageData(BbcUserFavoritesGoodsQTO.QTO qto) {
-
         return bbcUserFavoritesGoodsService.pageData(qto);
     }
 

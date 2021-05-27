@@ -12,9 +12,16 @@ import java.util.List;
  * @create 2021/3/22 14:14
  */
 public interface IBbcInUserCouponRpc {
-    List<BbcInUserCouponVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto);
+    List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto);
 
     void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto);
 
     void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto);
+
+    /**
+     * 获取会员卡列表
+     * @param qto
+     * @return
+     */
+    List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto);
 }

@@ -23,9 +23,9 @@ public class BbbH5InUserCouponServiceImpl implements IBbbH5InUserCouponService {
 
     @Override
     public List<PCBBBInUserCouponVO> queryInUserCouponList(BbbInUserCouponQTO.QTO qto) {
-        List<PCBBBInUserCouponVO> userCouponList = inUserCouponMapper.selectList(new QueryWrapper<PCBBBInUserCouponVO>()
-        .eq("user_id",qto.getUserId())
-        .eq("coupon_status",0));
+//        List<PCBBBInUserCouponVO> userCouponList = inUserCouponMapper.selectList(new QueryWrapper<PCBBBInUserCouponVO>()
+//        .eq("user_id",qto.getUserId())
+//        .eq("coupon_status",0));
         // 判断优惠券是否过期
 //        userCouponList.stream().forEach(coupon -> {
 //            Boolean result = DateUtils.isLessNowDate(coupon.getEndTime());
@@ -35,6 +35,6 @@ public class BbbH5InUserCouponServiceImpl implements IBbbH5InUserCouponService {
 //                userCouponList.remove(coupon);
 //            }
 //        });
-        return userCouponList;
+        return null;
     }
 }

@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
-import com.gs.lshly.biz.support.user.mapper.UserCouponMapper;
 import com.gs.lshly.biz.support.user.mapper.UserMapper;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
-import com.gs.lshly.common.enums.InUserCouponPriceEnum;
 import com.gs.lshly.common.enums.InUserCouponStatusEnum;
 import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -16,6 +14,7 @@ import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
 import com.gs.lshly.common.utils.DateUtils;
+import com.gs.lshly.common.utils.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +32,6 @@ import java.util.List;
 public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
     @Autowired
-    private UserCouponMapper userCouponMapper;
-    @Autowired
     private InUserCouponRepository couponRepository;
     @Autowired
     private UserMapper userMapper;
@@ -42,11 +39,16 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     private InUserCouponMapper inUserCouponMapper;
 
     @Override
-    public List<BbcInUserCouponVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
-        List<BbcInUserCouponVO> userCouponList = userCouponMapper.selectList(new QueryWrapper<BbcInUserCouponVO>()
-        .eq("user_id",qto.getUserId())
-        .eq("coupon_status",0));
-        return userCouponList;
+    public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
+        List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
+                .eq("user_id",qto.getJwtUserId())
+                .eq("coupon_status",0));
+        List<BbcInUserCouponVO.ListVO> resultList = ListUtil.listCover(BbcInUserCouponVO.ListVO.class,userCouponList);
+        resultList.forEach(coupon ->{
+            // 计算距离过期还剩的天数
+            coupon.setExpireDays(DateUtils.betweenStartAndEnd(coupon.getStartTime(),coupon.getEndTime()));
+        });
+        return resultList;
     }
 
     @Override
@@ -56,12 +58,43 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         if (0 == user.getIsInUser()) {
             throw new BusinessException("非in会员用户不能获取in会员优惠券");
         }
+        LocalDate startTime = LocalDate.now();
+        LocalDate endTime =  DateUtils.getHalfNextYearDate(startTime);
+        if (1 == qto.getVipType()) {
+            endTime = DateUtils.getNextMonthDate(startTime);
+        }
+        // todo 去运营平台获取可发放的优惠券
+        List<BbcInUserCouponVO.Coupon> couponList = inUserCouponMapper.queryCouponByBought();
+        // 根据运营平台发放规则发放优惠券
+        List<InUserCoupon> list = new ArrayList<>();
+        for (BbcInUserCouponVO.Coupon coupon : couponList) {
+            InUserCoupon inUserCoupon = new InUserCoupon()
+                    .setUserId(qto.getUserId())
+                    .setCouponDesc(coupon.getCouponDesc())
+                    .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                    .setCouponType(InUserCouponTypeEnum.购买赠送.getCode())
+                    .setCouponPrice(coupon.getDeductionAmount())
+                    .setMinPrice(coupon.getUseThreshold())
+                    .setCreateTime(new Date())
+                    .setModifyTime(new Date())
+                    .setStartTime(startTime)
+                    .setEndTime(endTime);
+            list.add(inUserCoupon);
+        }
+        couponRepository.saveBatch(list);
+/*        // 自动发放优惠券
         List<InUserCoupon> dtoList = new ArrayList<>();
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二十抵扣券.getCode())));
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.三十抵扣券.getCode())));
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.五十抵扣券.getCode())));
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.九十九抵扣券.getCode())));
-        couponRepository.saveBatch(dtoList);
+        couponRepository.saveBatch(dtoList);*/
+    }
+
+    @Override
+    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto) {
+        List<BbcInUserCouponVO.CardList> cardList = inUserCouponMapper.getCardList(qto.getJwtUserId());
+        return cardList;
     }
 
     @Override
@@ -76,13 +109,35 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         if (num != 0) {
             throw new BusinessException("本月已分享获得过优惠券，不可重复获得");
         }
-        List<InUserCoupon> userCouponList = new ArrayList<>();
+        LocalDate startTime = LocalDate.now();
+        LocalDate endTime =  DateUtils.getNextMonthDate(startTime);
+        // 去运营平台获取可发放的优惠券
+        List<BbcInUserCouponVO.Coupon> couponList = inUserCouponMapper.queryCouponByShare();
+        // 根据运营平台发放规则发放优惠券
+        List<InUserCoupon> list = new ArrayList<>();
+        for (BbcInUserCouponVO.Coupon coupon : couponList) {
+            InUserCoupon inUserCoupon = new InUserCoupon()
+                    .setUserId(qto.getUserId())
+                    .setCouponDesc(coupon.getCouponDesc())
+                    .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                    .setCouponType(InUserCouponTypeEnum.购买赠送.getCode())
+                    .setCouponPrice(coupon.getDeductionAmount())
+                    .setMinPrice(coupon.getUseThreshold())
+                    .setCreateTime(new Date())
+                    .setModifyTime(new Date())
+                    .setStartTime(startTime)
+                    .setEndTime(endTime);
+            list.add(inUserCoupon);
+        }
+        couponRepository.saveBatch(list);
+
+       /* List<InUserCoupon> userCouponList = new ArrayList<>();
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二十抵扣券.getCode())));
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.三十抵扣券.getCode())));
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.五十抵扣券.getCode())));
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.九十九抵扣券.getCode())));
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二百抵扣券.getCode())));
-        couponRepository.saveBatch(userCouponList);
+        couponRepository.saveBatch(userCouponList);*/
     }
 
     private InUserCoupon getCoupon(BbbInUserCouponQTO.ShareCouponQTO qto, BigDecimal money) {
@@ -105,7 +160,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     private InUserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
         // 判断in会员类型 0-年 1-月
         LocalDate startTime = LocalDate.now();
-        LocalDate endTime =  DateUtils.getNextYearDate(startTime);
+        LocalDate endTime =  DateUtils.getHalfNextYearDate(startTime);
         if (1 == qto.getVipType()) {
             endTime = DateUtils.getNextMonthDate(startTime);
         }

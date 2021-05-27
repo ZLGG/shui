@@ -115,5 +115,4 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         private List<String> idList;
 
     }
-
 }
