@@ -10,6 +10,7 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.IdListDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.InnerIdListDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.ModifySkuDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
@@ -85,6 +86,12 @@ public class BbcUserShoppingCarRpc implements IBbcUserShoppingCarRpc{
 	@Override
 	public List<ShopSkuVO> groupShopByCarId(InnerIdListDTO dto) {
 		return bbcUserShoppingCarService.groupShopByCarId(dto);
+	}
+
+	@Override
+	public void modifySku(ModifySkuDTO dto) {
+		bbcUserShoppingCarService.modifySku(dto);
+		
 	}
 
 }

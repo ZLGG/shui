@@ -32,6 +32,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.IdListDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.InnerIdListDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO.ModifySkuDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserShoppingCarQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
@@ -620,5 +621,61 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
         	}
         }
         return shopIdList;
+	}
+
+	@Override
+	public void modifySku(ModifySkuDTO dto) {
+		String id = dto.getId();
+		if (StringUtils.isBlank(dto.getJwtUserId())) {
+            throw new BusinessException("没有登录");
+        }
+        
+		UserShoppingCar userShoppingCar = userShoppingCarMapper.selectById(id);
+		
+		if(userShoppingCar == null)
+			throw new BusinessException("跟据ID未查到对应的购物车商品！");
+		
+		if (null == dto.getQuantity()) {
+            throw new BusinessException("数量不能为空");
+        }
+
+        // 查询商品
+        BbcUserShoppingCarVO.InnerSkuInfoVO skuInfoVO = skuRpc.getSkuInfo(dto.getSkuId());
+        if (skuInfoVO == null) {
+            throw new BusinessException("商品不存在");
+        }
+
+        // 查询购物车
+        userShoppingCar.setGoodsId(skuInfoVO.getGoodsId());
+        userShoppingCar.setGoodsName(skuInfoVO.getGoodsName());
+        userShoppingCar.setGoodsTitle(skuInfoVO.getGoodsTitle());
+        userShoppingCar.setIsPointGood(skuInfoVO.getIsPointGood());
+        userShoppingCar.setGoodsPrice(skuInfoVO.getSkuPrice());
+        userShoppingCar.setGoodsPointPrice(skuInfoVO.getPointPrice());
+        userShoppingCar.setSkuId(dto.getSkuId());
+        userShoppingCar.setSkuImage(skuInfoVO.getSkuImage());
+        userShoppingCar.setSpecValue(skuInfoVO.getSpecValue());
+        userShoppingCar.setShopId(skuInfoVO.getShopId());
+        userShoppingCar.setShopName(skuInfoVO.getShopName());
+        userShoppingCar.setQuantity(dto.getQuantity());
+        userShoppingCar.setExchangeType(skuInfoVO.getExchangeType());
+        userShoppingCar.setIsInMemberGift(skuInfoVO.getIsInMemberGift());
+        userShoppingCar.setInMemberPointPrice(skuInfoVO.getInMemberPointPrice());
+        userShoppingCar.setTerminal(TerminalEnum.BBC.getCode());
+        userShoppingCar.setIsSelect(TrueFalseEnum.是.getCode());
+        userShoppingCar.setUserId(dto.getJwtUserId());
+
+        //商品新增到购物车,检查库存
+        ResponseData<CommonStockVO.InnerCheckStockVO> responseData = commonStockRpc.innerCheckStock(dto, skuInfoVO.getShopId(), userShoppingCar.getSkuId(), userShoppingCar.getQuantity());
+        if (responseData.isSuccess()) {
+            CommonStockVO.InnerCheckStockVO innerCheckStockVO = responseData.getData();
+            if (StockCheckStateEnum.库存正常.getCode().equals(innerCheckStockVO.getCheckState())) {
+                repository.saveOrUpdate(userShoppingCar);
+            } else {
+                throw new BusinessException(StockCheckStateEnum.remark(innerCheckStockVO.getCheckState()));
+            }
+        } else {
+            throw new BusinessException(responseData.getMessage());
+        }
 	}
 }

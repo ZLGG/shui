@@ -44,4 +44,10 @@ public interface IBbcUserShoppingCarService {
      * @return
      */
     List<ShopSkuVO> groupShopByCarId(BbcUserShoppingCarDTO.InnerIdListDTO dto);
+    
+    /**
+     * 变更SKU
+     * @param dto
+     */
+    void modifySku(BbcUserShoppingCarDTO.ModifySkuDTO dto);
 }

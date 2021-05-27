@@ -1,21 +1,38 @@
 package com.gs.lshly.common.struct.bbc.user.dto;
+import java.io.Serializable;
+import java.util.List;
+
 import com.gs.lshly.common.struct.BaseDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
 * @author xxfc
 * @since 2020-10-28
 */
+@SuppressWarnings("serial")
 public abstract class BbcUserShoppingCarDTO implements Serializable {
+	@EqualsAndHashCode(callSuper=false)
+	@Data
+    @ApiModel("BbcUserShoppingCarDTO.ETO")
+    @Accessors(chain = true)
+    public static class ModifySkuDTO extends BaseDTO {
 
+		@ApiModelProperty("id")
+        private String id;
+
+        @ApiModelProperty("SKU-ID")
+        private String skuId;
+
+        @ApiModelProperty("数量")
+        private Integer quantity;
+    }
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.ETO")
     @Accessors(chain = true)
@@ -51,7 +68,7 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         @ApiModelProperty("数量")
         private Integer quantity;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.IdDTO")
     @AllArgsConstructor
@@ -60,7 +77,7 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         @ApiModelProperty(value = "id")
         private String id;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.IdListDTO")
     public static class IdListDTO extends BaseDTO {
@@ -68,7 +85,7 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         @ApiModelProperty(value = "购物车ID数组")
         private List<String> idList;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.QuantityDTO")
     @AllArgsConstructor
@@ -84,7 +101,7 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         private Integer location;
 
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.SelectDTO")
     @AllArgsConstructor
@@ -94,7 +111,7 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         private String id;
 
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.SelectAllDTO")
     @AllArgsConstructor
@@ -106,7 +123,7 @@ public abstract class BbcUserShoppingCarDTO implements Serializable {
         @ApiModelProperty(value = "选中状态[0=否 1=是]")
         private Integer isSelect;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("BbcUserShoppingCarDTO.InnerIdListDTO")
     public static class InnerIdListDTO extends BaseDTO {

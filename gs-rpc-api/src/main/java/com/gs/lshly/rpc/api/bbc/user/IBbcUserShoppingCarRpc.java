@@ -29,6 +29,12 @@ public interface IBbcUserShoppingCarRpc {
     void selectState(BbcUserShoppingCarDTO.SelectDTO eto);
 
     void selectStateAll(BbcUserShoppingCarDTO.SelectAllDTO eto);
+    
+    /**
+     * 修改SKU
+     * @param dto
+     */
+    void modifySku(BbcUserShoppingCarDTO.ModifySkuDTO dto);
 
     /**
      * 获取购物车信息数组(按店铺分组)

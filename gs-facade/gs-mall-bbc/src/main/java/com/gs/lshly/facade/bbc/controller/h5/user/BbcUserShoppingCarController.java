@@ -61,6 +61,13 @@ public class BbcUserShoppingCarController {
         bbcUserShoppingCarRpc.addUserShoppingCar(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
+    
+    @ApiOperation("修改购物车SKUID")
+    @PostMapping("/modifySku")
+    public ResponseData<Void> modifySku(@Valid @RequestBody BbcUserShoppingCarDTO.ModifySkuDTO dto) {
+        bbcUserShoppingCarRpc.modifySku(dto);
+        return ResponseData.success(MsgConst.ADD_SUCCESS);
+    }
 
     @ApiOperation("删除/清空失效购物车商品-v1.1.0")
     @DeleteMapping(value = "/deleteBatch")
