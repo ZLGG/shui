@@ -96,6 +96,7 @@ import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
+import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
@@ -181,6 +182,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @DubboReference
     private IBbcMarketActivityRpc bbcMarketActivityRpc;
 
+    @DubboReference
+    private IBbcStockRpc bbcStockRpc;
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
@@ -667,6 +670,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
                     skuVO.setSpecValue(skuGoodInfo.getSpecsValue());
                     skuVO.setSkuStock(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
+                    
+                    //获取库存数
+                    Integer quantity = bbcStockRpc.getQuantity(skuGoodInfo.getId());
+                    if(quantity==null||quantity.equals(0)){
+                    	skuVO.setIsBuy(0);
+                    	skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
+                    }
+                    
+                    if(!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())){
+                    	skuVO.setIsBuy(0);
+                    	skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
+                    }
                     break;
                 }
             }
