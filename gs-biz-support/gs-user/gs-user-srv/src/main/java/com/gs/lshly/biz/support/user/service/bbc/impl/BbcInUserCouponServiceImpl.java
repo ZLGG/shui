@@ -1,7 +1,6 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.biz.support.user.entity.User;

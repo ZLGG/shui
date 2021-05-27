@@ -933,6 +933,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("sku商品id")
         private String skuId;
 
+        @ApiModelProperty("店铺id")
+        private String shopId;
+
         @ApiModelProperty("商品默认图片")
         private String goodsImage;
 
