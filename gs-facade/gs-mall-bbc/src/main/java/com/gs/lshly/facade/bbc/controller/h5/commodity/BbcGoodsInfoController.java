@@ -1,16 +1,4 @@
 package com.gs.lshly.facade.bbc.controller.h5.commodity;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
@@ -23,7 +11,11 @@ import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.List;
 
 /**
 * <p>
@@ -129,5 +121,11 @@ public class BbcGoodsInfoController {
     public ResponseData<List<BbcGoodsSpecInfoVO.SpecListVO>> listSpecInfoByGoods(BbcGoodsInfoQTO.SpecInfoByGoodsQTO qto) {
         List<BbcGoodsSpecInfoVO.SpecListVO> resultList = bbcGoodsInfoRpc.listSpecInfoByGoods(qto);
         return ResponseData.data(resultList);
+    }
+
+    @ApiOperation("是否收藏商品-v1.1.0")
+    @GetMapping("/isCollectGoods")
+    public ResponseData isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.isCollectGoods(qto));
     }
 }

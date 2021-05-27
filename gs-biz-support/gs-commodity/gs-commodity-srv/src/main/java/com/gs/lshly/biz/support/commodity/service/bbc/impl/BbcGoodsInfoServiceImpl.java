@@ -143,7 +143,6 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private GoodsSearchHistoryMapper searchHistoryMapper;
     @Autowired
     private IGoodsAttributeInfoRepository goodsAttributeInfoRepository;
-
     @Autowired
     private IBbcGoodsCategoryService bbcGoodsCategoryService;
 
@@ -1415,6 +1414,19 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         wrapper.eq("flag", false);
         List<String> goodsIds = goodsInfoMapper.getGoodsIdsByName(wrapper);
         return goodsIds;
+    }
+
+    @Override
+    public BbcGoodsInfoVO.isCollectionGoodsVO isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto) {
+        Integer count = goodsInfoMapper.isCollectGoods(qto.getGoodsId(),qto.getJwtUserId());
+        BbcGoodsInfoVO.isCollectionGoodsVO goodsVO = new BbcGoodsInfoVO.isCollectionGoodsVO();
+        // 0-未收藏 1-已收藏
+        if (count != 0) {
+            goodsVO.setIsCollect(1);
+        }else {
+            goodsVO.setIsCollect(0);
+        }
+        return goodsVO;
     }
 
     @Override

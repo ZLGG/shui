@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.biz.support.user.mapper.UserCouponDTOMapper;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,4 +13,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class InUserCouponRepositoryImpl extends ServiceImpl<UserCouponDTOMapper, InUserCoupon>implements InUserCouponRepository {
+    @Autowired
+    private UserCouponDTOMapper userCouponMapper;
+    @Override
+    public Boolean getMyCouponByGoodsId(String goodsId, Long couponId) {
+        Integer isExist = userCouponMapper.getMyCouponByGoodsId(goodsId,couponId);
+        if (isExist == 0) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -30,17 +30,22 @@ public class BbcInUserCouponRpc implements IBbcInUserCouponRpc {
     }
 
     @Override
+    public List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto) {
+        return inUserCouponService.getMyCouponToUse(qto);
+    }
+
+    @Override
     public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto) {
         return inUserCouponService.getCardList(qto);
     }
 
     @Override
-    public void getCouponByShare(BbbInUserCouponQTO.ShareCouponQTO qto) {
+    public void getCouponByShare(BbcInUserCouponQTO.ShareCouponQTO qto) {
         inUserCouponService.getCouponByShare(qto);
     }
 
     @Override
-    public void getCouponByBuy(BbbInUserCouponQTO.BuyCouponQTO qto) {
+    public void getCouponByBuy(BbcInUserCouponQTO.BuyCouponQTO qto) {
         inUserCouponService.getCouponByBuy(qto);
     }
 }

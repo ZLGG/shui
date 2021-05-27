@@ -117,8 +117,8 @@ CREATE TABLE `gs_trade_goods_travelsky` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='信天游商品日志表';
 
-DROP TABLE IF EXISTS `gs_in_vip_coupon`;
-CREATE TABLE `gs_in_vip_coupon` (
+DROP TABLE IF EXISTS `gs_user_coupon`;
+CREATE TABLE `gs_user_coupon` (
   `id` varchar(32) NOT NULL COMMENT '主键id',
   `coupon_id` bigint(20) NOT NULL COMMENT '运营配置优惠券id',
   `user_id` varchar(32) NOT NULL COMMENT 'in会员userId',
@@ -156,7 +156,7 @@ ALTER TABLE `fy_mall`.`gs_user_shopping_car`
 ALTER TABLE `fy_mall`.`gs_goods_info`
 MODIFY COLUMN `is_suport_poor_goods` int(11) NULL DEFAULT 10 COMMENT '是否是扶贫商品(10=标准商品 20=扶贫商品）' AFTER `is_show_old_price`;
 
-ALTER TABLE `fy_mall`.`gs_in_vip_coupon`
+ALTER TABLE `fy_mall`.`gs_user_coupon`
     DROP COLUMN `min_price`
 ALTER TABLE `fy_mall`.`gs_goods_info`
 ADD COLUMN `click_volume` int(11) NOT NULL DEFAULT 0 COMMENT '点击量（临时）' AFTER `exchange_type`;

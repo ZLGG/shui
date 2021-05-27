@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -19,5 +20,38 @@ public class BbcInUserCouponQTO implements Serializable {
     @ApiModel("BbcInUserCouponQTO.QTO")
     @Accessors(chain = true)
     public static class QTO extends BaseDTO {
+        @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+        private Integer couponType;
     }
+
+    @Data
+    @ApiModel("BbcInUserCouponQTO.BuyCouponQTO")
+    @Accessors(chain = true)
+    public static class BuyCouponQTO implements Serializable {
+        @ApiModelProperty("in会员userId")
+        @NotBlank(message = "userId不能为空")
+        private String userId;
+
+        @ApiModelProperty("会员类型（0-年度会员，1-月度会员）")
+        @NotNull(message = "会员类型不能为空")
+        private Integer vipType;
+    }
+
+    @Data
+    @ApiModel("BbcInUserCouponQTO.ShareCouponQTO")
+    @Accessors(chain = true)
+    public static class ShareCouponQTO implements Serializable {
+        @ApiModelProperty("in会员userId")
+        @NotBlank(message = "userId不能为空")
+        private String userId;
+    }
+
+    @Data
+    @ApiModel("BbcInUserCouponQTO.MyCouponQTO")
+    public static class MyCouponQTO extends BaseDTO {
+        @ApiModelProperty("商品id")
+        @NotBlank(message = "商品id不能为空")
+        private String goodsId;
+    }
+
 }

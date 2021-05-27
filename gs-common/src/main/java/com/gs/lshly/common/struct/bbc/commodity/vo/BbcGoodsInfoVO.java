@@ -939,6 +939,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         @ApiModelProperty("sku商品id")
         private String skuId;
 
+        @ApiModelProperty("店铺id")
+        private String shopId;
+
         @ApiModelProperty("商品默认图片")
         private String goodsImage;
 
@@ -1078,6 +1081,13 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("是否为in会员(1-是 0-否)")
         private Integer isInUser;
+    }
+
+    @Data
+    @ApiModel("BbcGoodsInfoVO.isCollectionGoodsVO")
+    public static class isCollectionGoodsVO implements Serializable {
+        @ApiModelProperty("是否收藏（0-未收藏 1-已收藏）")
+        private Integer isCollect;
     }
 
 }

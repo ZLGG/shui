@@ -114,14 +114,15 @@ public class UserServiceImpl implements IUserService {
         if(ObjectUtils.isNotEmpty(qto.getIsInUser())){
             wrapper.eq("us.is_in_user",qto.getIsInUser());
         }
-        if(ObjectUtils.isNotEmpty(qto.getLabelId())){
-            wrapper.eq("dict.id",qto.getLabelId());
-        }
         if(ObjectUtils.isNotEmpty(qto.getTelecomsLevel())){
             wrapper.eq("us.telecoms_level",qto.getTelecomsLevel());
         }
         if(ObjectUtils.isNotEmpty(qto.getCity())){
             wrapper.eq("us.city",qto.getCity());
+        }
+
+        if(ObjectUtils.isNotEmpty(qto.getLabelId())){
+            wrapper.like("tm.label_ids",qto.getLabelId());
         }
 
         wrapper.orderByDesc("us.cdate");

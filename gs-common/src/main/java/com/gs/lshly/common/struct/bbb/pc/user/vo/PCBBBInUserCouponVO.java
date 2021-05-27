@@ -14,7 +14,7 @@ import java.util.Date;
  * @create 2021/3/18 10:04
  */
 @Data
-@TableName(value = "gs_in_vip_coupon")
+@TableName(value = "gs_user_coupon")
 public class PCBBBInUserCouponVO implements Serializable {
     @ApiModelProperty("优惠券id")
     private Long couponId;

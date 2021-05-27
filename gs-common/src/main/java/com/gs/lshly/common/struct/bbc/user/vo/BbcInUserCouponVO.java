@@ -1,7 +1,5 @@
 package com.gs.lshly.common.struct.bbc.user.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
@@ -47,6 +45,13 @@ public class BbcInUserCouponVO implements Serializable {
 
         @ApiModelProperty("优惠券说明")
         private String couponDesc;
+
+        @ApiModelProperty("优惠券名称")
+        private String couponName;
+
+        @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+        private Integer couponType;
+
     }
 
     @ApiModel("BbcInUserCouponVO.CardList")
@@ -56,7 +61,7 @@ public class BbcInUserCouponVO implements Serializable {
         @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
         private Date endTime;
 
-        @ApiModelProperty("会员卡类型（1-月会员，2-IN会员）")
+        @ApiModelProperty("会员卡类型（1-月会员，2-年会员）")
         private Integer type;
     }
 
@@ -110,6 +115,34 @@ public class BbcInUserCouponVO implements Serializable {
          */
         private String couponDescription;
 
+    }
+
+    @ApiModel("BbcInUserCouponVO.MyCouponListVO")
+    @Data
+    public static class MyCouponListVO implements Serializable {
+        @ApiModelProperty("优惠券id")
+        private String id;
+
+        @ApiModelProperty("优惠券使用开始时间")
+        private LocalDate startTime;
+
+        @ApiModelProperty("优惠券使用结束时间")
+        private LocalDate endTime;
+
+        @ApiModelProperty("优惠券抵扣金额")
+        private BigDecimal couponPrice;
+
+        @ApiModelProperty("使用门槛")
+        private BigDecimal minPrice;
+
+        @ApiModelProperty("优惠券说明")
+        private String couponDesc;
+
+        @ApiModelProperty("优惠券名称")
+        private String couponName;
+
+        @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+        private Integer couponType;
     }
 
 }

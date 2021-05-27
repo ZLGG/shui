@@ -33,7 +33,7 @@ public interface ITradeRightsRpc {
 
     void getRightsRefundAmont(TradeRightsDTO.RefundDTO dto);
 
-    PageData<TradeRightsRefundVO.DetailVO> rightsRefunList(TradeRightsQTO.QTO qto);
+    PageData<TradeRightsRefundVO.DetailVO> rightsRefunList(TradeRightsQTO.NewQTO qto);
 
     TradeRightsRefundVO.DetailViewVO rightsRefunView(TradeRightsRefundDTO.IdDTO dto);
 }

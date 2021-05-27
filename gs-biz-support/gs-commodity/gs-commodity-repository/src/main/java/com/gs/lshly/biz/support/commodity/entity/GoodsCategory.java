@@ -45,7 +45,7 @@ public class GoodsCategory extends Model {
     private Integer gsCategoryLevel;
 
     /**
-     *商品类别logo
+     * 商品类别logo
      */
     private String gsCategoryLogo;
 
@@ -88,6 +88,16 @@ public class GoodsCategory extends Model {
      * 换货设置的天数
      */
     private Integer returnDays;
+
+    /**
+     * 待付款设置的天数
+     */
+    private Integer waitDays;
+
+    /**
+     * 自动收货设置的天数
+     */
+    private Integer autoDays;
 
     /**
      * 创建时间

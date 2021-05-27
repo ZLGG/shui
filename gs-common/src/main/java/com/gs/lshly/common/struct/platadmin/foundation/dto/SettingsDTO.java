@@ -88,7 +88,7 @@ public abstract class SettingsDTO implements Serializable {
         @ApiModelProperty("是否开启售后时间限制[10=是 20=否]")
         private Integer isRightsTimeLimit;
 
-        @ApiModelProperty("售后类型[10=退货 20-退款]")
+        @ApiModelProperty("售后类型[10=退货 20-换货 30-待付款 40-自动收货]")
         private Integer rightsType;
 
         @ApiModelProperty("天数")

@@ -117,6 +117,11 @@ public abstract class GoodsCategoryDTO implements Serializable {
         @ApiModelProperty(value = "换货设置的天数")
         private Integer returnDays;
 
+        @ApiModelProperty(value = "待付款设置的天数")
+        private Integer waitDays;
+
+        @ApiModelProperty(value = "自动收货设置的天数")
+        private Integer autoDays;
 
 
 

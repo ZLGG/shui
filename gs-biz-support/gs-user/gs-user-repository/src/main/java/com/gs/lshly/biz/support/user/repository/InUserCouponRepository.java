@@ -9,4 +9,6 @@ import com.gs.lshly.biz.support.user.entity.InUserCoupon;
  * in会员优惠券
  */
 public interface InUserCouponRepository extends IService<InUserCoupon> {
+    // 查询当前商品个人可用优惠券
+    Boolean getMyCouponByGoodsId(String goodsId, Long couponId);
 }

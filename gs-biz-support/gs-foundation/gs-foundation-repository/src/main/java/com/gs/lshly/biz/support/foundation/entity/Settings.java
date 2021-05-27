@@ -2,7 +2,9 @@ package com.gs.lshly.biz.support.foundation.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+
 import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -10,6 +12,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.time.LocalDateTime;
 
 /**
@@ -122,6 +125,26 @@ public class Settings extends Model {
      * 换货限制天数
      */
     private Integer returnDays;
+
+    /**
+     * 是否开启待付款时间限制[10=是 20=否]
+     */
+    private Integer isWaitTimeLimit;
+
+    /**
+     * 待付款限制天数
+     */
+    private Integer waitDays;
+
+    /**
+     * 是否开启自动收获时间限制[10=是 20=否]
+     */
+    private Integer isAutoTimeLimit;
+
+    /**
+     * 自动收货限制天数
+     */
+    private Integer autoDays;
 
     /**
      * 活动开售提醒短线上限条数

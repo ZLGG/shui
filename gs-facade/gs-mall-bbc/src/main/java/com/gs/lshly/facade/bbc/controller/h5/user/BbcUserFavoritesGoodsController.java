@@ -28,7 +28,7 @@ public class BbcUserFavoritesGoodsController {
     @DubboReference
     private IBbcUserFavoritesGoodsRpc bbcUserFavoritesGoodsRpc;
 
-    @ApiOperation("商品收藏列表")
+    @ApiOperation("商品收藏列表-v1.1.0")
     @GetMapping("")
     public ResponseData<PageData<BbcUserFavoritesGoodsVO.ListVO>> list(BbcUserFavoritesGoodsQTO.QTO qto) {
         return ResponseData.data(bbcUserFavoritesGoodsRpc.pageData(qto));

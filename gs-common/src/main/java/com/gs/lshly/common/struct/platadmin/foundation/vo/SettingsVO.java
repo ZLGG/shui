@@ -102,6 +102,29 @@ public abstract class SettingsVO implements Serializable {
         @ApiModelProperty("换货限制天数")
         private Integer returnDays;
 
+        /**
+         * 是否开启待付款时间限制[10=是 20=否]
+         */
+        @ApiModelProperty("是否开启待付款时间限制[10=是 20=否]")
+        private Integer isWaitTimeLimit;
+
+        /**
+         * 待付款限制天数
+         */
+        @ApiModelProperty("待付款限制天数")
+        private Integer waitDays;
+
+        /**
+         * 是否开启自动收获时间限制[10=是 20=否]
+         */
+        @ApiModelProperty("是否开启自动收获时间限制[10=是 20=否]")
+        private Integer isAutoTimeLimit;
+
+        /**
+         * 自动收货限制天数
+         */
+        @ApiModelProperty("自动收货限制天数")
+        private Integer autoDays;
 
         @ApiModelProperty("活动开售提醒短线上限条数")
         private Integer  activityMessageCount;

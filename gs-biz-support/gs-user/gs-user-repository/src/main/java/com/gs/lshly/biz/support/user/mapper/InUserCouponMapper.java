@@ -18,10 +18,10 @@ import java.util.List;
 @Repository
 public interface InUserCouponMapper extends BaseMapper<InUserCoupon> {
 
-    @Update("update gs_in_vip_coupon set coupon_status = 2 where coupon_id = #{couponId}")
+    @Update("update gs_user_coupon set coupon_status = 2 where coupon_id = #{couponId}")
     void updateCouponStatus(@Param("couponId") Long couponId);
 
-    @Select("SELECT count(id) FROM gs_in_vip_coupon WHERE user_id = #{userId} and DATE_FORMAT(start_time,'%Y-%m')=date_format(CURDATE(),'%Y-%m') and coupon_type = 1")
+    @Select("SELECT count(id) FROM gs_user_coupon WHERE user_id = #{userId} and DATE_FORMAT(start_time,'%Y-%m')=date_format(CURDATE(),'%Y-%m') and coupon_type = 1")
     Integer selectIsShare(@Param("userId") String userId);
 
     @Select("select end_time, type from gs_user_ctcc_in where user_id = #{userId} and status = 1")
