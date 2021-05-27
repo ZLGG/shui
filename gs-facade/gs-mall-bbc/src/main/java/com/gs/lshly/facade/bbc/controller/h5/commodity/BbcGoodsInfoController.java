@@ -1,21 +1,28 @@
 package com.gs.lshly.facade.bbc.controller.h5.commodity;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 
 /**
@@ -116,4 +123,10 @@ public class BbcGoodsInfoController {
         return ResponseData.data(resultList);
     }
 
+    @ApiOperation("跟据商品ID获取SKU规格列表-v1.1.0")
+    @GetMapping("/listSkuByGoodsId")
+    public ResponseData<List<BbcGoodsSpecInfoVO.SpecListVO>> listSpecInfoByGoods(BbcGoodsInfoQTO.SpecInfoByGoodsQTO qto) {
+        List<BbcGoodsSpecInfoVO.SpecListVO> resultList = bbcGoodsInfoRpc.listSpecInfoByGoods(qto);
+        return ResponseData.data(resultList);
+    }
 }

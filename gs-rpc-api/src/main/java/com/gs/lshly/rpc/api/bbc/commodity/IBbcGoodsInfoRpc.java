@@ -6,6 +6,7 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 
 /**
@@ -204,4 +205,11 @@ public interface IBbcGoodsInfoRpc {
      * @param goodsName
      */
     List<String> getGoodsIdsByName(String goodsName);
+    
+    /**
+     * 获取商品的SKU列表
+     * @param qto
+     * @return
+     */
+    List<BbcGoodsSpecInfoVO.SpecListVO> listSpecInfoByGoods(BbcGoodsInfoQTO.SpecInfoByGoodsQTO qto);
 }

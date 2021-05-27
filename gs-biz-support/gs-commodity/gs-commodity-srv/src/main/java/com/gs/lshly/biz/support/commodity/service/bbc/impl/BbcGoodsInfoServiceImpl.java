@@ -9,10 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
-import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsServeRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -69,12 +65,14 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SkuIdListQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.AttributeVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.PromiseVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
@@ -92,6 +90,7 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsServeRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
@@ -1589,6 +1588,49 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             innerServiceVOS.add(serviceVO);
         }
         return innerServiceVOS;
+    }
+
+	@Override
+	public List<BbcGoodsSpecInfoVO.SpecListVO> listSpecInfoByGoods(BbcGoodsInfoQTO.SpecInfoByGoodsQTO qto) {
+		String id = qto.getGoodsId();
+		GoodsInfo goodsInfo = repository.getById(id);
+		if(goodsInfo==null)
+			 throw new BusinessException("数据异常");
+		
+        QueryWrapper<SkuGoodInfo> queryWrapperBoost = MybatisPlusUtil.query();
+        queryWrapperBoost.eq("good_id", goodsInfo.getId());
+        List<SkuGoodInfo> skuGoodInfos = skuGoodInfoRepository.list(queryWrapperBoost);
+
+        if (ObjectUtils.isEmpty(skuGoodInfos)) {
+            throw new BusinessException("数据异常");
+        }
+        //多规格才有规格值
+        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.多规格.getCode().intValue()) {
+            String specKeys = skuGoodInfos.get(0).getSpecsKey();
+            if (StringUtils.isEmpty(specKeys)) {
+                throw new BusinessException("sku数据异常");
+            }
+
+            //根据规格拓展id查询拓展信息
+            List<String> specKeyList = Arrays.asList(specKeys.split(","));
+            List<GoodsSpecInfo> specInfos = specInfoRepository.listByIds(specKeyList);
+
+            if (ObjectUtils.isEmpty(specInfos)) {
+                throw new BusinessException("规格数据异常！");
+            }
+            List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS = new ArrayList<>();
+            for (GoodsSpecInfo specInfo : specInfos) {
+                BbcGoodsSpecInfoVO.SpecListVO specListVO = new BbcGoodsSpecInfoVO.SpecListVO();
+                if (StringUtils.isEmpty(specInfo.getSpecValue()) || StringUtils.isEmpty(specInfo.getSpecName())) {
+                    throw new BusinessException("规格数据异常");
+                }
+                specListVO.setSpecName(specInfo.getSpecName());
+                specListVO.setSpecValues(Arrays.asList(specInfo.getSpecValue().split(",")));
+                specListVOS.add(specListVO);
+            }
+            return specListVOS;
+        }
+        return new ArrayList<>();
     }
 
 }
