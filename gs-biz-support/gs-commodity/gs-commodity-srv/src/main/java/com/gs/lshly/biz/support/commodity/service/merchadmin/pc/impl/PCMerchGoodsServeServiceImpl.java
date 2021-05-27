@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -56,12 +57,18 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
         GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
+            return null;
+        }
         List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
         List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+        if (CollUtil.isEmpty(goodsServeList)) {
+            return null;
+        }
         List<PCMerchGoodsServeVO.ListVO> listVOS = new ArrayList<>();
         for (GoodsServe goodsServe : goodsServeList) {
             PCMerchGoodsServeVO.ListVO listVO = new PCMerchGoodsServeVO.ListVO();
-            BeanUtil.copyProperties(goodsServe,listVO);
+            BeanUtil.copyProperties(goodsServe, listVO);
             listVOS.add(listVO);
         }
         return listVOS;

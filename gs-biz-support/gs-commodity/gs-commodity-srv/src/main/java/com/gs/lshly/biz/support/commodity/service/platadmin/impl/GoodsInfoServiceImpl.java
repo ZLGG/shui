@@ -302,15 +302,19 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
         GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
-        List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-        List<GoodsServe> goodsServeList = goodsServeRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-        List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
-        for (GoodsServe goodsServe : goodsServeList) {
-            GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
-            BeanUtil.copyProperties(goodsServe, listVO);
-            listVOS.add(listVO);
+        if (ObjectUtil.isNotEmpty(goodsServeCor)) {
+            List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
+            List<GoodsServe> goodsServeList = goodsServeRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+            if (CollUtil.isNotEmpty(goodsServeList)) {
+                List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
+                for (GoodsServe goodsServe : goodsServeList) {
+                    GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
+                    BeanUtil.copyProperties(goodsServe, listVO);
+                    listVOS.add(listVO);
+                }
+                detailVO.setGoodsServeList(listVOS);
+            }
         }
-        detailVO.setGoodsServeList(listVOS);
         return detailVO;
     }
 
