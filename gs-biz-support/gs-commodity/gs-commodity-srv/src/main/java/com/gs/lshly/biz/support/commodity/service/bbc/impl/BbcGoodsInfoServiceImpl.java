@@ -9,6 +9,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+<<<<<<< HEAD
+=======
+import cn.hutool.core.collection.CollUtil;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsServeRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
+>>>>>>> f2c9f4e9bb454689bd90ebcb5a2301432696b082
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -478,19 +486,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         BbcGoodsServeQTO.GoodsInfoQTO qto = new BbcGoodsServeQTO.GoodsInfoQTO();
         qto.setId(detailVo.getGoodsId());
         List<BbcGoodsServeVO.ListVO> goodsServeList = goodsServeRpc.getGoodsServeDetailByGoodsId(qto);
-        for (BbcGoodsServeVO.ListVO listVO : goodsServeList) {
-            PromiseVOS promiseVO = new PromiseVOS();
-            promiseVO.setId(listVO.getId());
-            promiseVO.setName(listVO.getServeName());
-            promiseVO.setContant(listVO.getServeContext());
-            promiseVO.setImageUrl(listVO.getImageUrl());
-            promiseVO.setJumpUrl(listVO.getJumpUrl());
-            promiseVOS.add(promiseVO);
+        if (CollUtil.isNotEmpty(goodsServeList)) {
+            for (BbcGoodsServeVO.ListVO listVO : goodsServeList) {
+                PromiseVOS promiseVO = new PromiseVOS();
+                promiseVO.setId(listVO.getId());
+                promiseVO.setName(listVO.getServeName());
+                promiseVO.setContant(listVO.getServeContext());
+                promiseVO.setImageUrl(listVO.getImageUrl());
+                promiseVO.setJumpUrl(listVO.getJumpUrl());
+                promiseVOS.add(promiseVO);
+            }
+            detailVo.setPromiseVOS(promiseVOS);
         }
-
-
-        detailVo.setPromiseVOS(promiseVOS);
-        ;
     }
 
     /**

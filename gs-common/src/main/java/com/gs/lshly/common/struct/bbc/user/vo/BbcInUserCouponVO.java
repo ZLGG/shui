@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -32,11 +33,11 @@ public class BbcInUserCouponVO implements Serializable {
 
         @ApiModelProperty("优惠券使用开始时间")
         @JsonIgnore
-        private Date startTime;
+        private LocalDate startTime;
 
         @ApiModelProperty("优惠券使用结束时间")
         @JsonIgnore
-        private Date endTime;
+        private LocalDate endTime;
 
         @ApiModelProperty("优惠券抵扣金额")
         private BigDecimal couponPrice;

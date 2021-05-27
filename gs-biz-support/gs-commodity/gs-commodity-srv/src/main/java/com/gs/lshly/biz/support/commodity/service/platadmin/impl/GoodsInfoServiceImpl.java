@@ -6,9 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gs.lshly.biz.support.commodity.entity.*;
+import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.*;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
@@ -26,17 +33,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.GoodsAuditRecord;
-import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
-import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
-import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsAuditRecordRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
-import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAuditRecordService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
@@ -58,13 +55,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsRelationLabelDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.SkuGoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsAuditRecordQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsAuditRecordVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsLabelVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -103,7 +94,10 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     private IGoodsShopNavigationRepository navigationRepository;
     @Autowired
     private IGoodsTempalteRepository goodsTempalteRepository;
-
+    @Autowired
+    private IGoodsServeCorRepository goodsServeCorRepository;
+    @Autowired
+    private IGoodsServeRepository goodsServeRepository;
     @DubboReference
     private ICommonStockRpc commonStockRpc;
 
@@ -303,6 +297,24 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
         //查询标签
         detailVO.setTags(relationLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
+
+        //查询服务
+        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
+        query.eq("goods_id", dto.getId());
+        GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
+        if (ObjectUtil.isNotEmpty(goodsServeCor)) {
+            List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
+            List<GoodsServe> goodsServeList = goodsServeRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+            if (CollUtil.isNotEmpty(goodsServeList)) {
+                List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
+                for (GoodsServe goodsServe : goodsServeList) {
+                    GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
+                    BeanUtil.copyProperties(goodsServe, listVO);
+                    listVOS.add(listVO);
+                }
+                detailVO.setGoodsServeList(listVOS);
+            }
+        }
         return detailVO;
     }
 
