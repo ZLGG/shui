@@ -30,14 +30,14 @@ public interface ICouponRpc {
      * @param id
      * @return
      */
-    Boolean deleteCoupon(Long id);
+    Boolean deleteCoupon(String id);
 
     /**
      * 优惠券详情
      * @param id
      * @return
      */
-    CouponVO.CouponDetailVO getDetail(Long id);
+    CouponVO.CouponDetailVO getDetail(String id);
 
     /**
      * 优惠券分页列表
@@ -49,7 +49,7 @@ public interface ICouponRpc {
      * 停止发放
      * @return
      */
-    Boolean stopSend(Long id);
+    Boolean stopSend(String id);
 
     /**
      * 修改库存

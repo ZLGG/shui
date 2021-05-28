@@ -258,7 +258,7 @@ public abstract class CouponQTO implements Serializable {
     public static class CouponStockQTO implements Serializable{
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "库存数")
         private Integer stockNum;
@@ -270,7 +270,7 @@ public abstract class CouponQTO implements Serializable {
     public static class CouponAduitQTO implements Serializable{
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
         private Integer auditStatus;

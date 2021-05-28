@@ -94,7 +94,7 @@ public class CouponDTO implements Serializable {
     public static class UpdateCouponDTO implements Serializable {
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
         private Integer couponType;
@@ -171,7 +171,7 @@ public class CouponDTO implements Serializable {
     public static class UpdateCouponByConDTO implements Serializable {
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "优惠券状态（0-未过期 1-已过期 2-停止发放）")
         private Integer couponStatus;

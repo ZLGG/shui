@@ -89,6 +89,11 @@ public class Coupon extends Model {
     private Integer effectiveDate;
 
     /**
+     * 库存数量限制 1-数量限制 0-无限制
+     */
+    private Integer stockType;
+
+    /**
      * 库存数
      */
     private Integer stockNum;
