@@ -23,7 +23,7 @@ public interface ICouponRpc {
      * @param qto
      * @return
      */
-    Boolean updateCoupon(CouponQTO.SaveCouponQTO qto);
+    Boolean updateCoupon(CouponQTO.UpdateCouponQTO qto);
 
     /**
      * 删除优惠券

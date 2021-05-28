@@ -26,7 +26,7 @@ public class CouponRpc implements ICouponRpc {
     }
 
     @Override
-    public Boolean updateCoupon(CouponQTO.SaveCouponQTO qto) {
+    public Boolean updateCoupon(CouponQTO.UpdateCouponQTO qto) {
         return iCouponService.updateCoupon(qto);
     }
 

@@ -40,9 +40,7 @@ public class CouponController {
     @ApiOperation("更新优惠券")
     @PostMapping("/updateCoupon")
     public ResponseData updateCoupon(@RequestBody CouponQTO.UpdateCouponQTO qto) {
-        CouponDTO.UpdateCouponDTO dto = new CouponDTO.UpdateCouponDTO();
-        BeanUtils.copyProperties(qto,dto);
-        iCouponRpc.updateCoupon(dto);
+        iCouponRpc.updateCoupon(qto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
