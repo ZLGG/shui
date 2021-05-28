@@ -33,9 +33,7 @@ public class CouponController {
     @ApiOperation("新增优惠券")
     @PostMapping("/addCoupon")
     public ResponseData addCoupon(@RequestBody CouponQTO.SaveCouponQTO qto) {
-        CouponDTO.SaveCouponDTO dto = new CouponDTO.SaveCouponDTO();
-        BeanUtils.copyProperties(qto,dto);
-        iCouponRpc.saveCoupon(dto);
+        iCouponRpc.saveCoupon(qto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 

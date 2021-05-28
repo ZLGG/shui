@@ -11,9 +11,9 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.CouponVO;
  */
 public interface ICouponService {
 
-    Boolean saveCoupon(CouponDTO.SaveCouponDTO saveCouponDTO);
+    Boolean saveCoupon(CouponQTO.SaveCouponQTO qto);
 
-    Boolean updateCoupon(CouponDTO.UpdateCouponDTO updateCouponDTO);
+    Boolean updateCoupon(CouponQTO.UpdateCouponQTO qto);
 
     Boolean deleteCoupon(Long id);
 

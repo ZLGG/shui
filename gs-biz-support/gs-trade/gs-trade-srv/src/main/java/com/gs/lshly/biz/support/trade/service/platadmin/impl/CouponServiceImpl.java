@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.Coupon;
 import com.gs.lshly.biz.support.trade.entity.CouponGoodsRelation;
+import com.gs.lshly.biz.support.trade.entity.CouponZoneGoodsRelation;
 import com.gs.lshly.biz.support.trade.mapper.CouponMapper;
 import com.gs.lshly.biz.support.trade.repository.ICouponGoodsRelationRepository;
 import com.gs.lshly.biz.support.trade.repository.ICouponRepository;
+import com.gs.lshly.biz.support.trade.repository.ICouponZoneGoodsRelationRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ICouponService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CouponDTO;
@@ -18,8 +20,10 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.CouponVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.lakala.boss.api.utils.UuidUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -40,80 +44,124 @@ public class CouponServiceImpl implements ICouponService {
     @Autowired
     private CouponMapper couponMapper;
 
+    @Autowired
+    private ICouponZoneGoodsRelationRepository zoneGoodsRelationRepository;
+
 
     @Override
-    public Boolean saveCoupon(CouponDTO.SaveCouponDTO saveCouponDTO) {
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean saveCoupon(CouponQTO.SaveCouponQTO qto) {
         Coupon coupon = new Coupon();
-        BeanCopyUtils.copyProperties(saveCouponDTO, coupon);
-        coupon.setCreateTime(new Date());
-        coupon.setModifyTime(new Date());
+        BeanCopyUtils.copyProperties(qto, coupon);
+        String couponId = UuidUtil.getUuid();
+        coupon.setCouponId(couponId);
+        coupon.setCdate(new Date());
+        coupon.setUdate(new Date());
         coupon.setAuditStatus(0);
+        coupon.setFlag(false);
+        //保存优惠券表
         boolean flag = iCouponRepository.save(coupon);
-        Long couponId = coupon.getCouponId();
-        CouponGoodsRelation couponGoodsRelation;
-        if (saveCouponDTO.getIsAllGoods()) {
-            couponGoodsRelation = new CouponGoodsRelation();
-            couponGoodsRelation.setCouponId(couponId);
-            couponGoodsRelation.setGoodId("-1");
-            couponGoodsRelation.setCreateTime(new Date());
-            couponGoodsRelation.setModifyTime(new Date());
-            iCouponGoodsRelationRepository.save(couponGoodsRelation);
-        } else {
-            List<String> goodIdList = saveCouponDTO.getGoodIds();
-            List<CouponGoodsRelation> relationList = new ArrayList<>();
-            for (String goodId : goodIdList) {
-                couponGoodsRelation = new CouponGoodsRelation();
-                couponGoodsRelation.setCouponId(couponId);
-                couponGoodsRelation.setGoodId(goodId);
-                couponGoodsRelation.setCreateTime(new Date());
-                couponGoodsRelation.setModifyTime(new Date());
-                relationList.add(couponGoodsRelation);
+
+        if (CollectionUtil.isNotEmpty(qto.getLevelIds())) {
+            //表示专区
+            if ("1".equals(qto.getLevel())) {
+                saveBatchZoneCouponGoodsRelation(qto.getLevelIds(), couponId);
             }
-            iCouponGoodsRelationRepository.saveBatch(relationList);
+            //表示类目或者商品
+            else {
+                saveBatchCouponGoodsRelation(qto.getLevelIds(), couponId);
+            }
         }
         return flag;
     }
 
+
     @Override
-    public Boolean updateCoupon(CouponDTO.UpdateCouponDTO updateCouponDTO) {
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateCoupon(CouponQTO.UpdateCouponQTO qto) {
         Coupon coupon = new Coupon();
-        BeanCopyUtils.copyProperties(updateCouponDTO, coupon);
-        coupon.setModifyTime(new Date());
-        //先删除relation
-        Map<String,Object> columnMap = new HashMap<>();
-        columnMap.put("coupon_id",updateCouponDTO.getCouponId());
-        iCouponGoodsRelationRepository.removeByMap(columnMap);
-
-        CouponGoodsRelation couponGoodsRelation;
-        if (updateCouponDTO.getIsAllGoods()) {
-            couponGoodsRelation = new CouponGoodsRelation();
-            couponGoodsRelation.setCouponId(updateCouponDTO.getCouponId());
-            couponGoodsRelation.setGoodId("-1");
-            couponGoodsRelation.setCreateTime(new Date());
-            couponGoodsRelation.setModifyTime(new Date());
-            iCouponGoodsRelationRepository.save(couponGoodsRelation);
+        BeanCopyUtils.copyProperties(qto, coupon);
+        coupon.setUdate(new Date());
+        //专区
+        if ("1".equals(qto.getLevel())) {
+            //先删除黑名单商品
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("coupon_id", qto.getCouponId());
+            zoneGoodsRelationRepository.removeByMap(columnMap);
+            //再删除relation
+            iCouponGoodsRelationRepository.removeByMap(columnMap);
+            //再新增
+            saveBatchZoneCouponGoodsRelation(qto.getLevelIds(), qto.getCouponId());
         } else {
-            List<String> goodIdList = updateCouponDTO.getGoodIds();
-            List<CouponGoodsRelation> relationList = new ArrayList<>();
-            for (String goodId : goodIdList) {
-                couponGoodsRelation = new CouponGoodsRelation();
-                couponGoodsRelation.setCouponId(updateCouponDTO.getCouponId());
-                couponGoodsRelation.setGoodId(goodId);
-                couponGoodsRelation.setCreateTime(new Date());
-                couponGoodsRelation.setModifyTime(new Date());
-                relationList.add(couponGoodsRelation);
-            }
-            iCouponGoodsRelationRepository.saveBatch(relationList);
+            //先删除relation
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("coupon_id", qto.getCouponId());
+            iCouponGoodsRelationRepository.removeByMap(columnMap);
+            saveBatchCouponGoodsRelation(qto.getLevelIds(), qto.getCouponId());
         }
-
         boolean flag = iCouponRepository.updateById(coupon);
         return flag;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public boolean saveBatchCouponGoodsRelation(List<CouponQTO.LevelQTO> levelQTOS, String couponId) {
+        if (CollectionUtil.isEmpty(levelQTOS)) {
+            return false;
+        }
+        List<CouponGoodsRelation> relationList = new ArrayList<>();
+        CouponGoodsRelation couponGoodsRelation;
+        for (CouponQTO.LevelQTO levelQTO : levelQTOS) {
+            couponGoodsRelation = new CouponGoodsRelation();
+            couponGoodsRelation.setCouponId(couponId);
+            couponGoodsRelation.setLevelId(levelQTO.getLevelId());
+            couponGoodsRelation.setCdate(new Date());
+            couponGoodsRelation.setUdate(new Date());
+            couponGoodsRelation.setFlag(false);
+            relationList.add(couponGoodsRelation);
+        }
+        return iCouponGoodsRelationRepository.saveBatch(relationList);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveBatchZoneCouponGoodsRelation(List<CouponQTO.LevelQTO> levelQTOS, String couponId) {
+        CouponGoodsRelation couponGoodsRelation;
+        for (CouponQTO.LevelQTO levelQTO : levelQTOS) {
+            couponGoodsRelation = new CouponGoodsRelation();
+            String relationId = UuidUtil.getUuid();
+            couponGoodsRelation.setId(relationId);
+            couponGoodsRelation.setCouponId(couponId);
+            couponGoodsRelation.setLevelId(levelQTO.getLevelId());
+            couponGoodsRelation.setCdate(new Date());
+            couponGoodsRelation.setUdate(new Date());
+            couponGoodsRelation.setFlag(false);
+            //保存优惠券关联表
+            iCouponGoodsRelationRepository.save(couponGoodsRelation);
+
+            CouponZoneGoodsRelation zoneGoodsRelation;
+            List<CouponZoneGoodsRelation> zoneGoodsRelationList = new ArrayList<>();
+            if (CollectionUtil.isNotEmpty(levelQTO.getExcludeGoodIds())) {
+                for (String goodId : levelQTO.getExcludeGoodIds()) {
+                    zoneGoodsRelation = new CouponZoneGoodsRelation();
+                    zoneGoodsRelation.setId(UuidUtil.getUuid());
+                    zoneGoodsRelation.setCouponId(couponId);
+                    zoneGoodsRelation.setRelationId(relationId);
+                    zoneGoodsRelation.setZoneId(levelQTO.getLevelId());
+                    zoneGoodsRelation.setGoodId(goodId);
+                    zoneGoodsRelation.setCdate(new Date());
+                    zoneGoodsRelation.setFlag(false);
+                    zoneGoodsRelation.setUdate(new Date());
+                    zoneGoodsRelationList.add(zoneGoodsRelation);
+                }
+                zoneGoodsRelationRepository.saveBatch(zoneGoodsRelationList);
+            }
+        }
+    }
+
     @Override
     public Boolean deleteCoupon(Long id) {
-        Map<String,Object> columnMap = new HashMap<>();
-        columnMap.put("coupon_id",id);
+        Map<String, Object> columnMap = new HashMap<>();
+        columnMap.put("coupon_id", id);
+        zoneGoodsRelationRepository.removeByMap(columnMap);
         iCouponGoodsRelationRepository.removeByMap(columnMap);
         return iCouponRepository.removeById(id);
     }
@@ -122,20 +170,45 @@ public class CouponServiceImpl implements ICouponService {
     public CouponVO.CouponDetailVO getDetail(Long id) {
         CouponVO.CouponDetailVO couponDetailDTO = new CouponVO.CouponDetailVO();
         Coupon coupon = iCouponRepository.getById(id);
-        BeanCopyUtils.copyProperties(coupon,couponDetailDTO);
+        BeanCopyUtils.copyProperties(coupon, couponDetailDTO);
         QueryWrapper<CouponGoodsRelation> wrapper = MybatisPlusUtil.query();
         wrapper.eq("coupon_id", id);
-        List<CouponGoodsRelation> goodList = iCouponGoodsRelationRepository.list(wrapper);
+        List<CouponGoodsRelation> relationList = iCouponGoodsRelationRepository.list(wrapper);
 
-        if(CollectionUtil.isNotEmpty(goodList)){
-            List<CouponVO.CouponGoodVO> couponGoodDTOList = new ArrayList<>();
-            CouponVO.CouponGoodVO couponGoodDTO;
-            for (CouponGoodsRelation couponGoodsRelation : goodList) {
-                couponGoodDTO = new CouponVO.CouponGoodVO();
-                couponGoodDTO.setGoodId(couponGoodsRelation.getGoodId());
-                couponGoodDTOList.add(couponGoodDTO);
+        if (CollectionUtil.isNotEmpty(relationList)) {
+            List<CouponVO.LevelVO> couponGoodDTOList = new ArrayList<>();
+            CouponVO.LevelVO levelVO;
+
+            if ("1".equals(coupon.getLevel())) {
+                QueryWrapper<CouponZoneGoodsRelation> zoneWrapper = MybatisPlusUtil.query();
+                zoneWrapper.eq("coupon_id", id);
+                List<CouponZoneGoodsRelation> zoneGoodList = zoneGoodsRelationRepository.list(zoneWrapper);
+
+                for (CouponGoodsRelation couponGoodsRelation : relationList) {
+                    levelVO = new CouponVO.LevelVO();
+                    levelVO.setLevelId(couponGoodsRelation.getLevelId());
+
+                    if(CollectionUtil.isNotEmpty(zoneGoodList)){
+                        List<String> excludeGoodIds = new ArrayList<>();
+                        for (CouponZoneGoodsRelation zoneGoodsRelation : zoneGoodList) {
+                            if(zoneGoodsRelation.getZoneId().equals(couponGoodsRelation.getLevelId())){
+                                excludeGoodIds.add(zoneGoodsRelation.getGoodId());
+                            }
+                        }
+                        levelVO.setExcludeGoodIds(excludeGoodIds);
+                    }
+                    couponGoodDTOList.add(levelVO);
+                }
+                couponDetailDTO.setLevelIds(couponGoodDTOList);
+            } else {
+                for (CouponGoodsRelation couponGoodsRelation : relationList) {
+                    levelVO = new CouponVO.LevelVO();
+                    levelVO.setLevelId(couponGoodsRelation.getLevelId());
+                    couponGoodDTOList.add(levelVO);
+                }
+                couponDetailDTO.setLevelIds(couponGoodDTOList);
             }
-            couponDetailDTO.setGoods(couponGoodDTOList);
+
         }
         return couponDetailDTO;
     }
@@ -143,21 +216,21 @@ public class CouponServiceImpl implements ICouponService {
     @Override
     public PageData<CouponVO.CouponListVO> queryCouponList(CouponQTO.CouponListQTO couponListQTO) {
         QueryWrapper<Coupon> wrapper = MybatisPlusUtil.query();
-        if(ObjectUtils.isNotEmpty(couponListQTO.getCouponType())){
+        if (ObjectUtils.isNotEmpty(couponListQTO.getCouponType())) {
             wrapper.eq("coupon_type", couponListQTO.getCouponType());
         }
-        if(ObjectUtils.isNotEmpty(couponListQTO.getChannel())){
-            wrapper.eq("channel",couponListQTO.getChannel());
+        if (ObjectUtils.isNotEmpty(couponListQTO.getChannel())) {
+            wrapper.eq("channel", couponListQTO.getChannel());
         }
-        if(ObjectUtils.isNotEmpty(couponListQTO.getCouponStatus())){
-            wrapper.eq("coupon_status",couponListQTO.getCouponStatus());
+        if (ObjectUtils.isNotEmpty(couponListQTO.getCouponStatus())) {
+            wrapper.eq("coupon_status", couponListQTO.getCouponStatus());
         }
-        if(ObjectUtils.isNotEmpty(couponListQTO.getCouponName())){
-            wrapper.like("coupon_name",couponListQTO.getCouponName());
+        if (ObjectUtils.isNotEmpty(couponListQTO.getCouponName())) {
+            wrapper.like("coupon_name", couponListQTO.getCouponName());
         }
 
         IPage<Coupon> page = MybatisPlusUtil.pager(couponListQTO);
-        IPage<Coupon> pageData = couponMapper.queryList(page,wrapper);
+        IPage<Coupon> pageData = couponMapper.queryList(page, wrapper);
         List<CouponVO.CouponListVO> activityListVOList = ListUtil.listCover(CouponVO.CouponListVO.class, pageData.getRecords());
         return new PageData<>(activityListVOList, couponListQTO.getPageNum(), couponListQTO.getPageSize(), pageData.getTotal());
     }
@@ -166,16 +239,16 @@ public class CouponServiceImpl implements ICouponService {
     public Boolean updateCouponByCondition(CouponDTO.UpdateCouponByConDTO updateCouponByConDTO) {
         UpdateWrapper<Coupon> wrapper = MybatisPlusUtil.update();
 
-        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getAuditStatus())){
-            wrapper.set("audit_status",updateCouponByConDTO.getAuditStatus());
+        if (ObjectUtils.isNotEmpty(updateCouponByConDTO.getAuditStatus())) {
+            wrapper.set("audit_status", updateCouponByConDTO.getAuditStatus());
         }
 
-        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getCouponStatus())){
-            wrapper.set("coupon_status",updateCouponByConDTO.getCouponStatus());
+        if (ObjectUtils.isNotEmpty(updateCouponByConDTO.getCouponStatus())) {
+            wrapper.set("coupon_status", updateCouponByConDTO.getCouponStatus());
         }
 
-        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getStockNum())){
-            wrapper.set("stock_num",updateCouponByConDTO.getStockNum());
+        if (ObjectUtils.isNotEmpty(updateCouponByConDTO.getStockNum())) {
+            wrapper.set("stock_num", updateCouponByConDTO.getStockNum());
         }
         wrapper.eq("coupon_id", updateCouponByConDTO.getCouponId());
         return iCouponRepository.update(wrapper);

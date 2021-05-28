@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,8 +30,8 @@ public class Coupon extends Model {
     /**
      * 优惠券id
      */
-    @TableId(value = "coupon_id", type = IdType.AUTO)
-    private Long couponId;
+    @TableId(value = "coupon_id")
+    private String couponId;
 
     /**
      * 优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）
@@ -56,6 +57,11 @@ public class Coupon extends Model {
      * 优惠券描述
      */
     private String couponDesc;
+
+    /**
+     * 券标签 1-购买所得 2-分享所得
+     */
+    private Integer couponLabel;
 
     /**
      * 1-固定时间 2-领取后生效
@@ -123,19 +129,24 @@ public class Coupon extends Model {
     private String instructions;
 
     /**
-     * 是否选择参加活动的商品(0-不参加 1—参加)
+     * 选择维度 1-专区 2-类目 3-商品
      */
-    private Boolean isActivity;
+    private Integer level;
 
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Date cdate;
 
     /**
      * 更新时间
      */
-    private Date modifyTime;
+    private Date udate;
+
+    /**
+     * 删除标记 0-未删除 1-已删除
+     */
+    private Boolean flag;
 
 
 }

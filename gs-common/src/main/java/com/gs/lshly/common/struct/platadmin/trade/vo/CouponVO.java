@@ -59,8 +59,8 @@ public class CouponVO implements Serializable {
         @ApiModelProperty(value = "优惠券描述")
         private String couponDesc;
 
-        @ApiModelProperty(value = "券标题")
-        private String couponLabel;
+        @ApiModelProperty(value = "券标签 1-购买所得 2-分享所得")
+        private Integer couponLabel;
 
         @ApiModelProperty(value = "1-固定时间 2-领取后生效")
         private Integer useTime;
@@ -107,14 +107,14 @@ public class CouponVO implements Serializable {
         @ApiModelProperty(value = "使用说明")
         private String instructions;
 
+        @ApiModelProperty(value = "使用商品维度 1-专区 2-类目 3-商品")
+        private Integer level;
+
         @ApiModelProperty(value = "是否适用全部商品")
         private Boolean isAllGoods;
 
-        @ApiModelProperty(value = "是否选择参加活动的商品")
-        private Boolean isActivity;
-
         @ApiModelProperty(value = "商品ids")
-        private List<CouponGoodVO> goods;
+        private List<LevelVO> levelIds;
 
         @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
         private Integer auditStatus;
@@ -122,9 +122,12 @@ public class CouponVO implements Serializable {
 
     @Data
     @ApiModel("CouponDTO.CouponGoodVO")
-    public static class CouponGoodVO implements Serializable {
+    public static class LevelVO implements Serializable {
 
-        @ApiModelProperty(value = "商品ids")
-        private String goodId;
+        @ApiModelProperty(value = "专区黑名单商品ids")
+        private List<String> excludeGoodIds;
+
+        @ApiModelProperty(value = "专区id/类目id/商品id")
+        private String levelId;
     }
 }

@@ -21,7 +21,7 @@ public abstract class CouponQTO implements Serializable {
     @Data
     @ApiModel("CouponQTO.SaveCouponQTO")
     @Accessors(chain = true)
-    public static class SaveCouponQTO{
+    public static class SaveCouponQTO implements Serializable{
 
         /**
          * 优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）
@@ -134,23 +134,23 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "使用说明")
         private String instructions;
 
+        @ApiModelProperty(value = "使用商品维度 1-专区 2-类目 3-商品")
+        private Integer level;
+
         @ApiModelProperty(value = "是否适用全部商品")
         private Boolean isAllGoods;
 
-        @ApiModelProperty(value = "是否选择参加活动的商品(false-不参加 true—参加)")
-        private Boolean isActivity;
-
         @ApiModelProperty(value = "适用商品ids")
-        private List<String> goodIds;
+        private List<LevelQTO> levelIds;
     }
 
     @Data
     @ApiModel("CouponQTO.UpdateCouponQTO")
     @Accessors(chain = true)
-    public static class UpdateCouponQTO {
+    public static class UpdateCouponQTO implements Serializable{
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
         private Integer couponType;
@@ -164,8 +164,8 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "优惠券描述")
         private String couponDesc;
 
-        @ApiModelProperty(value = "券标题")
-        private String couponLabel;
+        @ApiModelProperty(value = "券标签 1-购买所得 2-分享所得")
+        private Integer couponLabel;
 
         @ApiModelProperty(value = "1-固定时间 2-领取后生效")
         private Integer useTime;
@@ -212,14 +212,26 @@ public abstract class CouponQTO implements Serializable {
         @ApiModelProperty(value = "使用说明")
         private String instructions;
 
+        @ApiModelProperty(value = "使用商品维度 1-专区 2-类目 3-商品")
+        private Integer level;
+
         @ApiModelProperty(value = "是否适用全部商品")
         private Boolean isAllGoods;
 
-        @ApiModelProperty(value = "是否选择参加活动的商品(false-不参加 true—参加)")
-        private Boolean isActivity;
-
         @ApiModelProperty(value = "适用商品ids")
-        private List<String> goodIds;
+        private List<LevelQTO> levelIds;
+    }
+
+    @Data
+    @ApiModel("CouponQTO.LevelQTO")
+    @Accessors(chain = true)
+    public static class LevelQTO implements Serializable{
+
+        @ApiModelProperty(value = "专区黑名单商品ids")
+        private List<String> excludeGoodIds;
+
+        @ApiModelProperty(value = "专区id/类目id/商品id")
+        private String levelId;
     }
 
     @Data
@@ -243,7 +255,7 @@ public abstract class CouponQTO implements Serializable {
     @Data
     @ApiModel("CouponQTO.CouponStockQTO")
     @Accessors(chain = true)
-    public static class CouponStockQTO{
+    public static class CouponStockQTO implements Serializable{
 
         @ApiModelProperty(value = "优惠券id")
         private Long couponId;
@@ -255,7 +267,7 @@ public abstract class CouponQTO implements Serializable {
     @Data
     @ApiModel("CouponQTO.CouponAduitQTO")
     @Accessors(chain = true)
-    public static class CouponAduitQTO{
+    public static class CouponAduitQTO implements Serializable{
 
         @ApiModelProperty(value = "优惠券id")
         private Long couponId;
