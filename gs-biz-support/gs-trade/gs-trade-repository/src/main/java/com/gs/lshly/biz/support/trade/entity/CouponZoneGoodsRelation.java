@@ -1,9 +1,7 @@
 package com.gs.lshly.biz.support.trade.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -13,22 +11,22 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 优惠券商品关联表
+ * 优惠券专区黑名单商品关联表
  * </p>
  *
  * @author chenyang
- * @since 2021-05-26
+ * @since 2021-05-28
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("gs_coupon_goods_relation")
-public class CouponGoodsRelation extends Model {
+@TableName("gs_coupon_zone_goods_relation")
+public class CouponZoneGoodsRelation extends Model {
+
 
     /**
      * id
      */
-    @TableId(value = "id")
     private String id;
 
     /**
@@ -36,11 +34,20 @@ public class CouponGoodsRelation extends Model {
      */
     private String couponId;
 
+    /**
+     * relationId
+     */
+    private String relationId;
 
     /**
-     * 适用维度ID   专区id/类目id/商品id
+     * 专区id
      */
-    private String levelId;
+    private String zoneId;
+
+    /**
+     * 商品id  
+     */
+    private String goodId;
 
     /**
      * 创建时间
@@ -53,8 +60,9 @@ public class CouponGoodsRelation extends Model {
     private Date udate;
 
     /**
-     * 删除标记 0-未删除 1-已删除
+     * 删除标记
      */
     private Boolean flag;
+
 
 }

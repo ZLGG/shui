@@ -21,13 +21,13 @@ public class CouponRpc implements ICouponRpc {
     private ICouponService iCouponService;
 
     @Override
-    public Boolean saveCoupon(CouponDTO.SaveCouponDTO saveCouponDTO) {
-        return iCouponService.saveCoupon(saveCouponDTO);
+    public Boolean saveCoupon(CouponQTO.SaveCouponQTO qto) {
+        return iCouponService.saveCoupon(qto);
     }
 
     @Override
-    public Boolean updateCoupon(CouponDTO.UpdateCouponDTO updateCouponDTO) {
-        return iCouponService.updateCoupon(updateCouponDTO);
+    public Boolean updateCoupon(CouponQTO.SaveCouponQTO qto) {
+        return iCouponService.updateCoupon(qto);
     }
 
     @Override

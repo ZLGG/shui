@@ -121,18 +121,19 @@ DROP TABLE IF EXISTS `gs_user_coupon`;
 CREATE TABLE `gs_user_coupon` (
   `id` varchar(32) NOT NULL COMMENT '主键id',
   `coupon_id` bigint(20) NOT NULL COMMENT '运营配置优惠券id',
-  `user_id` varchar(32) NOT NULL COMMENT 'in会员userId',
+  `user_id` varchar(32) NOT NULL COMMENT '用户id',
+  `coupon_name` varchar(64) DEFAULT NULL COMMENT '优惠券名称',
   `coupon_desc` varchar(255) DEFAULT NULL COMMENT '优惠券说明',
   `start_time` date DEFAULT NULL COMMENT '优惠券使用开始时间',
   `end_time` date DEFAULT NULL COMMENT '优惠券使用结束时间',
   `coupon_price` decimal(10,2) NOT NULL COMMENT '优惠券抵扣金额',
   `min_price` decimal(10,2) DEFAULT NULL COMMENT '使用门槛',
-  `coupon_type` tinyint(1) NOT NULL COMMENT '优惠券类型（0-成为会员赠送 1-会员每月分享赠送）',
+  `coupon_type` varchar(255) DEFAULT NULL COMMENT '优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）',
   `coupon_status` tinyint(1) NOT NULL COMMENT '优惠券状态（0-未使用 1-已使用 2-已过期）',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='in会员优惠券表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员优惠券表';
 
 ALTER TABLE `fy_mall`.`gs_trade`
     ADD COLUMN `goods_source_type` int(11) NULL COMMENT '商品来源类型：1:商城商品，2:积分商品' AFTER `trade_state`,

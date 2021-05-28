@@ -13,17 +13,17 @@ public interface ICouponRpc {
 
     /**
      * 新增优惠券
-     * @param saveCouponDTO
+     * @param qto
      * @return
      */
-    Boolean saveCoupon(CouponDTO.SaveCouponDTO saveCouponDTO);
+    Boolean saveCoupon(CouponQTO.SaveCouponQTO qto);
 
     /**
      * 更新优惠券
-     * @param updateCouponDTO
+     * @param qto
      * @return
      */
-    Boolean updateCoupon(CouponDTO.UpdateCouponDTO updateCouponDTO);
+    Boolean updateCoupon(CouponQTO.SaveCouponQTO qto);
 
     /**
      * 删除优惠券

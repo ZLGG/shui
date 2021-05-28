@@ -1,4 +1,4 @@
-package com.gs.lshly.rpc.api.bbc.user;
+package com.gs.lshly.biz.support.user.service.bbc;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BBBMessageQTO;
@@ -10,9 +10,9 @@ import com.gs.lshly.common.struct.bbc.user.vo.BbcSiteNoticeVO;
 
 /**
  * @Author yangxi
- * @create 2021/4/6 15:33
+ * @create 2021/4/6 15:45
  */
-public interface IBbcMessageRpc {
+public interface IBbcMessageService {
     /**
      * 获取未读消息数
      * @param qto
@@ -34,8 +34,7 @@ public interface IBbcMessageRpc {
     BbcMessageVO.MessageDetailVO getMessageDetail(BbcMessageQTO.DetailQTO qto);
 
     /**
-     * 根据id查询公告详情
-     * @param qto
+     * 根据id查询公告消息详情
      * @return
      */
     BbcSiteNoticeVO.NoticeListVO getNoticeMessageDetail(BbcSiteNoticeQTO.IDQTO qto);

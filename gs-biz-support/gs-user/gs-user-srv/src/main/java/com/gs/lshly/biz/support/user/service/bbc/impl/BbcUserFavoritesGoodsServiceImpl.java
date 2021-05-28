@@ -94,6 +94,8 @@ public class BbcUserFavoritesGoodsServiceImpl implements IBbcUserFavoritesGoodsS
             BbcUserFavoritesGoodsVO.ListVO listVoItem =   voMap.get(innerGoodsVo.getId());
             if(null != listVoItem){
                 BeanCopyUtils.copyProperties(innerGoodsVo,listVoItem);
+                listVoItem.setCollectionCounts(userFavoritesGoodsMapper.selectCount(
+                        new QueryWrapper<UserFavoritesGoods>().eq("goods_id",listVoItem.getId())));
                 voList.add(listVoItem);
             }
         }

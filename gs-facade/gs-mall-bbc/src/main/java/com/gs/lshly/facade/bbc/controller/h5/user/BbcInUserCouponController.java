@@ -63,4 +63,5 @@ public class BbcInUserCouponController {
         List<BbcInUserCouponVO.MyCouponListVO> couponVOList = inUserCouponRpc.getMyCouponToUse(qto);
         return ResponseData.data(couponVOList);
     }
+
 }
