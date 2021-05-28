@@ -96,6 +96,7 @@ import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
+import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
@@ -181,6 +182,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @DubboReference
     private IBbcMarketActivityRpc bbcMarketActivityRpc;
 
+    @DubboReference
+    private IBbcStockRpc bbcStockRpc;
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
@@ -377,14 +380,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
         BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(goodsInfo).get(0);
         //若是多规格填充默认规格信息
-//        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.多规格.getCode().intValue()) {
         //获取默认规格商品信息
         detailVo.setSkuVO(skuVO);
 
         detailVo.setSkuId(skuVO.getSkuId());
 
         detailVo.setSalePrice(skuVO.getSkuSalePrice());
-//        }
+        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+        	if(detailVo.getIsBuy().equals(0)){
+	        	detailVo.setIsBuy(skuVO.getIsBuy());
+	        	detailVo.setBuyRemark(skuVO.getBuyRemark());
+	        }
+        }
 
         //填充spec规格列表信息
         if (ObjectUtils.isNotEmpty(getSpecInfoVO(goodsInfo))) {
@@ -667,6 +674,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
                     skuVO.setSpecValue(skuGoodInfo.getSpecsValue());
                     skuVO.setSkuStock(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
+                    
+                    //获取库存数
+                    Integer quantity = bbcStockRpc.getQuantity(skuGoodInfo.getId());
+                    if(quantity==null||quantity.equals(0)){
+                    	skuVO.setIsBuy(0);
+                    	skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
+                    }
+                    
+                    if(!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())){
+                    	skuVO.setIsBuy(0);
+                    	skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
+                    }
                     break;
                 }
             }
@@ -1059,6 +1078,17 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
                 skuVO.setSpecValue(StringUtils.isEmpty(skuGoodInfo.getSpecsValue()) ? "" : skuGoodInfo.getSpecsValue());
                 skuVO.setImage(StringUtils.isBlank(skuGoodInfo.getImage()) ? "" : skuGoodInfo.getImage());
+                
+                Integer quantity = bbcStockRpc.getQuantity(skuGoodInfo.getId());
+                if(quantity==null||quantity.equals(0)){
+                	skuVO.setIsBuy(0);
+                	skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
+                }
+                
+                if(!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())){
+                	skuVO.setIsBuy(0);
+                	skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
+                }
             }
             skuVOS.add(skuVO);
         }

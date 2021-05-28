@@ -11,7 +11,8 @@ public enum GoodsBuyRemarkEnum implements EnumMessage{
     
 	已下架(10, "已下架"),
     待审核(30, "待审核"),
-    审核失败(40, "审核失败");
+    审核失败(40, "审核失败"),
+    库存不足(50, "库存不足");
 
 
     GoodsBuyRemarkEnum(Integer code, String remark){
