@@ -18,7 +18,8 @@ public abstract class BbcUserFavoritesGoodsVO implements Serializable {
     @ApiModel("BbcUserFavoritesGoodsVO.ListVO")
     @Accessors(chain = true)
     public static class ListVO extends BbcGoodsInfoVO.HomeAndShopInnerServiceVO{
-
+        @ApiModelProperty("收藏数量")
+        private Integer collectionCounts;
     }
 
 }
