@@ -206,4 +206,11 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     BbcGoodsInfoVO.isCollectionGoodsVO isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto);
+    
+    /**
+     * 跟据商品ID获取优惠券
+     * @param qto
+     * @return
+     */
+    List<BbcGoodsInfoVO.ListCouponVO> listCoupon(BbcGoodsInfoQTO.GoodsIdQTO qto);
 }

@@ -1,6 +1,15 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
-import cn.hutool.core.collection.CollectionUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -11,7 +20,6 @@ import com.gs.lshly.biz.support.trade.entity.CouponZoneGoodsRelation;
 import com.gs.lshly.biz.support.trade.mapper.CouponMapper;
 import com.gs.lshly.biz.support.trade.repository.ICouponGoodsRelationRepository;
 import com.gs.lshly.biz.support.trade.repository.ICouponRepository;
-import com.gs.lshly.biz.support.trade.repository.ICouponZoneGoodsRelationRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ICouponService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CouponDTO;
@@ -21,11 +29,8 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.lakala.boss.api.utils.UuidUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * 优惠券 service

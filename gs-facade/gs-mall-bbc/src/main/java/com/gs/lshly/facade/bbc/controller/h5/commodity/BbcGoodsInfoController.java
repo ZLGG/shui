@@ -128,4 +128,10 @@ public class BbcGoodsInfoController {
     public ResponseData isCollectGoods(BbcGoodsInfoQTO.GoodsIdQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.isCollectGoods(qto));
     }
+    
+	@ApiOperation("跟据商品ID查询该商品可用的优惠券-v1.1.0")
+    @GetMapping("/listCoupon")
+    public ResponseData<List<BbcGoodsInfoVO.ListCouponVO>> listCoupon(BbcGoodsInfoQTO.GoodsIdQTO qto) {
+        return ResponseData.data(bbcGoodsInfoRpc.listCoupon(qto));
+    }
 }

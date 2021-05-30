@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gs.lshly.common.enums.GoodsCouponStatusEnum;
 import com.gs.lshly.common.enums.MarketCheckTypeEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
@@ -1090,4 +1092,84 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         private Integer isCollect;
     }
 
+    
+	@Setter
+	@ApiModel("BbcGoodsInfoVO.ListCouponVO")
+	public static class ListCouponVO implements Serializable {
+		
+		@ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+	    private Integer couponType;
+		
+		@ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+	    private Integer couponTypeText;
+ 
+		@ApiModelProperty("0-未领取 1-已领取 2-无需领取")
+	    private Integer couponStatus;
+	    
+		@ApiModelProperty("0-未领取 1-已领取 2-无需领取")
+	    private String couponStatusText;
+
+		@ApiModelProperty("优惠券名称")
+	    private String couponName;
+
+		@ApiModelProperty("可使用时间")
+	    private String useTime;
+
+		@ApiModelProperty("减免金额")
+	    private BigDecimal deduction;
+
+		@ApiModelProperty("使用门槛")
+	    private BigDecimal useThreshold;
+		
+		@ApiModelProperty("减免类型 1：积分  2：金额")
+	    private Integer deductionType;
+
+		@ApiModelProperty("优惠券ID")
+		private String id;
+
+		public Integer getCouponType() {
+			return couponType;
+		}
+
+		public Integer getCouponTypeText() {
+			return couponTypeText;
+		}
+
+		public Integer getCouponStatus() {
+			return couponStatus;
+		}
+
+		public String getCouponStatusText() {
+			if(couponStatus!=null)
+				couponStatusText = GoodsCouponStatusEnum.getRemarkByCode(couponStatus);
+			return couponStatusText;
+		}
+
+		public String getCouponName() {
+			return couponName;
+		}
+
+		public String getUseTime() {
+			return useTime;
+		}
+
+		public BigDecimal getDeduction() {
+			return deduction;
+		}
+
+		public BigDecimal getUseThreshold() {
+			return useThreshold;
+		}
+
+		public Integer getDeductionType() {
+			return deductionType;
+		}
+
+		public String getId() {
+			return id;
+		}
+		
+		
+
+	}
 }
