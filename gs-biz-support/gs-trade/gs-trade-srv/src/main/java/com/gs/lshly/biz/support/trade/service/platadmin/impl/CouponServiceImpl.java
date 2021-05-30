@@ -69,7 +69,7 @@ public class CouponServiceImpl implements ICouponService {
 
         if (CollectionUtil.isNotEmpty(qto.getLevelIds())) {
             //表示专区
-            if ("1".equals(qto.getLevel())) {
+            if (qto.getLevel() == 1) {
                 saveBatchZoneCouponGoodsRelation(qto.getLevelIds(), couponId);
             }
             //表示类目或者商品
@@ -88,7 +88,7 @@ public class CouponServiceImpl implements ICouponService {
         BeanCopyUtils.copyProperties(qto, coupon);
         coupon.setUdate(new Date());
         //专区
-        if ("1".equals(qto.getLevel())) {
+        if (qto.getLevel() == 1) {
             //先删除黑名单商品
             Map<String, Object> columnMap = new HashMap<>();
             columnMap.put("coupon_id", qto.getCouponId());
@@ -163,7 +163,7 @@ public class CouponServiceImpl implements ICouponService {
     }
 
     @Override
-    public Boolean deleteCoupon(Long id) {
+    public Boolean deleteCoupon(String id) {
         Map<String, Object> columnMap = new HashMap<>();
         columnMap.put("coupon_id", id);
         zoneGoodsRelationRepository.removeByMap(columnMap);
@@ -172,7 +172,7 @@ public class CouponServiceImpl implements ICouponService {
     }
 
     @Override
-    public CouponVO.CouponDetailVO getDetail(Long id) {
+    public CouponVO.CouponDetailVO getDetail(String id) {
         CouponVO.CouponDetailVO couponDetailDTO = new CouponVO.CouponDetailVO();
         Coupon coupon = iCouponRepository.getById(id);
         BeanCopyUtils.copyProperties(coupon, couponDetailDTO);
@@ -184,7 +184,7 @@ public class CouponServiceImpl implements ICouponService {
             List<CouponVO.LevelVO> couponGoodDTOList = new ArrayList<>();
             CouponVO.LevelVO levelVO;
 
-            if ("1".equals(coupon.getLevel())) {
+            if (coupon.getLevel() == 1) {
                 QueryWrapper<CouponZoneGoodsRelation> zoneWrapper = MybatisPlusUtil.query();
                 zoneWrapper.eq("coupon_id", id);
                 List<CouponZoneGoodsRelation> zoneGoodList = zoneGoodsRelationRepository.list(zoneWrapper);

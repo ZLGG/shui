@@ -97,7 +97,7 @@ public class DocketUtils {
     }
 
     public static Docket create2CFYApi(String swaggerTitle) {
-        return createAPI(swaggerTitle, "", "富友", BBCTerminal, "fy");
+        return createAPI(swaggerTitle, "", "测试", BBCTerminal, "test");
     }
 
     private static Docket createAPI(String swaggerTitle, String defaultJWTValue, String groupName, String terminal, String module){

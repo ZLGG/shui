@@ -46,7 +46,7 @@ public class CouponController {
 
     @ApiOperation("删除优惠券")
     @GetMapping("/deleteCoupon")
-    public ResponseData deleteCoupon(@RequestParam("id") Long id) {
+    public ResponseData deleteCoupon(@RequestParam("id") String id) {
         Optional.ofNullable(id).orElseThrow(() ->new BusinessException("id不能为空"));
         iCouponRpc.deleteCoupon(id);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -54,7 +54,7 @@ public class CouponController {
 
     @ApiOperation("查看优惠券详情")
     @PutMapping("getCouponDetail/{id}")
-    public ResponseData<CouponVO.CouponListVO> getCouponDetail(@PathVariable Long id) {
+    public ResponseData<CouponVO.CouponListVO> getCouponDetail(@PathVariable String id) {
         Optional.ofNullable(id).orElseThrow(() ->new BusinessException("id不能为空"));
         CouponVO.CouponDetailVO detailVO = iCouponRpc.getDetail(id);
         return ResponseData.data(detailVO);
@@ -76,7 +76,7 @@ public class CouponController {
 
     @ApiOperation("停止发送")
     @GetMapping("/stopSendCoupon")
-    public ResponseData stopSendCoupon(@RequestParam("couponId") Long couponId) {
+    public ResponseData stopSendCoupon(@RequestParam("couponId") String couponId) {
         iCouponRpc.stopSend(couponId);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }

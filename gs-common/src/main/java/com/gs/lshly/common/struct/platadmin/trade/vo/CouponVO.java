@@ -16,7 +16,7 @@ public class CouponVO implements Serializable {
     public static class CouponListVO implements Serializable {
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
         private Integer couponType;
@@ -45,7 +45,7 @@ public class CouponVO implements Serializable {
     public static class CouponDetailVO implements Serializable {
 
         @ApiModelProperty(value = "优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty(value = "优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
         private Integer couponType;

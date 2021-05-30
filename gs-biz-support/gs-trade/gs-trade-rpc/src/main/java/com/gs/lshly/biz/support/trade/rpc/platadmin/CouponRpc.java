@@ -31,12 +31,12 @@ public class CouponRpc implements ICouponRpc {
     }
 
     @Override
-    public Boolean deleteCoupon(Long id) {
+    public Boolean deleteCoupon(String id) {
         return iCouponService.deleteCoupon(id);
     }
 
     @Override
-    public CouponVO.CouponDetailVO getDetail(Long id) {
+    public CouponVO.CouponDetailVO getDetail(String id) {
         return iCouponService.getDetail(id);
     }
 
@@ -46,7 +46,7 @@ public class CouponRpc implements ICouponRpc {
     }
 
     @Override
-    public Boolean stopSend(Long id) {
+    public Boolean stopSend(String id) {
         CouponDTO.UpdateCouponByConDTO updateCouponByConDTO = new CouponDTO.UpdateCouponByConDTO();
         updateCouponByConDTO.setCouponId(id);
         updateCouponByConDTO.setCouponStatus(2);

@@ -15,9 +15,9 @@ public interface ICouponService {
 
     Boolean updateCoupon(CouponQTO.UpdateCouponQTO qto);
 
-    Boolean deleteCoupon(Long id);
+    Boolean deleteCoupon(String id);
 
-    CouponVO.CouponDetailVO getDetail(Long id);
+    CouponVO.CouponDetailVO getDetail(String id);
 
     PageData<CouponVO.CouponListVO> queryCouponList(CouponQTO.CouponListQTO couponListQTO);
 

@@ -25,7 +25,9 @@
         <module>gs-log</module>
         <module>gs-excel</module>
         <module>gs-mail</module>
+        <module>gs-rocketmq</module>
         <module>gs-captcha</module>
+        <module>gs-elasticsearch</module>
     </modules>
     <dependencies>
         <dependency>
