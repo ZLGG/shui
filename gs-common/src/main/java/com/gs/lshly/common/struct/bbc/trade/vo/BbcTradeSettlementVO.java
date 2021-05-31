@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.gs.lshly.common.enums.GoodsCouponStatusEnum;
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
 import com.gs.lshly.common.utils.StringManageUtil;
 
@@ -366,6 +367,12 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 
 		@ApiModelProperty("优惠券抵扣积分")
 		private BigDecimal discountPointAmount;
+		
+		@ApiModelProperty("默认优惠券列表")
+		private List<ListCouponVO> defaultCouponList;
+		
+		@ApiModelProperty("用户可选优惠券列表")
+		private List<ListCouponVO> optionalCouponList;
 
 		public String getRecvAddresId() {
 			return recvAddresId;
@@ -439,6 +446,69 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 
 	}
 
+	@Setter
+	@ApiModel("BbcTradeSettlementVO.ListCouponVO")
+	public static class ListCouponVO implements Serializable {
+		
+		@ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+	    private Integer couponType;
+		
+		@ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+	    private Integer couponTypeText;
+ 
+		@ApiModelProperty("优惠券名称")
+	    private String couponName;
+
+		@ApiModelProperty("可使用时间")
+	    private String useTime;
+
+		@ApiModelProperty("减免金额")
+	    private BigDecimal deduction;
+
+		@ApiModelProperty("使用门槛")
+	    private BigDecimal useThreshold;
+		
+		@ApiModelProperty("减免类型 1：积分  2：金额")
+	    private Integer deductionType;
+
+		@ApiModelProperty("优惠券ID")
+		private String id;
+
+		public Integer getCouponType() {
+			return couponType;
+		}
+
+		public Integer getCouponTypeText() {
+			return couponTypeText;
+		}
+
+		public String getCouponName() {
+			return couponName;
+		}
+
+		public String getUseTime() {
+			return useTime;
+		}
+
+		public BigDecimal getDeduction() {
+			return deduction;
+		}
+
+		public BigDecimal getUseThreshold() {
+			return useThreshold;
+		}
+
+		public Integer getDeductionType() {
+			return deductionType;
+		}
+
+		public String getId() {
+			return id;
+		}
+		
+	}
+	
+	
 	@Data
 	@ApiModel("BbcTradeSettlementVO.ListVO")
 	@Accessors(chain = true)

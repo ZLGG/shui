@@ -1685,24 +1685,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
 	@Override
 	public List<ListCouponVO> listCoupon(GoodsIdQTO qto) {
-		/**
-		 * @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
-	    private Integer couponType;
-		@ApiModelProperty("0-未领取 1-已领取 2-无需领取")
-	    private Integer couponStatus;
-		@ApiModelProperty("优惠券名称")
-	    private String couponName;
-		@ApiModelProperty("可使用时间")
-	    private String useTime;
-		@ApiModelProperty("减免金额")
-	    private BigDecimal deduction;
-		@ApiModelProperty("使用门槛")
-	    private BigDecimal useThreshold;
-		@ApiModelProperty("减免类型 1：积分  2：金额")
-	    private Integer deductionType;
-		@ApiModelProperty("优惠券ID")
-		private String id;
-		 */
+		
 		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
 		ListCouponVO listCouponVO = new ListCouponVO();
 		listCouponVO.setCouponType(1);

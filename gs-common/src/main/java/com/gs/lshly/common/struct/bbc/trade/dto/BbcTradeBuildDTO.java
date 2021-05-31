@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.gs.lshly.common.enums.ActivityTerminalEnum;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO.ListCouponVO;
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
 
 import io.swagger.annotations.ApiModel;
@@ -113,6 +114,9 @@ public abstract class BbcTradeBuildDTO implements Serializable {
         
         @ApiModelProperty(value = "配送方式",hidden=true)
         private Integer deliveryType = 10;
+        
+        @ApiModelProperty("优惠券ID")
+		private List<String> couponIds;
         
         @Data
         public static class ShopData implements Serializable {

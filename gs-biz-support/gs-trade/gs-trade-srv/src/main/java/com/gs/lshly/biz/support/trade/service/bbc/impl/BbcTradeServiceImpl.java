@@ -81,6 +81,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.GoodsIdQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
@@ -100,6 +101,7 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO.ListCouponVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO.ShopListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO;
@@ -528,8 +530,50 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         } catch (Exception e) {
             log.error("营销结算异常:"+e.getMessage(), e);
         }**/
+        
+        
+        /**
+         *模拟优惠券数据
+         */
+        List<ListCouponVO> couponVOS = this.listCoupon();
+        settlementVO.setDefaultCouponList(couponVOS);
+        
+        List<ListCouponVO> couponVOS1 = this.listCoupon1();
+        settlementVO.setDefaultCouponList(couponVOS1);
+        
+        
         return ResponseData.data(settlementVO);
     }
+
+	private List<ListCouponVO> listCoupon() {
+		
+		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
+		ListCouponVO listCouponVO = new ListCouponVO();
+		listCouponVO.setCouponType(1);
+		listCouponVO.setUseTime("2021/01/01 2021/08/01");
+		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+		listCouponVO.setDeduction(new BigDecimal("20.00"));
+		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+		listCouponVO.setDeductionType(Integer.valueOf(1));
+		listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
+		retList.add(listCouponVO);
+		return retList;
+	}
+	
+	private List<ListCouponVO> listCoupon1() {
+		
+		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
+		ListCouponVO listCouponVO = new ListCouponVO();
+		listCouponVO.setCouponType(1);
+		listCouponVO.setUseTime("2021/01/01 2021/11/01");
+		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+		listCouponVO.setDeduction(new BigDecimal("20.00"));
+		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+		listCouponVO.setDeductionType(Integer.valueOf(1));
+		listCouponVO.setId("666666666c421f9fd7f4c82bfcab5b");
+		retList.add(listCouponVO);
+		return retList;
+	}
 
     public static void main(String[] args) {
         Integer integer = 10;
