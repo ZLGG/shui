@@ -109,6 +109,7 @@ import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.http.HttpUtil;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -1684,10 +1685,36 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
 	@Override
 	public List<ListCouponVO> listCoupon(GoodsIdQTO qto) {
+		/**
+		 * @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+	    private Integer couponType;
+		@ApiModelProperty("0-未领取 1-已领取 2-无需领取")
+	    private Integer couponStatus;
+		@ApiModelProperty("优惠券名称")
+	    private String couponName;
+		@ApiModelProperty("可使用时间")
+	    private String useTime;
+		@ApiModelProperty("减免金额")
+	    private BigDecimal deduction;
+		@ApiModelProperty("使用门槛")
+	    private BigDecimal useThreshold;
+		@ApiModelProperty("减免类型 1：积分  2：金额")
+	    private Integer deductionType;
+		@ApiModelProperty("优惠券ID")
+		private String id;
+		 */
+		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
 		ListCouponVO listCouponVO = new ListCouponVO();
+		listCouponVO.setCouponType(1);
+		listCouponVO.setUseTime("2021/01/01 2021/08/01");
 		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
 		listCouponVO.setCouponStatus(2);
-		return null;
+		listCouponVO.setDeduction(new BigDecimal("20.00"));
+		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+		listCouponVO.setDeductionType(Integer.valueOf(1));
+		listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
+		retList.add(listCouponVO);
+		return retList;
 	}
 
 }

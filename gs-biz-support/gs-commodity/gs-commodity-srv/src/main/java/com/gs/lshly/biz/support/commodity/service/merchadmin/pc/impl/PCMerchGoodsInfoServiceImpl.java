@@ -444,7 +444,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             sb.append(goodsServeId + ",");
         }
         String serveIds = sb.toString();
-        goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
+        if(StringUtils.isNotEmpty(serveIds)){
+        	goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
+        }
         goodsServeCorRepository.save(goodsServeCor);
         return goodsIdVO;
     }

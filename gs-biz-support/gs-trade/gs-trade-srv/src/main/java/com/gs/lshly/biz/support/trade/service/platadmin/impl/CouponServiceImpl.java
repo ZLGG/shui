@@ -49,8 +49,8 @@ public class CouponServiceImpl implements ICouponService {
     @Autowired
     private CouponMapper couponMapper;
 
-    @Autowired
-    private ICouponZoneGoodsRelationRepository zoneGoodsRelationRepository;
+//    @Autowired
+//    private ICouponZoneGoodsRelationRepository zoneGoodsRelationRepository;
 
 
     @Override
@@ -92,7 +92,7 @@ public class CouponServiceImpl implements ICouponService {
             //先删除黑名单商品
             Map<String, Object> columnMap = new HashMap<>();
             columnMap.put("coupon_id", qto.getCouponId());
-            zoneGoodsRelationRepository.removeByMap(columnMap);
+//            zoneGoodsRelationRepository.removeByMap(columnMap);
             //再删除relation
             iCouponGoodsRelationRepository.removeByMap(columnMap);
             //再新增
@@ -157,7 +157,7 @@ public class CouponServiceImpl implements ICouponService {
                     zoneGoodsRelation.setUdate(new Date());
                     zoneGoodsRelationList.add(zoneGoodsRelation);
                 }
-                zoneGoodsRelationRepository.saveBatch(zoneGoodsRelationList);
+//                zoneGoodsRelationRepository.saveBatch(zoneGoodsRelationList);
             }
         }
     }
@@ -166,7 +166,7 @@ public class CouponServiceImpl implements ICouponService {
     public Boolean deleteCoupon(String id) {
         Map<String, Object> columnMap = new HashMap<>();
         columnMap.put("coupon_id", id);
-        zoneGoodsRelationRepository.removeByMap(columnMap);
+//        zoneGoodsRelationRepository.removeByMap(columnMap);
         iCouponGoodsRelationRepository.removeByMap(columnMap);
         return iCouponRepository.removeById(id);
     }
@@ -187,7 +187,8 @@ public class CouponServiceImpl implements ICouponService {
             if (coupon.getLevel() == 1) {
                 QueryWrapper<CouponZoneGoodsRelation> zoneWrapper = MybatisPlusUtil.query();
                 zoneWrapper.eq("coupon_id", id);
-                List<CouponZoneGoodsRelation> zoneGoodList = zoneGoodsRelationRepository.list(zoneWrapper);
+                List<CouponZoneGoodsRelation> zoneGoodList = new ArrayList<CouponZoneGoodsRelation>();
+                		//zoneGoodsRelationRepository.list(zoneWrapper);
 
                 for (CouponGoodsRelation couponGoodsRelation : relationList) {
                     levelVO = new CouponVO.LevelVO();
