@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
-* <p>
-*  前端控制器
-* </p>
-*
-* @author oy
-* @since 2020-12-06
-*/
+ * <p>
+ * 前端控制器
+ * </p>
+ *
+ * @author oy
+ * @since 2020-12-06
+ */
 @RestController
 @RequestMapping("/bbc/userCenter/tradeRights")
 @Api(tags = "交易售后表管理")
@@ -46,8 +46,15 @@ public class BbcTradeRightsController {
     @ApiOperation("申请售后")
     @PostMapping("/apply")
     public ResponseData<Void> add(@Valid @RequestBody BbcTradeRightsBuildDTO.ETO dto) {
-            bbcTradeRightsRpc.addTradeRights(dto);
-        return ResponseData.success(MsgConst.ADD_SUCCESS);
+        bbcTradeRightsRpc.addTradeRights(dto);
+        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
+    }
+
+    @ApiOperation("撤销售后申请")
+    @PostMapping("/revocation")
+    public ResponseData<Void> revocation(@Valid @RequestBody BbcTradeRightsBuildDTO.RevocationTradeRightsETO dto) {
+        bbcTradeRightsRpc.revocationTradeRights(dto);
+        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
     @ApiOperation("货物寄回")
@@ -56,6 +63,7 @@ public class BbcTradeRightsController {
         bbcTradeRightsRpc.returnGoods(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
+
     @ApiOperation("确认收货")
     @GetMapping("/addAddress")
     public ResponseData<Void> confirmReceipt(BbcTradeRightsDTO.IdDTO dto) {
@@ -63,4 +71,11 @@ public class BbcTradeRightsController {
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
+
+    @ApiOperation("删除记录")
+    @PutMapping("/deleteRecord")
+    public ResponseData<Void> deleteRecord(BbcTradeRightsDTO.IdDTO dto) {
+        bbcTradeRightsRpc.deleteRecord(dto);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+    }
 }

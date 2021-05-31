@@ -117,5 +117,13 @@ public class TradeRightsGoods extends Model {
     @TableLogic
     private Boolean flag;
 
+    /**
+     * 原商品或换货商品(10:原商品,20:换货商品)
+     */
+    private Integer goodsType;
 
+    /**
+     * 退款金额
+     */
+    private BigDecimal refundPoint;
 }

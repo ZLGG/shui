@@ -72,27 +72,36 @@ public abstract class TradeRightsQTO implements Serializable {
     public static class StateDTO extends BaseQTO {
 
         @ApiModelProperty("状态枚举类[10:换货,20:仅退款,30:退货退款]")
-        private Integer status;
+//        private Integer status;
+        private Integer rightsType;
 
-        @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
-        private Integer sourceType;
+/*        @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
+        private Integer sourceType;*/
+
+/*        @ApiModelProperty("订单编号")
+        private String tradeId;*/
 
         @ApiModelProperty("订单编号")
-        private String tradeId;
+        private String orderCode;
 
-        @ApiModelProperty("处理进度(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成) ")
+        @ApiModelProperty("手机号码")
+        private String phone;
+
+        @ApiModelProperty("处理进度([10:处理中，20：已完成，30：待审核]) ")
         private Integer state;
 
-        @ApiModelProperty("支付创建时间(介于大于等于)")
+        @ApiModelProperty("退款申请类型([10:取消订单退款,20:售后申请退款])")
+        private Integer refundMoneyType;
+/*        @ApiModelProperty("支付创建时间(介于大于等于)")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime cdate;
+        private LocalDateTime cdate;*/
 
-        @ApiModelProperty("支付创建时间(介于小于等于)")
+/*        @ApiModelProperty("支付创建时间(介于小于等于)")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime cdateLittleDate;
+        private LocalDateTime cdateLittleDate;*/
 
-        @ApiModelProperty("支付创建时间状态[10=晚于 20=早于 30=是 40=介于]")
-        private Integer cdateState;
+/*        @ApiModelProperty("支付创建时间状态[10=晚于 20=早于 30=是 40=介于]")
+        private Integer cdateState;*/
     }
     @Data
     @ApiModel("TradeRightsQTO.StateDTO")

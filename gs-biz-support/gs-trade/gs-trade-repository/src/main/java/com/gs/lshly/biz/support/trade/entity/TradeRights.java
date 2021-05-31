@@ -13,13 +13,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
-* <p>
-* 售后表
-* </p>
-*
-* @author oy
-* @since 2020-12-06
-*/
+ * <p>
+ * 售后表
+ * </p>
+ *
+ * @author oy
+ * @since 2020-12-06
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -29,69 +29,69 @@ public class TradeRights extends Model {
     private static final long serialVersionUID = 1L;
 
     /**
-    * 售后ID
-    */
+     * 售后ID
+     */
     private String id;
 
     /**
-    * 订单ID
-    */
+     * 订单ID
+     */
     private String tradeId;
 
     /**
-    * 会员ID
-    */
+     * 会员ID
+     */
     private String userId;
 
     /**
-    * 店铺ID
-    */
+     * 店铺ID
+     */
     private String shopId;
 
     /**
-    * 商家ID
-    */
+     * 商家ID
+     */
     private String merchantId;
 
     /**
-    * 订单编号
-    */
+     * 订单编号
+     */
     private String orderCode;
 
     /**
-    * 退款金额
-    */
+     * 退款金额
+     */
     private BigDecimal refundAmount;
 
     /**
      * 退款备注
-     * */
+     */
     private String refundRemarks;
 
     /**
      * TradeRightsStateEnum
-    * 状态(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成)
-    */
+     * 状态(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成)
+     */
     private Integer state;
 
     /**
-    * 售后类型(10:换货,20:仅退款,30:退货退款)
-    */
+     * 售后类型(10:换货,20:仅退款,30:退货退款)
+     */
     private Integer rightsType;
 
     /**
-    * 申请售后原因
-    */
+     * 申请售后原因
+     */
     private Integer rightsReasonType;
 
     /**
-    * 申请售后说明
-    */
+     * 申请售后说明
+     */
     private String rightsRemark;
 
     /**
-    * 退货方式(10:自行寄回,20:上门取件)
-    */
+     * 退货方式(10:自行寄回,20:上门取件)
+     */
     private Integer returnType;
     /**
      * 退货物流公司名字
@@ -120,48 +120,96 @@ public class TradeRights extends Model {
      */
     private LocalDateTime sendBackLogisticsDate;
     /**
-    * 审核拒绝原因
-    */
+     * 审核拒绝原因
+     */
     private String rejectReason;
 
     /**
-    * 申请时间
-    */
+     * 申请时间
+     */
     private LocalDateTime applyTime;
 
     /**
-    * 完成时间
-    */
+     * 完成时间
+     */
     private LocalDateTime completeTime;
 
     /**
-    * 审批人名字
-    */
+     * 审批人名字
+     */
     private String handPersonName;
 
     /**
-    * 审批人ID
-    */
+     * 审批人ID
+     */
     private String merchantAccountId;
 
     /**
-    * 创建时间
-    */
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdate;
 
     /**
-    * 更新时间
-    */
+     * 更新时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime udate;
 
     /**
-    * 逻辑删除标记
-    */
+     * 逻辑删除标记
+     */
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;
 
+    /**
+     * 会员手机号
+     */
+    private String phone;
 
+    /**
+     * 应退金额
+     */
+    private BigDecimal shouldRefundAmount;
+
+    /**
+     * 应退积分
+     */
+    private BigDecimal shouldRefundPoint;
+
+    /**
+     * 实退积分
+     */
+    private BigDecimal refundPoint;
+
+    /**
+     * 退款申请类型(10:取消订单退款,20:售后申请退款)
+     */
+    private Integer refundMoneyType;
+
+    /**
+     * 是否需要二次审核
+     */
+    private Integer isTwoCheck;
+
+    /**
+     * 平台处理状态
+     */
+    private Integer checkState;
+
+    /**
+     * 平台处理说明
+     */
+    private String platformCheckReason;
+
+    /**
+     * 退款方式(10:原路退回)
+     */
+    private Integer refundType;
+
+    /**
+     * 隐藏订单:1:是
+     */
+    private Integer isHide;
 }

@@ -77,4 +77,14 @@ public class TradeRightsRpc implements ITradeRightsRpc{
         return TradeRightsService.rightsRefunView(dto);
     }
 
+    @Override
+    public void setPlatformChenkReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
+        TradeRightsService.setPlatformChenkReason(dto);
+    }
+
+    @Override
+    public void platformCheckReason(TradeRightsDTO.IdDTO dto) {
+        TradeRightsService.platformCheckReason(dto);
+    }
+
 }

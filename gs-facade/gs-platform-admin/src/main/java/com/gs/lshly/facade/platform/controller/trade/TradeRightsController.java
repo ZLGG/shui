@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
-* <p>
-*  前端控制器
-* </p>
-*
-* @author zdf
-* @since 2020-12-17
-*/
+ * <p>
+ * 前端控制器
+ * </p>
+ *
+ * @author zdf
+ * @since 2020-12-17
+ */
 @RestController
 @RequestMapping("/platform/tradeRights")
 @Api(tags = "平台退换货管理")
@@ -37,23 +37,46 @@ public class TradeRightsController {
     public ResponseData<PageData<TradeRightsVO.RightsListVO>> list(@Valid @RequestBody TradeRightsQTO.StateDTO qto) {
         return ResponseData.data(iTradeRightsRpc.pageData(qto));
     }
+
     @ApiOperation("售后申请详情")
     @GetMapping(value = "/{id}")
     public ResponseData<TradeRightsVO.RightsListViewVO> get(TradeRightsDTO.IdDTO dto) {
         return ResponseData.data(iTradeRightsRpc.get(dto));
     }
 
-    @ApiOperation("退款申请列表")
+    @ApiOperation("二次审核")
+    @GetMapping(value = "/check/{id}")
+    public ResponseData<String> twoCheck(TradeRightsDTO.IdDTO dto) {
+        return ResponseData.data(iTradeRightsRpc.get(dto));
+    }
+
+    @ApiOperation("提交平台处理说明")
+    @PostMapping(value = "/{id}")
+    public ResponseData<String> setPlatformCheckReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
+        iTradeRightsRpc.setPlatformChenkReason(dto);
+        return ResponseData.success("提交成功");
+    }
+
+    @ApiOperation("平台审核通过")
+    @GetMapping(value = "/pass/{id}")
+    public ResponseData<String> platformCheckReason(TradeRightsDTO.IdDTO dto) {
+        iTradeRightsRpc.platformCheckReason(dto);
+        return ResponseData.success("通过成功");
+    }
+
+    @ApiOperation("退款申请列表(无)")
     @GetMapping("/rightsList")
     public ResponseData<PageData<TradeRightsVO.RightsRefundListVO>> rightsRefundList(TradeRightsQTO.StateRefundDTO qto) {
         return ResponseData.data(iTradeRightsRpc.getRightsRefundList(qto));
     }
-    @ApiOperation("退款申请详情")
+
+    @ApiOperation("退款申请详情(无)")
     @GetMapping(value = "/getRightsRefund/{id}")
     public ResponseData<TradeRightsVO.RightsRefundViewVO> getRightsRefund(TradeRightsDTO.IdDTO dto) {
         return ResponseData.data(iTradeRightsRpc.getRightsRefund(dto));
     }
-    @ApiOperation("退款")
+
+    @ApiOperation("退款(无)")
     @PostMapping(value = "/getRightsRefundAmont/{id}")
     public ResponseData<Void> getRightsRefundAmont(@Valid @RequestBody TradeRightsDTO.RefundDTO dto) {
         iTradeRightsRpc.getRightsRefundAmont(dto);
@@ -65,13 +88,12 @@ public class TradeRightsController {
     public ResponseData<PageData<TradeRightsRefundVO.DetailVO>> rightsRefunList(@Valid @RequestBody TradeRightsQTO.NewQTO qto) {
         return ResponseData.data(iTradeRightsRpc.rightsRefunList(qto));
     }
+
     @ApiOperation("退款单详情")
     @GetMapping("/rightsRefunView")
     public ResponseData<TradeRightsRefundVO.DetailViewVO> rightsRefunView(TradeRightsRefundDTO.IdDTO dto) {
         return ResponseData.data(iTradeRightsRpc.rightsRefunView(dto));
     }
-
-
 
 
 }

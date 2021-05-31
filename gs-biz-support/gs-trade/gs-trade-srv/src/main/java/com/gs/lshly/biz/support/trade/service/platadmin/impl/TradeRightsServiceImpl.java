@@ -3,14 +3,19 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.PayTypeEnum;
+import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
+import com.gs.lshly.biz.support.trade.enums.TradeRightsListStatusEnum;
+import com.gs.lshly.biz.support.trade.enums.TradeRightsNewStateEnum;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeRightsService;
 import com.gs.lshly.common.enums.*;
@@ -92,23 +97,65 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     @Override
     public PageData<TradeRightsVO.RightsListVO> pageData(TradeRightsQTO.StateDTO qto) {
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
-        if (ObjectUtils.isNotEmpty(qto.getStatus())) {
+        if (ObjectUtils.isNotEmpty(qto.getRightsType())) {
             //状态枚举类[10:换货,20:仅退款,30:退货退款]
-            query.and(i -> i.eq("tr.`rights_type`", qto.getStatus()));
+            query.and(i -> i.eq("rights_type", qto.getRightsType()));
         }
-        if (ObjectUtils.isNotEmpty(qto.getSourceType())) {
-            query.and(i -> i.eq("t.`source_type`", qto.getSourceType()));
+        if (ObjectUtils.isNotEmpty(qto.getPhone())) {
+            //根据手机号查询
+            query.and(i -> i.eq("phone", qto.getPhone()));
         }
-        if (StringUtils.isNotBlank(qto.getTradeId())) {
-            query.and(i -> i.like("tr.`trade_id`", qto.getTradeId()));
+        if (StringUtils.isNotBlank(qto.getOrderCode())) {
+            //根据订单编号查询
+            query.and(i -> i.like("order_code", qto.getOrderCode()));
         }
         if (ObjectUtils.isNotEmpty(qto.getState())) {
+            //根据平台审核状态查询
+            if (qto.getState().equals(TradeRightsNewStateEnum.处理中.getCode())) {
+                query.and(i -> i.eq("check_state", qto.getState()));
+            } else if (qto.getState().equals(TradeRightsNewStateEnum.已完成.getCode())) {
+                query.and(i -> i.eq("check_state", qto.getState()));
+            } else if (qto.getState().equals(TradeRightsNewStateEnum.待审核.getCode())) {
+                query.and(i -> i.eq("check_state", qto.getState()));
+            }
             query.and(i -> i.eq("tr.`state`", qto.getState()));
         }
-        if (ObjectUtils.isNotEmpty(qto.getCdate()) || ObjectUtils.isNotEmpty(qto.getCdateState())) {
-            GetQuery(query, qto.getCdateState(), qto.getCdate(), qto.getCdateLittleDate());
+        if (ObjectUtils.isNotEmpty(qto.getRefundMoneyType())) {
+            query.and(i -> i.eq("refund_money_type", qto.getRefundMoneyType()));
         }
+        query.orderByDesc("apply_time");
         IPage<TradeRights> pager = MybatisPlusUtil.pager(qto);
+        IPage<TradeRights> page = repository.page(pager, query);
+        List<TradeRightsVO.RightsListVO> listVOS = new ArrayList<>();
+        if (CollUtil.isNotEmpty(page.getRecords())) {
+            for (TradeRights record : page.getRecords()) {
+                TradeRightsVO.RightsListVO rightsListVO = new TradeRightsVO.RightsListVO();
+                BeanUtils.copyProperties(record, rightsListVO);
+                QueryWrapper<TradeRightsGoods> wrapper = MybatisPlusUtil.query();
+                wrapper.eq("rights_id", record.getId());
+                //查询商品名称
+                TradeRightsGoods tradeRightsGoods = iTradeRightsGoodsRepository.getOne(wrapper);
+                if (ObjectUtil.isNotEmpty(tradeRightsGoods)) {
+                    rightsListVO.setGoodsName(tradeRightsGoods.getGoodsName());
+                }
+                //查询实付金额与积分
+                Trade trade = iTradeRepository.getById(record.getTradeId());
+                if (ObjectUtil.isNotEmpty(trade)) {
+                    if (ObjectUtil.isNotEmpty(trade.getAmountActuallyPaid())) {
+                        rightsListVO.setAmountActuallyPaid(trade.getAmountActuallyPaid());
+                    }
+                    if (ObjectUtil.isNotEmpty(trade.getPointPriceActuallyPaid())) {
+                        rightsListVO.setPointPriceActuallyPaid(trade.getPointPriceActuallyPaid());
+                    }
+                }
+                listVOS.add(rightsListVO);
+            }
+        }
+        return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), listVOS.size());
+/*        if (ObjectUtils.isNotEmpty(qto.getCdate()) || ObjectUtils.isNotEmpty(qto.getCdateState())) {
+            GetQuery(query, qto.getCdateState(), qto.getCdate(), qto.getCdateLittleDate());
+        }*/
+/*        IPage<TradeRights> pager = MybatisPlusUtil.pager(qto);
         IPage<TradeRights> page = repository.selectPlatadminTradeRightsList(pager, query);
         List<TradeRightsVO.RightsListVO> listVOS = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(page.getRecords()) || ObjectUtils.isNotEmpty(pager)) {
@@ -150,9 +197,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
                 rightsListVO.setTradeCode(tradeRights.getOrderCode());
                 listVOS.add(rightsListVO);
             }
-        }
-
-        return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), listVOS.size());
+        }*/
     }
 
     private void GetQuery(QueryWrapper<?> query, Integer qto, LocalDateTime date, LocalDateTime littleDate) {
@@ -220,15 +265,96 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
 
     @Override
     public TradeRightsVO.RightsListViewVO get(TradeRightsDTO.IdDTO dto) {
-        if (StringUtils.isNotBlank(dto.getId())) {
-            TradeRights tradeRights = repository.getById(dto.getId());
-            TradeRightsVO.RightsListViewVO rightsListViewVO = new TradeRightsVO.RightsListViewVO();
-            if (ObjectUtils.isNotEmpty(tradeRights)) {
-                BeanUtils.copyProperties(tradeRights, rightsListViewVO);
-            } else {
-                throw new BusinessException("没有查询到售后表");
+        if (StrUtil.isEmpty(dto.getId())) {
+            throw new BusinessException("参数不能为空");
+        }
+        TradeRights tradeRights = repository.getById(dto.getId());
+        TradeRightsVO.RightsListViewVO rightsListViewVO = new TradeRightsVO.RightsListViewVO();
+        if (ObjectUtils.isEmpty(tradeRights)) {
+            throw new BusinessException("没有查询到售后表");
+        }
+        //填充退货基本信息
+        TradeRightsVO.RefundBasicVO refundBasicVO = new TradeRightsVO.RefundBasicVO();
+        BeanUtils.copyProperties(tradeRights, refundBasicVO);
+        ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(tradeRights.getShopId()));
+        if (ObjectUtil.isNotEmpty(detailVO)) {
+            refundBasicVO.setShopName(detailVO.getShopName());
+        }
+        QueryWrapper<TradeRightsImg> query = MybatisPlusUtil.query();
+        query.eq("rights_id", tradeRights.getId());
+        TradeRightsImg tradeRightsImg = iTradeRightsImgRepository.getOne(query);
+        if (ObjectUtil.isNotEmpty(tradeRightsImg)) {
+            refundBasicVO.setRightsImg(CollUtil.isEmpty(getImage(tradeRightsImg.getRightsImg())) ? new ArrayList<String>() : getImage(tradeRightsImg.getRightsImg()));
+        }
+        rightsListViewVO.setRefundBasicVO(refundBasicVO);
+        //填充订单商品信息
+        List<TradeListVO.TradeRightsGoodsDetailViewVO> tradeRightsGoodsDetailViewVOS = new ArrayList<>();
+        QueryWrapper<TradeRightsGoods> tradeRightsGoodsQuery = MybatisPlusUtil.query();
+        tradeRightsGoodsQuery.eq("rights_id", tradeRights.getId());
+        tradeRightsGoodsQuery.eq("goods_type", TradeRightsGoodsTypeEnum.原商品.getCode());
+        List<TradeRightsGoods> tradeRightsGoodsList = iTradeRightsGoodsRepository.list(tradeRightsGoodsQuery);
+        for (TradeRightsGoods tradeRightsGoods : tradeRightsGoodsList) {
+            TradeListVO.TradeRightsGoodsDetailViewVO tradeRightsGoodsDetailViewVO = new TradeListVO.TradeRightsGoodsDetailViewVO();
+            tradeRightsGoodsDetailViewVO.setGoodsName(tradeRightsGoods.getGoodsName());
+            tradeRightsGoodsDetailViewVO.setTradeCode(tradeRightsGoods.getOrderCode());
+            tradeRightsGoodsDetailViewVO.setQuantity(tradeRightsGoods.getQuantity());
+            tradeRightsGoodsDetailViewVO.setGoodsOnePrice(tradeRightsGoods.getSalePrice());
+            tradeRightsGoodsDetailViewVO.setGoodsAmount(tradeRightsGoods.getRefundAmount());
+            tradeRightsGoodsDetailViewVOS.add(tradeRightsGoodsDetailViewVO);
+        }
+        rightsListViewVO.setTradeRightsGoodsListVO(tradeRightsGoodsDetailViewVOS);
+        //填充明细
+        Trade trade = iTradeRepository.getById(tradeRights.getTradeId());
+        TradeRightsVO.RefundDetailVO refundDetailVO = new TradeRightsVO.RefundDetailVO();
+        BeanUtils.copyProperties(tradeRights, refundDetailVO);
+        if (ObjectUtil.isNotEmpty(trade)) {
+            if (ObjectUtil.isNotEmpty(trade.getAmountActuallyPaid())) {
+                refundDetailVO.setAmountActuallyPaid(trade.getAmountActuallyPaid());
             }
-            QueryWrapper<TradeRightsGoods> query1 = MybatisPlusUtil.query();
+            if (ObjectUtil.isNotEmpty(trade.getPointPriceActuallyPaid())) {
+                refundDetailVO.setPointPriceActuallyPaid(trade.getPointPriceActuallyPaid());
+            }
+        }
+        rightsListViewVO.setRefundDetailVO(refundDetailVO);
+        //填充退款信息
+        if (tradeRights.getRightsType().equals(TradeRightsListStatusEnum.退货退款.getCode())) {
+            TradeRightsVO.RefundMessageVO refundMessageVO = new TradeRightsVO.RefundMessageVO();
+            BeanUtils.copyProperties(tradeRights, refundMessageVO);
+            rightsListViewVO.setRefundMessageVO(refundMessageVO);
+        }
+        //填充换货商品信息
+        if (tradeRights.getRightsType().equals(TradeRightsListStatusEnum.换货.getCode())) {
+            List<TradeListVO.TradeRightsGoodsDetailViewVO> tradeRightGoodsSendList = new ArrayList<>();
+            QueryWrapper<TradeRightsGoods> tradeRightsGoodsSendQuery = MybatisPlusUtil.query();
+            tradeRightsGoodsQuery.eq("rights_id", tradeRights.getId());
+            tradeRightsGoodsQuery.eq("goods_type", TradeRightsGoodsTypeEnum.换货商品.getCode());
+            List<TradeRightsGoods> tradeRightsGoodsSendList = iTradeRightsGoodsRepository.list(tradeRightsGoodsSendQuery);
+            for (TradeRightsGoods tradeRightsGoods : tradeRightsGoodsSendList) {
+                TradeListVO.TradeRightsGoodsDetailViewVO tradeRightsGoodsSendVO = new TradeListVO.TradeRightsGoodsDetailViewVO();
+                tradeRightsGoodsSendVO.setGoodsName(tradeRightsGoods.getGoodsName());
+                tradeRightsGoodsSendVO.setTradeCode(tradeRightsGoods.getOrderCode());
+                tradeRightsGoodsSendVO.setQuantity(tradeRightsGoods.getQuantity());
+                tradeRightsGoodsSendVO.setGoodsOnePrice(tradeRightsGoods.getSalePrice());
+                tradeRightsGoodsSendVO.setGoodsAmount(tradeRightsGoods.getRefundAmount());
+                tradeRightGoodsSendList.add(tradeRightsGoodsSendVO);
+            }
+            rightsListViewVO.setTradeRightsGoodsSendListVO(tradeRightsGoodsDetailViewVOS);
+        }
+
+        //填充退换货处理结果
+        TradeRightsVO.RefundResultVO refundResultVO = new TradeRightsVO.RefundResultVO();
+        BeanUtils.copyProperties(tradeRights, refundResultVO);
+        rightsListViewVO.setRefundResultVO(refundResultVO);
+        //填充平台处理结果
+        if (ObjectUtil.isNotEmpty(tradeRights.getIsTwoCheck())) {
+            TradeRightsVO.PlatformResultVO platformResultVO = new TradeRightsVO.PlatformResultVO();
+            platformResultVO.setCheckState(tradeRights.getCheckState());
+            List<String> platformCheckReasonList = StrUtil.split(tradeRights.getPlatformCheckReason(), ',');
+            platformResultVO.setPlatformCheckReason(platformCheckReasonList);
+            rightsListViewVO.setPlatformResultVO(platformResultVO);
+        }
+        return rightsListViewVO;
+/*            QueryWrapper<TradeRightsGoods> query1 = MybatisPlusUtil.query();
             query1.and(i -> i.eq("trade_id", tradeRights.getTradeId()));
             query1.and(i -> i.eq("rights_id", tradeRights.getId()));
             TradeRightsGoods list1 = iTradeRightsGoodsRepository.getOne(query1);
@@ -267,8 +393,26 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             return rightsListViewVO;
         } else {
             throw new BusinessException("请输入ID");
-        }
+        }*/
 
+    }
+
+    private List<String> getImage(String images) {
+        if (images != null && !images.equals("{}")) {
+            JSONArray arr = JSONArray.parseArray(images);
+            if (ObjectUtils.isEmpty(arr)) {
+                return null;
+            }
+            List<String> tradeRightsImgList = new ArrayList<>();
+            for (int i = 0; i < arr.size(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String imgUrl = obj.getString("imgSrc");
+                tradeRightsImgList.add(imgUrl);
+            }
+
+            return tradeRightsImgList;
+        }
+        return null;
     }
 
     @Override
@@ -464,16 +608,16 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     @Override
     public PageData<TradeRightsRefundVO.DetailVO> rightsRefunList(TradeRightsQTO.NewQTO qto) {
         IPage<TradeRightsRefund> pager = MybatisPlusUtil.pager(qto);
-        QueryWrapper<TradeRightsRefund> query = new QueryWrapper<>();
+        QueryWrapper<TradeRightsRefund> query = MybatisPlusUtil.query();
         if (ObjectUtil.isNotEmpty(qto.getPayType())) {
-            query.eq("pay_type", qto.getPayType());
+            query.and(i -> i.eq("pay_type", qto.getPayType()));
         }
         //根据订单编号查询
         if (StrUtil.isNotEmpty(qto.getTradeCode())) {
-            query.eq("trade_code", qto.getTradeCode());
+            query.and(i -> i.like("trade_code", qto.getTradeCode()));
         } else if (StrUtil.isNotEmpty(qto.getPhone())) {
             //根据用户手机号查询
-            query.eq("phone", qto.getPhone());
+            query.and(i -> i.like("phone", qto.getPhone()));
         }
         IPage<TradeRightsRefund> page = iTradeRightsRefundRepository.page(pager, query);
         List<TradeRightsRefundVO.DetailVO> ListVOS = new ArrayList<>();
@@ -551,25 +695,68 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             if (ObjectUtils.isNotEmpty(tradeRights)) {
                 detailViewVO.setApplyTime(tradeRights.getApplyTime());
             }
-            QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
+            QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
             query.eq("trade_id", tradeRightsRefund.getTradeId());
-            List<TradeGoods> tradeGoodsList = iTradeGoodsRepository.list(query);
+            List<TradeRightsGoods> tradeGoodsList = iTradeRightsGoodsRepository.list(query);
             List<TradeListVO.TradeRightsGoodsDetailViewVO> viewVOList = new ArrayList<>();
             if (CollUtil.isNotEmpty(tradeGoodsList)) {
-                for (TradeGoods tradeGoods : tradeGoodsList) {
+                for (TradeRightsGoods tradeRightsGoods : tradeGoodsList) {
                     TradeListVO.TradeRightsGoodsDetailViewVO viewVO = new TradeListVO.TradeRightsGoodsDetailViewVO();
                     viewVO.setTradeCode(tradeRightsRefund.getTradeCode());
-                    viewVO.setGoodsName(tradeGoods.getGoodsName());
-                    viewVO.setQuantity(tradeGoods.getQuantity());
-                    viewVO.setGoodsOnePrice(tradeGoods.getSalePrice());
-                    viewVO.setGoodsAmount(tradeGoods.getPayAmount());
+                    viewVO.setGoodsName(tradeRightsGoods.getGoodsName());
+                    viewVO.setQuantity(tradeRightsGoods.getQuantity());
+                    viewVO.setGoodsOnePrice(tradeRightsGoods.getSalePrice());
+                    viewVO.setGoodsAmount(tradeRightsGoods.getRefundAmount());
                     viewVOList.add(viewVO);
                 }
-                detailViewVO.setMerchantName(tradeGoodsList.get(0).getShopName());
             }
             detailViewVO.setDetailViewVOList(viewVOList);
+            ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(tradeRights.getShopId()));
+            if (ObjectUtil.isNotEmpty(detailVO)) {
+                detailViewVO.setShopName(detailVO.getShopName());
+            }
         }
         return detailViewVO;
+    }
+
+    @Override
+    public void setPlatformChenkReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
+        if (ObjectUtil.isEmpty(dto)) {
+            throw new BusinessException("参数不能为空!");
+        }
+        if (StrUtil.isEmpty(dto.getId()) || StrUtil.isEmpty(dto.getPlatformCheckReason())) {
+            throw new BusinessException("参数不能为空!");
+        }
+        TradeRights tradeRights = iTradeRightsRepository.getById(dto.getId());
+        if (ObjectUtil.isEmpty(tradeRights)) {
+            throw new BusinessException("售后表信息不存在!");
+        }
+        if (StrUtil.isEmpty(tradeRights.getPlatformCheckReason())) {
+            tradeRights.setPlatformCheckReason(dto.getPlatformCheckReason());
+        } else {
+            tradeRights.setPlatformCheckReason(tradeRights.getPlatformCheckReason() + "," + dto.getPlatformCheckReason());
+        }
+        //平台填写处理说明后，将状态变更为处理中
+        if (tradeRights.getCheckState().equals(TradeRightsNewStateEnum.待审核.getCode())) {
+            tradeRights.setCheckState(TradeRightsNewStateEnum.处理中.getCode());
+        }
+        iTradeRightsRepository.updateById(tradeRights);
+    }
+
+    @Override
+    public void platformCheckReason(TradeRightsDTO.IdDTO dto) {
+        if (StrUtil.isEmpty(dto.getId())) {
+            throw new BusinessException("参数不能为空!");
+        }
+        TradeRights tradeRights = iTradeRightsRepository.getById(dto.getId());
+        if (ObjectUtil.isEmpty(tradeRights)) {
+            throw new BusinessException("售后表信息不存在!");
+        }
+        if (tradeRights.getCheckState().equals(TradeRightsNewStateEnum.处理中.getCode())) {
+            tradeRights.setCheckState(TradeRightsNewStateEnum.已完成.getCode());
+            tradeRights.setIsTwoCheck(0);
+            iTradeRightsRepository.updateById(tradeRights);
+        }
     }
 
     private List<TradeRightsImg> getRightsImg(String id, String tradeId) {

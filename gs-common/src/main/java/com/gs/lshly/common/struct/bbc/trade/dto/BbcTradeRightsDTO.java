@@ -78,7 +78,7 @@ public abstract class BbcTradeRightsDTO implements Serializable {
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
 
-        @ApiModelProperty(value = "售后ID")
+        @ApiModelProperty(value = "售后表ID")
         private String id;
     }
 
