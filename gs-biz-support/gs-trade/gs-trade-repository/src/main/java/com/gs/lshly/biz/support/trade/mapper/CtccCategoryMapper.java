@@ -16,6 +16,9 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface CtccCategoryMapper extends BaseMapper<CtccCategory> {
 
-    @Select("select name from gs_ctcc_category where id = (select category_id from gs_ctcc_category_goods where goods_id = #{goodsId})")
+    @Select("select name from gs_ctcc_category where id = (select category_id from gs_ctcc_category_goods where goods_id = #{goodsId} limit 1)")
     String getCtccCategoryName(@Param("goodsId") String goodsId);
+
+    @Select("select goods_state from gs_ctcc_pt_activity_goods where goods_id = #{id}")
+    Integer getGoodsState(@Param("id") String id);
 }

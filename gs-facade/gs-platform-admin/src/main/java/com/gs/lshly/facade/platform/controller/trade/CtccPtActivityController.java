@@ -4,6 +4,7 @@ import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityRpc;
@@ -12,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +23,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/platadmin/ctccPtActivity")
 @Api(tags = "平台电信国际管理-v1.1.0")
-//@Module(code = "ctcc",parent = "marketing",name = "电信国际",index = 8)
 public class CtccPtActivityController {
     @DubboReference
     private ICtccPtActivityRpc iCtccPtActivityRpc;
 
-    @ApiOperation("创建活动")
+/*    @ApiOperation("创建活动")
     @PostMapping("/addActivity")
     public ResponseData addActivity(@RequestBody CtccPtActivityDTO.AddDTO addDTO) {
         iCtccPtActivityRpc.addActivity(addDTO);
@@ -41,13 +40,13 @@ public class CtccPtActivityController {
         modifyDTO.setId(id);
         iCtccPtActivityRpc.modifyActivity(modifyDTO);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
-    }
+    }*/
 
-    @ApiOperation("查看活动")
-    @PutMapping("getActivityDetail/{id}")
-    public ResponseData<CtccPtActivityVO.DetailVO> getActivityDetail(@PathVariable String id) {
-        Optional.ofNullable(id).orElseThrow(() ->new BusinessException("活动id不能为空"));
-        CtccPtActivityVO.DetailVO detailVO = iCtccPtActivityRpc.getActivityDetail(id);
+    @ApiOperation("查看活动商品详情")
+    @PutMapping("getGoodsDetail/{id}")
+    public ResponseData<BbcGoodsInfoVO.CtccGoodsDetailVO> getActivityDetail(@PathVariable String id) {
+        Optional.ofNullable(id).orElseThrow(() ->new BusinessException("商品id不能为空"));
+        BbcGoodsInfoVO.CtccGoodsDetailVO detailVO = iCtccPtActivityRpc.getActivityDetail(id);
         return ResponseData.data(detailVO);
     }
 
@@ -73,9 +72,9 @@ public class CtccPtActivityController {
     }
 
 
-    @ApiOperation("批量删除商品")
+    @ApiOperation("批量删除活动商品")
     @PostMapping("/deleteGoods")
-    public ResponseData deleteGoods(@RequestBody List<CtccPtActivityDTO.DeleteGoodsDTO> list) {
+    public ResponseData deleteGoods(@RequestBody CtccPtActivityDTO.DeleteGoodsDTO list) {
         iCtccPtActivityRpc.deleteGoods(list);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
@@ -88,16 +87,17 @@ public class CtccPtActivityController {
     }
 
     @ApiOperation("添加活动商品")
-    @PostMapping("/addActivityGoods")
-    public ResponseData addActivityGoods(@RequestBody List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList) {
-        iCtccPtActivityRpc.addActivityGoods(activityGoodsDTOList);
+    @PostMapping("/addGoods")
+    public ResponseData addActivityGoods(@RequestBody List<CtccPtActivityDTO.AddGoodsDTO> dtoList) {
+        iCtccPtActivityRpc.addActivityGoods(dtoList);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("活动列表展示")
-    @GetMapping("/queryActivityList")
-    public ResponseData<PageData<CtccPtActivityVO.ActivityListVO>> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
-        PageData<CtccPtActivityVO.ActivityListVO> pageData = iCtccPtActivityRpc.queryActivityList(dto);
+    @ApiOperation("活动商品列表展示")
+    @GetMapping("/queryGoodsList")
+    public ResponseData<PageData<BbcGoodsInfoVO.CtccGoodsDetailVO>> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
+        PageData<BbcGoodsInfoVO.CtccGoodsDetailVO> pageData = iCtccPtActivityRpc.queryActivityList(dto);
         return ResponseData.data(pageData);
     }
+
 }

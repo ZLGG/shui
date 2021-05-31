@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.trade.rpc.platadmin;
 
 import com.gs.lshly.biz.support.trade.service.platadmin.ICtccPtActivityService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityRpc;
@@ -35,17 +36,17 @@ public class CtccPtActivityRpc implements ICtccPtActivityRpc {
     }
 
     @Override
-    public void deleteGoods(List<CtccPtActivityDTO.DeleteGoodsDTO> list) {
+    public void deleteGoods(CtccPtActivityDTO.DeleteGoodsDTO list) {
         ctccPtActivityService.deleteGoods(list);
     }
 
     @Override
-    public PageData<CtccPtActivityVO.ActivityListVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
+    public PageData<BbcGoodsInfoVO.CtccGoodsDetailVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
         return ctccPtActivityService.queryActivityList(dto);
     }
 
     @Override
-    public CtccPtActivityVO.DetailVO getActivityDetail(String id) {
+    public BbcGoodsInfoVO.CtccGoodsDetailVO getActivityDetail(String id) {
         return ctccPtActivityService.getActivityDetail(id);
     }
 
@@ -60,7 +61,7 @@ public class CtccPtActivityRpc implements ICtccPtActivityRpc {
     }
 
     @Override
-    public void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList) {
+    public void addActivityGoods(List<CtccPtActivityDTO.AddGoodsDTO> activityGoodsDTOList) {
         ctccPtActivityService.addActivityGoods(activityGoodsDTOList);
     }
 

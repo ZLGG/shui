@@ -23,9 +23,6 @@ public class CtccPtActivityDTO implements Serializable {
         @ApiModelProperty("商品id")
         private String goodsId;
 
-        @ApiModelProperty("活动id")
-        private String activityId;
-
         @ApiModelProperty("商品状态（10-未上架，20-已上架）")
         private Integer goodsState;
     }
@@ -33,11 +30,8 @@ public class CtccPtActivityDTO implements Serializable {
     @Data
     @ApiModel("CtccPtActivityDTO.DeleteGoodsDTO")
     public static class DeleteGoodsDTO implements Serializable {
-        @ApiModelProperty("商品id")
-        private String goodsId;
-
-        @ApiModelProperty("活动id")
-        private String activityId;
+        @ApiModelProperty("商品id列表")
+        private List<String> goodsIdList;
 
     }
     @Data
@@ -113,16 +107,17 @@ public class CtccPtActivityDTO implements Serializable {
     }
 
     @Data
-    @ApiModel("CtccPtActivityDTO.AddActivityGoodsDTO")
-    public static class AddActivityGoodsDTO implements Serializable {
+    @ApiModel("CtccPtActivityDTO.AddGoodsDTO")
+    public static class AddGoodsDTO implements Serializable {
         @ApiModelProperty("商品id")
         private String goodsId;
 
         @ApiModelProperty("类别id")
         private String categoryId;
 
-        @ApiModelProperty("活动id")
-        private String activityId;
+        @ApiModelProperty("排序")
+        private Integer idx;
+
     }
 
     @Data
@@ -162,5 +157,8 @@ public class CtccPtActivityDTO implements Serializable {
     public static class ActivityListDTO extends BaseQTO {
         @ApiModelProperty("商品名称")
         private String goodsName;
+
+        @ApiModelProperty("类别id")
+        private String categoryId;
     }
 }
