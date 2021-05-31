@@ -32,5 +32,7 @@ public interface InUserCouponMapper extends BaseMapper<InUserCoupon> {
 
     @Select("select coupon_id, coupon_desc, after_date, effective_date, deduction_amount, use_threshold where coupon_type = 1 and audit_status = 1 and coupon_label = 2")
     List<BbcInUserCouponVO.Coupon> queryCouponByShare();
+
+    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId);
 }
 

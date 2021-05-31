@@ -64,4 +64,11 @@ public class BbcInUserCouponController {
         return ResponseData.data(couponVOList);
     }
 
+    @ApiOperation("查看当前商品可领取的优惠券")
+    @PutMapping("/getGoodsCoupon/{goodsId}")
+    public ResponseData<List<BbcInUserCouponVO.GoodsCouponListVO>> getGoodsCoupon(@PathVariable String goodsId) {
+        List<BbcInUserCouponVO.GoodsCouponListVO> couponListVOS = inUserCouponRpc.getGoodsCoupon(goodsId);
+        return ResponseData.data(couponListVOS);
+    }
+
 }

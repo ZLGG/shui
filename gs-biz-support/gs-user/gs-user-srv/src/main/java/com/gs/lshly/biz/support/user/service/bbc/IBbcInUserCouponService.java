@@ -42,4 +42,11 @@ public interface IBbcInUserCouponService {
      * @return
      */
     List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto);
+
+    /**
+     * 查看当前商品可领取的优惠券
+     * @param goodsId
+     * @return
+     */
+    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId);
 }

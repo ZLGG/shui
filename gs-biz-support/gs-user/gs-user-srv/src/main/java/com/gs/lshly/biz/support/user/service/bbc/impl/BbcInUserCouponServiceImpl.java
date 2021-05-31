@@ -103,16 +103,23 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     }
 
     @Override
+    public List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId) {
+        // 查询当前商品可用优惠券
+        List<BbcInUserCouponVO.GoodsCouponListVO> couponList = inUserCouponMapper.getGoodsCoupon(goodsId);
+        return null;
+    }
+
+    @Override
     public List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto) {
-        // 获取当前所有优惠券
+        // 获取当前用户所有优惠券
         List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
                 .eq("user_id",qto.getJwtUserId())
                 .eq("coupon_status",0));
         List<BbcInUserCouponVO.MyCouponListVO> resultList = new ArrayList<>();
-        if (StringUtils.isNotBlank(qto.getGoodsId())) {
+        if (StringUtils.isNotBlank(qto.getLevelId())) {
             userCouponList.forEach(coupon ->{
-                // 根据商品id匹配可用优惠券
-                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getGoodsId(),coupon.getCouponId());
+                // 根据维度id匹配可用优惠券
+                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getLevelId(),coupon.getCouponId());
                 if (isExist) {
                     BbcInUserCouponVO.MyCouponListVO couponVO = new BbcInUserCouponVO.MyCouponListVO();
                     BeanUtils.copyProperties(coupon, couponVO);

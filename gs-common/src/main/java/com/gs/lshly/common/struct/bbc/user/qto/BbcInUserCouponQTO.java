@@ -49,9 +49,9 @@ public class BbcInUserCouponQTO implements Serializable {
     @Data
     @ApiModel("BbcInUserCouponQTO.MyCouponQTO")
     public static class MyCouponQTO extends BaseDTO {
-        @ApiModelProperty("商品id")
-        @NotBlank(message = "商品id不能为空")
-        private String goodsId;
+        @ApiModelProperty("适用维度id（专区id/类目id/商品id）")
+        @NotBlank(message = "适用维度id不能为空")
+        private String levelId;
     }
 
 }

@@ -24,7 +24,7 @@ public class BbcInUserCouponVO implements Serializable {
         private String id;
 
         @ApiModelProperty("运营配置优惠券id")
-        private Long couponId;
+        private String couponId;
 
         @ApiModelProperty("距离到期天数")
         private Integer expireDays;
@@ -68,7 +68,7 @@ public class BbcInUserCouponVO implements Serializable {
     @ApiModel("BbcInUserCouponVO.Coupon")
     @Data
     public static class Coupon implements Serializable {
-        private Long couponId;
+        private String couponId;
 
         /**
          * 优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）
@@ -131,6 +131,37 @@ public class BbcInUserCouponVO implements Serializable {
 
         @ApiModelProperty("优惠券抵扣金额")
         private BigDecimal couponPrice;
+
+        @ApiModelProperty("使用门槛")
+        private BigDecimal minPrice;
+
+        @ApiModelProperty("优惠券说明")
+        private String couponDesc;
+
+        @ApiModelProperty("优惠券名称")
+        private String couponName;
+
+        @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+        private Integer couponType;
+    }
+
+    @ApiModel("BbcInUserCouponVO.GoodsCouponListVO")
+    @Data
+    public static class GoodsCouponListVO implements Serializable {
+        @ApiModelProperty("优惠券id")
+        private String id;
+
+        @ApiModelProperty("优惠券使用开始时间")
+        private LocalDate startTime;
+
+        @ApiModelProperty("优惠券使用结束时间")
+        private LocalDate endTime;
+
+        @ApiModelProperty("优惠券减免金额")
+        private BigDecimal deductionAmount;
+
+        @ApiModelProperty("优惠券减免积分")
+        private Integer deductionPoints;
 
         @ApiModelProperty("使用门槛")
         private BigDecimal minPrice;
