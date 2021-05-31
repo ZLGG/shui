@@ -139,6 +139,11 @@ public class Coupon extends Model {
     private Integer level;
 
     /**
+     * 平台处理说明
+     */
+    private String rejectReason;
+
+    /**
      * 创建时间
      */
     private Date cdate;
