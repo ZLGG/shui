@@ -78,7 +78,7 @@ public abstract class TradeRightsRefundVO implements Serializable {
 
     @Data
     @ApiModel("TradeRightsRefundVO.DetailVO")
-    public static class DetailVO extends ListVO {
+    public static class DetailVO implements Serializable {
 
         /*        @ApiModelProperty("支付方式[90=线下支付]")
                 private Integer applyType;
@@ -89,6 +89,9 @@ public abstract class TradeRightsRefundVO implements Serializable {
                 @ApiModelProperty("支付开始时间")
                 @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
                 private LocalDateTime cdate;*/
+        @ApiModelProperty("售后退款表ID")
+        private String id;
+
         @ApiModelProperty("支付方式")
         private Integer payType;
 
@@ -100,6 +103,12 @@ public abstract class TradeRightsRefundVO implements Serializable {
 
         @ApiModelProperty("实退积分")
         private BigDecimal refundPoint;
+
+        @ApiModelProperty("订单ID(订单流水号)")
+        private String tradeId;
+
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
     }
 
     @Data
@@ -115,7 +124,7 @@ public abstract class TradeRightsRefundVO implements Serializable {
         private BigDecimal refundPoint;
 
         @ApiModelProperty("所属商家")
-        private String merchantName;
+        private String shopName;
 
         @ApiModelProperty("售后申请时间")
         private LocalDateTime applyTime;

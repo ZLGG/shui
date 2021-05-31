@@ -181,6 +181,9 @@ public class CouponDTO implements Serializable {
 
         @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
         private Integer auditStatus;
+
+        @ApiModelProperty(value = "平台处理说明")
+        private String rejectReason;
     }
 
 }

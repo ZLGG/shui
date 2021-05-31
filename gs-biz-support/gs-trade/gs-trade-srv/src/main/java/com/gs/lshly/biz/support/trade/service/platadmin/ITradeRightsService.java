@@ -31,4 +31,8 @@ public interface ITradeRightsService {
     PageData<TradeRightsRefundVO.DetailVO> rightsRefunList(TradeRightsQTO.NewQTO qto);
 
     TradeRightsRefundVO.DetailViewVO rightsRefunView(TradeRightsRefundDTO.IdDTO dto);
+
+    void setPlatformChenkReason(TradeRightsDTO.PlatformCheckReasonDTO dto);
+
+    void platformCheckReason(TradeRightsDTO.IdDTO dto);
 }

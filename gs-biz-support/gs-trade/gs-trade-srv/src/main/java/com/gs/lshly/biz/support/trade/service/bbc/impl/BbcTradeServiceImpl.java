@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.gs.lshly.common.enums.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -56,26 +57,6 @@ import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
-import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.ResponseCodeEnum;
-import com.gs.lshly.common.enums.StockAddressTypeEnum;
-import com.gs.lshly.common.enums.StockCheckStateEnum;
-import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
-import com.gs.lshly.common.enums.TradeCancelRefundStateEnum;
-import com.gs.lshly.common.enums.TradeCancelStateEnum;
-import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
-import com.gs.lshly.common.enums.TradeHideEnum;
-import com.gs.lshly.common.enums.TradePayOfficeEnum;
-import com.gs.lshly.common.enums.TradePayResultStateEnum;
-import com.gs.lshly.common.enums.TradePayStateEnum;
-import com.gs.lshly.common.enums.TradePayTypeEnum;
-import com.gs.lshly.common.enums.TradeRightsReasonTypeEnum;
-import com.gs.lshly.common.enums.TradeRightsStateEnum;
-import com.gs.lshly.common.enums.TradeRightsTypeEnum;
-import com.gs.lshly.common.enums.TradeSourceTypeEnum;
-import com.gs.lshly.common.enums.TradeStateEnum;
-import com.gs.lshly.common.enums.TradeTimeOutCancelEnum;
-import com.gs.lshly.common.enums.TradeTrueFalseEnum;
 import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -1720,8 +1701,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 setRightsType(TradeRightsTypeEnum.仅退款.getCode()).
                 setRightsReasonType(TradeRightsReasonTypeEnum.取消订单.getCode()).
                 setRightsRemark(dto.getRemark()).
-                setRefundRemarks(dto.getRemark()).
-                setApplyTime(LocalDateTime.now());
+                //setRefundRemarks(dto.getRemark()).
+                setApplyTime(LocalDateTime.now()).setIsHide(0).setRefundMoneyType(TradeRightsRefundMoneyTypeEnum.取消订单退款.getCode())
+		.setRefundType(TradeRightsRefundTypeEnum.原路退回.getCode());
         iTradeRightsRepository.save(tradeRights);
         QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
         query.and(i->i.eq("trade_id",tradeRights.getTradeId()));

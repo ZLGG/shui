@@ -75,7 +75,19 @@ public abstract class BbcTradeRightsQTO implements Serializable {
     public static class RightsList extends BaseQTO {
 
 
-        @ApiModelProperty("查询类型:10:退货申请,20:退款申请")
+/*        @ApiModelProperty("查询类型:10:退货申请,20:退款申请")
+        private Integer rightsType;*/
+
+
+    }
+
+    @Data
+    @ApiModel("BbcTradeRightsQTO.RightsList")
+    @Accessors(chain = true)
+    public static class Rights extends BaseQTO {
+
+
+        @ApiModelProperty("查询类型:(10:换货,20:仅退款,30:退货退款")
         private Integer rightsType;
 
 

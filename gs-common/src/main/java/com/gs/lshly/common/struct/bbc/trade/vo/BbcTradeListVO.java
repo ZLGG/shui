@@ -31,11 +31,11 @@ public abstract class BbcTradeListVO implements Serializable {
     @ApiModel("BbcTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
-    	
-    	/**
-    	 * 店铺信息
-    	 */
-    	@ApiModelProperty("店铺ID")
+
+        /**
+         * 店铺信息
+         */
+        @ApiModelProperty("店铺ID")
         private String shopId;
 
         @ApiModelProperty("店铺名称")
@@ -62,14 +62,14 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("商家ID")
         private String merchantId;
-        
-    	
-    	@ApiModelProperty("购买总数量")
-    	private Integer quantity;
+
+
+        @ApiModelProperty("购买总数量")
+        private Integer quantity;
 
         @ApiModelProperty("交易订单号(ID)")
         private String id;
-        
+
         @ApiModelProperty("交易编号")
         private String tradeCode;
 
@@ -84,19 +84,19 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("退款状态内容")
         private String rightsStateText;
-        
+
         @ApiModelProperty("交易状态")
         private Integer tradeState;
-        
+
         @ApiModelProperty("交易状态内容")
         private String tradeStateText;
-        
+
         @ApiModelProperty("交易状态内容标题")
         private String tradeStateTitle;
-        
+
         @ApiModelProperty("交易状态备注")
         private String tradeStateRemark;
-        
+
 
         @ApiModelProperty("商品来源类型：1:商城商品，2:积分商品")
         private Integer goodsSourceType;
@@ -112,10 +112,10 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("优惠金额")
         private BigDecimal discountAmount;
-        
+
         @ApiModelProperty("优惠积分金额")
         private BigDecimal discountPointAmount;
-        
+
         @ApiModelProperty("交易总金额（商城用）")
         private BigDecimal tradeAmount;
 
@@ -154,7 +154,7 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("支付类型")
         private Integer payType;
-        
+
         @ApiModelProperty("支付类型内容")
         private String payTypeText;
 
@@ -209,243 +209,244 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("服务器时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime serverTime = LocalDateTime.now() ;
-        
+        private LocalDateTime serverTime = LocalDateTime.now();
+
         @ApiModelProperty("交易商品集合")
         List<TradeGoodsVO> tradeGoodsVOS;
-        
+
         @ApiModelProperty("发货时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime deliveryTime ;
-        
-		public String getId() {
-			return id;
-		}
+        private LocalDateTime deliveryTime;
 
-		public String getUserId() {
-			return userId;
-		}
-
-		public String getUserName() {
-			return userName;
-		}
-
-		public String getShopId() {
-			return shopId;
-		}
-
-		public String getShopName() {
-			return shopName;
-		}
-
-		public String getShopLogo() {
-			return shopLogo;
-		}
-
-		public String getShopManName() {
-			return shopManName;
-		}
-
-		public String getShopManPhone() {
-			return shopManPhone;
-		}
-
-		public BigDecimal getShopLongitude() {
-			return shopLongitude;
-		}
-
-		public BigDecimal getShopLatitude() {
-			return shopLatitude;
-		}
-
-		public String getShopFullAddres() {
-			return shopFullAddres;
-		}
-
-		public String getMerchantId() {
-			return merchantId;
-		}
-
-		public String getTradeCode() {
-			return tradeCode;
-		}
-
-		public Integer getRightsState() {
-			return rightsState;
-		}
-
-		public Integer getTradeState() {
-			return tradeState;
-		}
-
-		public String getTradeStateText() {
-			if(tradeState!=null){
-				tradeStateText = TradeStateEnum.getRemarkByCode(tradeState);
-			}
-			return tradeStateText;
-		}
-
-		public Integer getGoodsSourceType() {
-			return goodsSourceType;
-		}
-
-		public BigDecimal getGoodsAmount() {
-			return goodsAmount;
-		}
-
-		public BigDecimal getGoodsPointAmount() {
-			return goodsPointAmount;
-		}
-
-		public BigDecimal getDiscountAmount() {
-			return discountAmount;
-		}
-
-		public BigDecimal getDeliveryAmount() {
-			return deliveryAmount;
-		}
-
-		public BigDecimal getTradeAmount() {
-			return tradeAmount;
-		}
-
-		public LocalDateTime getCreateTime() {
-			return createTime;
-		}
-
-		public LocalDateTime getPayTime() {
-			return payTime;
-		}
-
-		public LocalDateTime getPayDeadline() {
-			return payDeadline;
-		}
-
-		public LocalDateTime getRecvTime() {
-			return recvTime;
-		}
-
-		public Integer getPayType() {
-			return payType;
-		}
-
-		public Integer getDeliveryType() {
-			return deliveryType;
-		}
-
-		public String getLogisticsNumber() {
-			return logisticsNumber;
-		}
-
-		public String getLogisticsCompanyCode() {
-			return logisticsCompanyCode;
-		}
-
-		public String getLogisticsCompanyName() {
-			return logisticsCompanyName;
-		}
-
-		public String getTakeGoodsCode() {
-			return takeGoodsCode;
-		}
-
-		public String getTakeGoodsQrcode() {
-			return takeGoodsQrcode;
-		}
-
-		public String getRecvAddresId() {
-			return recvAddresId;
-		}
-
-		public String getRecvPersonName() {
-			return recvPersonName;
-		}
-
-		public String getRecvPhone() {
-			return recvPhone;
-		}
-
-		public String getRecvFullAddres() {
-			return recvFullAddres;
-		}
-
-		public Integer getTimeoutCancel() {
-			return timeoutCancel;
-		}
-
-		public String getBuyerRemark() {
-			return buyerRemark;
-		}
-
-		public String getDeliveryRemark() {
-			return deliveryRemark;
-		}
-
-		public List<TradeGoodsVO> getTradeGoodsVOS() {
-			return tradeGoodsVOS;
-		}
-
-		public BigDecimal getTradePointAmount() {
-			return tradePointAmount;
-		}
-
-		public LocalDateTime getServerTime() {
-			return serverTime;
-		}
-
-		public Integer getQuantity() {
-			return quantity;
-		}
-
-		
-		public Integer getIsModifyAddress() {
-		    return isModifyAddress;
+        public String getId() {
+            return id;
         }
 
-		public BigDecimal getDiscountPointAmount() {
-			return discountPointAmount;
-		}
+        public String getUserId() {
+            return userId;
+        }
 
-		public BigDecimal getPayablePointAmount() {
-			return payablePointAmount;
-		}
+        public String getUserName() {
+            return userName;
+        }
 
-		public BigDecimal getPayableAmount() {
-			return payableAmount;
-		}
+        public String getShopId() {
+            return shopId;
+        }
 
-		public String getRightsStateText() {
-			if(rightsState!=null){
-				rightsStateText = TradeRightsStateEnum.getRemarkByCode(rightsState);
-			}
-			return rightsStateText;
-		}
+        public String getShopName() {
+            return shopName;
+        }
 
-		public String getPayTypeText() {
-			if(payType!=null)
-				payTypeText = TradePayTypeEnum.getEnum(payType).getRemark();
-			return payTypeText;
-		}
+        public String getShopLogo() {
+            return shopLogo;
+        }
 
-		public LocalDateTime getDeliveryTime() {
-			return deliveryTime;
-		}
+        public String getShopManName() {
+            return shopManName;
+        }
 
-		public String getTradeStateTitle() {
-			if(tradeState!=null){
-				tradeStateTitle = TradeStateTitleEnum.getRemarkByCode(tradeState);
-			}
-			return tradeStateTitle;
-			
-		}
+        public String getShopManPhone() {
+            return shopManPhone;
+        }
 
-		public String getTradeStateRemark() {
-			if(tradeState!=null){
-				tradeStateRemark = TradeStateRemarkEnum.getRemarkByCode(tradeState);
-			}
-			return tradeStateRemark;
-		}
-		
+        public BigDecimal getShopLongitude() {
+            return shopLongitude;
+        }
+
+        public BigDecimal getShopLatitude() {
+            return shopLatitude;
+        }
+
+        public String getShopFullAddres() {
+            return shopFullAddres;
+        }
+
+        public String getMerchantId() {
+            return merchantId;
+        }
+
+        public String getTradeCode() {
+            return tradeCode;
+        }
+
+        public Integer getRightsState() {
+            return rightsState;
+        }
+
+        public Integer getTradeState() {
+            return tradeState;
+        }
+
+        public String getTradeStateText() {
+            if (tradeState != null) {
+                tradeStateText = TradeStateEnum.getRemarkByCode(tradeState);
+            }
+            return tradeStateText;
+        }
+
+        public Integer getGoodsSourceType() {
+            return goodsSourceType;
+        }
+
+        public BigDecimal getGoodsAmount() {
+            return goodsAmount;
+        }
+
+        public BigDecimal getGoodsPointAmount() {
+            return goodsPointAmount;
+        }
+
+        public BigDecimal getDiscountAmount() {
+            return discountAmount;
+        }
+
+        public BigDecimal getDeliveryAmount() {
+            return deliveryAmount;
+        }
+
+        public BigDecimal getTradeAmount() {
+            return tradeAmount;
+        }
+
+        public LocalDateTime getCreateTime() {
+            return createTime;
+        }
+
+        public LocalDateTime getPayTime() {
+            return payTime;
+        }
+
+        public LocalDateTime getPayDeadline() {
+            return payDeadline;
+        }
+
+        public LocalDateTime getRecvTime() {
+            return recvTime;
+        }
+
+        public Integer getPayType() {
+            return payType;
+        }
+
+        public Integer getDeliveryType() {
+            return deliveryType;
+        }
+
+        public String getLogisticsNumber() {
+            return logisticsNumber;
+        }
+
+        public String getLogisticsCompanyCode() {
+            return logisticsCompanyCode;
+        }
+
+        public String getLogisticsCompanyName() {
+            return logisticsCompanyName;
+        }
+
+        public String getTakeGoodsCode() {
+            return takeGoodsCode;
+        }
+
+        public String getTakeGoodsQrcode() {
+            return takeGoodsQrcode;
+        }
+
+        public String getRecvAddresId() {
+            return recvAddresId;
+        }
+
+        public String getRecvPersonName() {
+            return recvPersonName;
+        }
+
+        public String getRecvPhone() {
+            return recvPhone;
+        }
+
+        public String getRecvFullAddres() {
+            return recvFullAddres;
+        }
+
+        public Integer getTimeoutCancel() {
+            return timeoutCancel;
+        }
+
+        public String getBuyerRemark() {
+            return buyerRemark;
+        }
+
+        public String getDeliveryRemark() {
+            return deliveryRemark;
+        }
+
+        public List<TradeGoodsVO> getTradeGoodsVOS() {
+            return tradeGoodsVOS;
+        }
+
+        public BigDecimal getTradePointAmount() {
+            return tradePointAmount;
+        }
+
+        public LocalDateTime getServerTime() {
+            return serverTime;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+
+        public Integer getIsModifyAddress() {
+            return isModifyAddress;
+        }
+
+        public BigDecimal getDiscountPointAmount() {
+            return discountPointAmount;
+        }
+
+        public BigDecimal getPayablePointAmount() {
+            return payablePointAmount;
+        }
+
+        public BigDecimal getPayableAmount() {
+            return payableAmount;
+        }
+
+        public String getRightsStateText() {
+            if (rightsState != null) {
+                rightsStateText = TradeRightsStateEnum.getRemarkByCode(rightsState);
+            }
+            return rightsStateText;
+        }
+
+        public String getPayTypeText() {
+            if (payType != null) {
+                payTypeText = TradePayTypeEnum.getEnum(payType).getRemark();
+            }
+            return payTypeText;
+        }
+
+        public LocalDateTime getDeliveryTime() {
+            return deliveryTime;
+        }
+
+        public String getTradeStateTitle() {
+            if (tradeState != null) {
+                tradeStateTitle = TradeStateTitleEnum.getRemarkByCode(tradeState);
+            }
+            return tradeStateTitle;
+
+        }
+
+        public String getTradeStateRemark() {
+            if (tradeState != null) {
+                tradeStateRemark = TradeStateRemarkEnum.getRemarkByCode(tradeState);
+            }
+            return tradeStateRemark;
+        }
+
     }
 
     @Data
@@ -495,7 +496,7 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("销售价")
         private BigDecimal goodsAmount;
-        
+
         @ApiModelProperty("积分价")
         private BigDecimal goodsPointAmount;
 
@@ -522,10 +523,10 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
-        
+
         @ApiModelProperty("应付积分金额")
         private BigDecimal payablePointAmount;
-        
+
         @ApiModelProperty("应付金额")
         private BigDecimal payableAmount;
 
@@ -608,7 +609,7 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("是否隐藏[10=隐藏 20=不隐藏]")
         private Integer isHide;
 
-        
+
     }
 
     @Data

@@ -1,17 +1,20 @@
 package com.gs.lshly.common.struct.platadmin.trade.dto;
+
 import com.gs.lshly.common.struct.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 /**
-* @author zdf
-* @since 2020-12-22
-*/
+ * @author zdf
+ * @since 2020-12-22
+ */
 public abstract class TradeRightsDTO implements Serializable {
 
     @Data
@@ -19,7 +22,7 @@ public abstract class TradeRightsDTO implements Serializable {
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
-        @ApiModelProperty(value = "售后表ID",hidden = true)
+        @ApiModelProperty(value = "售后表ID", hidden = true)
         private String id;
 
         @ApiModelProperty("订单ID")
@@ -100,6 +103,19 @@ public abstract class TradeRightsDTO implements Serializable {
         @ApiModelProperty(value = "售后表ID")
         private String id;
     }
+
+    @Data
+    @ApiModel("TradeRightsDTO.PlatformCheckReasonDTO")
+    @AllArgsConstructor
+    public static class PlatformCheckReasonDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "售后表ID")
+        private String id;
+
+        @ApiModelProperty(value = "平台处理说明")
+        private String platformCheckReason;
+    }
+
     @Data
     @ApiModel("TradeRightsDTO.RefundDTO")
     @AllArgsConstructor
@@ -129,7 +145,6 @@ public abstract class TradeRightsDTO implements Serializable {
 
 
     }
-
 
 
 }

@@ -1,16 +1,15 @@
 package com.gs.lshly.biz.support.trade.enums;
 
-
 import com.gs.lshly.common.enums.EnumMessage;
 
-public enum TradeRightsListStatusEnum implements EnumMessage {
-//状态枚举类[10=平台待审核 20=待确认收货 40=退货退款 50=换货]"
-    换货(10, "换货"),
-    仅退款(20, "仅退款"),
-    退货退款(30, "退货退款");
+public enum TradeRightsNewStateEnum implements EnumMessage {
+
+    处理中(10, "处理中"),
+    已完成(20, "已完成"),
+    待审核(30, "待审核");
 
 
-    TradeRightsListStatusEnum(Integer code, String remark){
+    TradeRightsNewStateEnum(Integer code, String remark){
         this.code = code;
         this.remark = remark;
     }

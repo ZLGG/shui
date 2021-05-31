@@ -19,4 +19,8 @@ public interface IBbcTradeRightsService {
     void returnGoods(BbcTradeRightsBuildDTO.RightsReturnGoodsLogistics dto);
 
     void confirmReceipt(BbcTradeRightsDTO.IdDTO dto);
+
+    void revocationTradeRights(BbcTradeRightsBuildDTO.RevocationTradeRightsETO dto);
+
+    void deleteRecord(BbcTradeRightsDTO.IdDTO dto);
 }

@@ -1,11 +1,9 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.gs.lshly.biz.support.trade.mapper.CouponGoodsRelationMapper;
+import com.gs.lshly.biz.support.trade.mapper.CouponZoneGoodsRelationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +48,14 @@ public class CouponServiceImpl implements ICouponService {
     @Autowired
     private CouponMapper couponMapper;
 
-//    @Autowired
+    @Autowired
     private ICouponZoneGoodsRelationRepository zoneGoodsRelationRepository;
+
+    @Autowired
+    private CouponGoodsRelationMapper relationMapper;
+
+    @Autowired
+    private CouponZoneGoodsRelationMapper zoneGoodsRelationMapper;
 
 
     @Override
@@ -164,12 +168,14 @@ public class CouponServiceImpl implements ICouponService {
     }
 
     @Override
-    public Boolean deleteCoupon(String id) {
-        Map<String, Object> columnMap = new HashMap<>();
-        columnMap.put("coupon_id", id);
-//        zoneGoodsRelationRepository.removeByMap(columnMap);
-        iCouponGoodsRelationRepository.removeByMap(columnMap);
-        return iCouponRepository.removeById(id);
+    public Boolean deleteCoupon(String ids) {
+        List<String> idList = Arrays.asList(ids.split(","));
+        if(CollectionUtil.isEmpty(idList)){
+            return false;
+        }
+        zoneGoodsRelationMapper.deleteByCouponIds(idList);
+        relationMapper.deleteByCouponIds(idList);
+        return iCouponRepository.removeByIds(idList);
     }
 
     @Override
@@ -255,6 +261,10 @@ public class CouponServiceImpl implements ICouponService {
 
         if (ObjectUtils.isNotEmpty(updateCouponByConDTO.getStockNum())) {
             wrapper.set("stock_num", updateCouponByConDTO.getStockNum());
+        }
+
+        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getRejectReason())){
+            wrapper.set("reject_reason",updateCouponByConDTO.getRejectReason());
         }
         wrapper.eq("coupon_id", updateCouponByConDTO.getCouponId());
         return iCouponRepository.update(wrapper);

@@ -1,23 +1,28 @@
 package com.gs.lshly.common.struct.platadmin.trade.vo;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
-* @author zdf
-* @since 2020-12-22
-*/
+ * @author zdf
+ * @since 2020-12-22
+ */
 public abstract class TradeRightsVO implements Serializable {
 
     @Data
     @ApiModel("TradeRightsVO.ListVO")
     @Accessors(chain = true)
-    public static class ListVO implements Serializable{
+    public static class ListVO implements Serializable {
 
         @ApiModelProperty("售后表ID")
         private String id;
@@ -80,7 +85,7 @@ public abstract class TradeRightsVO implements Serializable {
 
 
         @ApiModelProperty("退货寄出时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime returnGoodsLogisticsDate;
 
 
@@ -93,7 +98,7 @@ public abstract class TradeRightsVO implements Serializable {
 
 
         @ApiModelProperty("换货商机寄出时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime sendBackLogisticsDate;
 
 
@@ -102,12 +107,12 @@ public abstract class TradeRightsVO implements Serializable {
 
 
         @ApiModelProperty("申请时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime applyTime;
 
 
         @ApiModelProperty("完成时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime completeTime;
 
 
@@ -119,8 +124,6 @@ public abstract class TradeRightsVO implements Serializable {
         private String merchantAccountId;
 
 
-
-
     }
 
     @Data
@@ -128,6 +131,7 @@ public abstract class TradeRightsVO implements Serializable {
     public static class DetailVO extends ListVO {
 
     }
+
     @Data
     @ApiModel("TradeRightsVO.RightsRefundListVO")
     public static class RightsRefundListVO implements Serializable {
@@ -136,14 +140,14 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("申请售后原因(10:质量问题,20:7天无理由,30:地址信息填写错误,40:不想要了,50:价格有点贵,60:商品错选,70:商品无货,80:其他)")
         private Integer rightsReasonType;
         @ApiModelProperty("修改时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime udate;
         @ApiModelProperty("退款金额")
         private BigDecimal refundAmount;
         @ApiModelProperty("订单金额")
         private BigDecimal tradeAmount;
         @ApiModelProperty("创建时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
         @ApiModelProperty("售后类型(10:换货,20:仅退款,30:退货退款)")
         private Integer rightsType;
@@ -155,10 +159,54 @@ public abstract class TradeRightsVO implements Serializable {
         private String tradeCode;
 
     }
+
     @Data
     @ApiModel("TradeRightsVO.RightsListVO")
     public static class RightsListVO implements Serializable {
+
         @ApiModelProperty("售后表ID")
+        private String id;
+
+        @ApiModelProperty("二次审核状态(0:二次审核完成,1:需要二次审核)")
+        private Integer isTwoCheck;
+
+        @ApiModelProperty("手机号码")
+        private String phone;
+
+        @ApiModelProperty("售后申请类型[10:换货,20:仅退款,30:退货退款]")
+        private Integer rightsType;
+
+        @ApiModelProperty("退款申请类型([10:取消订单退款,20:售后申请退款])")
+        private Integer refundMoneyType;
+
+        @ApiModelProperty("处理进度([10:处理中，20：已完成，30：待审核]) ")
+        private Integer checkState;
+
+        @ApiModelProperty("商品标题")
+        private String goodsName;
+
+        @ApiModelProperty("实付金额")
+        private BigDecimal amountActuallyPaid;
+
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+
+        @ApiModelProperty("应退金额")
+        private BigDecimal shouldRefundAmount;
+
+        @ApiModelProperty("实付积分")
+        private BigDecimal pointPriceActuallyPaid;
+
+        @ApiModelProperty("应退积分")
+        private BigDecimal shouldRefundPoint;
+
+        @ApiModelProperty("实退积分")
+        private BigDecimal refundPoint;
+
+        @ApiModelProperty("订单编号")
+        private String orderCode;
+
+/*        @ApiModelProperty("售后表ID")
         private String id;
         @ApiModelProperty("申请会员")
         private String userName;
@@ -180,29 +228,143 @@ public abstract class TradeRightsVO implements Serializable {
         private Integer rightsReasonType;
         @ApiModelProperty("创建时间")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime cdate;
+        private LocalDateTime cdate;*/
     }
+
     @Data
     @ApiModel("TradeRightsVO.RightsListViewVO")
-    public static class RightsListViewVO extends ListVO {
-        @ApiModelProperty("所属商家")
+    public static class RightsListViewVO implements Serializable {
+        @ApiModelProperty("退货基本信息")
+        private TradeRightsVO.RefundBasicVO refundBasicVO;
+
+        @ApiModelProperty("订单商品信息(原商品信息)")
+        private List<TradeListVO.TradeRightsGoodsDetailViewVO> tradeRightsGoodsListVO;
+
+        @ApiModelProperty("换货商品信息")
+        private List<TradeListVO.TradeRightsGoodsDetailViewVO> tradeRightsGoodsSendListVO;
+
+        @ApiModelProperty("明细")
+        private TradeRightsVO.RefundDetailVO refundDetailVO;
+
+        @ApiModelProperty("退款信息")
+        private TradeRightsVO.RefundMessageVO refundMessageVO;
+
+        @ApiModelProperty("退换货处理结果")
+        private TradeRightsVO.RefundResultVO refundResultVO;
+
+        @ApiModelProperty("平台处理结果")
+        private TradeRightsVO.PlatformResultVO platformResultVO;
+
+
+/*        @ApiModelProperty("所属商家")
         private String shopName;
         @ApiModelProperty("图片售后凭证")
-        private String  rightsImage;
+        private String rightsImage;
         @ApiModelProperty("商品名")
-        private String  goodsName;
+        private String goodsName;
         @ApiModelProperty("商品图片")
-        private String  goodsImage;
+        private String goodsImage;
         @ApiModelProperty("商品售价")
-        private BigDecimal  salePrice;
+        private BigDecimal salePrice;
         @ApiModelProperty("退款数量")
-        private Integer  quantity;
+        private Integer quantity;
         @ApiModelProperty("总金额")
-        private BigDecimal  totalPrice;
+        private BigDecimal totalPrice;
         @ApiModelProperty("商家处理说明")
-        private String  merchanHandle;
+        private String merchanHandle;*/
 
     }
+
+    @Data
+    @ApiModel("TradeRightsVO.RefundBasicVO")
+    public static class RefundBasicVO implements Serializable {
+        @ApiModelProperty("售后编号")
+        private String id;
+
+        @ApiModelProperty("手机号码")
+        private String phone;
+
+        @ApiModelProperty("申请时间")
+        private LocalDateTime applyTime;
+
+        @ApiModelProperty("二次审核状态(0:二次审核完成,1:需要二次审核)")
+        private Integer isTwoCheck;
+
+        @ApiModelProperty("售后申请类型[10:换货,20:仅退款,30:退货退款]")
+        private Integer rightsType;
+
+        @ApiModelProperty("订单编号(订单号)")
+        private String orderCode;
+
+        @ApiModelProperty("所属商家")
+        private String shopName;
+
+        @ApiModelProperty("申请售后原因")
+        private Integer rightsReasonType;
+
+        @ApiModelProperty("申请描述")
+        private String rightsRemark;
+
+        @ApiModelProperty("商品图片凭证")
+        private List<String> rightsImg;
+
+    }
+
+    @Data
+    @ApiModel("TradeRightsVO.RefundDetailVO")
+    public static class RefundDetailVO implements Serializable {
+        @ApiModelProperty("实付金额")
+        private BigDecimal amountActuallyPaid;
+
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+
+        @ApiModelProperty("应退金额")
+        private BigDecimal shouldRefundAmount;
+
+        @ApiModelProperty("实付积分")
+        private BigDecimal pointPriceActuallyPaid;
+
+        @ApiModelProperty("应退积分")
+        private BigDecimal shouldRefundPoint;
+
+        @ApiModelProperty("实退积分")
+        private BigDecimal refundPoint;
+    }
+
+    @Data
+    @ApiModel("TradeRightsVO.RefundMessageVO")
+    public static class RefundMessageVO implements Serializable {
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+
+        @ApiModelProperty("实退积分")
+        private BigDecimal refundPoint;
+
+        @ApiModelProperty("退款方式(积分退回)")
+        private Integer refundType;
+    }
+
+    @Data
+    @ApiModel("TradeRightsVO.RefundResultVO")
+    public static class RefundResultVO implements Serializable {
+        @ApiModelProperty("状态(申请(10, 申请), 驳回(20, 驳回), 通过(30, 通过), 已退货(40, 已退货), 收到退货(50, 收到退货), 等待退款(60, 等待退款), 退款完成(70,退款完成), 等待发货(80, 等待发货), 已发货(90, 已发货), 确认收货(91, 确认收货), 用户取消(95, 用户取消), 完成(99, 完成)")
+        private Integer state;
+
+        @ApiModelProperty("商家处理说明")
+        private String rejectReason;
+    }
+
+    @Data
+    @ApiModel("TradeRightsVO.PlatformResultVO")
+    public static class PlatformResultVO implements Serializable {
+        @ApiModelProperty("审核状态")
+        private Integer checkState;
+
+        @ApiModelProperty("平台处理说明")
+        private List<String> platformCheckReason;
+    }
+
     @Data
     @ApiModel("TradeRightsVO.RightsRefundViewVO")
     public static class RightsRefundViewVO implements Serializable {
@@ -216,7 +378,7 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("状态(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成)")
         private Integer state;
         @ApiModelProperty("创建时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
         @ApiModelProperty("售后表ID")
         private String id;

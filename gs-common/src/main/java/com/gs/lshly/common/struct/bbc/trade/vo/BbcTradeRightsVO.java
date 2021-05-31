@@ -22,7 +22,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
     @Accessors(chain = true)
     public static class ListVO implements Serializable{
 
-        @ApiModelProperty("售后ID")
+        @ApiModelProperty("售后表ID")
         private String id;
 
 
@@ -63,7 +63,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
         private BigDecimal refundAmount;
 
 
-        @ApiModelProperty("状态(10:申请,20:驳回,30:通过,40:已退货,50:收到退货,60:等待退款,70:退款完成,80:等待发货,90:已发货,91:确认收货,95:用户取消,99:完成)")
+        @ApiModelProperty("状态(10:已申请,20:商家已驳回,30:已通过,40:等待买家退货,50:卖家已发货,60:确认收货,70:用户取消,80:完成)")
         private Integer state;
 
         @ApiModelProperty("退款备注")
@@ -84,19 +84,19 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime returnGoodsLogisticsDate;
 
-        @ApiModelProperty("换货商机寄回物流公司名字")
+        @ApiModelProperty("换货商家寄回物流公司名字")
         private String sendBackLogisticsName;
 
-        @ApiModelProperty("换货商机寄回物流单号")
+        @ApiModelProperty("换货商家寄回物流单号")
         private String sendBackLogisticsNum;
 
 
-        @ApiModelProperty("换货商机寄出时间")
+        @ApiModelProperty("换货商家寄出时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime sendBackLogisticsDate;
 
 
-        @ApiModelProperty("申请售后原因(10:质量问题,20:7天无理由,30:地址信息填写错误,40:不想要了,50:价格有点贵,60:商品错选,70:商品无货,80:其他)")
+        @ApiModelProperty("申请售后原因(10:不想要或多拍了,15:商品信息拍错(规格/尺码/颜色等),20:地址/电话信息填写错误,25:没用或少用优惠券,30:协商退款一致,35:缺货,40:其他,45:与商品详情不符,50:生产日期/保质期与商品不符,55:图片/产地/规格等描述不符,60:商品变质,65:商品破损/缺少配件,70:卖家发错货,75:不喜欢/不想要,80:空包裹,85:快递一直未送达,90:快递无跟踪记录,95:货物破损已拒签)")
         private Integer rightsReasonType;
 
 
@@ -184,7 +184,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
         private String skuId;
 
 
-        @ApiModelProperty("格规值")
+        @ApiModelProperty("规格")
         private String skuSpecValue = "";
 
         @ApiModelProperty("SKU IMG")
@@ -217,10 +217,14 @@ public abstract class BbcTradeRightsVO implements Serializable {
         private Integer quantity;
 
 
-        @ApiModelProperty("退款金额")
+        @ApiModelProperty("退回金额")
         private BigDecimal refundAmount;
 
+        @ApiModelProperty("退回积分")
+        private BigDecimal refundPoint;
 
+        @ApiModelProperty("原商品或换货商品(10:原商品,20:换货商品)")
+        private Integer goodsType;
     }
 
     @Data
