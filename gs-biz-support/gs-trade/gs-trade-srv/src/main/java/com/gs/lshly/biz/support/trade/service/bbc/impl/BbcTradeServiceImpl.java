@@ -313,6 +313,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             
             skuQuantityVO.setQuantity(dto.getQuantity());
             skuQuantityVO.setSkuId(dto.getGoodsSkuId());
+            skuQuantityVO.setGoodsPointPrice(innerServiceVO.getGoodsPointAmount());
+            skuQuantityVO.setGoodsPrice(innerServiceVO.getGoodsAmount());
+            skuQuantityVO.setInMemberPointPrice(innerServiceVO.getInMemberPointPrice());
+            skuQuantityVO.setIsInMemberGift(innerServiceVO.getIsInMemberGift());
+            skuQuantityVO.setIsPointGood(innerServiceVO.getIsPointGood());
             
             skuQuantity.add(skuQuantityVO);
             shopSkuVO.setSkuQuantity(skuQuantity);
@@ -334,9 +339,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         for (ShopSkuVO shopskuvo : shopskuList) {
         	List<SkuQuantityVO> skuList = shopskuvo.getSkuQuantity();
         	for (SkuQuantityVO skuQuantityVO : skuList) {
-        		if(skuQuantityVO.getIsInMemberGift()){
+        		
+        		if(skuQuantityVO.getIsInMemberGift()!=null&&skuQuantityVO.getIsInMemberGift()){
         			totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getInMemberPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
-        		}else if(skuQuantityVO.getIsPointGood()){//积分商品
+        		}else if(skuQuantityVO.getIsPointGood()!=null&&skuQuantityVO.getIsPointGood()){//积分商品
         			totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
         			totalPointPrice = totalPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
         		}else{
@@ -1054,6 +1060,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             qty=qty+tradeGoodsDTO.getQuantity();
             TradeGoods tradeGoods = new TradeGoods();
             BeanUtils.copyProperties(tradeGoodsDTO, tradeGoods);
+            tradeGoods.setId(null);
             tradeGoodsRepository.save(tradeGoods);
         }
         return qty;

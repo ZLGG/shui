@@ -201,25 +201,26 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 	}
 	 
 	 public static void main(String args[]){
+		 System.out.println(random());
 		 
-		 List<Integer> list = new ArrayList<Integer>();
-		 list.add(10);
-		 list.add(12);
-		 list.add(18);
-		 list.add(20);
-		 list.add(22);
-		 
-		 Integer minute = 10;
-			Integer from = 0;
-			for(Integer i:list){
-				boolean flag = Math.max(from, minute) == Math.min(minute, i);
-				if(flag){
-					System.out.println(from);
-					break;
-				}
-				from = i;
-				System.out.println(from+"<><>");
-			}
+//		 List<Integer> list = new ArrayList<Integer>();
+//		 list.add(10);
+//		 list.add(12);
+//		 list.add(18);
+//		 list.add(20);
+//		 list.add(22);
+//		 
+//		 Integer minute = 10;
+//			Integer from = 0;
+//			for(Integer i:list){
+//				boolean flag = Math.max(from, minute) == Math.min(minute, i);
+//				if(flag){
+//					System.out.println(from);
+//					break;
+//				}
+//				from = i;
+//				System.out.println(from+"<><>");
+//			}
 	 }
 
 	@Override
@@ -381,12 +382,14 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 					homePageSeckill.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
 					homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.抢购中.getRemark());
 					homePageSeckill.setChecked(true);
-				} else if (seckill.getTimeQuantum() > fromTimeQuantumEnum) {
+				}  if (seckill.getTimeQuantum() > fromTimeQuantumEnum) {
 					homePageSeckill.setStatus(MarketPtSeckillStatusEnum.即将开抢.getCode());
 					homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.即将开抢.getRemark());
-				} else if (seckill.getTimeQuantum() < fromTimeQuantumEnum) {
+					homePageSeckill.setChecked(false);
+				}  if (seckill.getTimeQuantum() < fromTimeQuantumEnum) {
 					homePageSeckill.setStatus(MarketPtSeckillStatusEnum.已开抢.getCode());
 					homePageSeckill.setStatusText(MarketPtSeckillStatusEnum.已开抢.getRemark());
+					homePageSeckill.setChecked(false);
 				}
 				homePageSeckill.setGoodsList(this.listGoodsBySeckillId(seckill.getId()));
 				retList.add(homePageSeckill);
@@ -423,9 +426,20 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     				homePageSeckillGoods.setSalePrice(spu.getSeckillSalePrice());
     			}
         		homePageSeckillGoods.setGoodsImage(ObjectUtils.isEmpty(getImage(homePageSeckillGoods.getGoodsImage())) ?"": getImage(homePageSeckillGoods.getGoodsImage()));
+        		homePageSeckillGoods.setSaleRate(random());
         		retList.add(homePageSeckillGoods);
         	}
         }
         return retList;
+	}
+	
+	
+	private static BigDecimal random(){
+		BigDecimal max = new BigDecimal("100");
+		BigDecimal min = new BigDecimal("0");
+		float minF = min.floatValue();
+		float maxF = max.floatValue();
+		BigDecimal db = new BigDecimal(Math.random() * (maxF - minF) + minF);
+		return db.divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
 	}
 }

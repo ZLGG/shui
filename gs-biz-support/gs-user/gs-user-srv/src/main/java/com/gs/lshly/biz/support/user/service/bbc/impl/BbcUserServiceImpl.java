@@ -1,11 +1,18 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.entity.UserCtccPoint;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
-import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
 import com.gs.lshly.biz.support.user.repository.IUserCtccPointRepository;
 import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
@@ -26,12 +33,6 @@ import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
 * <p>
@@ -45,6 +46,10 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @Autowired
     private IUserRepository repository;
+    
+    @Autowired
+    private IUserCtccPointRepository userCtccPointRepository;
+    
     @Autowired
     private UserIntegralMapper userIntegralMapper;
     @Autowired
@@ -61,6 +66,8 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @DubboReference
     private IBbcUserAuthRpc iBbcUserAuthRpc;
+    
+    
 
     /**
      * 获取用户详情
@@ -113,13 +120,15 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @Override
     public BbcUserVO.UserIntegralVO integral(BaseDTO dto) {
-        QueryWrapper<UserIntegral> queryWrapper = MybatisPlusUtil.query();
+        QueryWrapper<UserCtccPoint> queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("user_id",dto.getJwtUserId());
-        queryWrapper.groupBy("user_id");
-        UserIntegralView sumCountView = userIntegralMapper.sumCount(queryWrapper);
+        UserCtccPoint userCtccPoint = userCtccPointRepository.getOne(queryWrapper);
         BbcUserVO.UserIntegralVO userIntegralVO  = new BbcUserVO.UserIntegralVO();
-        if(null != sumCountView){
-            userIntegralVO.setOkIntegral(sumCountView.getQuantity());
+        userIntegralVO.setOkIntegral(0);
+    	userIntegralVO.setJpassIntegral(0);
+        if(null != userCtccPoint){
+        	userIntegralVO.setOkIntegral(userCtccPoint.getPointBalance());
+        	userIntegralVO.setJpassIntegral(userCtccPoint.getYearBalance());
         }
         return userIntegralVO;
     }
