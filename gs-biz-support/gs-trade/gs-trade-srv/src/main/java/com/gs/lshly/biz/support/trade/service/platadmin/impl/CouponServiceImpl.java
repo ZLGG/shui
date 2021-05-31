@@ -50,7 +50,7 @@ public class CouponServiceImpl implements ICouponService {
     @Autowired
     private CouponMapper couponMapper;
 
-    @Autowired
+//    @Autowired
     private ICouponZoneGoodsRelationRepository zoneGoodsRelationRepository;
 
 

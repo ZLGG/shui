@@ -1612,6 +1612,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 serviceVO.setSkuId(skuId);
                 serviceVO.setSkuGoodsNo(goodsInfo.getGoodsNo());
                 serviceVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
+                serviceVO.setIsSingle(goodsInfo.getIsSingle());
             } else {
                 serviceVO.setShopId(goodsInfo.getShopId());
                 serviceVO.setSkuId(skuId);
@@ -1633,6 +1634,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 serviceVO.setGoodsAmount(skuGoodInfo.getSalePrice());
                 serviceVO.setGoodsPointAmount(skuGoodInfo.getPointPrice());
                 serviceVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
+                serviceVO.setIsSingle(goodsInfo.getIsSingle());
 
             }
             innerServiceVOS.add(serviceVO);

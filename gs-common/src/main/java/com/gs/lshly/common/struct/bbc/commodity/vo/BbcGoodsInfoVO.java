@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.enums.GoodsCouponStatusEnum;
+import com.gs.lshly.common.enums.GoodsCouponTypeEnum;
 import com.gs.lshly.common.enums.MarketCheckTypeEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
@@ -418,6 +418,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     @Data
     @ApiModel("BbcGoodsInfoVO.DetailVO")
     public static class DetailVO implements Serializable {
+    	
+        /**
+         * 单品或者多规格商品（10 = 单品，20=多规格）
+         */
+    	@ApiModelProperty(value = "单品或者多规格商品（10 = 单品，20=多规格）")
+        private Integer isSingle;
 
         @ApiModelProperty("规格列表")
         private List<BbcGoodsSpecInfoVO.SpecListVO> specListVOS;
@@ -1053,6 +1059,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("应付积分价格")
         private BigDecimal payablePointAmount;
+        
+        /**
+         * 单品或者多规格商品（10 = 单品，20=多规格）
+         */
+    	@ApiModelProperty(value = "单品或者多规格商品（10 = 单品，20=多规格）")
+        private Integer isSingle;
     }
 
     @Data
@@ -1101,7 +1113,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 	    private Integer couponType;
 		
 		@ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
-	    private Integer couponTypeText;
+	    private String couponTypeText;
  
 		@ApiModelProperty("0-未领取 1-已领取 2-无需领取")
 	    private Integer couponStatus;
@@ -1131,7 +1143,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 			return couponType;
 		}
 
-		public Integer getCouponTypeText() {
+		public String getCouponTypeText() {
+			if(couponType!=null)
+				couponTypeText = GoodsCouponTypeEnum.getRemarkByCode(couponStatus);
 			return couponTypeText;
 		}
 

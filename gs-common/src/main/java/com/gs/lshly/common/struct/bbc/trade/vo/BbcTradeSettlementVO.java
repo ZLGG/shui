@@ -444,6 +444,15 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 			return discountPointAmount;
 		}
 
+		public List<ListCouponVO> getDefaultCouponList() {
+			return defaultCouponList;
+		}
+
+		public List<ListCouponVO> getOptionalCouponList() {
+			return optionalCouponList;
+		}
+
+		
 	}
 
 	@Setter

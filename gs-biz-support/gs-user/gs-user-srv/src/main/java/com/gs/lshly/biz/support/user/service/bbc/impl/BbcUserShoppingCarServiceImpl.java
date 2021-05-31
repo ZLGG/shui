@@ -163,7 +163,7 @@ public class BbcUserShoppingCarServiceImpl implements IBbcUserShoppingCarService
                             shoppingCarItemVO.setExchangeType(innerSkuGoodVo.getExchangeType());
                             shoppingCarItemVO.setIsInMemberGift(innerSkuGoodVo.getIsInMemberGift());
                             shoppingCarItemVO.setInMemberPointPrice(innerSkuGoodVo.getInMemberPointPrice());
-                            
+                            shoppingCarItemVO.setIsSingle(innerSkuGoodVo.getIsSingle());
                             if(innerSkuGoodVo.getGoodsState().equals(GoodsStateEnum.已上架.getCode())){
 	                            BbcUserShoppingCarVO.ListVO listVO = voMap.get(shoppingCarItemVO.getShopId());
 	                            if (null != listVO) {

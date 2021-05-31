@@ -73,7 +73,7 @@ public class TradeCancelComsumerStart implements InitializingBean {
                     }
                     // 没有消息
                     if (messages == null || messages.isEmpty()) {
-                        System.out.println(Thread.currentThread().getName() + ": no new message, continue!");
+//                        System.out.println(Thread.currentThread().getName() + ": no new message, continue!");
                         continue;
                     }
 

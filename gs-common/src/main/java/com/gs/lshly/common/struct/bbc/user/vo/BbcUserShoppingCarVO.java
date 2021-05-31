@@ -98,6 +98,12 @@ public abstract class BbcUserShoppingCarVO implements Serializable {
 
         @ApiModelProperty("in会员积分价格")
         private BigDecimal inMemberPointPrice;
+        
+        /**
+         * 单品或者多规格商品（10 = 单品，20=多规格）
+         */
+    	@ApiModelProperty(value = "单品或者多规格商品（10 = 单品，20=多规格）")
+        private Integer isSingle;
     }
 
     @Data
