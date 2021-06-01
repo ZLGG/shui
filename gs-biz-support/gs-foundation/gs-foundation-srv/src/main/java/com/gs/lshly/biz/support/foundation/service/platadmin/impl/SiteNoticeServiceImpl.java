@@ -1,5 +1,10 @@
 package com.gs.lshly.biz.support.foundation.service.platadmin.impl;
 
+import com.gs.lshly.common.enums.SubjectEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcMessageQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcSiteNoticeVO;
+import com.gs.lshly.common.utils.ListUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +25,8 @@ import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteNoticeVO.PCDetailV
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteNoticeVO.PCListVO;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+
+import java.util.List;
 
 /**
  * 
@@ -68,6 +75,19 @@ public class SiteNoticeServiceImpl implements ISiteNoticeService {
         SiteNoticeVO.PCDetailVO detailVO = new SiteNoticeVO.PCDetailVO();
         BeanUtils.copyProperties(SiteNotice,detailVO);
 		return detailVO;
+	}
+
+	@Override
+	public PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto) {
+		QueryWrapper<SiteNotice> wrapper = MybatisPlusUtil.query();
+		wrapper.eq("terminal", TerminalEnum.BBC.getCode());
+		wrapper.eq("subject", SubjectEnum.积分商城.getCode());
+		wrapper.eq("flag", false);
+		wrapper.orderByDesc("udate");
+		IPage<SiteNotice> pager = MybatisPlusUtil.pager(qto);
+		repository.page(pager,wrapper);
+		List<BbcSiteNoticeVO.NoticeListVO> list = ListUtil.listCover(BbcSiteNoticeVO.NoticeListVO.class,pager.getRecords());
+		return new PageData<>(list,qto.getPageNum(),qto.getPageSize(),pager.getTotal());
 	}
 
 	@Override

@@ -43,10 +43,13 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
     @Override
     public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
-        List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
-                .eq("user_id",qto.getJwtUserId())
-                .eq("coupon_type",qto.getCouponType())
-                .eq("coupon_status",0));
+        QueryWrapper<InUserCoupon> wrapper = new QueryWrapper<>();
+        wrapper .eq("user_id",qto.getJwtUserId());
+        wrapper.eq("coupon_status",0);
+        if (qto.getCouponType() != UserCouponEnum.全部抵扣券.getCode()) {
+            wrapper.eq("coupon_type",qto.getCouponType());
+        }
+        List<InUserCoupon> userCouponList = couponRepository.list(wrapper);
         List<BbcInUserCouponVO.ListVO> resultList = ListUtil.listCover(BbcInUserCouponVO.ListVO.class,userCouponList);
         resultList.forEach(coupon ->{
             // 计算距离过期还剩的天数
@@ -97,22 +100,29 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     }
 
     @Override
-    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto) {
+    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.CardQTO qto) {
         List<BbcInUserCouponVO.CardList> cardList = inUserCouponMapper.getCardList(qto.getJwtUserId());
         return cardList;
     }
 
     @Override
+    public List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId) {
+        // 查询当前商品可用优惠券
+        List<BbcInUserCouponVO.GoodsCouponListVO> couponList = inUserCouponMapper.getGoodsCoupon(goodsId);
+        return null;
+    }
+
+    @Override
     public List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto) {
-        // 获取当前所有优惠券
+        // 获取当前用户所有优惠券
         List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
                 .eq("user_id",qto.getJwtUserId())
                 .eq("coupon_status",0));
         List<BbcInUserCouponVO.MyCouponListVO> resultList = new ArrayList<>();
-        if (StringUtils.isNotBlank(qto.getGoodsId())) {
+        if (StringUtils.isNotBlank(qto.getLevelId())) {
             userCouponList.forEach(coupon ->{
-                // 根据商品id匹配可用优惠券
-                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getGoodsId(),coupon.getCouponId());
+                // 根据维度id匹配可用优惠券
+                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getLevelId(),coupon.getCouponId());
                 if (isExist) {
                     BbcInUserCouponVO.MyCouponListVO couponVO = new BbcInUserCouponVO.MyCouponListVO();
                     BeanUtils.copyProperties(coupon, couponVO);

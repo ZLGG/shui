@@ -30,12 +30,17 @@ public class BbcInUserCouponRpc implements IBbcInUserCouponRpc {
     }
 
     @Override
+    public List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId) {
+        return inUserCouponService.getGoodsCoupon(goodsId);
+    }
+
+    @Override
     public List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto) {
         return inUserCouponService.getMyCouponToUse(qto);
     }
 
     @Override
-    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto) {
+    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.CardQTO qto) {
         return inUserCouponService.getCardList(qto);
     }
 

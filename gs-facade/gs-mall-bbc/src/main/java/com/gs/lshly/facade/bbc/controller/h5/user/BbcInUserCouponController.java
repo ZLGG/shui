@@ -38,7 +38,7 @@ public class BbcInUserCouponController {
 
     @ApiOperation("in会员会员卡列表")
     @GetMapping("/getCardList")
-    public ResponseData<List<BbcInUserCouponVO.CardList>> getCardList(BbcInUserCouponQTO.QTO qto) {
+    public ResponseData<List<BbcInUserCouponVO.CardList>> getCardList(BbcInUserCouponQTO.CardQTO qto) {
         List<BbcInUserCouponVO.CardList> resultList = inUserCouponRpc.getCardList(qto);
         return ResponseData.data(resultList);
     }
@@ -62,6 +62,13 @@ public class BbcInUserCouponController {
     public ResponseData<List<BbcInUserCouponVO.MyCouponListVO>> getMyCouponToUse(@Valid @RequestBody BbcInUserCouponQTO.MyCouponQTO qto) {
         List<BbcInUserCouponVO.MyCouponListVO> couponVOList = inUserCouponRpc.getMyCouponToUse(qto);
         return ResponseData.data(couponVOList);
+    }
+
+    @ApiOperation("查看当前商品可领取的优惠券")
+    @PutMapping("/getGoodsCoupon/{goodsId}")
+    public ResponseData<List<BbcInUserCouponVO.GoodsCouponListVO>> getGoodsCoupon(@PathVariable String goodsId) {
+        List<BbcInUserCouponVO.GoodsCouponListVO> couponListVOS = inUserCouponRpc.getGoodsCoupon(goodsId);
+        return ResponseData.data(couponListVOS);
     }
 
 }

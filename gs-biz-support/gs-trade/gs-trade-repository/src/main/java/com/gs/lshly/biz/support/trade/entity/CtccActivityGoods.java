@@ -20,24 +20,24 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("gs_ctcc_pt_activity_goods_relation")
+@TableName("gs_ctcc_pt_activity_goods")
 public class CtccActivityGoods extends Model {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
     private String id;
 
-    @ApiModelProperty("活动")
-    private String activityId;
-
     @ApiModelProperty("类目id")
     private String categoryId;
 
-    @ApiModelProperty("类目id")
+    @ApiModelProperty("商品id")
     private String goodsId;
 
     @ApiModelProperty("商品状态（10-未上架，20-已上架）")
     private Integer goodsState;
+
+    @ApiModelProperty("排序")
+    private Integer idx;
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)

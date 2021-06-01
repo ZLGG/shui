@@ -20,8 +20,14 @@ public class BbcInUserCouponQTO implements Serializable {
     @ApiModel("BbcInUserCouponQTO.QTO")
     @Accessors(chain = true)
     public static class QTO extends BaseDTO {
-        @ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
+        @ApiModelProperty("优惠券类型（0-全部 1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
         private Integer couponType;
+    }
+
+    @Data
+    @ApiModel("BbcInUserCouponQTO.CardQTO")
+    public static class CardQTO extends BaseDTO {
+
     }
 
     @Data
@@ -49,9 +55,9 @@ public class BbcInUserCouponQTO implements Serializable {
     @Data
     @ApiModel("BbcInUserCouponQTO.MyCouponQTO")
     public static class MyCouponQTO extends BaseDTO {
-        @ApiModelProperty("商品id")
-        @NotBlank(message = "商品id不能为空")
-        private String goodsId;
+        @ApiModelProperty("适用维度id（专区id/类目id/商品id）")
+        @NotBlank(message = "适用维度id不能为空")
+        private String levelId;
     }
 
 }

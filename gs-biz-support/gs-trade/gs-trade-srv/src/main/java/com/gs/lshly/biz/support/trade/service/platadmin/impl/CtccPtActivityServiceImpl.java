@@ -16,6 +16,7 @@ import com.gs.lshly.biz.support.trade.repository.ICtccPtActivityRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ICtccPtActivityService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
@@ -26,6 +27,7 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -84,12 +86,11 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
     }
 
     @Override
-    public void deleteGoods(List<CtccPtActivityDTO.DeleteGoodsDTO> list) {
-        list.forEach(m -> {
+    public void deleteGoods(CtccPtActivityDTO.DeleteGoodsDTO list) {
+        list.getGoodsIdList().forEach(m -> {
             UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
-            wrapper.set("falg", true);
-            wrapper.eq("activity_id", m.getActivityId());
-            wrapper.eq("goods_id", m.getGoodsId());
+            wrapper.set("flag", true);
+            wrapper.eq("goods_id", m);
             activityGoodsRepository.update(wrapper);
         });
     }
@@ -99,74 +100,56 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         list.forEach(m -> {
             UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
             wrapper.set("goods_state", m.getGoodsState());
-            wrapper.eq("activity_id", m.getActivityId());
             wrapper.eq("goods_id", m.getGoodsId());
             activityGoodsRepository.update(wrapper);
         });
     }
 
     @Override
-    public PageData<CtccPtActivityVO.ActivityListVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
-
-
-        QueryWrapper<CtccPtActivity> queryWrapper = MybatisPlusUtil.query();
+    public PageData<BbcGoodsInfoVO.CtccGoodsDetailVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
+        // 查询电信国际活动商品
+        QueryWrapper<CtccActivityGoods> queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("flag",false);
-        queryWrapper.orderByDesc("end_time");
+        queryWrapper.orderByDesc("idx");
+        if (StringUtils.isNotBlank(dto.getCategoryId())) {
+            queryWrapper.eq("category_id", dto.getCategoryId());
+        }
         if (StringUtils.isNotBlank(dto.getGoodsName())) {
             // 根据商品名称模糊匹配商品id
             List<String> goodsIds = bbcGoodsInfoRpc.getGoodsIdsByName(dto.getGoodsName());
-            // 根据商品id查询活动id
-            List<CtccActivityGoods> activityIdsList = activityGoodsRepository.getActivityIdByGoodsId(goodsIds);
-            if (ObjectUtils.isEmpty(activityIdsList)) {
-                return null;
-            }
-            List<String> activityIds = new ArrayList<>();
-            activityIdsList.forEach(activityGoods -> {
-                activityIds.add(activityGoods.getActivityId());
-            });
-            queryWrapper.in("id",activityIds);
+            queryWrapper.in("goods_id",goodsIds);
         }
-        IPage<CtccPtActivity> page = MybatisPlusUtil.pager(dto);
-        // 查看活动信息
-        IPage<CtccPtActivity> pageData = ctccPtActivityMapper.queryList(page,queryWrapper);
-        List<CtccPtActivityVO.ActivityListVO> activityListVOList = ListUtil.listCover(CtccPtActivityVO.ActivityListVO.class, pageData.getRecords());
+        IPage<CtccActivityGoods> page = MybatisPlusUtil.pager(dto);
+        IPage<CtccActivityGoods> pageData = activityGoodsRepository.page(page,queryWrapper);
+        List<BbcGoodsInfoVO.CtccGoodsDetailVO> resultList = new ArrayList<>();
         // 查看活动商品信息
-        activityListVOList.forEach(activity ->{
-            List<BbcGoodsInfoVO.CtccGoodsDetailVO> ctccGoodsDetailVOList = new ArrayList<>();
-                // 查询商品详情
-                QueryWrapper<CtccActivityGoods> ew = new QueryWrapper<>();
-                ew.eq("flag", false);
-                ew.eq("activity_id",activity.getId());
-                List<CtccActivityGoods> ctccPtActivityList = activityGoodsRepository.list(ew);
-                if(CollectionUtil.isNotEmpty(ctccPtActivityList)){
-                    for(CtccActivityGoods activityGoods:ctccPtActivityList){
-                        BbcGoodsInfoVO.CtccGoodsDetailVO ctccGoodsDetailVO = new BbcGoodsInfoVO.CtccGoodsDetailVO();
-                        String goodsId = activityGoods.getGoodsId();
-                        BbcGoodsInfoVO.DetailVO detailVO= bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
-                        BeanUtils.copyProperties(detailVO,ctccGoodsDetailVO);
-                        ctccGoodsDetailVO.setGoodsState(activityGoods.getGoodsState());
-                        ctccGoodsDetailVO.setShopName(detailVO.getGoodsShopDetailVO().getShopName());
-                        ctccGoodsDetailVO.setBrandName(ctccPtActivityMapper.getBrandNameByGoodsId(goodsId));
-                        ctccGoodsDetailVO.setCategoryName(ctccCategoryMapper.getCtccCategoryName(goodsId));
-                        ctccGoodsDetailVOList.add(ctccGoodsDetailVO);
-                    }
-                }
-            activity.setGoodsList(ctccGoodsDetailVOList);
+        pageData.getRecords().forEach(goods ->{
+            // 查询商品详情
+            BbcGoodsInfoVO.CtccGoodsDetailVO ctccGoodsDetailVO = new BbcGoodsInfoVO.CtccGoodsDetailVO();
+            String goodsId = goods.getGoodsId();
+            BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+            BeanUtils.copyProperties(detailVO, ctccGoodsDetailVO);
+            ctccGoodsDetailVO.setGoodsState(goods.getGoodsState());
+            ctccGoodsDetailVO.setShopName(detailVO.getGoodsShopDetailVO().getShopName());
+            ctccGoodsDetailVO.setBrandName(ctccPtActivityMapper.getBrandNameByGoodsId(goodsId));
+            ctccGoodsDetailVO.setCategoryName(ctccCategoryMapper.getCtccCategoryName(goodsId));
+            resultList.add(ctccGoodsDetailVO);
         });
-        return new PageData<>(activityListVOList, dto.getPageNum(), dto.getPageSize(), pageData.getTotal());
+        return new PageData<>(resultList, dto.getPageNum(), dto.getPageSize(), pageData.getTotal());
     }
 
     @Override
-    public CtccPtActivityVO.DetailVO getActivityDetail(String id) {
-        // 查看活动信息
-        CtccPtActivity ctccPtActivity = ctccPtActivityRepository.getById(id);
-        CtccPtActivityVO.DetailVO detailVO = new CtccPtActivityVO.DetailVO();
-        BeanUtils.copyProperties(ctccPtActivity,detailVO);
-        // 查看活动banner图组信息
-        List<CtccPtActivityImages> images = imagesMapper.selectByActivityId(id);
-        List<CtccPtActivityDTO.ImageGroupDTO> imageGroupDTOList = ListUtil.listCover(CtccPtActivityDTO.ImageGroupDTO.class, images);
-        detailVO.setImageGroupDTOList(imageGroupDTOList);
-        return detailVO;
+    public BbcGoodsInfoVO.CtccGoodsDetailVO getActivityDetail(String id) {
+
+        BbcGoodsInfoVO.CtccGoodsDetailVO ctccGoodsDetailVO = new BbcGoodsInfoVO.CtccGoodsDetailVO();
+        BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(id));
+        BeanUtils.copyProperties(detailVO, ctccGoodsDetailVO);
+        ctccGoodsDetailVO.setGoodsState(ctccCategoryMapper.getGoodsState(id));
+        ctccGoodsDetailVO.setShopName(detailVO.getGoodsShopDetailVO().getShopName());
+        ctccGoodsDetailVO.setBrandName(ctccPtActivityMapper.getBrandNameByGoodsId(id));
+        ctccGoodsDetailVO.setCategoryName(ctccCategoryMapper.getCtccCategoryName(id));
+        ctccGoodsDetailVO.setStockQuantity(detailVO.getIsSingle() == 10 ? detailVO.getSingleSkuStock():detailVO.getSkuVO().getSkuStock());
+        return ctccGoodsDetailVO;
     }
 
     @Override
@@ -194,9 +177,11 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
     }
 
     @Override
-    public void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> list) {
+    public void addActivityGoods(List<CtccPtActivityDTO.AddGoodsDTO> list) {
         List<CtccActivityGoods> activityGoodsList = ListUtil.listCover(CtccActivityGoods.class, list);
-        activityGoodsList.forEach(m -> m.setGoodsState(GoodsStateEnum.已上架.getCode()));
+        activityGoodsList.forEach(m -> {
+            m.setGoodsState(GoodsStateEnum.已上架.getCode());
+        });
         activityGoodsRepository.saveBatch(activityGoodsList);
     }
 

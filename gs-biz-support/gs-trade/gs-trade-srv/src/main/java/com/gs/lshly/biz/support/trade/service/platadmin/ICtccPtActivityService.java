@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.trade.service.platadmin;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 
@@ -34,7 +35,7 @@ public interface ICtccPtActivityService {
      * 添加活动商品
      * @param activityGoodsDTOList
      */
-    void addActivityGoods(List<CtccPtActivityDTO.AddActivityGoodsDTO> activityGoodsDTOList);
+    void addActivityGoods(List<CtccPtActivityDTO.AddGoodsDTO> activityGoodsDTOList);
 
     /**
      * 添加电信国际类目
@@ -49,18 +50,18 @@ public interface ICtccPtActivityService {
     void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list);
 
     /**
-     * 查看活动详情
+     * 查看商品详情
      * @param id
      * @return
      */
-    CtccPtActivityVO.DetailVO getActivityDetail(String id);
+    BbcGoodsInfoVO.CtccGoodsDetailVO getActivityDetail(String id);
 
     /**
      * 获取活动列表信息
      * @param dto
      * @return
      */
-    PageData<CtccPtActivityVO.ActivityListVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto);
+    PageData<BbcGoodsInfoVO.CtccGoodsDetailVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto);
 
     /**
      * 修改商品上下架状态
@@ -72,5 +73,5 @@ public interface ICtccPtActivityService {
      * 批量商城商品
      * @param list
      */
-    void deleteGoods(List<CtccPtActivityDTO.DeleteGoodsDTO> list);
+    void deleteGoods(CtccPtActivityDTO.DeleteGoodsDTO list);
 }

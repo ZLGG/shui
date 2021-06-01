@@ -1,7 +1,5 @@
 package com.gs.lshly.common.struct.platadmin.trade.qto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -262,6 +260,7 @@ public abstract class CouponQTO implements Serializable {
 
         @ApiModelProperty(value = "库存数")
         private Integer stockNum;
+
     }
 
     @Data
@@ -274,5 +273,8 @@ public abstract class CouponQTO implements Serializable {
 
         @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
         private Integer auditStatus;
+
+        @ApiModelProperty(value = "平台处理说明")
+        private String rejectReason;
     }
 }

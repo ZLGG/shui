@@ -31,8 +31,8 @@ public class CouponRpc implements ICouponRpc {
     }
 
     @Override
-    public Boolean deleteCoupon(String id) {
-        return iCouponService.deleteCoupon(id);
+    public Boolean deleteCoupon(String ids) {
+        return iCouponService.deleteCoupon(ids);
     }
 
     @Override

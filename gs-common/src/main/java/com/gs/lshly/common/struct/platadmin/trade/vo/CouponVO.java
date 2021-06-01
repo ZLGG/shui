@@ -38,6 +38,9 @@ public class CouponVO implements Serializable {
 
         @ApiModelProperty(value = "审核状态（0-待审核 1-已审核）")
         private Integer auditStatus;
+
+        @ApiModelProperty(value = "平台处理说明")
+        private String rejectReason;
     }
 
     @Data
@@ -110,6 +113,9 @@ public class CouponVO implements Serializable {
         @ApiModelProperty(value = "使用商品维度 1-专区 2-类目 3-商品")
         private Integer level;
 
+        @ApiModelProperty(value = "平台处理说明")
+        private String rejectReason;
+
         @ApiModelProperty(value = "是否适用全部商品")
         private Boolean isAllGoods;
 
@@ -130,4 +136,5 @@ public class CouponVO implements Serializable {
         @ApiModelProperty(value = "专区id/类目id/商品id")
         private String levelId;
     }
+
 }

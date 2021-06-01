@@ -23,7 +23,7 @@ public interface IBbcInUserCouponRpc {
      * @param qto
      * @return
      */
-    List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto);
+    List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.CardQTO qto);
 
     /**
      * 获取当前可用优惠券列表
@@ -31,4 +31,11 @@ public interface IBbcInUserCouponRpc {
      * @return
      */
     List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto);
+
+    /**
+     * 查看当前商品可领取的优惠券
+     * @param goodsId
+     * @return
+     */
+    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId);
 }
