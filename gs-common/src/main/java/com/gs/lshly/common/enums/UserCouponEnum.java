@@ -12,6 +12,7 @@ import java.util.Map;
 
 public enum UserCouponEnum implements EnumMessage {
 
+    全部抵扣券(0,"全部抵扣券"),
     IN会员抵扣券(1, "IN会员抵扣券"),
     店铺券(2, "店铺券"),
     平台券(3, "平台券"),

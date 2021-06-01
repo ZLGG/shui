@@ -34,7 +34,7 @@ public interface IBbcInUserCouponService {
      * @param qto
      * @return
      */
-    List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto);
+    List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.CardQTO qto);
 
     /**
      * 获取当前可用优惠券列表

@@ -62,6 +62,4 @@ public class PCMerchStockTemplateController {
     public  ResponseData<List<CommonStockTemplateVO.IdNameVO>> idNames(){
         return  ResponseData.data(pcMerchStockTemplateRpc.idNames(new BaseDTO()));
     }
-
-
 }

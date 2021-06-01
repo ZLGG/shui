@@ -43,8 +43,6 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
     private IMessageMapper messageMapper;
     @Autowired
     private IMessageRepository repository;
-    @Autowired
-    private ISiteNoticeRpc noticeRpc;
 
     @Override
     public BbcMessageVO.UnReadCountsVO getUnreadMessage(BbcMessageQTO.QTO qto) {
@@ -65,8 +63,8 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
 
     @Override
     public PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto) {
-        PageData<BbcSiteNoticeVO.NoticeListVO> pageData = noticeRpc.getNoticeList(qto);
-        return pageData;
+//        PageData<BbcSiteNoticeVO.NoticeListVO> pageData = noticeRpc.getNoticeList(qto);
+        return null;
     }
 
     @Override

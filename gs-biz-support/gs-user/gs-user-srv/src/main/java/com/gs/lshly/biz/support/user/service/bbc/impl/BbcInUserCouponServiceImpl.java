@@ -43,10 +43,13 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
     @Override
     public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
-        List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
-                .eq("user_id",qto.getJwtUserId())
-                .eq("coupon_type",qto.getCouponType())
-                .eq("coupon_status",0));
+        QueryWrapper<InUserCoupon> wrapper = new QueryWrapper<>();
+        wrapper .eq("user_id",qto.getJwtUserId());
+        wrapper.eq("coupon_status",0);
+        if (qto.getCouponType() != UserCouponEnum.全部抵扣券.getCode()) {
+            wrapper.eq("coupon_type",qto.getCouponType());
+        }
+        List<InUserCoupon> userCouponList = couponRepository.list(wrapper);
         List<BbcInUserCouponVO.ListVO> resultList = ListUtil.listCover(BbcInUserCouponVO.ListVO.class,userCouponList);
         resultList.forEach(coupon ->{
             // 计算距离过期还剩的天数
@@ -97,7 +100,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     }
 
     @Override
-    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto) {
+    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.CardQTO qto) {
         List<BbcInUserCouponVO.CardList> cardList = inUserCouponMapper.getCardList(qto.getJwtUserId());
         return cardList;
     }

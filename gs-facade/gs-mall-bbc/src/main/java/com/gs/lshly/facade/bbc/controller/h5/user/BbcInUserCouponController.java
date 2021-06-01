@@ -38,7 +38,7 @@ public class BbcInUserCouponController {
 
     @ApiOperation("in会员会员卡列表")
     @GetMapping("/getCardList")
-    public ResponseData<List<BbcInUserCouponVO.CardList>> getCardList(BbcInUserCouponQTO.QTO qto) {
+    public ResponseData<List<BbcInUserCouponVO.CardList>> getCardList(BbcInUserCouponQTO.CardQTO qto) {
         List<BbcInUserCouponVO.CardList> resultList = inUserCouponRpc.getCardList(qto);
         return ResponseData.data(resultList);
     }

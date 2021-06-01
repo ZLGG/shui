@@ -40,7 +40,7 @@ public class BbcInUserCouponRpc implements IBbcInUserCouponRpc {
     }
 
     @Override
-    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.QTO qto) {
+    public List<BbcInUserCouponVO.CardList> getCardList(BbcInUserCouponQTO.CardQTO qto) {
         return inUserCouponService.getCardList(qto);
     }
 
