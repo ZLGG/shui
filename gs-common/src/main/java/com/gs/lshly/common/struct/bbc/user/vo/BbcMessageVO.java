@@ -47,7 +47,7 @@ public abstract class BbcMessageVO implements Serializable {
 
         @ApiModelProperty("消息发送时间")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-        private Date sendTime;
+        private LocalDateTime cdate;
     }
 
     @Data
@@ -75,12 +75,12 @@ public abstract class BbcMessageVO implements Serializable {
 
         @ApiModelProperty("消息发送时间")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime sendTime;
+        private LocalDateTime cdate;
     }
 
     @ApiModel("BbcMessageVO.UnReadCountsVO")
     @Data
-    public static class UnReadCountsVO {
+    public static class UnReadCountsVO implements Serializable {
         @ApiModelProperty("系统消息未读数")
         private Integer sysCounts = 0;
 

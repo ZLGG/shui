@@ -136,4 +136,5 @@ public class CouponVO implements Serializable {
         @ApiModelProperty(value = "专区id/类目id/商品id")
         private String levelId;
     }
+
 }

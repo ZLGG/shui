@@ -8,6 +8,7 @@ import com.gs.lshly.common.struct.bbc.user.qto.BbcMessageQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcMessageVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcSiteNoticeVO;
 import com.gs.lshly.rpc.api.bbc.user.IBbcMessageRpc;
+import com.gs.lshly.rpc.api.platadmin.foundation.ISiteNoticeRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -31,14 +32,12 @@ public class BbcMessageController {
     @ApiOperation("查询未读消息数")
     @PostMapping("/getUnreadMessage")
     public ResponseData<BbcMessageVO.UnReadCountsVO> getUnreadMessage(BbcMessageQTO.QTO qto) {
-        Optional.ofNullable(qto.getJwtUserId()).orElseThrow(() -> new BusinessException("请登陆后查看个人消息"));
         return ResponseData.data(messageRpc.getUnreadMessage(qto));
     }
 
     @ApiOperation("消息列表")
     @PostMapping("/queryMessageList")
     public ResponseData<BbcMessageVO.MessageListVO> queryMessageList(BbcMessageQTO.QTO qto) {
-        Optional.ofNullable(qto.getJwtUserId()).orElseThrow(() -> new BusinessException("请登陆后查看个人消息"));
         BbcMessageVO.MessageListVO messageListVO = messageRpc.queryMessageList(qto);
         return ResponseData.data(messageListVO);
     }

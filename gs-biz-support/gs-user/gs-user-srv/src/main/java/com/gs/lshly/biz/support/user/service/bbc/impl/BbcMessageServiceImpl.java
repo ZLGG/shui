@@ -23,6 +23,7 @@ import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISiteNoticeRpc;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,12 +43,13 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
     private IMessageMapper messageMapper;
     @Autowired
     private IMessageRepository repository;
+    @Autowired
+    private ISiteNoticeRpc noticeRpc;
 
     @Override
     public BbcMessageVO.UnReadCountsVO getUnreadMessage(BbcMessageQTO.QTO qto) {
         BbcMessageVO.UnReadCountsVO unReadCountsVO = new BbcMessageVO.UnReadCountsVO();
         QueryWrapper<Message> wrapper = new QueryWrapper<Message>()
-                .eq("falg", false)
                 .eq("status", 0)
                 .eq("user_id", qto.getJwtUserId());
         List<Message> list = repository.list(wrapper);
@@ -63,14 +65,8 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
 
     @Override
     public PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto) {
-        QueryWrapper wrapper = MybatisPlusUtil.query();
-        wrapper.eq("terminal", TerminalEnum.BBC.getCode());
-        wrapper.eq("subject", SubjectEnum.积分商城.getCode());
-        wrapper.eq("flag", false);
-        wrapper.orderByDesc("udate");
-        IPage<BbcSiteNoticeVO.NoticeListVO> pager = MybatisPlusUtil.pager(qto);
-        IPage<BbcSiteNoticeVO.NoticeListVO> pageData = messageMapper.getNoticeList(pager,wrapper);
-        return new PageData<>(pageData.getRecords(),qto.getPageNum(),qto.getPageSize(),pager.getTotal());
+        PageData<BbcSiteNoticeVO.NoticeListVO> pageData = noticeRpc.getNoticeList(qto);
+        return pageData;
     }
 
     @Override
@@ -104,7 +100,6 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
         Message message = repository.getById(qto.getId());
         BbcMessageVO.MessageDetailVO messageDetailVO = new BbcMessageVO.MessageDetailVO();
         BeanUtils.copyProperties(message,messageDetailVO);
-        messageDetailVO.setSendTime(message.getCdate());
         return messageDetailVO;
     }
 
@@ -114,24 +109,27 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
         // 获取最新一条系统消息
         QueryWrapper<Message> sysWrapper = new QueryWrapper<>();
         sysWrapper.eq("user_id", qto.getJwtUserId());
-        sysWrapper.eq("flag",false);
         sysWrapper.eq("type", 1);
         sysWrapper.orderByDesc("cdate");
+        sysWrapper.last("limit 1");
         Message systemMessage = repository.getOne(sysWrapper);
         // 获取最新一条活动消息
         QueryWrapper<Message> actWrapper = new QueryWrapper<>();
         actWrapper.eq("user_id", qto.getJwtUserId());
-        actWrapper.eq("flag",false);
-        actWrapper.eq("type", 0);
+        actWrapper.eq("type", 2);
         actWrapper.orderByDesc("cdate");
+        actWrapper.last("limit 1");
         Message activityMessage = repository.getOne(actWrapper);
-
-        BbcMessageVO.MessageList activity = new BbcMessageVO.MessageList();
-        BeanUtils.copyProperties(activityMessage, activity);
-        messageListVO.setActivityMessage(activity);
-        BbcMessageVO.MessageList system = new BbcMessageVO.MessageList();
-        BeanUtils.copyProperties(systemMessage, system);
-        messageListVO.setSystemMessage(system);
+        if (ObjectUtils.isNotEmpty(activityMessage)) {
+            BbcMessageVO.MessageList activity = new BbcMessageVO.MessageList();
+            BeanUtils.copyProperties(activityMessage, activity);
+            messageListVO.setActivityMessage(activity);
+        }
+        if (ObjectUtils.isNotEmpty(systemMessage)) {
+            BbcMessageVO.MessageList system = new BbcMessageVO.MessageList();
+            BeanUtils.copyProperties(systemMessage, system);
+            messageListVO.setSystemMessage(system);
+        }
         return messageListVO;
     }
 

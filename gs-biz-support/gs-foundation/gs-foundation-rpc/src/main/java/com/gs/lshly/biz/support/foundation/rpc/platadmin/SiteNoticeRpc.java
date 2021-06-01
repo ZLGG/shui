@@ -1,4 +1,6 @@
 package com.gs.lshly.biz.support.foundation.rpc.platadmin;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcMessageQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcSiteNoticeVO;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +46,10 @@ public class SiteNoticeRpc implements ISiteNoticeRpc{
 		siteNoticeServic.delete(dto);
 	}
 
-	
-   
+	@Override
+	public PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto) {
+		return siteNoticeServic.getNoticeList(qto);
+	}
+
+
 }

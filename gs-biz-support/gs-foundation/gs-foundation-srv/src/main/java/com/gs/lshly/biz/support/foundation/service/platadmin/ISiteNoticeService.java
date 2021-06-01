@@ -1,5 +1,7 @@
 package com.gs.lshly.biz.support.foundation.service.platadmin;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcMessageQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcSiteNoticeVO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.SiteNoticeDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.SiteNoticeQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SiteNoticeVO;
@@ -31,6 +33,7 @@ public interface ISiteNoticeService {
 	 * 
 	 */
 	void delete(SiteNoticeDTO.IdDTO dto);
-	
 
+
+	PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto);
 }

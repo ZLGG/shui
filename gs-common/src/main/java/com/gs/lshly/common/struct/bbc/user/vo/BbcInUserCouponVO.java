@@ -151,6 +151,9 @@ public class BbcInUserCouponVO implements Serializable {
         @ApiModelProperty("优惠券id")
         private String id;
 
+        @ApiModelProperty("运营配置优惠券id")
+        private String couponId;
+
         @ApiModelProperty("优惠券使用开始时间")
         private LocalDate startTime;
 
