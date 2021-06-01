@@ -88,4 +88,10 @@ public interface ICommonStockRpc {
      * @return
      */
     List<CommonStockVO.InnerStockVO> queryListStock(List<String> skuIdList);
+
+    /**
+     * 根据商品id获得库存数量
+     * @return
+     */
+    Integer getGoodsQuantity(String goodsId);
 }

@@ -25,13 +25,13 @@ public abstract class MarketPtSeckillQTO implements Serializable {
     @Accessors(chain = true)
     public static class QTO extends BaseQTO {
 
-        @ApiModelProperty(value = "状态[10=未审核 20=审核通过 30=审核未通过 40=全部]")
+/*        @ApiModelProperty(value = "状态[10=未审核 20=审核通过 30=审核未通过 40=全部]")
         private String check;
 
         @ApiModelProperty(value = "店铺名字")
-        private String shopName;
+        private String shopName;*/
 
-        @ApiModelProperty(value = "活动名字")
+        @ApiModelProperty(value = "活动名称")
         private String acName;
 
     }

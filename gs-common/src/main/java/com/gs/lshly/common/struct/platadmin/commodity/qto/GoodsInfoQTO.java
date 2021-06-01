@@ -71,6 +71,8 @@ public abstract class GoodsInfoQTO implements Serializable {
         @ApiModelProperty("计价单位")
         private String goodsPriceUnit;
 
+        @ApiModelProperty("是否是in会员商品(0:不是,1:是)")
+        private Integer isInMemberGift;
     }
 
     @Data

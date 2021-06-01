@@ -30,4 +30,5 @@ public interface ICommonStockService {
 
     List<CommonStockVO.InnerStockVO> queryListStock(List<String> skuIdList);
 
+    Integer getGoodsQuantity(String goodsId);
 }

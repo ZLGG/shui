@@ -20,6 +20,7 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
+import com.sun.xml.bind.v2.model.core.ID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -98,6 +99,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     private IGoodsServeCorRepository goodsServeCorRepository;
     @Autowired
     private IGoodsServeRepository goodsServeRepository;
+
     @DubboReference
     private ICommonStockRpc commonStockRpc;
 
@@ -161,6 +163,9 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (StringUtils.isNotBlank(qto.getLabelId())) {
             boost.like("grl.label_id", qto.getLabelId());
         }
+        if (ObjectUtil.isNotEmpty(qto.getIsInMemberGift())){
+            boost.eq("gs.is_in_member_gift",qto.getIsInMemberGift());
+        }
         if (StringUtils.isNotBlank(qto.getShopName())) {
             List<CommonShopVO.SimpleVO> simpleVOS = commonShopRpc.searchDetailShop(qto.getShopName());
             if (ObjectUtils.isEmpty(simpleVOS)) {
@@ -206,6 +211,11 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
             //填充店铺类型
             spuListVO.setShopType(simpleVO.getShopType());
+            String goodsId = spuListVO.getId();
+            Integer quantity = commonStockRpc.getGoodsQuantity(goodsId);
+            if (ObjectUtil.isNotEmpty(quantity)){
+                spuListVO.setQuantity(quantity);
+            }
         }
         return MybatisPlusUtil.toPageData(qto, GoodsInfoVO.SpuListVO.class, spuListVOIPage);
     }

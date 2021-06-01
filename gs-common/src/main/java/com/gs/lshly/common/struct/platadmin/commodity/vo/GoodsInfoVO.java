@@ -7,6 +7,7 @@ import com.gs.lshly.common.struct.platadmin.commodityfupin.vo.GoodsFupinVO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -24,7 +25,7 @@ public abstract class GoodsInfoVO implements Serializable {
     @Data
     @ApiModel("GoodsInfoVO.ListVO")
     @Accessors(chain = true)
-    public static class ListVO implements Serializable{
+    public static class ListVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -204,11 +205,11 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "扶贫商品信息")
         private GoodsFupinVO.DetailVO fupinInfo;
-        
-        @ApiModelProperty(value="标签")
+
+        @ApiModelProperty(value = "标签")
         private List<String> tags;
 
-        @ApiModelProperty(value="服务列表")
+        @ApiModelProperty(value = "服务列表")
         private List<GoodsServeVO.ListVO> goodsServeList;
     }
 
@@ -230,6 +231,9 @@ public abstract class GoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "商品标签")
         private List<GoodsLabelVO.ListVO> labels;
+
+        @ApiModelProperty(value = "库存数量")
+        private Integer quantity;
     }
 
     @Data
@@ -244,7 +248,7 @@ public abstract class GoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoVO.BindCategoryGoodsVO")
-    public static class BindCategoryGoodsVO implements Serializable{
+    public static class BindCategoryGoodsVO implements Serializable {
         @ApiModelProperty("商品id")
         private String id;
 
@@ -285,7 +289,7 @@ public abstract class GoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoVO.ShopFloorCommodityVO")
-    public static class ShopFloorCommodityVO implements Serializable{
+    public static class ShopFloorCommodityVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -308,7 +312,7 @@ public abstract class GoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoVO.FupinFloorCommodityVO")
-    public static class FupinFloorCommodityVO implements Serializable{
+    public static class FupinFloorCommodityVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;
@@ -326,7 +330,7 @@ public abstract class GoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoVO.InnerServiceGoodsVO")
-    public static class InnerServiceGoodsVO implements Serializable{
+    public static class InnerServiceGoodsVO implements Serializable {
 
         @ApiModelProperty("商品id")
         private String id;

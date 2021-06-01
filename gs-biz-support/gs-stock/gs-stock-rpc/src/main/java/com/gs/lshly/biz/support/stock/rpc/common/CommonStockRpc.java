@@ -79,4 +79,9 @@ public class CommonStockRpc implements ICommonStockRpc {
         return commonStockService.queryListStock(skuIdList);
     }
 
+    @Override
+    public Integer getGoodsQuantity(String goodsId) {
+        return commonStockService.getGoodsQuantity(goodsId);
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.gs.lshly.facade.platform.controller.trade;
+
 import javax.validation.Valid;
 
+import com.gs.lshly.rpc.api.platadmin.trade.IMarketPtSeckillMerchantRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,47 +28,48 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 平台秒杀秒杀管理
  *
- * 
  * @author yingjun
  * @date 2021年5月7日 上午10:30:05
  */
 @RestController
 @RequestMapping("/platadmin/marketPtSeckill")
 @Api(tags = "平台秒杀管理-v1.1.0")
-@Module(code = "seckill",parent = "marketing",name = "秒杀",index = 8)
+@Module(code = "seckill", parent = "marketing", name = "秒杀", index = 8)
 @SuppressWarnings("unchecked")
 public class MarketPtSeckillController {
 
     @DubboReference
     private IMarketPtSeckillRpc marketPtSeckillRpc;
 
- 
-	@ApiOperation("平台秒杀列表-v1.1.0")
+    @DubboReference
+    private IMarketPtSeckillMerchantRpc marketPtSeckillMerchantRpc;
+
+    @ApiOperation("平台秒杀列表-v1.1.0")
     @GetMapping("")
-    @Func(code = "view",name = "查")
-    public ResponseData<PageData<MarketPtSeckillVO.ListVO>> list(MarketPtSeckillQTO.QTO qto) {
+    @Func(code = "view", name = "查")
+    public ResponseData<PageData<MarketPtSeckillVO.activityListVO>> list(MarketPtSeckillQTO.QTO qto) {
         return ResponseData.data(marketPtSeckillRpc.pageData(qto));
     }
 
     @ApiOperation("平台秒杀详情-v1.1.0")
     @GetMapping(value = "/{id}")
-    @Func(code = "view",name = "查")
-    public ResponseData<MarketPtSeckillVO.DetailVO> get(@PathVariable String id) {
+    @Func(code = "view", name = "查")
+    public ResponseData<MarketPtSeckillVO.activityListVO> get(@PathVariable String id) {
         return ResponseData.data(marketPtSeckillRpc.detailMarketPtSeckill(new MarketPtSeckillDTO.IdDTO(id)));
     }
 
     @ApiOperation("新增平台秒杀-v1.1.0")
     @PostMapping("")
-    @Func(code = "add",name = "增")
+    @Func(code = "add", name = "增")
     public ResponseData<Void> add(@RequestBody MarketPtSeckillDTO.ETO dto) {
-            marketPtSeckillRpc.addMarketPtSeckill(dto);
+        marketPtSeckillRpc.addMarketPtSeckill(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
     @ApiOperation("批量删除平台秒杀-v1.1.0")
     @PostMapping(value = "/deleteBatches")
-    @Func(code = "delete",name = "删除")
-    public ResponseData<Void> delete(@Valid @RequestBody  MarketPtSeckillDTO.IdListDTO dto) {
+    @Func(code = "delete", name = "删除")
+    public ResponseData<Void> delete(@Valid @RequestBody MarketPtSeckillDTO.IdListDTO dto) {
         marketPtSeckillRpc.deleteMarketPtSeckill(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
@@ -74,30 +77,36 @@ public class MarketPtSeckillController {
 
     @ApiOperation("修改平台秒杀-v1.1.0")
     @PutMapping(value = "/{id}")
-    @Func(code = "edit",name = "改")
+    @Func(code = "edit", name = "改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody MarketPtSeckillDTO.ETO eto) {
         eto.setId(id);
         marketPtSeckillRpc.editMarketPtSeckill(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
+/*    @ApiOperation("活动商家参与记录-v1.1.0")
+    @GetMapping("/merchant")
+    @Func(code = "view", name = "查")
+    public ResponseData<PageData<MarketPtSeckillVO.ListVO>> merchankList(MarketPtSeckillQTO.QTO qto) {
+        return ResponseData.data(marketPtSeckillRpc.pageData(qto));
+    }*/
     /**
-     * 
+     *
      * @param eto
      * @return
- 
-    @ApiOperation("配置秒杀权限")
-    @PutMapping(value = "/updateActivity")
-    @Func(code = "edit",name = "改")
-    public ResponseData<Void> updateActivity( @Valid @RequestBody MarketPtSeckillDTO.updateDTO eto) {
-        marketPtSeckillRpc.updateSeckill(eto);
-        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
-    }
-    @ApiOperation("获取秒杀权限")
-    @PutMapping(value = "/getActivity")
-    @Func(code = "edit",name = "改")
-    public ResponseData<MarketPtSeckillVO.updateDTO> getActivity() {
-        return ResponseData.data(marketPtSeckillRpc.getActivity());
-    }
-    */
+
+     @ApiOperation("配置秒杀权限")
+     @PutMapping(value = "/updateActivity")
+     @Func(code = "edit",name = "改")
+     public ResponseData<Void> updateActivity( @Valid @RequestBody MarketPtSeckillDTO.updateDTO eto) {
+     marketPtSeckillRpc.updateSeckill(eto);
+     return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+     }
+     @ApiOperation("获取秒杀权限")
+     @PutMapping(value = "/getActivity")
+     @Func(code = "edit",name = "改")
+     public ResponseData<MarketPtSeckillVO.updateDTO> getActivity() {
+     return ResponseData.data(marketPtSeckillRpc.getActivity());
+     }
+     */
 }

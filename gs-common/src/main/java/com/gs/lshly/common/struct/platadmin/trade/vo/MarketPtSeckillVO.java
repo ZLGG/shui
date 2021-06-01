@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 
  *
- * 
+ *
+ *
  * @author yingjun
  * @date 2021年5月7日 上午10:38:40
  */
@@ -332,4 +332,25 @@ public class MarketPtSeckillVO implements Serializable {
         private BigDecimal seckillSaleSkuPrice;
     }
 
+    @Data
+    @Accessors(chain = true)
+    @ApiModel("MarketPtSeckillVO.activityListVO")
+    public static class activityListVO implements Serializable {
+        @ApiModelProperty("活动id")
+        private String id;
+
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("活动状态(10:未开始,20:进行中,30:已结束)")
+        private Integer state;
+
+        @ApiModelProperty("开售开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime seckillStartTime;
+
+        @ApiModelProperty("开售结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime seckillEndTime;
+    }
 }

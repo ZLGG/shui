@@ -25,7 +25,7 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc{
     private IMarketPtSeckillService marketPtSeckillService;
 
     @Override
-    public PageData<MarketPtSeckillVO.ListVO> pageData(MarketPtSeckillQTO.QTO qto){
+    public PageData<MarketPtSeckillVO.activityListVO> pageData(MarketPtSeckillQTO.QTO qto){
         return marketPtSeckillService.pageData(qto);
     }
 
@@ -47,7 +47,7 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc{
     }
 
     @Override
-    public MarketPtSeckillVO.DetailVO detailMarketPtSeckill(MarketPtSeckillDTO.IdDTO dto){
+    public MarketPtSeckillVO.activityListVO detailMarketPtSeckill(MarketPtSeckillDTO.IdDTO dto){
         return  marketPtSeckillService.detailMarketPtSeckill(dto);
     }
 
