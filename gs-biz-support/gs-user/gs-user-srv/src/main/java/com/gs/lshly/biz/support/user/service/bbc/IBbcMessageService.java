@@ -47,7 +47,7 @@ public interface IBbcMessageService {
     PageData<BbcMessageVO.MessageList> getSysOrActMessageList(BbcMessageQTO.MessageQTO qto);
 
     /**
-     * 获取公告列表
+     * 获取公告列表信息
      * @param qto
      * @return
      */

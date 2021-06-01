@@ -63,7 +63,12 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
 
     @Override
     public PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto) {
-//        PageData<BbcSiteNoticeVO.NoticeListVO> pageData = noticeRpc.getNoticeList(qto);
+        QueryWrapper<BbcSiteNoticeVO.NoticeListVO> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("terminal", TerminalEnum.BBC.getCode());
+        wrapper.eq("subject", SubjectEnum.积分商城.getCode());
+        wrapper.orderByDesc("udate");
+        IPage<BbcSiteNoticeVO.NoticeListVO> page = MybatisPlusUtil.pager(qto);
+        IPage<BbcSiteNoticeVO.NoticeListVO> pageData = messageMapper.getNoticeList(page,wrapper);
         return null;
     }
 

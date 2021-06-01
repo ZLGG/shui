@@ -139,6 +139,7 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
     @Transactional(rollbackFor = RuntimeException.class)
     public void editorStockAddress(BbcStockAddressDTO.ETO eto,Integer addressType) {
 
+        // 修改地址信息
         QueryWrapper<StockAddress> queryWrapper = MybatisPlusUtil.query();
         StockAddress  stockAddress = new StockAddress();
         BeanUtils.copyProperties(eto,stockAddress);
@@ -147,7 +148,25 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         queryWrapper.eq("owner_id",eto.getJwtUserId());
         repository.update(stockAddress,queryWrapper);
 
-
+        // 修改是否为默认地址
+        if (1 == eto.getIsDefault() ) {
+            // 查询用户是否有默认收货地址
+            String addressChildId = stockAddressChildMapper.getAddressIdIsDefault(new QueryWrapper<StockAddressChild>()
+                    .eq("addr.owner_id", eto.getJwtUserId())
+                    .eq("child.address_type", addressType)
+                    .eq("child.state", true)
+                    .eq("child.is_default", true)
+            );
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(addressChildId)) {
+                // 取消当前默认地址
+                stockAddressMapper.cancelDefault(addressChildId);
+            }
+        }
+        UpdateWrapper<StockAddressChild> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("is_default",eto.getIsDefault());
+        updateWrapper.set("address_type",addressType);
+        updateWrapper.eq("address_id",eto.getId());
+        stockAddressChildRepository.update(updateWrapper);
     }
 
     @Override

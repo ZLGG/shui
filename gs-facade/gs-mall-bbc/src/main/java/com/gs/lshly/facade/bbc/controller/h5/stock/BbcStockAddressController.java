@@ -46,7 +46,6 @@ public class BbcStockAddressController {
     @ApiOperation("收获地址新增")
     @PostMapping("")
     public ResponseData<BbcStockAddressVO.DetailVO> Add(@Valid @RequestBody BbcStockAddressDTO.ETO dto) {
-
         return ResponseData.data(bbcStockAddressRpc.addStockAddress(dto,StockAddressTypeEnum.收货.getCode()));
     }
 
