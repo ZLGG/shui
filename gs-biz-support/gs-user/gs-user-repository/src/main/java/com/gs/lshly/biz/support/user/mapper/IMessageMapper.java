@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 /**
  * @Author yangxi
@@ -26,6 +28,5 @@ public interface IMessageMapper extends BaseMapper<Message> {
     @Select("select id, name, content, udate from gs_site_notice where id = #{id}")
     BbcSiteNoticeVO.NoticeListVO getNoticeMessageDetail(@Param("id") String id);
 
-    @Select("select id, name, content, udate from gs_site_notice where ${ew.sqlSegment}")
-    IPage<BbcSiteNoticeVO.NoticeListVO> getNoticeList(IPage<BbcSiteNoticeVO.NoticeListVO> pager, @Param(Constants.WRAPPER) QueryWrapper wrapper);
+
 }

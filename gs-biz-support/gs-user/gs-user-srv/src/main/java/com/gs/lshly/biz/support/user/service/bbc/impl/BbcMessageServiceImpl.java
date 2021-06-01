@@ -3,9 +3,12 @@ package com.gs.lshly.biz.support.user.service.bbc.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gs.lshly.biz.support.user.entity.Message;
+import com.gs.lshly.biz.support.user.entity.Notice;
 import com.gs.lshly.biz.support.user.entity.UserFavoritesGoods;
 import com.gs.lshly.biz.support.user.mapper.IMessageMapper;
+import com.gs.lshly.biz.support.user.mapper.INoticeMapper;
 import com.gs.lshly.biz.support.user.repository.IMessageRepository;
 import com.gs.lshly.biz.support.user.service.bbb.h5.IBbbH5MessageService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcMessageService;
@@ -33,7 +36,7 @@ import java.util.stream.Collectors;
 
 /**
  * @Author yangxi
- * @create 2021/4/6 15:46
+ * @create 2021/4/6 15:46gs_site_notice
  */
 @Component
 @Slf4j
@@ -43,6 +46,8 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
     private IMessageMapper messageMapper;
     @Autowired
     private IMessageRepository repository;
+    @Autowired
+    private INoticeMapper noticeMapper;
 
     @Override
     public BbcMessageVO.UnReadCountsVO getUnreadMessage(BbcMessageQTO.QTO qto) {
@@ -63,13 +68,14 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
 
     @Override
     public PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto) {
-        QueryWrapper<BbcSiteNoticeVO.NoticeListVO> wrapper = MybatisPlusUtil.query();
+        QueryWrapper<Notice> wrapper = MybatisPlusUtil.query();
         wrapper.eq("terminal", TerminalEnum.BBC.getCode());
         wrapper.eq("subject", SubjectEnum.积分商城.getCode());
         wrapper.orderByDesc("udate");
-        IPage<BbcSiteNoticeVO.NoticeListVO> page = MybatisPlusUtil.pager(qto);
-        IPage<BbcSiteNoticeVO.NoticeListVO> pageData = messageMapper.getNoticeList(page,wrapper);
-        return null;
+        IPage<Notice> page = new Page<>(qto.getPageNum(),qto.getPageSize());
+        IPage<Notice> pageData = noticeMapper.selectPage(page,wrapper);
+        List<BbcSiteNoticeVO.NoticeListVO> resultList = ListUtil.listCover(BbcSiteNoticeVO.NoticeListVO.class, pageData.getRecords());
+        return new PageData<>(resultList, qto.getPageNum(),qto.getPageSize(),pageData.getTotal());
     }
 
     @Override
