@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,9 +25,7 @@ import com.gs.lshly.common.struct.bbc.user.vo.BbcSiteNoticeVO;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.platadmin.foundation.ISiteNoticeRpc;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,6 +63,14 @@ public class BbcMessageServiceImpl implements IBbcMessageService {
         // 获取未读活动消息数量
         unReadCountsVO.setActCounts(list.size()-sysList.size());
         return unReadCountsVO;
+    }
+
+    @Override
+    public void readUnReadMessage(BbcMessageQTO.QTO qto) {
+        UpdateWrapper<Message> wrapper = new UpdateWrapper<>();
+        wrapper.set("status",true);
+        wrapper.eq("user_id",qto.getJwtUserId());
+        repository.update(wrapper);
     }
 
     @Override

@@ -42,6 +42,11 @@ public class BbcMessageRpc implements IBbcMessageRpc {
     }
 
     @Override
+    public void readUnReadMessage(BbcMessageQTO.QTO qto) {
+        messageService.readUnReadMessage(qto);
+    }
+
+    @Override
     public PageData<BbcMessageVO.MessageList> getSysOrActMessageList(BbcMessageQTO.MessageQTO qto) {
         return messageService.getSysOrActMessageList(qto);
     }

@@ -9,6 +9,19 @@ import com.gs.lshly.biz.support.user.entity.InUserCoupon;
  * in会员优惠券
  */
 public interface InUserCouponRepository extends IService<InUserCoupon> {
-    // 查询当前商品个人可用优惠券
+
+    /**
+     * 查询当前商品个人可用优惠券
+     * @param goodsId
+     * @param couponId
+     * @return
+     */
     Boolean getMyCouponByGoodsId(String goodsId, Long couponId);
+
+    /**
+     * 查询是否属于in会员礼品
+     * @param goodsId
+     * @return
+     */
+    Boolean isInUserGoods(String goodsId);
 }

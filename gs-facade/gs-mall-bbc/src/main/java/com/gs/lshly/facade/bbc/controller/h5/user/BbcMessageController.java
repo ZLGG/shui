@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.bbc.controller.h5.user;
 
+import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
@@ -33,6 +34,13 @@ public class BbcMessageController {
     @PostMapping("/getUnreadMessage")
     public ResponseData<BbcMessageVO.UnReadCountsVO> getUnreadMessage(BbcMessageQTO.QTO qto) {
         return ResponseData.data(messageRpc.getUnreadMessage(qto));
+    }
+
+    @ApiOperation("一键已读未读消息")
+    @GetMapping("/readUnReadMessage")
+    public ResponseData readUnReadMessage(BbcMessageQTO.QTO qto) {
+        messageRpc.readUnReadMessage(qto);
+        return ResponseData.data(MsgConst.OPERATOR_SUCCESS);
     }
 
     @ApiOperation("消息列表")

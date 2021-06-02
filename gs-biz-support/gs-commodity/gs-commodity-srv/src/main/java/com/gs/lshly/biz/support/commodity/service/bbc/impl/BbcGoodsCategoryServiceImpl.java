@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -201,11 +202,11 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         return treeVOList.stream().map(v -> v.getId()).collect(Collectors.toList());
     }
 
+    /**
+     * 跟据类目查询对应的分类
+     */
     private List<String> getNewSubCategoryIds(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
         List<String> ret = new ArrayList<String>();
-        /**
-         * 跟据类目查询对应的分类
-         */
         ret.add(categoryIdQTO.getCategoryId());
         GoodsCategory goodsCategory = repository.getById(categoryIdQTO.getCategoryId());
         if (StringUtils.isNotEmpty(goodsCategory.getParentId())) {

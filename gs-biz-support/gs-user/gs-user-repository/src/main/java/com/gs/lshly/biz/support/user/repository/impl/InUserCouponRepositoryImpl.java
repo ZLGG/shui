@@ -15,6 +15,16 @@ import org.springframework.stereotype.Service;
 public class InUserCouponRepositoryImpl extends ServiceImpl<UserCouponDTOMapper, InUserCoupon>implements InUserCouponRepository {
     @Autowired
     private UserCouponDTOMapper userCouponMapper;
+
+    @Override
+    public Boolean isInUserGoods(String goodsId) {
+        Integer isInGoods = userCouponMapper.isInGoods(goodsId);
+        if (isInGoods == 0) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public Boolean getMyCouponByGoodsId(String goodsId, Long couponId) {
         Integer isExist = userCouponMapper.getMyCouponByGoodsId(goodsId,couponId);

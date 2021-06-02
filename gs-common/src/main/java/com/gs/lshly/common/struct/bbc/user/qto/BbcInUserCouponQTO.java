@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author yangxi
@@ -55,9 +56,26 @@ public class BbcInUserCouponQTO implements Serializable {
     @Data
     @ApiModel("BbcInUserCouponQTO.MyCouponQTO")
     public static class MyCouponQTO extends BaseDTO {
-        @ApiModelProperty("适用维度id（专区id/类目id/商品id）")
-        @NotBlank(message = "适用维度id不能为空")
+        @ApiModelProperty("区间id")
+        private String zoneId;
+
+        @ApiModelProperty("商品id")
+        @NotBlank(message = "商品id不能为空")
+        private String goodsId;
+
+        @ApiModelProperty("类目id")
+        @NotBlank(message = "类目id不能为空")
+        private String categoryId;
+    }
+
+    @Data
+    @ApiModel("BbcInUserCouponQTO.ZoneQTO")
+    public static class ZoneQTO implements Serializable {
+        @ApiModelProperty("适用维度id")
         private String levelId;
+
+        @ApiModelProperty("维度类型（1-专区id，2-类目id，3-商品id）")
+        private Integer type;
     }
 
 }

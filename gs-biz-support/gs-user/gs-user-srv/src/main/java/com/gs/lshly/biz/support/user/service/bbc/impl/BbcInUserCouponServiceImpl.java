@@ -15,9 +15,11 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.CouponVO;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.ListUtil;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @Author yangxi
@@ -114,21 +118,49 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
     @Override
     public List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto) {
-        // 获取当前用户所有优惠券
+        // 1.获取当前用户所有优惠券
         List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
-                .eq("user_id",qto.getJwtUserId())
-                .eq("coupon_status",0));
+                .eq("user_id", qto.getJwtUserId())
+                .eq("coupon_status", 0));
+        // 2.筛选当前商品可用优惠券
         List<BbcInUserCouponVO.MyCouponListVO> resultList = new ArrayList<>();
-        if (StringUtils.isNotBlank(qto.getLevelId())) {
-            userCouponList.forEach(coupon ->{
-                // 根据维度id匹配可用优惠券
-                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getLevelId(),coupon.getCouponId());
+        // 查询可否使用in会员优惠券
+        Boolean isInGoods = couponRepository.isInUserGoods(qto.getGoodsId());
+        if (isInGoods) {
+            List<InUserCoupon> inCouponList = userCouponList.stream().filter(m -> m.getCouponType().equals(UserCouponEnum.IN会员抵扣券.getCode())).collect(Collectors.toList());
+            resultList = ListUtil.listCover(BbcInUserCouponVO.MyCouponListVO.class, inCouponList);
+        }
+        // 查询商品可用优惠券
+        for (InUserCoupon coupon : userCouponList) {
+            // 根据商品id匹配可用优惠券
+            if (ObjectUtils.isNotEmpty(qto.getGoodsId())) {
+                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getGoodsId(), coupon.getCouponId());
                 if (isExist) {
                     BbcInUserCouponVO.MyCouponListVO couponVO = new BbcInUserCouponVO.MyCouponListVO();
                     BeanUtils.copyProperties(coupon, couponVO);
                     resultList.add(couponVO);
                 }
-            });
+            }
+            // 查询专区可用优惠券
+            if (ObjectUtils.isNotEmpty(qto.getZoneId())) {
+                // 根据专区id匹配可用优惠券
+                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getZoneId(), coupon.getCouponId());
+                if (isExist) {
+                    BbcInUserCouponVO.MyCouponListVO couponVO = new BbcInUserCouponVO.MyCouponListVO();
+                    BeanUtils.copyProperties(coupon, couponVO);
+                    resultList.add(couponVO);
+                }
+            }
+            // 查询类目可用优惠券
+            if (ObjectUtils.isNotEmpty(qto.getCategoryId())) {
+                // 根据类目id匹配可用优惠券
+                Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getCategoryId(), coupon.getCouponId());
+                if (isExist) {
+                    BbcInUserCouponVO.MyCouponListVO couponVO = new BbcInUserCouponVO.MyCouponListVO();
+                    BeanUtils.copyProperties(coupon, couponVO);
+                    resultList.add(couponVO);
+                }
+            }
         }
         return resultList;
     }

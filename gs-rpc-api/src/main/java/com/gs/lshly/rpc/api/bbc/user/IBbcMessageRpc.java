@@ -53,4 +53,10 @@ public interface IBbcMessageRpc {
      * @return
      */
     PageData<BbcSiteNoticeVO.NoticeListVO> getNoticeList(BbcMessageQTO.NoticeListQTO qto);
+
+    /**
+     * 一键已读未读消息
+     * @param qto
+     */
+    void readUnReadMessage(BbcMessageQTO.QTO qto);
 }

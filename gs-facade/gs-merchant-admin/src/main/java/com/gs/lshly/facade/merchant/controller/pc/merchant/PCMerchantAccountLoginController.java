@@ -14,13 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.ResponseData;
-import com.gs.lshly.common.struct.AuthDTO;
-import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.bbb.pc.user.vo.BbbUserVO;
 import com.gs.lshly.common.struct.common.dto.CommonPhoneLoginDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchantAccountLoginDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
-import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.log.Log;
 import com.gs.lshly.middleware.vcode.kaptcha.CaptchaService;
