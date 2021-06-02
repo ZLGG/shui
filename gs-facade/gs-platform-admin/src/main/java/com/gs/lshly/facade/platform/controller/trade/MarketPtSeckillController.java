@@ -2,7 +2,11 @@ package com.gs.lshly.facade.platform.controller.trade;
 
 import javax.validation.Valid;
 
+import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtSeckillTimeQuantumDTO;
+import com.gs.lshly.common.struct.platadmin.trade.qto.MarketPtSeckillTimeQuantumQTO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillTimeQuantumVO;
 import com.gs.lshly.rpc.api.platadmin.trade.IMarketPtSeckillMerchantRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.IMarketPtSeckillTimeQuantumRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +47,9 @@ public class MarketPtSeckillController {
 
     @DubboReference
     private IMarketPtSeckillMerchantRpc marketPtSeckillMerchantRpc;
+
+    @DubboReference
+    private IMarketPtSeckillTimeQuantumRpc marketPtSeckillTimeQuantumRpc;
 
     @ApiOperation("平台秒杀列表-v1.1.0")
     @GetMapping("")
@@ -92,7 +99,7 @@ public class MarketPtSeckillController {
     }*/
     /**
      *
-     * @param eto
+     * @param
      * @return
 
      @ApiOperation("配置秒杀权限")
@@ -109,4 +116,40 @@ public class MarketPtSeckillController {
      return ResponseData.data(marketPtSeckillRpc.getActivity());
      }
      */
+    @ApiOperation("活动时间段列表-v1.1.0")
+    @GetMapping("/time")
+    @Func(code = "view", name = "查")
+    public ResponseData<PageData<MarketPtSeckillTimeQuantumVO.ListVO>> pageTimeQuantumlist(MarketPtSeckillTimeQuantumQTO.QTO qto) {
+        return ResponseData.data(marketPtSeckillTimeQuantumRpc.pageTimeQuantumlist(qto));
+    }
+
+    @ApiOperation("活动时间段详情-v1.1.0")
+    @GetMapping("/time/{id}")
+    @Func(code = "view", name = "查")
+    public ResponseData<PageData<MarketPtSeckillTimeQuantumVO.ListVO>> timeQuantum(MarketPtSeckillTimeQuantumQTO.IdQTO qto) {
+        return ResponseData.data(marketPtSeckillTimeQuantumRpc.timeQuantum(qto));
+    }
+
+    @ApiOperation("新增活动时间段-v1.1.0")
+    @PostMapping("/time")
+    @Func(code = "add", name = "增")
+    public ResponseData<Void> addTimeQuantum(@RequestBody MarketPtSeckillTimeQuantumDTO.ETO dto) {
+        marketPtSeckillTimeQuantumRpc.addTimeQuantum(dto);
+        return ResponseData.success(MsgConst.ADD_SUCCESS);
+    }
+
+    @ApiOperation("修改活动时间段-v1.1.0")
+    @PutMapping(value = "/time")
+    @Func(code = "edit", name = "改")
+    public ResponseData<Void> updateTimeQuantum(@Valid @RequestBody MarketPtSeckillTimeQuantumDTO.ETO dto) {
+        marketPtSeckillTimeQuantumRpc.updateTimeQuantum(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+    @ApiOperation("删除活动时间段-v1.1.0")
+    @PostMapping(value = "/deleteTime")
+    @Func(code = "delete", name = "删除")
+    public ResponseData<Void> deleteTimeQuantum(MarketPtSeckillTimeQuantumDTO.IdDTO dto) {
+        marketPtSeckillTimeQuantumRpc.deleteTimeQuantum(dto);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+    }
 }

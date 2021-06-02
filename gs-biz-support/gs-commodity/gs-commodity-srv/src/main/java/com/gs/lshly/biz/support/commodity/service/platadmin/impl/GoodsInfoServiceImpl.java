@@ -14,13 +14,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.*;
+import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityGoodsVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
+import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityGoodsRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
-import com.sun.xml.bind.v2.model.core.ID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -99,7 +100,8 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     private IGoodsServeCorRepository goodsServeCorRepository;
     @Autowired
     private IGoodsServeRepository goodsServeRepository;
-
+    @Autowired
+    private ICtccCategoryGoodsRepository ctccCategoryGoodsRepository;
     @DubboReference
     private ICommonStockRpc commonStockRpc;
 
@@ -118,9 +120,31 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @DubboReference
     private ITradeGoodsRpc iTradeGoodsRpc;
 
+    @DubboReference
+    private ICtccPtActivityGoodsRpc iCtccPtActivityGoodsRpc;
+
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto) {
         QueryWrapper<GoodsInfoVO.SpuListVO> boost = MybatisPlusUtil.query();
+        if (ObjectUtil.isNotEmpty(qto.getGoodsPlace())) {
+            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.IN会员专区.getCode())) {
+                boost.eq("gs.is_in_member_gift", 1);
+            }
+            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信专区.getCode())) {
+                QueryWrapper<CtccCategoryGoods> query = MybatisPlusUtil.query();
+                query.eq("category_id","ctcc");
+                List<CtccCategoryGoods> categoryGoodsList = ctccCategoryGoodsRepository.list(query);
+                List<String> goodsIdList = CollUtil.getFieldValues(categoryGoodsList, "goodsId", String.class);
+                boost.in("gs.id", goodsIdList);
+            }
+            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信国际.getCode())) {
+                List<String> ctccGoodsList = iCtccPtActivityGoodsRpc.getList();
+                boost.in("gs.id", ctccGoodsList);
+            }
+/*            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.扶贫专区.getCode())) {
+
+            }*/
+        }
         if (ObjectUtils.isNotEmpty(qto.getGoodState()) && qto.getGoodState().intValue() != -1) {
             boost.eq("gs.goods_state", qto.getGoodState());
         }
@@ -163,9 +187,15 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (StringUtils.isNotBlank(qto.getLabelId())) {
             boost.like("grl.label_id", qto.getLabelId());
         }
-        if (ObjectUtil.isNotEmpty(qto.getIsInMemberGift())){
-            boost.eq("gs.is_in_member_gift",qto.getIsInMemberGift());
+        if (ObjectUtil.isNotEmpty(qto.getPointPrice1())) {
+            boost.ge("gs.point_price", qto.getPointPrice1());
         }
+        if (ObjectUtil.isNotEmpty(qto.getPointPrice2())) {
+            boost.le("gs.point_price", qto.getPointPrice2());
+        }
+/*        if (ObjectUtil.isNotEmpty(qto.getIsInMemberGift())){
+            boost.eq("gs.is_in_member_gift",qto.getIsInMemberGift());
+        }*/
         if (StringUtils.isNotBlank(qto.getShopName())) {
             List<CommonShopVO.SimpleVO> simpleVOS = commonShopRpc.searchDetailShop(qto.getShopName());
             if (ObjectUtils.isEmpty(simpleVOS)) {
@@ -213,7 +243,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             spuListVO.setShopType(simpleVO.getShopType());
             String goodsId = spuListVO.getId();
             Integer quantity = commonStockRpc.getGoodsQuantity(goodsId);
-            if (ObjectUtil.isNotEmpty(quantity)){
+            if (ObjectUtil.isNotEmpty(quantity)) {
                 spuListVO.setQuantity(quantity);
             }
         }
