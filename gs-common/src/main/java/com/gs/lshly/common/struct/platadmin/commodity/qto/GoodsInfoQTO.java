@@ -65,19 +65,28 @@ public abstract class GoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品成本价2")
         private BigDecimal costPrice2;
 
+        @ApiModelProperty("商品积分价1")
+        private BigDecimal pointPrice1;
+
+        @ApiModelProperty("商品积分价2")
+        private BigDecimal pointPrice2;
+
         @ApiModelProperty("标签Id")
         private String labelId;
 
         @ApiModelProperty("计价单位")
         private String goodsPriceUnit;
 
-        @ApiModelProperty("是否是in会员商品(0:不是,1:是)")
-        private Integer isInMemberGift;
+/*        @ApiModelProperty("是否是in会员商品(0:不是,1:是)")
+        private Integer isInMemberGift;*/
+
+        @ApiModelProperty("商品分区[(10:电信专区,20:in会员专区,30:电信国际,40:秒杀专区,50:扶贫专区]")
+        private Integer goodsPlace;
     }
 
     @Data
     @ApiModel("GoodsInfoQTO.ShopFloorQTO")
-    public static class ShopFloorQTO extends  BaseQTO{
+    public static class ShopFloorQTO extends BaseQTO {
 
         @ApiModelProperty("商品编号")
         private String goodsNo;
@@ -92,9 +101,9 @@ public abstract class GoodsInfoQTO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoQTO.FupinFloorQTO")
-    public static class FupinFloorQTO extends  BaseQTO{
+    public static class FupinFloorQTO extends BaseQTO {
 
-        @ApiModelProperty(value = "商品Id",hidden = true)
+        @ApiModelProperty(value = "商品Id", hidden = true)
         private List<String> goodsId;
 
         @ApiModelProperty("商品编号")
@@ -110,7 +119,7 @@ public abstract class GoodsInfoQTO implements Serializable {
 
     @Data
     @ApiModel("GoodsInfoQTO.CategoryIdQTO")
-    public static class CategoryIdQTO extends BaseQTO{
+    public static class CategoryIdQTO extends BaseQTO {
 
         @ApiModelProperty("类目id")
         private String categoryId;
