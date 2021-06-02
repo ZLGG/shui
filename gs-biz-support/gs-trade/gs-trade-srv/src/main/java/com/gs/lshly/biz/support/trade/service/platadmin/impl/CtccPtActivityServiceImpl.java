@@ -133,6 +133,7 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
             ctccGoodsDetailVO.setShopName(detailVO.getGoodsShopDetailVO().getShopName());
             ctccGoodsDetailVO.setBrandName(ctccPtActivityMapper.getBrandNameByGoodsId(goodsId));
             ctccGoodsDetailVO.setCategoryName(ctccCategoryMapper.getCtccCategoryName(goodsId));
+            ctccGoodsDetailVO.setIdx(goods.getIdx());
             resultList.add(ctccGoodsDetailVO);
         });
         return new PageData<>(resultList, dto.getPageNum(), dto.getPageSize(), pageData.getTotal());
