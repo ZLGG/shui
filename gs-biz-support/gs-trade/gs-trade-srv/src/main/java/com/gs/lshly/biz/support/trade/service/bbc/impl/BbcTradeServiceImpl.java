@@ -387,7 +387,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 				// 组装商品信息
 				BbcTradeSettlementVO.ShopListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(carId, quantity,
 						innerServiceGoodsVO);
-
+		        
 				if(goodsInfoVO.getIsInMemberGift()){
 					if ("1".equals(isInUser)) {	//是IN会员用IN会员价格
 						
@@ -408,6 +408,16 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 							goodsInfoVO.setTradePointAmount(pointPrice);
 							goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
 						}
+						
+						/**
+				         *模拟优惠券数据
+				         */
+				        List<ListCouponVO> couponVOS = this.listCoupon();
+				        goodsInfoVO.setDefaultCouponList(couponVOS);
+				        
+				        List<ListCouponVO> couponVOS1 = this.listCoupon1();
+				        goodsInfoVO.setDefaultCouponList(couponVOS1);
+				        
 					} else{
 						throw new BusinessException("请先成为IN会员，再买IN会员商品");
 					}
@@ -517,16 +527,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         } catch (Exception e) {
             log.error("营销结算异常:"+e.getMessage(), e);
         }**/
-        
-        
-        /**
-         *模拟优惠券数据
-         */
-        List<ListCouponVO> couponVOS = this.listCoupon();
-        settlementVO.setDefaultCouponList(couponVOS);
-        
-        List<ListCouponVO> couponVOS1 = this.listCoupon1();
-        settlementVO.setDefaultCouponList(couponVOS1);
         
         
         return ResponseData.data(settlementVO);

@@ -156,6 +156,12 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 
 			@ApiModelProperty("应付积分金额")
 			private BigDecimal tradePointAmount;
+			
+			@ApiModelProperty("默认优惠券列表")
+			private List<ListCouponVO> defaultCouponList;
+			
+			@ApiModelProperty("用户可选优惠券列表")
+			private List<ListCouponVO> optionalCouponList;
 
 			public String getCartId() {
 				return cartId;
@@ -228,7 +234,14 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 			public BigDecimal getTradePointAmount() {
 				return tradePointAmount;
 			}
-			
+
+			public List<ListCouponVO> getDefaultCouponList() {
+				return defaultCouponList;
+			}
+
+			public List<ListCouponVO> getOptionalCouponList() {
+				return optionalCouponList;
+			}
 		}
 
 		public List<String> getShopDeliveryType() {
@@ -368,11 +381,6 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 		@ApiModelProperty("优惠券抵扣积分")
 		private BigDecimal discountPointAmount;
 		
-		@ApiModelProperty("默认优惠券列表")
-		private List<ListCouponVO> defaultCouponList;
-		
-		@ApiModelProperty("用户可选优惠券列表")
-		private List<ListCouponVO> optionalCouponList;
 
 		public String getRecvAddresId() {
 			return recvAddresId;
@@ -443,15 +451,6 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 		public BigDecimal getDiscountPointAmount() {
 			return discountPointAmount;
 		}
-
-		public List<ListCouponVO> getDefaultCouponList() {
-			return defaultCouponList;
-		}
-
-		public List<ListCouponVO> getOptionalCouponList() {
-			return optionalCouponList;
-		}
-
 		
 	}
 
