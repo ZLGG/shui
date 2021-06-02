@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.mapper.CtccCategoryMapper;
 import com.gs.lshly.biz.support.trade.mapper.CtccPtActivityImagesMapper;
@@ -16,7 +15,6 @@ import com.gs.lshly.biz.support.trade.repository.ICtccPtActivityRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ICtccPtActivityService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
-import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
@@ -192,6 +190,9 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         QueryWrapper<CtccCategory> wrapper = MybatisPlusUtil.query();
         wrapper.eq("subject", SubjectEnum.电信国际.getCode());
         wrapper.orderByAsc("idx");
+        if (ObjectUtils.isNotEmpty(listDTO.getCategoryId())) {
+            wrapper.eq("id", listDTO.getCategoryId());
+        }
 
         // 根据商品名称查询商品信息及对应类目
         if (StringUtils.isNotBlank(listDTO.getGoodsName())) {

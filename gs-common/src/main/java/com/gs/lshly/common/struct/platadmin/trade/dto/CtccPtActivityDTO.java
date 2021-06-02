@@ -104,6 +104,9 @@ public class CtccPtActivityDTO implements Serializable {
     public static class CateGoryListDTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
+
+        @ApiModelProperty("类目id")
+        private String categoryId;
     }
 
     @Data

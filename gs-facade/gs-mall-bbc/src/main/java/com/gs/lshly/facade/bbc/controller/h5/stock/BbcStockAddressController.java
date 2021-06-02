@@ -25,7 +25,7 @@ import java.util.List;
 */
 @RestController
 @RequestMapping("/bbc/userCenter/stockAddress")
-@Api(tags = "会员地址管理")
+@Api(tags = "会员地址管理-v1.1.0")
 public class BbcStockAddressController {
 
     @DubboReference
