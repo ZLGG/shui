@@ -29,4 +29,7 @@ public interface UserIntegralMapper extends BaseMapper<UserIntegral> {
 
     @Select("select gs.direction_integral,gs.phone, gi.point_balance as okIntegral, gi.year_balance from gs_user gs left join gs_user_ctcc_point gi on gs.id = gi.user_id where gs.id = #{userId}")
     BbcUserVO.MyIntegralVO myIntegral(@Param("userId") String userId);
+
+    @Select("select count(1) from gs_user_shopping_car where user_id = #{userId}")
+    Integer goodsIsInCart(@Param("userId") String jwtUserId);
 }

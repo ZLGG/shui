@@ -104,6 +104,12 @@ public class BbcUserServiceImpl implements IBbcUserService {
         if (ObjectUtils.isNotEmpty(thirdVO)){
             detailVO.setNickName(thirdVO.getNickName());
         }
+        // 查询购物车是否加购商品
+        Integer isExist = userIntegralMapper.goodsIsInCart(qto.getJwtUserId());
+        detailVO.setGoodsIsInCart(isExist);
+        if (isExist != 0) {
+            detailVO.setGoodsIsInCart(1);
+        }
         return detailVO;
     }
 

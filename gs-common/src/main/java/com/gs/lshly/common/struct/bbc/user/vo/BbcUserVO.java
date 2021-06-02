@@ -63,6 +63,9 @@ public abstract class BbcUserVO implements Serializable {
         @ApiModelProperty("优惠卷数量")
         private Integer countCard;
 
+        @ApiModelProperty("购物车是否有商品(0-否，1-是) ")
+        private Integer goodsIsInCart;
+
         @ApiModelProperty("订单交易状态数组")
         List<BbcTradeListVO.stateCountVO> tradeStateList;
 

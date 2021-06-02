@@ -84,4 +84,5 @@ public interface IBbcTradeService {
      * @param dto
      */
     void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
+
 }
