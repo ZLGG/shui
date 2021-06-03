@@ -6,6 +6,7 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 
@@ -134,4 +135,12 @@ public class BbcGoodsInfoController {
     public ResponseData<List<BbcGoodsInfoVO.ListCouponVO>> listCoupon(BbcGoodsInfoQTO.GoodsIdQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.listCoupon(qto));
     }
+
+    @ApiOperation("2C商城查询一级类目下所有商品-v1.1.0")
+    @GetMapping("/allFirstCategoryGoods")
+    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO categoryIdQTO) {
+        PageData<BbcGoodsInfoVO.GoodsListVO> listVOS = bbcGoodsInfoRpc.allFirstCategoryGoods(categoryIdQTO);
+        return ResponseData.data(listVOS);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.rpc.bbc;
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,15 +54,18 @@ public class BbcGoodsCategoryRpc implements IBbcGoodsCategoryRpc {
     public PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
         return bbcGoodsCategoryService.goodsList(categoryIdQTO);
     }
+
 	@Override
 	public PageData<ListVO> goodsListByBrand(IdQTO idQTO) {
 		return bbcGoodsCategoryService.goodsListByBrand(idQTO);
 	}
+
 	@Override
 	public CtccHomeVO ctcchome(CtccDTO ctccDTO) {
 		return bbcGoodsCategoryService.ctcchome(ctccDTO);
 	}
-	@Override
+
+    @Override
 	public List<BbcGoodsCategoryVO.ListVO> listThirdGoodsCategory(ThirdListDTO dto) {
 		return bbcGoodsCategoryService.listThirdGoodsCategory(dto);
 	}
