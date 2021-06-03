@@ -1,11 +1,15 @@
 package com.gs.lshly.common.struct.platadmin.commodity.qto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -125,6 +129,25 @@ public abstract class GoodsInfoQTO implements Serializable {
         private String categoryId;
 
         @ApiModelProperty("类型 不传将无法查到数据")
+        private Integer useFiled = 0;
+    }
+
+    @Data
+    @ApiModel("GoodsInfoQTO.CategoryGoodsQTO")
+    public static class CategoryGoodsQTO extends BaseQTO {
+
+        @ApiModelProperty("类目id")
+        @NotBlank(message = "类目id不能为空")
+        private String categoryId;
+
+        @ApiModelProperty(value = "排序条件字段 10=综合 20=销量 30=价格 40=上新 ")
+        private Integer orderByProperties;
+
+        @ApiModelProperty(value = "排序方式 10=升序 20=降序")
+        private Integer orderByType;
+
+        @ApiModelProperty(value = "类型 不传将无法查到数据",hidden = true)
+        @JsonIgnore
         private Integer useFiled = 0;
     }
 

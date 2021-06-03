@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.rpc.bbc;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -196,7 +197,12 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 		return bbcGoodsInfoService.listSpecInfoByGoods(qto);
 	}
 
-	@Override
+    @Override
+    public PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO qto) {
+        return bbcGoodsInfoService.allFirstCategoryGoods(qto);
+    }
+
+    @Override
 	public List<ListCouponVO> listCoupon(GoodsIdQTO dto) {
 		return bbcGoodsInfoService.listCoupon(dto);
 	}

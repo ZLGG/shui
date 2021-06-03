@@ -8,6 +8,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 
 /**
 *
@@ -226,4 +227,11 @@ public interface IBbcGoodsInfoRpc {
      * @return
      */
     List<BbcGoodsInfoVO.ListCouponVO> listCoupon(BbcGoodsInfoQTO.GoodsIdQTO dto);
+
+    /**
+     * 查询一级类目下所有商品
+     * @param categoryIdQTO
+     * @return
+     */
+    PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO categoryIdQTO);
 }

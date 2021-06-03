@@ -15,6 +15,7 @@ import com.gs.lshly.biz.support.trade.repository.ICtccPtActivityRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ICtccPtActivityService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
@@ -84,6 +85,14 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
     }
 
     @Override
+    public void sortedGoods(CtccPtActivityDTO.SortedGoodsDTO dto) {
+        UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
+        wrapper.set("idx", dto.getIdx());
+        wrapper.eq("goods_id", dto.getGoodsId());
+        activityGoodsRepository.update(wrapper);
+    }
+
+    @Override
     public void deleteGoods(CtccPtActivityDTO.DeleteGoodsDTO list) {
         list.getGoodsIdList().forEach(m -> {
             UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
@@ -116,6 +125,9 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
             // 根据商品名称模糊匹配商品id
             List<String> goodsIds = bbcGoodsInfoRpc.getGoodsIdsByName(dto.getGoodsName());
             queryWrapper.in("goods_id",goodsIds);
+        }
+        if (null != dto.getStatus()) {
+            queryWrapper.eq("goods_state", dto.getStatus());
         }
         IPage<CtccActivityGoods> page = MybatisPlusUtil.pager(dto);
         IPage<CtccActivityGoods> pageData = activityGoodsRepository.page(page,queryWrapper);
@@ -190,7 +202,7 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         QueryWrapper<CtccCategory> wrapper = MybatisPlusUtil.query();
         wrapper.eq("subject", SubjectEnum.电信国际.getCode());
         wrapper.orderByAsc("idx");
-        if (ObjectUtils.isNotEmpty(listDTO.getCategoryId())) {
+        if (StringUtils.isNotBlank(listDTO.getCategoryId())) {
             wrapper.eq("id", listDTO.getCategoryId());
         }
 

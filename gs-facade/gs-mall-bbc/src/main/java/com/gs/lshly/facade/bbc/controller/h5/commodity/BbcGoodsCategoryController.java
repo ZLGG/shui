@@ -4,6 +4,7 @@ import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsCategoryQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsBrandQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
@@ -71,5 +72,4 @@ public class BbcGoodsCategoryController {
         PageData<GoodsInfoVO.ListVO> listVOS = bbcGoodsCategoryRpc.goodsList(categoryIdQTO);
         return ResponseData.data(listVOS);
     }
-
 }

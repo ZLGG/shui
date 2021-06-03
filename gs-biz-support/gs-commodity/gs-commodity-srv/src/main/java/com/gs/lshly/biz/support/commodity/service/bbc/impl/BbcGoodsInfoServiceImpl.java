@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import com.gs.lshly.common.struct.bbc.commodity.vo.*;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -68,16 +71,12 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGood
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SkuIdListQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.AttributeVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListCouponVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.PromiseVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
@@ -171,6 +170,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @DubboReference
     private ICommonShopRpc commonShopRpc;
+
+    @DubboReference
+    private IBbcGoodsCategoryRpc goodsCategoryRpc;
 
 
     @DubboReference
@@ -1139,6 +1141,83 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             return specListVOS;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO qto) {
+        // 获取所有子类目
+        BbcGoodsCategoryDTO.ThirdListDTO thirdListDTO = new BbcGoodsCategoryDTO.ThirdListDTO();
+        thirdListDTO.setParentId(qto.getCategoryId());
+        List<BbcGoodsCategoryVO.ListVO> categoryList = goodsCategoryRpc.listThirdGoodsCategory(thirdListDTO);
+        List<String> categoryIds = new ArrayList<>();
+        categoryList.forEach(m-> categoryIds.add(m.getId()));
+        // 获取类目下商品
+        QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
+        // 1. 通用查询条件
+        boost.in("category_id",categoryIds);
+        boost.ne("use_platform", GoodsUsePlatformEnums.B商城.getCode());
+        boost.eq("goods_state", GoodsStateEnum.已上架.getCode());
+        boost.eq("is_point_good", true);
+        // 按点击量排序（默认排序）
+        if (qto.getOrderByProperties() != null && qto.getOrderByProperties() == 10) {
+            boost.orderByDesc("click_volume");
+        }
+        // 按价格排序
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+            boost.orderByAsc("sale_price");
+        }
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
+            boost.orderByDesc("sale_price");
+        }
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+            boost.orderByAsc("point_price");
+        }
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
+            boost.orderByDesc("point_price");
+        }
+        // 按上架时间排序
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties() == 40) {
+            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
+                if (qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+                    boost.orderByAsc("publish_time", "id");
+                } else {
+                    boost.orderByDesc("publish_time", "id");
+                }
+            } else {
+                boost.orderByDesc("publish_time", "id");
+            }
+        }
+
+        // 2.获取2C商城的商品
+        IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
+        IPage<GoodsInfo> pageData = repository.page(page, boost);
+        List<GoodsInfo> goodsInfos = pageData.getRecords();
+        // 声明商品数据的储存容器
+        List<BbcGoodsInfoVO.GoodsListVO> goodsListVOS = new ArrayList<>();
+
+        // 按销量排序
+        if (qto.getOrderByProperties() != null && (qto.getOrderByProperties() == 20)) {
+            goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
+        } else {
+            for (GoodsInfo info : goodsInfos) {
+                BbcGoodsInfoVO.GoodsListVO goodsListVO = new BbcGoodsInfoVO.GoodsListVO();
+                BeanUtils.copyProperties(info, goodsListVO);
+                goodsListVO.setGoodsId(info.getId());
+                goodsListVO.setShopName(shopDetailVO(info.getShopId()).getShopName());
+                if (ObjectUtils.isNotEmpty(getSpecInfoVO(info))) {
+                    goodsListVO.setSpecListVOS(getSpecInfoVO(info));
+                }
+                if (info.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+                    BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(info).get(0);
+                    goodsListVO.setSkuId(skuVO.getSkuId());
+                    goodsListVO.setSingleSkuStock(getSkuStockNum(info.getShopId(), skuVO.getSkuId()));
+                }
+                goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
+                goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
+                goodsListVOS.add(goodsListVO);
+            }
+        }
+        return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
 
     private String getImage(String images) {

@@ -1,12 +1,19 @@
 package com.gs.lshly.biz.support.commodity.service.bbc.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSearchHistory;
+import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsCategoryDTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
+import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
+import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -24,9 +31,6 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsBrandRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
-import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
-import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
-import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -166,9 +170,9 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
 	@Override
     public PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
-
+        // 查询该类目所有子类目
         List<String> cIds = getNewSubCategoryIds(categoryIdQTO);
-        //通过列表对产品表进行查询 返回品牌信息
+        // 通过列表对产品表进行查询 返回品牌信息
 
         QueryWrapper<GoodsInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("category_id", cIds);
@@ -392,7 +396,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 		return retList;
 	}
 
-	@Override
+    @Override
 	public List<String> listGoodsCategoryByParentId(ParentIdDTO dto) {
 		
 		List<String> retList = new ArrayList<String>();

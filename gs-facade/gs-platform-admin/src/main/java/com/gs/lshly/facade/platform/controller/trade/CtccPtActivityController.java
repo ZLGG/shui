@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +67,7 @@ public class CtccPtActivityController {
 
     @ApiOperation("电信国际类目-列表展示")
     @GetMapping("/getCategoryList")
-    public ResponseData<CtccPtActivityVO.CategoryListVO> getCategoryList(CtccPtActivityDTO.CateGoryListDTO listDTO) {
+    public ResponseData<CtccPtActivityVO.CategoryListVO> getCategoryList(@Valid @RequestBody CtccPtActivityDTO.CateGoryListDTO listDTO) {
         CtccPtActivityVO.CategoryListVO categoryListVO = iCtccPtActivityRpc.getCategoryList(listDTO);
         return ResponseData.data(categoryListVO);
     }
@@ -98,6 +99,13 @@ public class CtccPtActivityController {
     public ResponseData<PageData<BbcGoodsInfoVO.CtccGoodsDetailVO>> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
         PageData<BbcGoodsInfoVO.CtccGoodsDetailVO> pageData = iCtccPtActivityRpc.queryActivityList(dto);
         return ResponseData.data(pageData);
+    }
+
+    @ApiOperation("对商品排序")
+    @GetMapping("/sortedGoods")
+    public ResponseData sortedGoods(CtccPtActivityDTO.SortedGoodsDTO dto) {
+        iCtccPtActivityRpc.sortedGoods(dto);
+        return ResponseData.data(MsgConst.UPDATE_SUCCESS);
     }
 
 }

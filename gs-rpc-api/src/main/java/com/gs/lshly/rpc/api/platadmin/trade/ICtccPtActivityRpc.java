@@ -75,4 +75,10 @@ public interface ICtccPtActivityRpc {
      * @param list
      */
     void deleteGoods(CtccPtActivityDTO.DeleteGoodsDTO list);
+
+    /**
+     * 商品排序
+     * @param dto
+     */
+    void sortedGoods(CtccPtActivityDTO.SortedGoodsDTO dto);
 }
