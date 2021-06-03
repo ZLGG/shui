@@ -62,6 +62,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.GoodsIdQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
@@ -2083,10 +2084,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<BbcTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
         Integer quantity = 0;
+        BbcGoodsInfoVO.DetailVO goodsDetail = new BbcGoodsInfoVO.DetailVO();
         for(TradeGoods tradeGoods : tradeGoodsList){
             BbcTradeListVO.TradeGoodsVO tradeGoodsVO = new BbcTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
-//            tradeGoodsVO.setShopName(tradeVO.getShopName());
+            String goodsId = tradeGoods.getGoodsId();
+            goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+            tradeGoodsVO.setExchangeType(goodsDetail.getExchangeType());
             if(tradeGoods.getQuantity()!=null)
             	quantity = quantity+tradeGoods.getQuantity();
             tradeGoodsVOS.add(tradeGoodsVO);
