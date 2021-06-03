@@ -530,7 +530,8 @@ public abstract class BbcTradeListVO implements Serializable {
         @ApiModelProperty("应付金额")
         private BigDecimal payableAmount;
 
-
+        @ApiModelProperty("兑换类型（20实物，10虚拟）")
+        private Integer exchangeType;
     }
 
     @Data
