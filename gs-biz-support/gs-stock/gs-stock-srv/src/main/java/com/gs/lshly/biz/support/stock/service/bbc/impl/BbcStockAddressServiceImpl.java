@@ -62,9 +62,9 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         queryWrapper.eq("child.address_type",addressType);
         queryWrapper.eq("ad.owner_type",StockAddressOwnerTypeEnum.会员.getCode());
         queryWrapper.eq("ad.owner_id",qto.getJwtUserId());
-        queryWrapper.orderByDesc("ad.cdate");
+        queryWrapper.orderByAsc("ad.cdate");
         List<StockAddressView> viewList = stockAddressMapper.mapperList(queryWrapper);
-        //没有默认 取第一个为默认
+        //没有默认 取最早设置的为默认地址
         if(ObjectUtils.isNotEmpty(viewList)){
             StockAddressView defaultView = null;
             int hasDefault = 0;
