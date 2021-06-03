@@ -41,6 +41,11 @@ public class CtccPtActivityRpc implements ICtccPtActivityRpc {
     }
 
     @Override
+    public void sortedGoods(CtccPtActivityDTO.SortedGoodsDTO dto) {
+        ctccPtActivityService.sortedGoods(dto);
+    }
+
+    @Override
     public PageData<BbcGoodsInfoVO.CtccGoodsDetailVO> queryActivityList(CtccPtActivityDTO.ActivityListDTO dto) {
         return ctccPtActivityService.queryActivityList(dto);
     }

@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -118,9 +119,6 @@ public class CtccPtActivityDTO implements Serializable {
         @ApiModelProperty("类别id")
         private String categoryId;
 
-        @ApiModelProperty("排序")
-        private Integer idx;
-
     }
 
     @Data
@@ -156,6 +154,18 @@ public class CtccPtActivityDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("CtccPtActivityDTO.SortedGoodsDTO")
+    public static class SortedGoodsDTO implements Serializable {
+
+        @ApiModelProperty("商品id")
+        @NotBlank(message = "商品id不能为空")
+        private String goodsId;
+
+        @ApiModelProperty("排序")
+        private Integer idx;
+    }
+
+    @Data
     @ApiModel("CtccPtActivityDTO.ActivityListDTO")
     public static class ActivityListDTO extends BaseQTO {
         @ApiModelProperty("商品名称")
@@ -163,5 +173,8 @@ public class CtccPtActivityDTO implements Serializable {
 
         @ApiModelProperty("类别id")
         private String categoryId;
+
+        @ApiModelProperty("商品状态(10-未上架，20-已上架)")
+        private Integer status;
     }
 }

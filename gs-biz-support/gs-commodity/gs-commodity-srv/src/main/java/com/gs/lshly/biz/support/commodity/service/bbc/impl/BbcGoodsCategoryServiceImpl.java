@@ -166,7 +166,8 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 
 	@Override
     public PageData<GoodsInfoVO.ListVO> goodsList(GoodsInfoQTO.CategoryIdQTO categoryIdQTO) {
-
+        // 查询该类目所有子类目
+//        repository.list(new QueryWrapper<>())
         List<String> cIds = getNewSubCategoryIds(categoryIdQTO);
         //通过列表对产品表进行查询 返回品牌信息
 
