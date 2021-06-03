@@ -264,7 +264,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
         
         Integer isInUser = userInfo.getIsInUser();	//判断是否是IN会员商户。
-        
+        log.info("[settlementVO][userInfo=>{}]",userInfo);
 //        //skuid/数量
 //        List<CommonStockDTO.InnerSkuGoodsInfoItem> goodsItemList = new ArrayList<>();
 //

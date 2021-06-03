@@ -1,14 +1,12 @@
 package com.gs.lshly.biz.support.trade.entity;
 
 import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import io.swagger.annotations.ApiModelProperty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -32,6 +30,11 @@ public class Coupon extends Model {
      */
     @TableId(value = "coupon_id")
     private String couponId;
+    
+    /**
+     * 券编码
+     */
+    private String code;
 
     /**
      * 优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）
