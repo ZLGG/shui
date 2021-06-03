@@ -121,7 +121,7 @@ public class TradeGoods extends Model {
     private BigDecimal payAmount;
     
     /**
-     * 支付总金额
+     * 支付总积分
      */
     private BigDecimal tradePointAmount;
 

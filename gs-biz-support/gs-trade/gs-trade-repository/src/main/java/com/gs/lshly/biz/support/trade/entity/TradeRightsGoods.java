@@ -126,4 +126,9 @@ public class TradeRightsGoods extends Model {
      * 退款金额
      */
     private BigDecimal refundPoint;
+
+    /**
+     * 收货地址全文本
+     */
+    private String recvFullAddres;
 }

@@ -10,7 +10,7 @@ public interface IBbcTradeRightsService {
 
     PageData<BbcTradeRightsVO.ListVO> pageData(BbcTradeRightsQTO.QTO qto);
 
-    void addTradeRights(BbcTradeRightsBuildDTO.ETO eto);
+    BbcTradeRightsVO.DetailVO addTradeRights(BbcTradeRightsBuildDTO.ETO eto);
 
     BbcTradeRightsVO.DetailVO detailTradeRights(BbcTradeRightsDTO.IdDTO dto);
 
@@ -23,4 +23,8 @@ public interface IBbcTradeRightsService {
     void revocationTradeRights(BbcTradeRightsBuildDTO.RevocationTradeRightsETO dto);
 
     void deleteRecord(BbcTradeRightsDTO.IdDTO dto);
+
+    void updateTradeRights(BbcTradeRightsBuildDTO.UpdateETO dto);
+
+    BbcTradeRightsVO.GoodsTotalVO goodsTotal(BbcTradeRightsBuildDTO.GoodsTotalDTO dto);
 }

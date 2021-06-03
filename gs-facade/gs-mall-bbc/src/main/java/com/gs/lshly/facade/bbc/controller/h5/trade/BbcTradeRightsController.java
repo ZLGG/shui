@@ -45,9 +45,15 @@ public class BbcTradeRightsController {
 
     @ApiOperation("申请售后")
     @PostMapping("/apply")
-    public ResponseData<Void> add(@Valid @RequestBody BbcTradeRightsBuildDTO.ETO dto) {
-        bbcTradeRightsRpc.addTradeRights(dto);
-        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
+    public ResponseData<BbcTradeRightsVO.DetailVO> add(@Valid @RequestBody BbcTradeRightsBuildDTO.ETO dto) {
+        return ResponseData.data(bbcTradeRightsRpc.addTradeRights(dto));
+    }
+
+    @ApiOperation("修改售后")
+    @PostMapping("/update")
+    public ResponseData<BbcTradeRightsVO.DetailVO> update(@Valid @RequestBody BbcTradeRightsBuildDTO.UpdateETO dto) {
+        bbcTradeRightsRpc.updateTradeRights(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
     @ApiOperation("撤销售后申请")
@@ -57,19 +63,25 @@ public class BbcTradeRightsController {
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
-    @ApiOperation("货物寄回")
+    @ApiOperation("计算待退货商品实付金额与积分")
+    @PostMapping("/total")
+    public ResponseData<Void> goodsTotal(@Valid @RequestBody BbcTradeRightsBuildDTO.GoodsTotalDTO dto) {
+        return ResponseData.data(bbcTradeRightsRpc.goodsTotal(dto));
+    }
+
+/*    @ApiOperation("货物寄回")
     @PostMapping("/returnGoods")
     public ResponseData<Void> returnGoods(@Valid @RequestBody BbcTradeRightsBuildDTO.RightsReturnGoodsLogistics dto) {
         bbcTradeRightsRpc.returnGoods(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
-    }
+    }*/
 
-    @ApiOperation("确认收货")
+/*    @ApiOperation("确认收货")
     @GetMapping("/addAddress")
     public ResponseData<Void> confirmReceipt(BbcTradeRightsDTO.IdDTO dto) {
         bbcTradeRightsRpc.confirmReceipt(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
-    }
+    }*/
 
 
     @ApiOperation("删除记录")

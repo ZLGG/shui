@@ -93,10 +93,30 @@ public abstract class BbcTradeRightsBuildDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("BbcTradeRightsDTO.UpdateETO")
+    @Accessors(chain = true)
+    public static class UpdateETO extends ETO {
+        @ApiModelProperty("售后表ID")
+        private String id;
+    }
+
+    @Data
     @ApiModel("BbcTradeRightsDTO.RevocationTradeRightsETO")
     @Accessors(chain = true)
     public static class RevocationTradeRightsETO extends BaseDTO {
         @ApiModelProperty("售后表ID")
         private String id;
+    }
+
+    @Data
+    @ApiModel("BbcTradeRightsDTO.GoodsTotalDTO")
+    @Accessors(chain = true)
+    public static class GoodsTotalDTO extends BaseDTO {
+
+        @ApiModelProperty("当前订单id")
+        private String tradeId;
+
+        @ApiModelProperty("商品sku id")
+        private List<String> skuIds;
     }
 }

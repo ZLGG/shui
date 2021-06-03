@@ -25,8 +25,8 @@ public class BbcTradeRightsRpc implements IBbcTradeRightsRpc {
     }
 
     @Override
-    public void addTradeRights(BbcTradeRightsBuildDTO.ETO eto) {
-        bbcTradeRightsService.addTradeRights(eto);
+    public BbcTradeRightsVO.DetailVO addTradeRights(BbcTradeRightsBuildDTO.ETO eto) {
+        return bbcTradeRightsService.addTradeRights(eto);
     }
 
     @Override
@@ -57,6 +57,16 @@ public class BbcTradeRightsRpc implements IBbcTradeRightsRpc {
     @Override
     public void deleteRecord(BbcTradeRightsDTO.IdDTO dto) {
         bbcTradeRightsService.deleteRecord(dto);
+    }
+
+    @Override
+    public void updateTradeRights(BbcTradeRightsBuildDTO.UpdateETO dto) {
+        bbcTradeRightsService.updateTradeRights(dto);
+    }
+
+    @Override
+    public BbcTradeRightsVO.GoodsTotalVO goodsTotal(BbcTradeRightsBuildDTO.GoodsTotalDTO dto) {
+        return bbcTradeRightsService.goodsTotal(dto);
     }
 
 }

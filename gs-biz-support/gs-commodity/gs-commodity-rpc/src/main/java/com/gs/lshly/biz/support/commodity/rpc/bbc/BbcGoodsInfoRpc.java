@@ -207,4 +207,9 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 		return bbcGoodsInfoService.listCoupon(dto);
 	}
 
+    @Override
+    public String selectOne(String tradeGoodsId) {
+        return bbcGoodsInfoService.selectOne(tradeGoodsId);
+    }
+
 }
