@@ -67,7 +67,7 @@ public class CtccPtActivityController {
 
     @ApiOperation("电信国际类目-列表展示")
     @GetMapping("/getCategoryList")
-    public ResponseData<CtccPtActivityVO.CategoryListVO> getCategoryList(@Valid @RequestBody CtccPtActivityDTO.CateGoryListDTO listDTO) {
+    public ResponseData<CtccPtActivityVO.CategoryListVO> getCategoryList(CtccPtActivityDTO.CateGoryListDTO listDTO) {
         CtccPtActivityVO.CategoryListVO categoryListVO = iCtccPtActivityRpc.getCategoryList(listDTO);
         return ResponseData.data(categoryListVO);
     }

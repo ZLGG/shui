@@ -136,7 +136,7 @@ public class BbcGoodsInfoController {
         return ResponseData.data(bbcGoodsInfoRpc.listCoupon(qto));
     }
 
-    @ApiOperation("2C商城查询一级类目下所有商品-v1.1.0")
+    @ApiOperation("2C商城查询类目下所有商品-v1.1.0")
     @GetMapping("/allFirstCategoryGoods")
     public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO categoryIdQTO) {
         PageData<BbcGoodsInfoVO.GoodsListVO> listVOS = bbcGoodsInfoRpc.allFirstCategoryGoods(categoryIdQTO);
