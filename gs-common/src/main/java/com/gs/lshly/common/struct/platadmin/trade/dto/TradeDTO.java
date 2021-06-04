@@ -111,6 +111,18 @@ public abstract class TradeDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("TradeDTO.PlatformCancelDTO")
+    @AllArgsConstructor
+    public static class PlatformCancelDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "交易订单表(ID)")
+        private String id;
+
+        @ApiModelProperty(value = "运营平台处理说明")
+        private String cancelReason;
+    }
+
+    @Data
     @ApiModel("TradeDTO.PayDateList")
     @Accessors(chain = true)
     public static class PayDateList extends BaseDTO {

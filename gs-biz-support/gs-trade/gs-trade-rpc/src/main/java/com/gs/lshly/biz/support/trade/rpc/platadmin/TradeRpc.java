@@ -25,25 +25,30 @@ import java.util.List;
 @DubboService
 public class TradeRpc implements ITradeRpc{
     @Autowired
-    private ITradeService  TradeService;
+    private ITradeService  tradeService;
 
 
     @Override
     public PageData<TradeListVO.tradeVO> tradeListPageData(TradeQTO.TradeList qto) {
-        return TradeService.tradeListPageData(qto);
+        return tradeService.tradeListPageData(qto);
     }
 
     @Override
     public TradeListVO.tradeVO detail(TradeDTO.IdDTO dto){
-        return  TradeService.detail(dto);
+        return  tradeService.detail(dto);
     }
     @Override
     public ExportDataDTO export(TradeQTO.IdListQTO qo) throws Exception{
-        return ExcelUtil.treatmentBean(TradeService.export(qo),TradeVO.ListVOExport.class);
+        return ExcelUtil.treatmentBean(tradeService.export(qo),TradeVO.ListVOExport.class);
     }
 
     @Override
     public TradeVO.TradeInfoVO findById(TradeGoodsVO.ListVO listVO) {
-        return TradeService.findById(listVO);
+        return tradeService.findById(listVO);
+    }
+
+    @Override
+    public Boolean platformCancel(TradeDTO.PlatformCancelDTO dto) {
+        return tradeService.platformCancel(dto);
     }
 }
