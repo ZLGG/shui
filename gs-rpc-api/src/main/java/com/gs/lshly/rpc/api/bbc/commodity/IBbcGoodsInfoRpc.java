@@ -229,7 +229,7 @@ public interface IBbcGoodsInfoRpc {
     List<BbcGoodsInfoVO.ListCouponVO> listCoupon(BbcGoodsInfoQTO.GoodsIdQTO dto);
 
     /**
-     * 查询一级类目下所有商品
+     * 查询类目下所有商品
      * @param categoryIdQTO
      * @return
      */
