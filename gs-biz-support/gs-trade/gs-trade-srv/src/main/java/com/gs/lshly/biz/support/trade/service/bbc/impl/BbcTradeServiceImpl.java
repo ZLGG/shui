@@ -417,7 +417,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 				        goodsInfoVO.setDefaultCouponList(couponVOS);
 				        
 				        List<ListCouponVO> couponVOS1 = this.listCoupon1();
-				        goodsInfoVO.setDefaultCouponList(couponVOS1);
+				        goodsInfoVO.setOptionalCouponList(couponVOS1);
 				        
 //					} else{
 //						throw new BusinessException("请先成为IN会员，再买IN会员商品");

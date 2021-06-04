@@ -17,4 +17,12 @@ public interface IBbcCtccCategoryGoodsService {
     
     
     List<DetailVO> listGoodsInfo();
+    
+    /**
+     * 跟据分类查询商品
+     * @param categoryId
+     * @return
+     */
+    List<BbcCtccCategoryGoodsVO.GoodsListVO> listGoodsByCategoryId(String categoryId);
+    
 }

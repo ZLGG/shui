@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.CtccCategory;
 import com.gs.lshly.biz.support.commodity.entity.CtccCategoryGoods;
+import com.gs.lshly.biz.support.commodity.mapper.CtccCategoryMapper;
 import com.gs.lshly.biz.support.commodity.repository.ICtccCategoryGoodsRepository;
 import com.gs.lshly.biz.support.commodity.repository.ICtccCategoryRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcCtccCategoryGoodsService;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
 import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO;
@@ -20,12 +23,14 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalAdvertVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalCategoryVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.GoodsListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
+import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
@@ -48,6 +53,13 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
     
     @Autowired
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
+    
+    @Autowired
+    private CtccCategoryMapper ctccCategoryMapper;
+    
+    @Autowired
+    private IBbcGoodsLabelService bbcGoodsLabelService;
+    
 	/**
 	 * 
 	 * @param dto
@@ -82,20 +94,17 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         		
         		//
         		wrapperGoods.eq("category_id", ctccCategory.getId());
-        		List<CtccCategoryGoods> ctccCategoryGoods = goodsRepository.list(wrapperGoods);
+        		List<BbcCtccCategoryGoodsVO.GoodsListVO> ctccCategoryGoods = ctccCategoryMapper.listGoodsByCategoryId(ctccCategory.getId());
         		
-        		List<BbcGoodsInfoVO.DetailVO> detailVOList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
         		if(CollectionUtil.isNotEmpty(ctccCategoryGoods)){
-	        		for(CtccCategoryGoods ctccCategoryGood:ctccCategoryGoods){
+	        		for(BbcCtccCategoryGoodsVO.GoodsListVO goodsListVO:ctccCategoryGoods){
 						
-						String goodsId = ctccCategoryGood.getGoodsId();
-						BbcGoodsInfoVO.DetailVO detailVO= bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
-						detailVOList.add(detailVO);
-						
+	        			goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsListVO.getGoodsId()));
+	        			goodsListVO.setGoodsImage(ObjectUtils.isEmpty(StringManageUtil.getImage(goodsListVO.getGoodsImage())) ? "" : StringManageUtil.getImage(goodsListVO.getGoodsImage()));
 					}
         		}
         		
-        		ctccInternationalCategoryVO.setGoodsList(detailVOList);
+        		ctccInternationalCategoryVO.setGoodsList(ctccCategoryGoods);
         		categorys.add(ctccInternationalCategoryVO);
         	}
         	ctccInternationalHomeVO.setCategorys(categorys);
@@ -120,6 +129,11 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
 			}
 		}
 		return detailVOList;
+	}
+	@Override
+	public List<GoodsListVO> listGoodsByCategoryId(String categoryId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
 }
