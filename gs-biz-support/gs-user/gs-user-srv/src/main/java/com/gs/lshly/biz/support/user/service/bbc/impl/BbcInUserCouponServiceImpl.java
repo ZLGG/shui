@@ -9,6 +9,7 @@ import com.gs.lshly.biz.support.user.mapper.UserMapper;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
 import com.gs.lshly.common.enums.InUserCouponStatusEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.enums.UserCouponEnum;
 import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -110,10 +111,33 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     }
 
     @Override
-    public List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId) {
-        // 查询当前商品可用优惠券
-        List<BbcInUserCouponVO.GoodsCouponListVO> couponList = inUserCouponMapper.getGoodsCoupon(goodsId);
-        return null;
+    public List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(BbcInUserCouponQTO.GoodsCouponQTO qto) {
+        QueryWrapper<BbcInUserCouponVO.Coupon> boost = new QueryWrapper<>();
+        boost.eq("c.audit_status", true);
+        boost.eq("c.flag", false);
+        // 1.in会员专区优惠券
+        Boolean isInGoods = couponRepository.isInUserGoods(qto.getGoodsId());
+        if (isInGoods) {
+            boost.eq("c.coupon_type", UserCouponEnum.IN会员抵扣券.getCode());
+            List<BbcInUserCouponVO.GoodsCouponListVO> resultList = inUserCouponMapper.getGoodsCoupon(boost);
+            return resultList;
+        }
+        // 2.当前商品所有匹配优惠券
+        List<String> levelIds = new ArrayList<>();
+        if (StringUtils.isNotBlank(qto.getGoodsId())) {
+            levelIds.add(qto.getGoodsId());
+        }
+        if (StringUtils.isNotBlank(qto.getZoneId())) {
+            levelIds.add(qto.getZoneId());
+        }
+        if (StringUtils.isNotBlank(qto.getCategoryId())) {
+            levelIds.add(qto.getCategoryId());
+        }
+        if (ObjectUtils.isNotEmpty(levelIds)) {
+            boost.in("r.level_id", qto.getGoodsId());
+        }
+        List<BbcInUserCouponVO.GoodsCouponListVO> couponList = inUserCouponMapper.getAllGoodsCoupon(boost);
+        return couponList;
     }
 
     @Override
@@ -133,7 +157,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         // 查询商品可用优惠券
         for (InUserCoupon coupon : userCouponList) {
             // 根据商品id匹配可用优惠券
-            if (ObjectUtils.isNotEmpty(qto.getGoodsId())) {
+            if (StringUtils.isNotBlank(qto.getGoodsId())) {
                 Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getGoodsId(), coupon.getCouponId());
                 if (isExist) {
                     BbcInUserCouponVO.MyCouponListVO couponVO = new BbcInUserCouponVO.MyCouponListVO();
@@ -142,7 +166,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
                 }
             }
             // 查询专区可用优惠券
-            if (ObjectUtils.isNotEmpty(qto.getZoneId())) {
+            if (StringUtils.isNotBlank(qto.getZoneId())) {
                 // 根据专区id匹配可用优惠券
                 Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getZoneId(), coupon.getCouponId());
                 if (isExist) {
@@ -152,7 +176,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
                 }
             }
             // 查询类目可用优惠券
-            if (ObjectUtils.isNotEmpty(qto.getCategoryId())) {
+            if (StringUtils.isNotBlank(qto.getCategoryId())) {
                 // 根据类目id匹配可用优惠券
                 Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getCategoryId(), coupon.getCouponId());
                 if (isExist) {

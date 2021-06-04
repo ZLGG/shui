@@ -1,6 +1,8 @@
 package com.gs.lshly.biz.support.user.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
 import org.apache.ibatis.annotations.Param;
@@ -33,7 +35,10 @@ public interface InUserCouponMapper extends BaseMapper<InUserCoupon> {
     @Select("select coupon_id, coupon_desc, after_date, effective_date, deduction_amount, use_threshold where coupon_type = 1 and audit_status = 1 and coupon_label = 2")
     List<BbcInUserCouponVO.Coupon> queryCouponByShare();
 
-    @Select("")
-    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId);
+    @Select("select c.coupon_id, c.start_time, c.end_time, c.deduction_amount, c.deduction_points, c.use_threshold as minPrice, c.coupon_desc, c.coupon_name from gs_coupon c where ${ew.sqlSegment}")
+    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(@Param(Constants.WRAPPER) QueryWrapper<BbcInUserCouponVO.Coupon> boost);
+
+    @Select("select c.coupon_id, c.start_time, c.end_time, c.deduction_amount, c.deduction_points, c.use_threshold as minPrice, c.coupon_desc, c.coupon_name from gs_coupon c left join gs_coupon_goods_relation r on r.coupon_id = c.coupon_id where ${ew.sqlSegment}")
+    List<BbcInUserCouponVO.GoodsCouponListVO> getAllGoodsCoupon(@Param(Constants.WRAPPER) QueryWrapper<BbcInUserCouponVO.Coupon> boost);
 }
 

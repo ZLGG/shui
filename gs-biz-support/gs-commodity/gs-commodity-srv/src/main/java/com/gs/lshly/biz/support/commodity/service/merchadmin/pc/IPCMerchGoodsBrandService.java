@@ -52,5 +52,4 @@ public interface IPCMerchGoodsBrandService {
      */
     boolean innerGetBrandVO(String brandName,String categoryId);
 
-
 }

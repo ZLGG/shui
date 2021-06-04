@@ -45,8 +45,7 @@ public interface IBbcInUserCouponService {
 
     /**
      * 查看当前商品可领取的优惠券
-     * @param goodsId
      * @return
      */
-    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(String goodsId);
+    List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(BbcInUserCouponQTO.GoodsCouponQTO qto);
 }
