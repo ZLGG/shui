@@ -255,6 +255,11 @@ public class Trade extends Model {
     private LocalDateTime cdate;
 
     /**
+     * 平台取消订单处理说明
+     */
+    private String cancelReason;
+
+    /**
      * 更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)

@@ -21,4 +21,6 @@ public interface ITradeService {
     List<TradeVO.ListVOExport> export(TradeQTO.IdListQTO qo);
 
     TradeVO.TradeInfoVO findById(TradeGoodsVO.ListVO listVO);
+
+    Boolean platformCancel(TradeDTO.PlatformCancelDTO dto);
 }

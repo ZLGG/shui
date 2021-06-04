@@ -51,6 +51,7 @@ import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.lakala.boss.api.common.Common;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -321,5 +322,23 @@ public class TradeServiceImpl implements ITradeService {
             TradeVO.TradeInfoVO tradeInfoVO = new TradeVO.TradeInfoVO();
             BeanUtils.copyProperties(trade1,tradeInfoVO);
         return tradeInfoVO;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean platformCancel(TradeDTO.PlatformCancelDTO dto) {
+        //待发货状态下，平台取消订单，修改订单状态，添加处理说明
+        Trade trade = tradeMapper.selectById(dto.getId());
+        trade.setTradeState(TradeStateEnum.已取消.getCode());
+        trade.setCancelReason(dto.getCancelReason());
+        trade.setUdate(LocalDateTime.now());
+        boolean flag = tradeRepository.updateById(trade);
+
+        //回库存
+        cancelTradeReturnStock(dto.getId());
+        
+        //退钱
+        // TODO: 2021-06-04 yingjun
+        return flag;
     }
 }

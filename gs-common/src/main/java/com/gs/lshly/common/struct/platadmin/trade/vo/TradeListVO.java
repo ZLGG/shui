@@ -143,6 +143,9 @@ public abstract class TradeListVO implements Serializable {
         @ApiModelProperty("交易商品集合")
         List<TradeGoodsVO> tradeGoodsVOS;
 
+        @ApiModelProperty("平台取消订单处理说明")
+        private String cancelReason;
+
     }
 
     @Data

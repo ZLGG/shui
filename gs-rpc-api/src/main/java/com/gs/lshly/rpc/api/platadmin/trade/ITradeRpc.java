@@ -24,4 +24,6 @@ public interface ITradeRpc {
     ExportDataDTO export(TradeQTO.IdListQTO qo) throws Exception;
 
     TradeVO.TradeInfoVO findById(TradeGoodsVO.ListVO listVO);
+
+    Boolean platformCancel(TradeDTO.PlatformCancelDTO dto);
 }
