@@ -66,11 +66,11 @@ public abstract class PCMerchTradeListVO implements Serializable {
         private BigDecimal deliveryAmount;
 
 
-        @ApiModelProperty(value = "交易总金额",position = 12)
+        @ApiModelProperty(value = "付款总额",position = 12)
         private BigDecimal tradeAmount;
 
 
-        @ApiModelProperty(value = "创建时间",position = 13)
+        @ApiModelProperty(value = "下单时间",position = 13)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime createTime;
 
@@ -118,11 +118,11 @@ public abstract class PCMerchTradeListVO implements Serializable {
         private String recvAddresId;
 
 
-        @ApiModelProperty(value = "收货人",position = 25)
+        @ApiModelProperty(value = "收件人姓名",position = 25)
         private String recvPersonName;
 
 
-        @ApiModelProperty(value = "收货人电话",position = 26)
+        @ApiModelProperty(value = "收件人电话",position = 26)
         private String recvPhone;
 
 
@@ -146,6 +146,12 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         @ApiModelProperty("售后信息")
         private PCMerchTradeListVO.tradeVO.Right rightsInfo;
+
+        @ApiModelProperty("支付积分总数")
+        private BigDecimal pointPriceActuallyPaid;
+
+        @ApiModelProperty("付款总额")
+        private BigDecimal amountActuallyPaid;
 
         @Data
         @ApiModel("PCMerchTradeListVO.tradeVO.Right")
@@ -333,9 +339,11 @@ public abstract class PCMerchTradeListVO implements Serializable {
         private BigDecimal discountAmount;
 
 
-        @ApiModelProperty("支付总金额")
+        @ApiModelProperty("支付金额")
         private BigDecimal payAmount;
 
+        @ApiModelProperty("支付积分")
+        private BigDecimal tradePointAmount;
 
         @ApiModelProperty("所得积分")
         private BigDecimal giftIntegral;
@@ -346,6 +354,7 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
+
 
     }
     @Data
