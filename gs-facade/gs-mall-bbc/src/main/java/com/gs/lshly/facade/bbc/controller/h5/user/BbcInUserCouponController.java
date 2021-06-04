@@ -57,7 +57,7 @@ public class BbcInUserCouponController {
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
-    @ApiOperation("查看个人可用优惠券")
+    @ApiOperation("查看当前商品个人可用优惠券")
     @GetMapping("/getMyCouponToUse")
     public ResponseData<List<BbcInUserCouponVO.MyCouponListVO>> getMyCouponToUse(@Valid @RequestBody BbcInUserCouponQTO.MyCouponQTO qto) {
         List<BbcInUserCouponVO.MyCouponListVO> couponVOList = inUserCouponRpc.getMyCouponToUse(qto);
@@ -66,8 +66,8 @@ public class BbcInUserCouponController {
 
     @ApiOperation("查看当前商品可领取的优惠券")
     @PutMapping("/getGoodsCoupon/{goodsId}")
-    public ResponseData<List<BbcInUserCouponVO.GoodsCouponListVO>> getGoodsCoupon(@PathVariable String goodsId) {
-        List<BbcInUserCouponVO.GoodsCouponListVO> couponListVOS = inUserCouponRpc.getGoodsCoupon(goodsId);
+    public ResponseData<List<BbcInUserCouponVO.GoodsCouponListVO>> getGoodsCoupon(@Valid @RequestBody BbcInUserCouponQTO.GoodsCouponQTO qto) {
+        List<BbcInUserCouponVO.GoodsCouponListVO> couponListVOS = inUserCouponRpc.getGoodsCoupon(qto);
         return ResponseData.data(couponListVOS);
     }
 
