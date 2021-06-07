@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.rpc.bbc;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -209,7 +210,7 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	}
 
     @Override
-    public TradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
+    public BbcTradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
         return bbcGoodsInfoService.selectOne(tradeGoodsId);
     }
 

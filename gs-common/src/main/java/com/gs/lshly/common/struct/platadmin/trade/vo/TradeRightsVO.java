@@ -167,8 +167,8 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("售后表ID")
         private String id;
 
-        @ApiModelProperty("二次审核状态(0:二次审核完成,1:需要二次审核)")
-        private Integer isTwoCheck;
+/*        @ApiModelProperty("二次审核状态(0:二次审核完成,1:需要二次审核)")
+        private Integer isTwoCheck;*/
 
         @ApiModelProperty("手机号码")
         private String phone;
@@ -186,16 +186,16 @@ public abstract class TradeRightsVO implements Serializable {
         private String goodsName;
 
         @ApiModelProperty("实付金额")
-        private BigDecimal amountActuallyPaid;
-
-        @ApiModelProperty("实退金额")
-        private BigDecimal refundAmount;
+        private BigDecimal tradeAmount;
 
         @ApiModelProperty("应退金额")
         private BigDecimal shouldRefundAmount;
 
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+
         @ApiModelProperty("实付积分")
-        private BigDecimal pointPriceActuallyPaid;
+        private BigDecimal tradePointAmount;
 
         @ApiModelProperty("应退积分")
         private BigDecimal shouldRefundPoint;
@@ -237,11 +237,11 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("退货基本信息")
         private TradeRightsVO.RefundBasicVO refundBasicVO;
 
-        @ApiModelProperty("订单商品信息(原商品信息)")
-        private List<TradeListVO.TradeRightsGoodsDetailViewVO> tradeRightsGoodsListVO;
+        @ApiModelProperty("订单商品信息")
+        private List<TradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsListVO;
 
-        @ApiModelProperty("换货商品信息")
-        private List<TradeListVO.TradeRightsGoodsDetailViewVO> tradeRightsGoodsSendListVO;
+       /* @ApiModelProperty("换货商品信息")
+        private List<TradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsSendListVO;*/
 
         @ApiModelProperty("明细")
         private TradeRightsVO.RefundDetailVO refundDetailVO;
@@ -284,11 +284,14 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("手机号码")
         private String phone;
 
+        @ApiModelProperty("状态(10:待处理,20:商家同意,30:商户驳回,40:买家二次申诉,50:平台同意,60:平台驳回,70:换货完成,80:商家确认收货并退款,90:用户取消)")
+        private Integer state;
+
         @ApiModelProperty("申请时间")
         private LocalDateTime applyTime;
 
-        @ApiModelProperty("二次审核状态(0:二次审核完成,1:需要二次审核)")
-        private Integer isTwoCheck;
+/*        @ApiModelProperty("二次审核状态(0:二次审核完成,1:需要二次审核)")
+        private Integer isTwoCheck;*/
 
         @ApiModelProperty("售后申请类型[10:换货,20:仅退款,30:退货退款]")
         private Integer rightsType;
@@ -296,14 +299,14 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("订单编号(订单号)")
         private String orderCode;
 
-        @ApiModelProperty("所属商家")
-        private String shopName;
+        @ApiModelProperty("申请描述")
+        private String rightsRemark;
 
         @ApiModelProperty("申请售后原因")
         private Integer rightsReasonType;
 
-        @ApiModelProperty("申请描述")
-        private String rightsRemark;
+        @ApiModelProperty("支付方式")
+        private Integer payType;
 
         @ApiModelProperty("商品图片凭证")
         private List<String> rightsImg;
@@ -314,7 +317,7 @@ public abstract class TradeRightsVO implements Serializable {
     @ApiModel("TradeRightsVO.RefundDetailVO")
     public static class RefundDetailVO implements Serializable {
         @ApiModelProperty("实付金额")
-        private BigDecimal amountActuallyPaid;
+        private BigDecimal tradeAmount;
 
         @ApiModelProperty("实退金额")
         private BigDecimal refundAmount;
@@ -323,7 +326,7 @@ public abstract class TradeRightsVO implements Serializable {
         private BigDecimal shouldRefundAmount;
 
         @ApiModelProperty("实付积分")
-        private BigDecimal pointPriceActuallyPaid;
+        private BigDecimal tradePointAmount;
 
         @ApiModelProperty("应退积分")
         private BigDecimal shouldRefundPoint;
@@ -341,14 +344,14 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("实退积分")
         private BigDecimal refundPoint;
 
-        @ApiModelProperty("退款方式(积分退回)")
+        @ApiModelProperty("退款方式/积分退回(10:原路退回)")
         private Integer refundType;
     }
 
     @Data
     @ApiModel("TradeRightsVO.RefundResultVO")
     public static class RefundResultVO implements Serializable {
-        @ApiModelProperty("状态(申请(10, 申请), 驳回(20, 驳回), 通过(30, 通过), 已退货(40, 已退货), 收到退货(50, 收到退货), 等待退款(60, 等待退款), 退款完成(70,退款完成), 等待发货(80, 等待发货), 已发货(90, 已发货), 确认收货(91, 确认收货), 用户取消(95, 用户取消), 完成(99, 完成)")
+        @ApiModelProperty("状态(10:待处理,20:商家同意,30:商户驳回,40:买家二次申诉,50:平台同意,60:平台驳回,70:换货完成,80:商家确认收货并退款,90:用户取消)")
         private Integer state;
 
         @ApiModelProperty("商家处理说明")
@@ -358,12 +361,49 @@ public abstract class TradeRightsVO implements Serializable {
     @Data
     @ApiModel("TradeRightsVO.PlatformResultVO")
     public static class PlatformResultVO implements Serializable {
-        @ApiModelProperty("审核状态")
+        @ApiModelProperty("审核状态(10:处理中,20:已完成,30:待审核)")
         private Integer checkState;
 
         @ApiModelProperty("平台处理说明")
         private List<String> platformCheckReason;
     }
+
+
+    @Data
+    @ApiModel("TradeRightsVO.TradeRightsGoodsVO")
+    public static class TradeRightsGoodsVO implements Serializable {
+
+        @ApiModelProperty("店铺名称")
+        private String shopName;
+
+        @ApiModelProperty("商品图片组")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品编号")
+        private String goodsId;
+
+        @ApiModelProperty("商品sku编号")
+        private String skuId;
+
+        @ApiModelProperty("数量")
+        private Integer quantity;
+
+        @ApiModelProperty("规格")
+        private String skuSpecValue;
+
+        @ApiModelProperty("单价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty("积分")
+        private BigDecimal pointPrice;
+    }
+
 
     @Data
     @ApiModel("TradeRightsVO.RightsRefundViewVO")
@@ -416,18 +456,5 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("收款人")
         private String collectName;
 
-    }
-
-    @Data
-    @ApiModel("TradeRightsVO.GoodsInfo")
-    public static class GoodsInfo implements Serializable {
-        @ApiModelProperty("商品标题")
-        private String goodsTitle;
-
-        @ApiModelProperty("商品计价单位")
-        private String goodsPriceUnit;
-
-        @ApiModelProperty("商品图片")
-        private String goodsImage;
     }
 }

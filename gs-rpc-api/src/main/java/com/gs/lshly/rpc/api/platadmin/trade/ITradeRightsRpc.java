@@ -40,4 +40,6 @@ public interface ITradeRightsRpc {
     void setPlatformChenkReason(TradeRightsDTO.PlatformCheckReasonDTO dto);
 
     void platformCheckReason(TradeRightsDTO.IdDTO dto);
+
+    void platformDisPass(TradeRightsDTO.IdDTO dto);
 }

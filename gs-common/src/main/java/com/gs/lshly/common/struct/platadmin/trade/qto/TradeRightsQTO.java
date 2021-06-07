@@ -70,9 +70,8 @@ public abstract class TradeRightsQTO implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class StateDTO extends BaseQTO {
-
-        @ApiModelProperty("状态枚举类[10:换货,20:仅退款,30:退货退款]")
-//        private Integer status;
+        //        private Integer status;
+        @ApiModelProperty("售后申请类型[10:换货,20:仅退款,30:退货退款]")
         private Integer rightsType;
 
 /*        @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
@@ -88,7 +87,7 @@ public abstract class TradeRightsQTO implements Serializable {
         private String phone;
 
         @ApiModelProperty("处理进度([10:处理中，20：已完成，30：待审核]) ")
-        private Integer state;
+        private Integer checkState;
 
         @ApiModelProperty("退款申请类型([10:取消订单退款,20:售后申请退款])")
         private Integer refundMoneyType;
