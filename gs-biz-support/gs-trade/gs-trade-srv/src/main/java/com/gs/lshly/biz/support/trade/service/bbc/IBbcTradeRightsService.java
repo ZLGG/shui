@@ -6,11 +6,13 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeRightsDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeRightsQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
 
+import java.util.List;
+
 public interface IBbcTradeRightsService {
 
     PageData<BbcTradeRightsVO.ListVO> pageData(BbcTradeRightsQTO.QTO qto);
 
-    void addTradeRights(BbcTradeRightsBuildDTO.ETO eto);
+    List<String> addTradeRights(BbcTradeRightsBuildDTO.ETO eto);
 
     BbcTradeRightsVO.DetailVO detailTradeRights(BbcTradeRightsDTO.IdDTO dto);
 
@@ -23,4 +25,10 @@ public interface IBbcTradeRightsService {
     void revocationTradeRights(BbcTradeRightsBuildDTO.RevocationTradeRightsETO dto);
 
     void deleteRecord(BbcTradeRightsDTO.IdDTO dto);
+
+    void updateTradeRights(BbcTradeRightsBuildDTO.UpdateETO dto);
+
+    BbcTradeRightsVO.GoodsTotalVO goodsTotal(BbcTradeRightsBuildDTO.GoodsTotalDTO dto);
+
+    void twoCheck(BbcTradeRightsDTO.IdDTO dto);
 }

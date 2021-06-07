@@ -418,4 +418,16 @@ public abstract class TradeRightsVO implements Serializable {
 
     }
 
+    @Data
+    @ApiModel("TradeRightsVO.GoodsInfo")
+    public static class GoodsInfo implements Serializable {
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品计价单位")
+        private String goodsPriceUnit;
+
+        @ApiModelProperty("商品图片")
+        private String goodsImage;
+    }
 }

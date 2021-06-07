@@ -36,8 +36,8 @@ public abstract class BbcTradeRightsBuildDTO implements Serializable {
         @ApiModelProperty("申请售后(退款,换货)说明")
         private String rightsRemark;
 
-        @ApiModelProperty("退货方式(10:自行寄回,20:上门取件)")
-        private Integer returnType;
+/*        @ApiModelProperty("退货方式(10:自行寄回,20:上门取件)")
+        private Integer returnType;*/
 
         @ApiModelProperty("退款金额")
         private BigDecimal refundAmount;
@@ -51,11 +51,14 @@ public abstract class BbcTradeRightsBuildDTO implements Serializable {
         @ApiModelProperty(value = "凭证图片集合")
         private List<RightsImgData> rightsImgData;
 
+        @ApiModelProperty(value = "买家收货地址全文本")
+        private String recvFullAddres;
+
         @Data
         public static class ProductData implements Serializable {
 
-            @ApiModelProperty(value = "订单商品ID")
-            private String tradeGoodsId;
+            @ApiModelProperty(value = "订单商品sku ID")
+            private String skuId;
 
             @ApiModelProperty(value = "退货数量")
             private Integer quantity;
@@ -93,10 +96,30 @@ public abstract class BbcTradeRightsBuildDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("BbcTradeRightsDTO.UpdateETO")
+    @Accessors(chain = true)
+    public static class UpdateETO extends ETO {
+        @ApiModelProperty("售后表ID")
+        private String id;
+    }
+
+    @Data
     @ApiModel("BbcTradeRightsDTO.RevocationTradeRightsETO")
     @Accessors(chain = true)
     public static class RevocationTradeRightsETO extends BaseDTO {
         @ApiModelProperty("售后表ID")
         private String id;
+    }
+
+    @Data
+    @ApiModel("BbcTradeRightsDTO.GoodsTotalDTO")
+    @Accessors(chain = true)
+    public static class GoodsTotalDTO extends BaseDTO {
+
+        @ApiModelProperty("当前订单id")
+        private String tradeId;
+
+        @ApiModelProperty("商品sku id")
+        private List<String> skuIds;
     }
 }

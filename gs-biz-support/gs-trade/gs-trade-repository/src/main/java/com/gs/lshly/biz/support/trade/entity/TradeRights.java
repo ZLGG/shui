@@ -212,4 +212,12 @@ public class TradeRights extends Model {
      * 隐藏订单:1:是
      */
     private Integer isHide;
+    /**
+     * 买家地址全文本
+     */
+    private String recvFullAddres;
+    /**
+     * 卖家地址全文本
+     */
+    private String merFullAddres;
 }

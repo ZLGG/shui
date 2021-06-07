@@ -9,8 +9,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.struct.bbc.commodity.vo.*;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1202,6 +1205,22 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             }
         }
         return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
+    }
+
+    @Override
+    public TradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
+        if (StrUtil.isEmpty(tradeGoodsId)) {
+            return null;
+        }
+        GoodsInfo goodsInfo = this.repository.getById(tradeGoodsId);
+        if (ObjectUtil.isEmpty(goodsInfo)) {
+            return null;
+        }
+        TradeRightsVO.GoodsInfo tradeGoodsInfo = new TradeRightsVO.GoodsInfo();
+        tradeGoodsInfo.setGoodsTitle(goodsInfo.getGoodsTitle());
+        tradeGoodsInfo.setGoodsPriceUnit(goodsInfo.getGoodsPriceUnit());
+        tradeGoodsInfo.setGoodsImage(goodsInfo.getGoodsImage());
+        return tradeGoodsInfo;
     }
 
     private String getImage(String images) {

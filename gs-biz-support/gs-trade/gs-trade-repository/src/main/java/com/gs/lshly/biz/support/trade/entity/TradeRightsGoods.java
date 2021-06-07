@@ -126,4 +126,6 @@ public class TradeRightsGoods extends Model {
      * 退款金额
      */
     private BigDecimal refundPoint;
+
+
 }

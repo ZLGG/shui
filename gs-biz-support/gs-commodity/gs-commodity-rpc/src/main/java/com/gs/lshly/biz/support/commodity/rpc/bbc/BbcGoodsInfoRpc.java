@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -206,5 +207,10 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	public List<ListCouponVO> listCoupon(GoodsIdQTO dto) {
 		return bbcGoodsInfoService.listCoupon(dto);
 	}
+
+    @Override
+    public TradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
+        return bbcGoodsInfoService.selectOne(tradeGoodsId);
+    }
 
 }
