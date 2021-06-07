@@ -362,6 +362,11 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("商品标签列表")
         private List<GoodsLabelVO> labelVOS = new ArrayList<>();
+        
+        @ApiModelProperty("商品标签列表")
+        private List<String> tags = new ArrayList<>();
+        
+        
 
         @ApiModelProperty(value = "idx顺序", hidden = true)
         private Integer idx;

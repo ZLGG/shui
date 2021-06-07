@@ -609,6 +609,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 }
                 goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
                 goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
+                goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(info.getId()));
                 goodsListVOS.add(goodsListVO);
             }
         }
