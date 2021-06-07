@@ -91,7 +91,7 @@ public class PCMerchantAccountLoginController {
     }
 
     @ApiOperation("3、通过手机号加验证码登录")
-    @PostMapping("/login")
+    @PostMapping("/loginByPhone")
     public ResponseData<BbbUserVO.LoginVO> login(@Valid @RequestBody CommonPhoneLoginDTO.Login dto) {
         if (StringUtils.isBlank(dto.getPhone())) {
             return ResponseData.fail("手机号不能为空");

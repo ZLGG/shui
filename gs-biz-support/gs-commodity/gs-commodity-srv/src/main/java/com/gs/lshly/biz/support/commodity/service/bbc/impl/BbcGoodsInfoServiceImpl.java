@@ -562,7 +562,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         // 3.积分商城-我能兑换
         if (MallCategoryEnum.我能兑换.getCode().equals(qto.getSearchEntry())) {
             System.out.println(qto.getUserId());
-            if (StringUtils.isBlank(qto.getUserId()) || qto.getOkIntegral() == null) {
+            if (StringUtils.isBlank(qto.getUserId())) {
                 throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
             boost.eq("is_point_good", true);
@@ -965,6 +965,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             serviceVO.setSkuId(skuID);
             serviceVO.setSkuGoodsNo(goodsInfo.getGoodsNo());
             serviceVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
+            
+            serviceVO.setGoodsPointAmount(goodsInfo.getPointPrice());
+            serviceVO.setSalePrice(goodsInfo.getSalePrice());
+            serviceVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
+            serviceVO.setIsInMemberGift(skuGoodInfo.getIsInMemberGift());
+            serviceVO.setIsPointGood(skuGoodInfo.getIsPointGood());
         } else {
             serviceVO.setShopId(goodsInfo.getShopId());
             serviceVO.setSkuId(skuID);
@@ -1076,6 +1082,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     skuVO.setIsBuy(0);
                     skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
                 }
+            }else{
+            	BeanCopyUtils.copyProperties(skuGoodInfo, skuVO);
             }
             skuVOS.add(skuVO);
         }
@@ -1449,8 +1457,16 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         List<BbcGoodsInfoVO.InVipListVO> categoryGoodsVOS = ListUtil.listCover(BbcGoodsInfoVO.InVipListVO.class, goodsInfoIPage.getRecords());
         if (CollectionUtils.isNotEmpty(categoryGoodsVOS)) {
             for (BbcGoodsInfoVO.InVipListVO detailVO : categoryGoodsVOS) {
-                detailVO.setGoodsImage(ObjectUtils.isEmpty(getImage(detailVO.getGoodsImage())) ? "" : getImage(detailVO.getGoodsImage()));
-                detailVO.setInMemberPointPrice(detailVO.getPointPrice().compareTo(new BigDecimal(qto.getInCouponType())) > 0 ? detailVO.getPointPrice().subtract(new BigDecimal(qto.getInCouponType())) : new BigDecimal(0));
+                BigDecimal inMemberPointPrice = detailVO.getInMemberPointPrice();
+            	
+            	detailVO.setGoodsImage(ObjectUtils.isEmpty(getImage(detailVO.getGoodsImage())) ? "" : getImage(detailVO.getGoodsImage()));
+                detailVO.setInMemberPointPrice(inMemberPointPrice);
+            
+                detailVO.setOldPrice(inMemberPointPrice.divide(new BigDecimal("100")));
+                inMemberPointPrice = inMemberPointPrice.divide(new BigDecimal("100"));
+                BigDecimal salePrice = inMemberPointPrice.compareTo(new BigDecimal(qto.getInCouponType())) > 0 ? inMemberPointPrice.subtract(new BigDecimal(qto.getInCouponType())) : new BigDecimal(0);
+                
+                detailVO.setSalePrice(salePrice);
             }
         }
         return new PageData<>(categoryGoodsVOS, qto.getPageNum(), qto.getPageSize(), goodsInfoIPage.getTotal());

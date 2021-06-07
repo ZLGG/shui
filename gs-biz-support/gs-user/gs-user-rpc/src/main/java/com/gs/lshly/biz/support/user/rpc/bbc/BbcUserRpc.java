@@ -26,7 +26,6 @@ public class BbcUserRpc implements IBbcUserRpc {
 
     @Override
     public BbcUserVO.DetailVO getUserInfo(BbcUserQTO.QTO qto) {
-
         return bbcUserService.getUserInfo(qto);
     }
 
@@ -52,7 +51,6 @@ public class BbcUserRpc implements IBbcUserRpc {
 
 	@Override
 	public DetailVO getUserInfoNoLogin(BaseDTO dto) {
-		// TODO Auto-generated method stub
 		return bbcUserService.getUserInfoNoLogin(dto);
 	}
 

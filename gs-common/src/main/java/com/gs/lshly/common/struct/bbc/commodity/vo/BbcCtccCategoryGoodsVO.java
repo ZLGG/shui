@@ -114,34 +114,34 @@ public abstract class BbcCtccCategoryGoodsVO implements Serializable {
         private String goodsTitle;
 
         @ApiModelProperty("商品售价")
-        private BigDecimal salePrice;
+        private BigDecimal salePrice = BigDecimal.ZERO;
 
         @ApiModelProperty(value = "商品市场价/原价")
-        private BigDecimal oldPrice;
+        private BigDecimal oldPrice = BigDecimal.ZERO;
 
         @ApiModelProperty("积分价格")
-        private BigDecimal pointPrice;
+        private BigDecimal pointPrice=BigDecimal.ZERO;
 
         @ApiModelProperty("原积分价格")
-        private BigDecimal oldPointPrice;
+        private BigDecimal oldPointPrice=BigDecimal.ZERO;
 
         @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
+        private Boolean isPointGood = false;
 
         @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
+        private Boolean isInMemberGift = false;
 
         @ApiModelProperty("IN会员价格")
-        private BigDecimal inMemberPointPrice;
+        private BigDecimal inMemberPointPrice=BigDecimal.ZERO;
 
         @ApiModelProperty("当前登录的用户ID")
         private String userId;
 
         @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
-        private Integer memberType;
+        private Integer memberType = 1;
 
         @ApiModelProperty("是否为in会员(1-是 0-否)")
-        private Integer isInUser;
+        private Integer isInUser = 0;
         
     }
 }

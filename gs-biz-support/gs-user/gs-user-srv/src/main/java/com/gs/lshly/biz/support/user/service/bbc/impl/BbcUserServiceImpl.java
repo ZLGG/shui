@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -66,7 +67,6 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @DubboReference
     private IBbcUserAuthRpc iBbcUserAuthRpc;
-    
     
 
     /**
@@ -142,6 +142,13 @@ public class BbcUserServiceImpl implements IBbcUserService {
     @Override
     public BbcUserVO.MyIntegralVO myIntegral(String userId) {
         BbcUserVO.MyIntegralVO myIntegralVO = userIntegralMapper.myIntegral(userId);
+    	/**
+         * 获取电信积分数据 DUBBO
+         */
+        BbcUserCtccPointVO.DetailVO ctccPoint = bbcUserCtccPointService.getCtccPointByUserId(userId);
+        myIntegralVO.setDirectionIntegral(0);
+        myIntegralVO.setOkIntegral(ctccPoint.getPointBalance());
+        myIntegralVO.setYearBalance(ctccPoint.getYearBalance());
         String phone = AESUtil.aesDecrypt(myIntegralVO.getPhone());
         myIntegralVO.setPhone(phone);
         return myIntegralVO;

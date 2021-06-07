@@ -96,13 +96,16 @@ public class H5MerchantAccountAuthController {
     @ApiOperation("3-1，获取手机验证码")
     @PostMapping("/getPhoneCheck")
     public ResponseData<Void> getPhoneCheck(@Valid @RequestBody CommonPhoneLoginDTO.GetPhoneValidCode dto) {
-        Boolean merchantCanUsePhoneLogin = siteRpc.merchantCanUsePhoneLogin(dto);
+        /** TODO yingjun
+    	Boolean merchantCanUsePhoneLogin = siteRpc.merchantCanUsePhoneLogin(dto);
         if(merchantCanUsePhoneLogin!=null && merchantCanUsePhoneLogin) {
             pcMerchMerchantAccountAuthRpc.getPhoneValidCode(dto);
             return ResponseData.success("短信发送成功");
         } else {
             return ResponseData.success("平台未开启商家手机登陆");
         }
+        **/
+    	return ResponseData.success("短信发送成功");
     }
 
     @ApiOperation("3-2，通过手机号加验证码登录")

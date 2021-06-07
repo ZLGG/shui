@@ -28,12 +28,14 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.DetailVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +62,8 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
     @Autowired
     private IBbcGoodsLabelService bbcGoodsLabelService;
     
+    @DubboReference
+    private IBbcUserRpc userRpc;
 	/**
 	 * 
 	 * @param dto
@@ -80,6 +84,10 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         wrapper.eq("subject", SubjectEnum.电信国际.getCode());
         wrapper.orderByAsc("idx");
         List<CtccCategory> ctccCategoryList = repository.list( wrapper);
+        
+        
+        BbcUserVO.DetailVO userDetail = userRpc.getUserInfoNoLogin(dto);
+        
         if(CollectionUtil.isNotEmpty(ctccCategoryList)){
         	List<CtccInternationalCategoryVO> categorys = new ArrayList<CtccInternationalCategoryVO>();
         	
@@ -101,7 +109,10 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
 						
 	        			goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsListVO.getGoodsId()));
 	        			goodsListVO.setGoodsImage(ObjectUtils.isEmpty(StringManageUtil.getImage(goodsListVO.getGoodsImage())) ? "" : StringManageUtil.getImage(goodsListVO.getGoodsImage()));
-					}
+	        			goodsListVO.setGoodsId(goodsListVO.getId());
+	        			goodsListVO.setIsInUser(userDetail.getIsInUser());
+	        			goodsListVO.setMemberType(userDetail.getMemberType());
+	        		}
         		}
         		
         		ctccInternationalCategoryVO.setGoodsList(ctccCategoryGoods);

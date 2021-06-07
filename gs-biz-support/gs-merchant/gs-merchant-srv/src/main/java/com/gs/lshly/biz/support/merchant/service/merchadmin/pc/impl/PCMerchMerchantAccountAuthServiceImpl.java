@@ -183,11 +183,16 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
 
     @Override
     public BbbUserVO.LoginVO login(CommonPhoneLoginDTO.Login dto) {
+    	
+    	/**
+    	 * TODO yingjun
+
     	Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
         String validCode = code != null ? code + "" : "";
         if (!StringUtils.equals(validCode, dto.getValidCode())) {
             throw new BusinessException("验证码不匹配");
         }
+            	 */
     	MerchantAccount user = repository.getOne(new QueryWrapper<MerchantAccount>().eq("phone", dto.getPhone()));
     	BbbUserVO.LoginVO loginVO= new BbbUserVO.LoginVO();
     	if (user != null) {

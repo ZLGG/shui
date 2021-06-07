@@ -308,6 +308,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("会员券后价")
         private BigDecimal inMemberPointPrice;
+        
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty("商品市场价")
+        private BigDecimal oldPrice;
 
     }
 
