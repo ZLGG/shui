@@ -322,7 +322,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         	List<SkuQuantityVO> skuList = shopskuvo.getSkuQuantity();
         	for (SkuQuantityVO skuQuantityVO : skuList) {
         		
-        		if(skuQuantityVO.getIsInMemberGift()!=null&&skuQuantityVO.getIsInMemberGift()){
+        		if((skuQuantityVO.getIsInMemberGift()!=null&&skuQuantityVO.getIsInMemberGift())||isInUser.equals(1)){
+        			totalPointPrice =totalPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
         			totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getInMemberPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
         		}else if(skuQuantityVO.getIsPointGood()!=null&&skuQuantityVO.getIsPointGood()){//积分商品
         			totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
@@ -390,7 +391,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 						innerServiceGoodsVO);
 		        
 				if(goodsInfoVO.getIsInMemberGift()){
-//					if ("1".equals(isInUser)) {	//是IN会员用IN会员价格
+					if (isInUser.equals(1)) {	//是IN会员用IN会员价格
 						
 						BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
 								.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
@@ -419,12 +420,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 				        List<ListCouponVO> couponVOS1 = this.listCoupon1();
 				        goodsInfoVO.setOptionalCouponList(couponVOS1);
 				        
-//					} else{
-//						throw new BusinessException("请先成为IN会员，再买IN会员商品");
-//					}
+					} else{
+						throw new BusinessException("请先成为IN会员，再买IN会员商品");
+					}
 				}else if (goodsInfoVO.getIsPointGood()) { // 积分商品
 					// 判断用户是不是IN会员，如果是的话，就用IN会员价格
-					if ("1".equals(isInUser)) {	//是IN会员用IN会员价格
+					if (isInUser.equals(1)) {	//是IN会员用IN会员价格
 						
 						BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
 								.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
