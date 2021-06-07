@@ -1,6 +1,9 @@
 package com.gs.lshly.common.struct.bbc.commodity.vo;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -84,9 +87,61 @@ public abstract class BbcCtccCategoryGoodsVO implements Serializable {
 		private String remark;
 		
 		@ApiModelProperty("商品列表")
-		private List<BbcGoodsInfoVO.DetailVO> goodsList;
+		private List<BbcCtccCategoryGoodsVO.GoodsListVO> goodsList;
 
     }
 	
-	
+	@Data
+    @ApiModel("BbcCtccCategoryGoodsVO.GoodsListVO")
+    public static class GoodsListVO implements Serializable {
+    	
+        @ApiModelProperty("标签")
+        private List<String> tags;
+
+        @ApiModelProperty("商品id")
+        private String goodsId;
+
+        @JsonIgnore
+        private String id;
+
+        @ApiModelProperty("商品默认图片")
+        private String goodsImage;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品售价")
+        private BigDecimal salePrice;
+
+        @ApiModelProperty(value = "商品市场价/原价")
+        private BigDecimal oldPrice;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+        @ApiModelProperty("原积分价格")
+        private BigDecimal oldPointPrice;
+
+        @ApiModelProperty("是否是积分商品")
+        private Boolean isPointGood;
+
+        @ApiModelProperty("是否是in会员礼品")
+        private Boolean isInMemberGift;
+
+        @ApiModelProperty("IN会员价格")
+        private BigDecimal inMemberPointPrice;
+
+        @ApiModelProperty("当前登录的用户ID")
+        private String userId;
+
+        @ApiModelProperty("用户类型(1-普通用户 2-电信用户)")
+        private Integer memberType;
+
+        @ApiModelProperty("是否为in会员(1-是 0-否)")
+        private Integer isInUser;
+        
+    }
 }

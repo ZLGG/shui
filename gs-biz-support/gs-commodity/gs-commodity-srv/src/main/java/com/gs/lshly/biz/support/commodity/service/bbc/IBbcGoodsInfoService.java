@@ -215,7 +215,7 @@ public interface IBbcGoodsInfoService {
     List<BbcGoodsInfoVO.ListCouponVO> listCoupon(BbcGoodsInfoQTO.GoodsIdQTO qto);
 
     /**
-     * 获取一级类目下所有商品列表
+     * 获取类目下所有商品列表
      * @param qto
      * @return
      */

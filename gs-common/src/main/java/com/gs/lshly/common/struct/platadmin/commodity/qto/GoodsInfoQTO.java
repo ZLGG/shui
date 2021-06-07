@@ -136,6 +136,9 @@ public abstract class GoodsInfoQTO implements Serializable {
     @ApiModel("GoodsInfoQTO.CategoryGoodsQTO")
     public static class CategoryGoodsQTO extends BaseQTO {
 
+        @ApiModelProperty("类目级别(1:一级类目，3:三级类目)")
+        private Integer level;
+
         @ApiModelProperty("类目id")
         @NotBlank(message = "类目id不能为空")
         private String categoryId;

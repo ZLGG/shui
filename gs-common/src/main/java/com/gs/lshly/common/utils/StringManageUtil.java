@@ -28,6 +28,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -759,5 +760,18 @@ public class StringManageUtil {
 	            retList.add(s);
         	}
         	return retList;
+        }
+        
+        public static String getImage(String images) {
+            if (images != null) {
+                JSONArray arr = JSONArray.parseArray(images);
+                if (arr==null) {
+                    return null;
+                }
+                JSONObject obj = arr.getJSONObject(0);
+                String imgUrl = obj.getString("imgSrc");
+                return imgUrl;
+            }
+            return null;
         }
 }
