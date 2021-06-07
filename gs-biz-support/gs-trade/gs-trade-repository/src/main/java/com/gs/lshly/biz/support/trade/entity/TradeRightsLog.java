@@ -44,6 +44,11 @@ public class TradeRightsLog extends Model {
     private Integer state;
 
     /**
+     * 状态说明
+     */
+    private String content;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)

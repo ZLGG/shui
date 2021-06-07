@@ -11,6 +11,8 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO.SpecListVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 
 
 public interface IBbcGoodsInfoService {
@@ -221,5 +223,5 @@ public interface IBbcGoodsInfoService {
      */
     PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO qto);
 
-    String selectOne(String tradeGoodsId);
+    TradeRightsVO.GoodsInfo selectOne(String tradeGoodsId);
 }

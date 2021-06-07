@@ -10,6 +10,8 @@ import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRightsRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * @author oy
  * @since 2020-12-06
@@ -25,7 +27,7 @@ public class BbcTradeRightsRpc implements IBbcTradeRightsRpc {
     }
 
     @Override
-    public BbcTradeRightsVO.DetailVO addTradeRights(BbcTradeRightsBuildDTO.ETO eto) {
+    public List<String> addTradeRights(BbcTradeRightsBuildDTO.ETO eto) {
         return bbcTradeRightsService.addTradeRights(eto);
     }
 
@@ -67,6 +69,11 @@ public class BbcTradeRightsRpc implements IBbcTradeRightsRpc {
     @Override
     public BbcTradeRightsVO.GoodsTotalVO goodsTotal(BbcTradeRightsBuildDTO.GoodsTotalDTO dto) {
         return bbcTradeRightsService.goodsTotal(dto);
+    }
+
+    @Override
+    public void twoCheck(BbcTradeRightsDTO.IdDTO dto) {
+        bbcTradeRightsService.twoCheck(dto);
     }
 
 }

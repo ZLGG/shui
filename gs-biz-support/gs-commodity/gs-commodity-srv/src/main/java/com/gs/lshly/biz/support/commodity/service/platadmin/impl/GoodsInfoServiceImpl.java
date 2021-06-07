@@ -198,33 +198,67 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         }*/
         if (StringUtils.isNotBlank(qto.getShopName())) {
             List<CommonShopVO.SimpleVO> simpleVOS = commonShopRpc.searchDetailShop(qto.getShopName());
-            if (ObjectUtils.isEmpty(simpleVOS)) {
-                return new PageData<>();
+            if (ObjectUtils.isNotEmpty(simpleVOS)) {
+                /*return new PageData<>();*/
+                List<String> shopIdList = ListUtil.getIdList(CommonShopVO.SimpleVO.class, simpleVOS);
+                if (ObjectUtils.isNotEmpty(shopIdList)) {
+                    //return new PageData<>();
+                    boost.in("gs.shop_id", shopIdList);
+                }
             }
-            List<String> shopIdList = ListUtil.getIdList(CommonShopVO.SimpleVO.class, simpleVOS);
+/*            List<String> shopIdList = ListUtil.getIdList(CommonShopVO.SimpleVO.class, simpleVOS);
             if (ObjectUtils.isEmpty(shopIdList)) {
                 return new PageData<>();
             }
-            boost.in("gs.shop_id", shopIdList);
+            boost.in("gs.shop_id", shopIdList);*/
         }
         //自营商品
         if (ObjectUtils.isNotEmpty(qto.getShopType())) {
             List<ShopVO.InnerSimpleVO> idNameVOS = shopRpc.innerlistShopIdName(qto, ShopTypeEnum.运营商自营.getCode(), TerminalEnum.BBB.getCode());
-            if (ObjectUtils.isEmpty(idNameVOS)) {
-                return new PageData<>();
+            if (ObjectUtils.isNotEmpty(idNameVOS)) {
+                //return new PageData<>();
+                List<String> shopIdList = ListUtil.getIdList(ShopVO.InnerSimpleVO.class, idNameVOS);
+                if (ObjectUtils.isNotEmpty(shopIdList)) {
+                    //return new PageData<>();
+                    boost.in("gs.shop_id", shopIdList);
+                }
+                //boost.in("gs.shop_id", shopIdList);
             }
-            List<String> shopIdList = ListUtil.getIdList(ShopVO.InnerSimpleVO.class, idNameVOS);
+/*            List<String> shopIdList = ListUtil.getIdList(ShopVO.InnerSimpleVO.class, idNameVOS);
             if (ObjectUtils.isEmpty(shopIdList)) {
                 return new PageData<>();
             }
-            boost.in("gs.shop_id", shopIdList);
+            boost.in("gs.shop_id", shopIdList);*/
         }
         IPage<GoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfoVO.SpuListVO> spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
-        if (ObjectUtils.isEmpty(spuListVOIPage)) {
-            return new PageData<>();
+        if (ObjectUtils.isNotEmpty(spuListVOIPage)) {
+            for (GoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
+                //填充商品标签
+                if (ObjectUtils.isNotEmpty(getLabelInfo(spuListVO))) {
+                    spuListVO.setLabels(getLabelInfo(spuListVO));
+                }
+                //填充商品图片
+                spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "{}" : getImage(spuListVO.getGoodsImage()));
+
+                CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(spuListVO.getShopId());
+                if (ObjectUtils.isEmpty(simpleVO)) {
+                    throw new BusinessException("店铺数据异常");
+                }
+                //填充店铺信息
+                spuListVO.setShopName(StringUtils.isEmpty(simpleVO.getShopName()) ? "" : simpleVO.getShopName());
+
+                //填充店铺类型
+                spuListVO.setShopType(simpleVO.getShopType());
+                String goodsId = spuListVO.getId();
+                Integer quantity = commonStockRpc.getGoodsQuantity(goodsId);
+                if (ObjectUtil.isNotEmpty(quantity)) {
+                    spuListVO.setQuantity(quantity);
+                }
+            }
+            //return new PageData<>();
         }
-        for (GoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
+       /* for (GoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
             //填充商品标签
             if (ObjectUtils.isNotEmpty(getLabelInfo(spuListVO))) {
                 spuListVO.setLabels(getLabelInfo(spuListVO));
@@ -246,7 +280,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             if (ObjectUtil.isNotEmpty(quantity)) {
                 spuListVO.setQuantity(quantity);
             }
-        }
+        }*/
         return MybatisPlusUtil.toPageData(qto, GoodsInfoVO.SpuListVO.class, spuListVOIPage);
     }
 

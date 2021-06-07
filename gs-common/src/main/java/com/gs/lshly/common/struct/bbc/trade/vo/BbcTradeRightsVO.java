@@ -59,7 +59,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @ApiModelProperty("退款积分")
         private BigDecimal refundPoint;
 
-        @ApiModelProperty("状态(10:提交申请,20:商家处理,30:退款成功)")
+        @ApiModelProperty("状态(10:待处理,20:商家同意,30:商户驳回,40:买家二次申诉,50:平台同意,60:平台驳回,70:换货完成,80:商家确认收货并退款,90:用户取消)")
         private Integer state;
 
 /*        @ApiModelProperty("退款备注")
@@ -112,15 +112,26 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @ApiModelProperty("审批人ID")
         private String merchantAccountId;*/
 
-/*        @ApiModelProperty("交易商品集合")
-        List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVOS;*/
+        /*        @ApiModelProperty("交易商品集合")
+                List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVOS;*/
+        @ApiModelProperty("卖家地址全文本")
+        private String merFullAddres;
 
-        @ApiModelProperty("换货商品详情")
-        BbcTradeRightsVO.TradeRightsGoodsVO tradeRightsGoodsVO;
+        @ApiModelProperty("申请时间")
+        private LocalDateTime cdate;
+
+        /**
+         * 收货地址全文本
+         */
+        @ApiModelProperty("收货地址全文本")
+        private String recvFullAddres;
+
+        @ApiModelProperty("商品详情")
+        List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVO;
     }
 
     @Data
-    @ApiModel("BbcTradeRightsVO.TradeGoodsVO")
+    @ApiModel("BbcTradeRightsVO.TradeRightsGoodsVO")
     @Accessors(chain = true)
     public static class TradeRightsGoodsVO implements Serializable {
 
@@ -168,8 +179,8 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @ApiModelProperty("规格")
         private String skuSpecValue = "";
 
-        @ApiModelProperty("商品SKU 图片")
-        private String skuImg;
+        @ApiModelProperty("商品图片")
+        private String goodsImage;
 
 /*        @ApiModelProperty("SKU商品货号")
         private String skuGoodsNo;*/
@@ -206,11 +217,8 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @ApiModelProperty("原商品或换货商品(10:原商品,20:换货商品)")
         private Integer goodsType;
 
-        /*        @ApiModelProperty("商品类型（20实物，10虚拟）")
-                private Integer exchangeType;*/
-        @ApiModelProperty("申请时间")
-        private LocalDateTime cdate;
-
+/*        @ApiModelProperty("商品类型（20实物，10虚拟）")
+        private Integer exchangeType;*/
 
     }
 
@@ -220,6 +228,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
 
         @ApiModelProperty("售后图片")
         private List<String> tradeRightImg;
+
     }
 
     @Data
@@ -231,5 +240,12 @@ public abstract class BbcTradeRightsVO implements Serializable {
 
         @ApiModelProperty("退款积分")
         private BigDecimal point;
+    }
+
+    @Data
+    @ApiModel("BbcTradeRightsVO.IdVO")
+    public static class IdVO implements Serializable{
+        @ApiModelProperty("售后Id")
+        private String id;
     }
 }
