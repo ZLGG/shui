@@ -12,6 +12,7 @@ import java.util.Random;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.struct.bbc.commodity.vo.*;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
@@ -1208,7 +1209,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
-    public TradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
+    public BbcTradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
         if (StrUtil.isEmpty(tradeGoodsId)) {
             return null;
         }
@@ -1216,7 +1217,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (ObjectUtil.isEmpty(goodsInfo)) {
             return null;
         }
-        TradeRightsVO.GoodsInfo tradeGoodsInfo = new TradeRightsVO.GoodsInfo();
+        BbcTradeRightsVO.GoodsInfo tradeGoodsInfo = new BbcTradeRightsVO.GoodsInfo();
         tradeGoodsInfo.setGoodsTitle(goodsInfo.getGoodsTitle());
         tradeGoodsInfo.setGoodsPriceUnit(goodsInfo.getGoodsPriceUnit());
         tradeGoodsInfo.setGoodsImage(goodsInfo.getGoodsImage());

@@ -248,4 +248,17 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @ApiModelProperty("售后Id")
         private String id;
     }
+
+    @Data
+    @ApiModel("BbcTradeRightsVO.GoodsInfo")
+    public static class GoodsInfo implements Serializable {
+        @ApiModelProperty("商品标题")
+        private String goodsTitle;
+
+        @ApiModelProperty("商品计价单位")
+        private String goodsPriceUnit;
+
+        @ApiModelProperty("商品图片")
+        private String goodsImage;
+    }
 }

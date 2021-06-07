@@ -87,4 +87,9 @@ public class TradeRightsRpc implements ITradeRightsRpc{
         TradeRightsService.platformCheckReason(dto);
     }
 
+    @Override
+    public void platformDisPass(TradeRightsDTO.IdDTO dto) {
+        TradeRightsService.platformDisPass(dto);
+    }
+
 }

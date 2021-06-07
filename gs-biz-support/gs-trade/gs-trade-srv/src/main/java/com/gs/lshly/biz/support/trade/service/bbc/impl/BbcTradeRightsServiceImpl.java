@@ -763,7 +763,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             BbcTradeRightsVO.TradeRightsGoodsVO tradeRightsGoodsVO = new BbcTradeRightsVO.TradeRightsGoodsVO();
             BeanUtil.copyProperties(tradeRightsGoods, tradeRightsGoodsVO);
             tradeRightsGoodsVO.setGoodsId(tradeRightsGoods.getTradeGoodsId());
-            TradeRightsVO.GoodsInfo goodsInfo = iBbcGoodsInfoRpc.selectOne(tradeRightsGoods.getTradeGoodsId());
+            BbcTradeRightsVO.GoodsInfo goodsInfo = iBbcGoodsInfoRpc.selectOne(tradeRightsGoods.getTradeGoodsId());
             if (ObjectUtil.isNotEmpty(goodsInfo)) {
                 tradeRightsGoodsVO.setGoodsTitle(goodsInfo.getGoodsTitle());
                 tradeRightsGoodsVO.setGoodsPriceUnit(goodsInfo.getGoodsPriceUnit());
