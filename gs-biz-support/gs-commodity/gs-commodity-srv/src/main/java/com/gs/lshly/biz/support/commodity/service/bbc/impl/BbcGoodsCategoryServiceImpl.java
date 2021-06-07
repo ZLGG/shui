@@ -158,7 +158,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
                 .or()
                 .isNull("use_filed")
         );
-        queryWrapper.orderByDesc("idx");
+        queryWrapper.orderByAsc("idx");
         List<GoodsCategory> list = repository.list(queryWrapper);
         Map<String, List<GoodsCategory>> map = allGoodsCategoryMap(list);
         List<BbcGoodsCategoryVO.CategoryTreeVO> categoryTreeVOS = getCategoryTree(listQTO, map);

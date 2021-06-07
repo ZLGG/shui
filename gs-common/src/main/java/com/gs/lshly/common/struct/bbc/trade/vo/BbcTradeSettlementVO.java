@@ -453,6 +453,10 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 		public BigDecimal getDiscountPointAmount() {
 			return discountPointAmount;
 		}
+
+		public Integer getExchangeType() {
+			return exchangeType;
+		}
 		
 	}
 
