@@ -2,6 +2,7 @@ package com.gs.lshly.facade.platform.controller.commodity;
 
 
 import com.gs.lshly.common.constants.MsgConst;
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsLabelDTO;
@@ -12,6 +13,8 @@ import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsLabelRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -29,12 +32,13 @@ import java.util.List;
 @RequestMapping("/platform/goodsLabel")
 @Api(tags = "商品标签管理")
 @Module(code = "labelManagement", parent = "commodityManagement", name = "商品标签", index =1)
+@SuppressWarnings("unchecked")
 public class GoodsLabelController {
 
     @DubboReference
     private IGoodsLabelRpc goodsLabelRpc;
 
-    @ApiOperation("商品标签分页列表")
+	@ApiOperation("商品标签分页列表")
     @GetMapping("")
     @Func(code="view", name = "查看")
     public ResponseData<PageData<GoodsLabelVO.ListVO>> pageDataResponseData(GoodsLabelQTO.QTO qto) {
@@ -59,6 +63,13 @@ public class GoodsLabelController {
     @PostMapping("")
     @Func(code="add", name = "新增")
     public ResponseData<Void> add(@Valid @RequestBody GoodsLabelDTO.ETO dto) {
+    	
+    	if(StringUtils.isEmpty(dto.getLabelName())||dto.getLabelName().length()>10){
+    		throw new BusinessException("标签名称请小于10个字符");
+    	}
+    	if(StringUtils.isEmpty(dto.getLabelRemark())||dto.getLabelRemark().length()>10){
+    		throw new BusinessException("标签备注请小于10个字符");
+    	}
         goodsLabelRpc.addGoodsLabel(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }

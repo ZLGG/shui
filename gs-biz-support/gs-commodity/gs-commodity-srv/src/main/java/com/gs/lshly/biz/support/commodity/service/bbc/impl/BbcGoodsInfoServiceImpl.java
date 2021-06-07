@@ -1133,7 +1133,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO qto) {
         List<String> categoryIds = new ArrayList<>();
-        if (1 == qto.getLevel()) {
+        if (qto.getLevel()!=null &&qto.getLevel().equals(1)) {
             // 获取所有子类目
             BbcGoodsCategoryDTO.ThirdListDTO thirdListDTO = new BbcGoodsCategoryDTO.ThirdListDTO();
             thirdListDTO.setParentId(qto.getCategoryId());

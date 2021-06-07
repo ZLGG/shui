@@ -245,6 +245,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<BbcTradeSettlementVO.DetailVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
+    	
+    	/**
+    	 * 如果是立即支付时，会有考虑是不是要扣优惠券的值 
+    	 */
+    	
+    	Integer isInCar = 1;
     	//返回地址、商家、商品（图片、名称、规格、单价）、商品总金额、商品数量、运费
         BbcTradeSettlementVO.DetailVO settlementVO = new BbcTradeSettlementVO.DetailVO();
         Integer exchangeType = 20;
@@ -280,6 +286,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         Integer goodsCount = 0;//商品总数
         
         if(StringUtils.isNotEmpty(dto.getGoodsSkuId())){//立即购买
+        	isInCar = 0;
 
             BbcGoodsInfoVO.InnerServiceVO innerServiceVO = iBbcGoodsInfoRpc.innerSimpleServiceGoodsVO(dto.getGoodsSkuId());
             ShopSkuVO shopSkuVO = new ShopSkuVO();
@@ -390,10 +397,19 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 				if(goodsInfoVO.getIsInMemberGift()){
 					if (isInUser.equals(1)) {	//是IN会员用IN会员价格
 						
+						/**
+				         *模拟优惠券数据
+				         */
+				        List<ListCouponVO> couponVOS = this.listCoupon();
+				        goodsInfoVO.setDefaultCouponList(couponVOS);
+				        
+				        List<ListCouponVO> couponVOS1 = this.listCoupon1();
+				        goodsInfoVO.setOptionalCouponList(couponVOS1);
+						
 						BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
 								.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-						goodsPointAmount = goodsPointAmount.add(pointPrice);
-						goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
+						
+						
 						
 						if(flag){//需要分积分
 							BigDecimal tradePointAmount = BigDecimal.ZERO;
@@ -404,19 +420,18 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 							tradePointAmountDetail  = tradePointAmountDetail.add(tradePointAmount);
 							tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
 						}else{
+							
+							//本期就考虑不用分积分的
+							ListCouponVO couponVO = couponVOS.get(0);
+							BigDecimal deduction = couponVO.getDeduction().multiply(new BigDecimal("100"));
+							pointPrice = pointPrice.compareTo(deduction)<=0?BigDecimal.ZERO:pointPrice.subtract(deduction);
+							
 							goodsInfoVO.setTradePointAmount(pointPrice);
 							goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
 						}
 						
-						/**
-				         *模拟优惠券数据
-				         */
-				        List<ListCouponVO> couponVOS = this.listCoupon();
-				        goodsInfoVO.setDefaultCouponList(couponVOS);
-				        
-				        List<ListCouponVO> couponVOS1 = this.listCoupon1();
-				        goodsInfoVO.setOptionalCouponList(couponVOS1);
-				        
+						goodsPointAmount = goodsPointAmount.add(pointPrice);
+						goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
 					} else{
 						throw new BusinessException("请先成为IN会员，再买IN会员商品");
 					}
@@ -553,14 +568,25 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 		listCouponVO.setCouponType(1);
 		listCouponVO.setUseTime("2021/01/01 2021/11/01");
 		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
-		listCouponVO.setDeduction(new BigDecimal("20.00"));
-		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+		listCouponVO.setDeduction(new BigDecimal("30.00"));
+		listCouponVO.setUseThreshold(new BigDecimal("50.00"));
 		listCouponVO.setDeductionType(Integer.valueOf(1));
 		listCouponVO.setId("666666666c421f9fd7f4c82bfcab5b");
 		retList.add(listCouponVO);
+		
+		listCouponVO = new ListCouponVO();
+		listCouponVO.setCouponType(1);
+		listCouponVO.setUseTime("2021/01/01 2021/12/01");
+		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+		listCouponVO.setDeduction(new BigDecimal("40.00"));
+		listCouponVO.setUseThreshold(new BigDecimal("60.00"));
+		listCouponVO.setDeductionType(Integer.valueOf(1));
+		listCouponVO.setId("77777777c421f9fd7f4c82bfcab5b");
+		retList.add(listCouponVO);
+		
 		return retList;
 	}
-
+	
     public static void main(String[] args) {
         Integer integer = 10;
         Integer integer2 = 10;
