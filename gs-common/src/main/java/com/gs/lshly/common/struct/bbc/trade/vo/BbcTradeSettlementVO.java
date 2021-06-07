@@ -331,6 +331,8 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 	@Accessors(chain = true)
 	public static class DetailVO implements Serializable {
 		// 返回地址
+		@ApiModelProperty("虚拟商品还是实物商品")
+		private Integer exchangeType;
 
 		@ApiModelProperty("收货地址ID")
 		private String recvAddresId;

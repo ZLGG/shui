@@ -247,7 +247,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public ResponseData<BbcTradeSettlementVO.DetailVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
     	//返回地址、商家、商品（图片、名称、规格、单价）、商品总金额、商品数量、运费
         BbcTradeSettlementVO.DetailVO settlementVO = new BbcTradeSettlementVO.DetailVO();
-        
+        Integer exchangeType = 20;
         // 获取用户信息，获取是否是IN会员
         String jwtUserId = dto.getJwtUserId();
 
@@ -280,12 +280,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         Integer goodsCount = 0;//商品总数
         
         if(StringUtils.isNotEmpty(dto.getGoodsSkuId())){//立即购买
-//            CommonStockDTO.InnerSkuGoodsInfoItem innerSkuGoodsInfoItem = new CommonStockDTO.InnerSkuGoodsInfoItem(null,dto.getGoodsSkuId(),dto.getQuantity());
-//            goodsItemList.add(innerSkuGoodsInfoItem);
-//
-//            BbcUserShoppingCarVO.InnerSimpleItem innerSimpleItem = new BbcUserShoppingCarVO.InnerSimpleItem();
-//            BeanUtils.copyProperties(innerSkuGoodsInfoItem,innerSimpleItem);
-//            itemList.add(innerSimpleItem);
 
             BbcGoodsInfoVO.InnerServiceVO innerServiceVO = iBbcGoodsInfoRpc.innerSimpleServiceGoodsVO(dto.getGoodsSkuId());
             ShopSkuVO shopSkuVO = new ShopSkuVO();
@@ -304,6 +298,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             skuQuantity.add(skuQuantityVO);
             shopSkuVO.setSkuQuantity(skuQuantity);
             shopskuList.add(shopSkuVO);
+            
+            //判断商品类型
+            exchangeType = innerServiceVO.getExchangeType();
         }else{//购物车购买 dto.getCartIds();
         	//根据购物车id查询实体 //判断商品是否属于同一个店铺
             BbcUserShoppingCarDTO.InnerIdListDTO innerIdListDTO = new BbcUserShoppingCarDTO.InnerIdListDTO();
@@ -529,7 +526,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         } catch (Exception e) {
             log.error("营销结算异常:"+e.getMessage(), e);
         }**/
-        
+        settlementVO.setExchangeType(exchangeType);
         
         return ResponseData.data(settlementVO);
     }

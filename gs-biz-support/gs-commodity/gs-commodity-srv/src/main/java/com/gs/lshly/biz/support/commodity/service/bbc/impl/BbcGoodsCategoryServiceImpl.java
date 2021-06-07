@@ -368,6 +368,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         
         QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("parent_id", dto.getParentId());
+        queryWrapper.orderByAsc("idx");
 //        queryWrapper.eq("use_filed", dto.getUseFiled());
         //获取树结构
         List<GoodsCategory> goodsCategorys = repository.list(queryWrapper);
@@ -376,6 +377,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         		queryWrapper = new QueryWrapper<>();
                 queryWrapper.in("parent_id", goodsCategory.getId());
                 queryWrapper.ne("use_filed", GoodsUsePlatformEnums.B商城.getCode());
+                queryWrapper.orderByAsc("idx");
                 //获取树结构
                 List<GoodsCategory> thirds = repository.list(queryWrapper);
                 if(CollectionUtils.isNotEmpty(thirds)){
