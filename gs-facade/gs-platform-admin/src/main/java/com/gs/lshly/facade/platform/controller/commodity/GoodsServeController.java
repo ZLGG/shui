@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/platform/GoodsServe")
 @Api(tags = "商品服务管理-v1.1.0")
-@Module(code = "commodityServe", parent = "commodity", name = "商品服务管理", index = 4)
+//@Module(code = "commodityServe", parent = "commodity", name = "商品服务管理", index = 4)
 public class GoodsServeController {
 
     @DubboReference
@@ -36,7 +36,7 @@ public class GoodsServeController {
      */
     @ApiOperation("商品服务列表")
     @GetMapping("")
-    @Func(code = "view", name = "查看")
+//    @Func(code = "view", name = "查看")
     public ResponseData<PageData<GoodsServeVO.ListVO>> pageGoodsServeData(GoodsServeQTO.QTO qto) {
         return ResponseData.data(goodsServeRpc.pageGoodsServeData(qto));
     }
@@ -49,7 +49,7 @@ public class GoodsServeController {
      */
     @ApiOperation("商品服务详情")
     @GetMapping(value = "{id}")
-    @Func(code = "view", name = "查看")
+//    @Func(code = "view", name = "查看")
     public ResponseData<GoodsServeVO.ListVO> getGoodsServeDetail(@PathVariable String id) {
         return ResponseData.data(goodsServeRpc.getGoodsServeDetail(new GoodsServeDTO.IdDTO(id)));
     }
@@ -61,7 +61,7 @@ public class GoodsServeController {
      */
     @ApiOperation("新增服务")
     @PutMapping(value = "addGoodsServe")
-    @Func(code = "add", name = "新增")
+//    @Func(code = "add", name = "新增")
     public ResponseData<Void> addGoodsServe(GoodsServeDTO.ETO eto) {
         goodsServeRpc.addGoodsServe(eto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -74,7 +74,7 @@ public class GoodsServeController {
      */
     @ApiOperation("修改服务信息")
     @PutMapping(value = "editGoodsServe")
-    @Func(code = "edit", name = "修改")
+//    @Func(code = "edit", name = "修改")
     public ResponseData<Void> editGoodsServe(GoodsServeDTO.EditDTO eto) {
         goodsServeRpc.editGoodsServe(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
@@ -87,7 +87,7 @@ public class GoodsServeController {
      */
     @ApiOperation("删除服务")
     @DeleteMapping(value = "deleteGoodsServe")
-    @Func(code = "delete", name = "删除")
+//    @Func(code = "delete", name = "删除")
     public ResponseData<Void> deleteGoodsServe(GoodsServeDTO.IdListDTO dto) {
         goodsServeRpc.deleteGoodsServe(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);

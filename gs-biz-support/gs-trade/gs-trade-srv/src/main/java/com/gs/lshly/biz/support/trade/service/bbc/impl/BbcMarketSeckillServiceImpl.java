@@ -414,6 +414,8 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         		
         		String goodsId = spu.getGoodsId();
         		goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+        		if(!goodsDetail.getGoodsState().equals(20))
+        			continue;
         		
         		BeanCopyUtils.copyProperties(goodsDetail, homePageSeckillGoods);
         		homePageSeckillGoods.setGoodsId(goodsDetail.getId());

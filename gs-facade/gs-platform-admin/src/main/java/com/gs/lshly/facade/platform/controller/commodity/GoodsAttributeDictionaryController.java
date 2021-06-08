@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/goods-attribute-dictionary")
 @Api(tags = "平台属性管理")
-@Module(code = "item", parent = "category", name = "属性项列表", index = 2)
+@Module(code = "item", parent = "category", name = "属性列表", index = 2)
 public class GoodsAttributeDictionaryController {
 
     @DubboReference

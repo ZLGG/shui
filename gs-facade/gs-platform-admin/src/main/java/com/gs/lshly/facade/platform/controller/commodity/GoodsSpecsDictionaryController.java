@@ -9,6 +9,8 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsSpecDictionaryDTO
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsSpecDictionaryItemQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsSpecDictionaryQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsSpecDictionaryVO;
+import com.gs.lshly.middleware.auth.rbac.Func;
+import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsSpecDictionaryItemRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsSpecDictionaryRpc;
 import io.swagger.annotations.Api;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/goods-specs-dictionary")
 @Api(tags = "平台规格管理")
+@Module(code = "item", parent = "category", name = "规格列表", index = 3)
 public class GoodsSpecsDictionaryController {
     @DubboReference
     private IGoodsSpecDictionaryRpc dictionaryRpc;
@@ -38,6 +41,7 @@ public class GoodsSpecsDictionaryController {
 
     @ApiOperation("添加规格信息")
     @PostMapping(value = "")
+    @Func(code="add", name = "新增")
     public ResponseData<Void> addSpec (@RequestBody GoodsSpecDictionaryDTO.ETO addSpecInfoETO){
         dictionaryRpc.addSpec(addSpecInfoETO);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -45,6 +49,7 @@ public class GoodsSpecsDictionaryController {
 
     @ApiOperation("删除规格信息")
     @DeleteMapping(value = "/{id}")
+    @Func(code="add", name = "删除")
     public ResponseData<Void> deleteSpec (@PathVariable String id){
         GoodsSpecDictionaryDTO.IdDTO idDTO = new GoodsSpecDictionaryDTO.IdDTO(id);
         dictionaryRpc.deleteSpec(idDTO);
@@ -53,6 +58,7 @@ public class GoodsSpecsDictionaryController {
 
     @ApiOperation("查询规格详情信息")
     @GetMapping(value = "/{id}")
+    @Func(code="add", name = "详情")
     public @ResponseBody ResponseData<GoodsSpecDictionaryVO.DetailVO> getSpecDetails(@PathVariable String id, GoodsSpecDictionaryItemQTO.QTO qto){
         GoodsSpecDictionaryDTO.IdDTO dto = new GoodsSpecDictionaryDTO.IdDTO(id);
         GoodsSpecDictionaryVO.DetailVO detailVO = dictionaryRpc.getSpecDetails(dto);
@@ -63,6 +69,7 @@ public class GoodsSpecsDictionaryController {
 
     @ApiOperation("修改规格信息")
     @PutMapping(value = "/{id}")
+    @Func(code="add", name = "修改")
     public ResponseData<Void> getSpecDetails(@PathVariable String id,@RequestBody GoodsSpecDictionaryDTO.ETO dto){
         dto.setId(id);
         dictionaryRpc.updateSpec(dto);
@@ -71,6 +78,7 @@ public class GoodsSpecsDictionaryController {
 
     @ApiOperation("查询规格列表")
     @GetMapping(value = "")
+    @Func(code="add", name = "查询")
     public ResponseData<PageData<GoodsSpecDictionaryVO.ListVO>> listpec(){
         GoodsSpecDictionaryQTO.QTO qto = new GoodsSpecDictionaryQTO.QTO();
         return ResponseData.data(dictionaryRpc.listSpec(qto));
@@ -78,6 +86,7 @@ public class GoodsSpecsDictionaryController {
 
     @ApiOperation("批量删除规格列表")
     @DeleteMapping(value = "/deleteSpecList")
+    @Func(code="add", name = "批量删除")
     public ResponseData<Void> deleSpecList(GoodsSpecDictionaryDTO.IdListDTO dto){
        dictionaryRpc.deleteSpecBatches(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);

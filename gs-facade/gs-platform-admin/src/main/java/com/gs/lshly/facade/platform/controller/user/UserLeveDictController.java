@@ -27,7 +27,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/userLeveDict")
 @Api(tags = "会员等级数据管理",description = " ")
-@Module(code = "memberLevel", parent = "members", name = "会员等级", index = 3)
+//@Module(code = "memberLevel", parent = "members", name = "会员等级", index = 3)
 public class UserLeveDictController {
 
     @DubboReference
@@ -35,21 +35,21 @@ public class UserLeveDictController {
 
     @ApiOperation("会员等级数据列表")
     @GetMapping("")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<PageData<UserLeveDictVO.ListVO>> list(UserLeveDictQTO.QTO qto) {
         return ResponseData.data(userLeveDictRpc.pageData(qto));
     }
 
     @ApiOperation("会员等级数据详情")
     @GetMapping(value = "/{id}")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<UserLeveDictVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(userLeveDictRpc.detailUserLeveDict(new UserLeveDictDTO.IdDTO(id)));
     }
 
     @ApiOperation("新增会员等级数据")
     @PostMapping("")
-    @Func(code="add", name="增")
+    //@Func(code="add", name="增")
     public ResponseData<Void> add(@Valid @RequestBody UserLeveDictDTO.ETO dto) {
         userLeveDictRpc.addUserLeveDict(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -57,7 +57,7 @@ public class UserLeveDictController {
 
     @ApiOperation("删除会员等级数据")
     @PostMapping(value = "/deleteBatch")
-    @Func(code="delete", name="删")
+    //@Func(code="delete", name="删")
     public ResponseData<Void> deleteBatch(@Valid @RequestBody UserLeveDictDTO.IdListDTO dto) {
         userLeveDictRpc.deleteBatchUserLeveDict(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -65,7 +65,7 @@ public class UserLeveDictController {
 
     @ApiOperation("修改会员等级数据")
     @PutMapping(value = "/{id}")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody UserLeveDictDTO.ETO eto) {
         eto.setId(id);
         userLeveDictRpc.editUserLeveDict(eto);
@@ -74,7 +74,7 @@ public class UserLeveDictController {
 
     @ApiOperation("会员等级列表(不分页)")
     @GetMapping(value = "/listLevel")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<UserLeveDictVO.LevelListVO> listLevel(UserLeveDictDTO.UsingTypeDTO dto) {
         return ResponseData.data(userLeveDictRpc.lisLevelListVO(dto));
     }

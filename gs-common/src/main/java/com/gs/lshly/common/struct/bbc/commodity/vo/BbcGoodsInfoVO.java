@@ -552,6 +552,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         
         @ApiModelProperty("不能够买原因")
         private String buyRemark;
+        
+        @ApiModelProperty("商品状态")
+        private Integer goodsState;
 
     }
 

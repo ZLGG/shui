@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/userLabelDict")
 @Api(tags = "会员标签数据管理",description = " ")
-@Module(code = "membersTag", parent = "members", name = "会员标签", index = 4)
+@Module(code = "membersTag", parent = "members", name = "用户标签", index = 2)
 public class  UserLabelDictController {
 
     @DubboReference

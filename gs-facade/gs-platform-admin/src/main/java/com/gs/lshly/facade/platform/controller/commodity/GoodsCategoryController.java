@@ -29,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/goods-category")
 @Api(tags = "平台商品分类管理")
-@Module(code = "listSort", parent = "category", name = "分类列表", index =3)
+@Module(code = "listSort", parent = "category", name = "产品分类", index =4)
 public class GoodsCategoryController {
 
     @DubboReference

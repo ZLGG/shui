@@ -38,7 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/2b/user")
 @Api(tags = "会员管理2B",description = " ")
-@Module(code = "membersBussiness", parent = "members", name = "企业会员", index = 2)
+//@Module(code = "membersBussiness", parent = "members", name = "企业会员", index = 2)
 public class User2bController {
 
     @DubboReference
@@ -50,7 +50,7 @@ public class User2bController {
 
     @ApiOperation("会员列表(商级搜索)")
     @PostMapping("/fullSearchList")
-    @Func(code="view", name="查")
+//    @Func(code="view", name="查")
     public ResponseData<PageData<UserVO.ListVO>> fullSearchList(@RequestBody UserQTO.FullSearchQTO qto) {
         qto.setType(UserTypeEnum._2B用户.getCode());
         return ResponseData.data(userRpc.fullSearchList(qto));
@@ -59,7 +59,7 @@ public class User2bController {
 
     @ApiOperation("会员列表")
     @GetMapping("")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<PageData<UserVO.ListVO>> list(UserQTO.QTO qto) {
         qto.setType(UserTypeEnum._2B用户.getCode());
         return ResponseData.data(userRpc.pageData(qto));
@@ -67,7 +67,7 @@ public class User2bController {
 
     @ApiOperation("会员详情")
     @GetMapping("/details/{userId}")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<UserVO.DetailVO> details(@PathVariable  String userId) {
 
         return  ResponseData.data(userRpc.details(new UserDTO.IdDTO(userId)));
@@ -75,7 +75,7 @@ public class User2bController {
 
     @ApiOperation("获取会员已有的标签")
     @GetMapping("/getUserLabel")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<List<UserLabelDictVO.UserLabelVO>> getMoreUserLabel(@Valid @RequestBody UserLabelDictQTO.UserIdListQTO qto) {
 
         return  ResponseData.data( userLabelDictRpc.getMoreUserLabel(qto));
@@ -83,7 +83,7 @@ public class User2bController {
 
     @ApiOperation("批量给会员标记标签")
     @PostMapping("/addUserLabel")
-    @Func(code="add", name="增")
+    //@Func(code="add", name="增")
     public ResponseData<Void> addUserLabel(@Valid @RequestBody UserLabelDictDTO.AddUserLabelDTO dto) {
         userLabelDictRpc.addUserLabel(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -91,7 +91,7 @@ public class User2bController {
 
     @ApiOperation("批量删除会员")
     @PostMapping(value = "/deleteBatch")
-    @Func(code="delete", name="删")
+    //@Func(code="delete", name="删")
     public ResponseData<Void> deleteBatch(@Valid @RequestBody UserDTO.IdListDTO dto) {
         userRpc.deleteBatchUser(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -99,7 +99,7 @@ public class User2bController {
 
     @ApiOperation("编辑会员信息")
     @PutMapping(value = "/{id}")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody UserDTO.ETO eto) {
         eto.setId(id);
         userRpc.editorUserInfo(eto);
@@ -108,7 +108,7 @@ public class User2bController {
 
     @ApiOperation("编辑会员密码")
     @PutMapping(value = "/editorPassworld/{id}")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> editorPassworld(@PathVariable String id, @Valid @RequestBody UserDTO.PassworldETO eto) {
         eto.setId(id);
         userRpc.editorPassworld(eto);
@@ -117,7 +117,7 @@ public class User2bController {
 
     @ApiOperation("编辑会员积分")
     @PutMapping(value = "/editorIntegral/{id}")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> editorIntegral(@PathVariable String id, @Valid @RequestBody UserDTO.IntegralETO eto) {
         eto.setId(id);
         userRpc.editorIntegral(eto);
@@ -126,7 +126,7 @@ public class User2bController {
 
     @ApiOperation("编辑会员等级")
     @PutMapping(value = "/editorLeve/{id}")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> editorLeve(@PathVariable String id, @Valid @RequestBody UserDTO.LeveETO eto) {
         eto.setId(id);
         userRpc.editorLeve(eto);
@@ -136,7 +136,7 @@ public class User2bController {
 
     @ApiOperation("添加企业会员")
     @PostMapping("")
-    @Func(code="add", name="增")
+    //@Func(code="add", name="增")
     public ResponseData<Void> add(@Valid @RequestBody UserDTO.AddETO dto) {
         userRpc.addUser(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -145,7 +145,7 @@ public class User2bController {
 
     @ApiOperation("启用会员")
     @PostMapping(value = "/enable")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> enable(@RequestBody UserDTO.IdListDTO dto) {
         userRpc.enableUser(dto);
         return ResponseData.success(MsgConst.ENABLE_SUCCESS);
@@ -153,7 +153,7 @@ public class User2bController {
 
     @ApiOperation("停用会员")
     @PostMapping(value = "/disable")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> disable(@RequestBody UserDTO.IdListDTO dto) {
         userRpc.disableUser(dto);
         return ResponseData.success(MsgConst.DISABLE_SUCCESS);

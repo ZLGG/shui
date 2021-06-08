@@ -28,7 +28,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/userUser2bApply")
 @Api(tags = "2B会员申请管理",description = " ")
-@Module(code = "membersReview", parent = "members", name = "会员审核", index = 5)
+//@Module(code = "membersReview", parent = "members", name = "会员审核", index = 5)
 public class UserUser2bApplyController {
 
     @DubboReference
@@ -36,7 +36,7 @@ public class UserUser2bApplyController {
 
     @ApiOperation("2B会员申请列表")
     @GetMapping("")
-    @Func(code="view", name="查")
+    //@Func(code="view", name="查")
     public ResponseData<PageData<UserUser2bApplyVO.ListVO>> pageList(UserUser2bApplyQTO.QTO qto) {
         return ResponseData.data(userUser2bApplyRpc.pageData(qto));
     }
@@ -57,7 +57,7 @@ public class UserUser2bApplyController {
 
     @ApiOperation("批量删除2B会员申请")
     @PostMapping(value = "/deleteBatch")
-    @Func(code="delete", name="删")
+    //@Func(code="delete", name="删")
     public ResponseData<Void> deleteBatch(@Valid @RequestBody UserUser2bApplyDTO.IdListDTO dto) {
         userUser2bApplyRpc.deleteBatchUserUser2bApply(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -65,7 +65,7 @@ public class UserUser2bApplyController {
 
     @ApiOperation("审核2B会员申请")
     @PutMapping(value = "/apply")
-    @Func(code="edit", name="改")
+    //@Func(code="edit", name="改")
     public ResponseData<Void> apply(@Valid @RequestBody UserUser2bApplyDTO.ApplyDTO dto) {
         userUser2bApplyRpc.applyUserUser2bApply(dto);
         return ResponseData.success(MsgConst.APPLY_SUCCESS);

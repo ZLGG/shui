@@ -1,11 +1,12 @@
 package com.gs.lshly.biz.support.foundation.service.platadmin.rbac;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysRoleDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysRoleQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysRoleVO;
-
-import java.util.List;
 
 /**
  * <p>
@@ -28,4 +29,6 @@ public interface ISysRoleService {
     List<String> permitFuncs(SysRoleDTO.IdDTO dto);
 
     void setRoleFuncPermit(SysRoleDTO.RoleFuncETO eto);
+    
+    List<SysRoleVO.ListVO> listAll(BaseQTO qto);
 }

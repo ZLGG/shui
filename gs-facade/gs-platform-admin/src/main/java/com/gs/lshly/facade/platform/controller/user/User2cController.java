@@ -38,7 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/2c/user")
 @Api(tags = "会员管理2C",description = " ")
-@Module(code = "membersRetail", parent = "members", name = "零售会员", index = 1)
+@Module(code = "membersRetail", parent = "members", name = "用户列表", index = 1)
 public class User2cController {
 
     @DubboReference

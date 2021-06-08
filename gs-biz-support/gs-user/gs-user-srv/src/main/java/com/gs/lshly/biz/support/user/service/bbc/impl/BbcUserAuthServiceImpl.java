@@ -1,11 +1,18 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserThirdLogin;
+import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.IUserThirdLoginRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserAuthService;
@@ -28,12 +35,8 @@ import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * <p>
@@ -63,6 +66,9 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
 
     @Autowired
     private RedisUtil redisUtil;
+    
+    @Autowired
+    private UserIntegralMapper userIntegralMapper;
 
 
     @Override
@@ -135,6 +141,9 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             if (vo != null) {
                 UpdateWrapper wrapper = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
                 repository.update(wrapper);
+                
+                Integer isExist = userIntegralMapper.goodsIsInCart(vo.getId());
+                vo.setGoodsIsInCart(isExist);
                 return vo;
             }
 
@@ -152,6 +161,10 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
             UpdateWrapper eq = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
             repository.update(eq);
+            
+            Integer isExist = userIntegralMapper.goodsIsInCart(vo.getId());
+            vo.setGoodsIsInCart(isExist);
+            
             return vo;
     	}else{
     		
@@ -164,6 +177,10 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
 	            redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
                 UpdateWrapper eq = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
                 repository.update(eq);
+                
+                Integer isExist = userIntegralMapper.goodsIsInCart(vo.getId());
+                vo.setGoodsIsInCart(isExist);
+                
 	            return vo;
             }else{
             	throw new BusinessException("密码错误");

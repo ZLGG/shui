@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/platadmin/tradeComment")
 @Api(tags = "订单交易评论申述管理")
-@Module(code = "commentsOverview",parent = "transaction",name = "评论概述",index = 8)
+//@Module(code = "commentsOverview",parent = "transaction",name = "评论概述",index = 8)
 public class TradeCommentOverviewController {
 
     @DubboReference
@@ -32,21 +32,21 @@ public class TradeCommentOverviewController {
 
     @ApiOperation("订单交易评论申诉列表")
     @GetMapping("")
-    @Func(code = "view",name = "查")
+//    @Func(code = "view",name = "查")
     public ResponseData<PageData<TradeCommentVO.CommentAppealListVO>> list(TradeCommentQTO.AppealCommentQTO qto) {
         return ResponseData.data(TradeCommentRpc.pageData(qto));
     }
 
     @ApiOperation("订单交易评论申诉详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view",name = "查")
+//    @Func(code = "view",name = "查")
     public ResponseData<TradeCommentVO.CommentAppealDetailVO> get(@PathVariable String id) {
         return ResponseData.data(TradeCommentRpc.detailTradeComment(new TradeCommentDTO.IdDTO(id)));
     }
 
     @ApiOperation("审核订单交易评论申诉")
     @PostMapping(value = "checkAppeal")
-    @Func(code = "edit",name = "改")
+//    @Func(code = "edit",name = "改")
     public ResponseData<Void> get(@RequestBody TradeCommentDTO.CheckCommentAppealDTO dto) {
        TradeCommentRpc.checkCommentAppeal(dto);
        return ResponseData.success(MsgConst.APPLY_SUCCESS);

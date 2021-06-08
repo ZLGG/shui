@@ -2,10 +2,12 @@ package com.gs.lshly.biz.support.foundation.rpc.platadmin.rbac;
 
 import com.gs.lshly.biz.support.foundation.service.platadmin.rbac.ISysRoleService;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.common.PermitNodeVO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysRoleDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysRoleQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysRoleVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysRoleVO.ListVO;
 import com.gs.lshly.rpc.api.platadmin.foundation.rbac.ISysRoleRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +59,10 @@ public class SysRoleRpc implements ISysRoleRpc {
     public void setRoleFuncPermit(SysRoleDTO.RoleFuncETO eto) {
         sysRoleService.setRoleFuncPermit(eto);
     }
+
+	@Override
+	public List<ListVO> listAll(BaseQTO qto) {
+		return sysRoleService.listAll(qto);
+	}
 
 }

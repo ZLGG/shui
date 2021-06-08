@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/platadmin/tradeComment")
 @Api(tags = "订单交易评论管理")
-@Module(code = "listComment",parent = "transaction",name = "评论列表",index = 8)
+//@Module(code = "listComment",parent = "transaction",name = "评论列表",index = 8)
 public class TradeCommentController {
 
     @DubboReference
@@ -32,19 +32,19 @@ public class TradeCommentController {
 
     @ApiOperation("订单交易评论列表")
     @GetMapping("/comment")
-    @Func(code = "view",name = "查")
+//    @Func(code = "view",name = "查")
     public ResponseData<PageData<TradeCommentVO.CommentListVO>> commentList(TradeCommentQTO.CommentQTO qto) {
         return ResponseData.data(TradeCommentRpc.commentList(qto));
     }
     @ApiOperation("订单交易评论详情")
     @GetMapping("/commentDetail")
-    @Func(code = "view",name = "查")
+//    @Func(code = "view",name = "查")
     public ResponseData<TradeCommentVO.CommentDetailVO> commentDetail(TradeCommentQTO.CommentDetailQTO qto) {
         return ResponseData.data(TradeCommentRpc.commentDetail(qto));
     }
     @ApiOperation("删除评论")
     @GetMapping("/commentDelete")
-    @Func(code = "delete",name = "删除")
+//    @Func(code = "delete",name = "删除")
     public ResponseData<Void> commentDelete(TradeCommentDTO.IdsDTO dto) {
         TradeCommentRpc.delete(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);

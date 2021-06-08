@@ -370,10 +370,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (ObjectUtils.isEmpty(goodsInfo)) {
             throw new BusinessException("数据异常");
         }
-        
-        if(!goodsInfo.getGoodsState().equals(20)){
-        	throw new BusinessException("商品未上架");
-        }
+//        if(!goodsInfo.getGoodsState().equals(20)){
+//        	throw new BusinessException("商品未上架");
+//        }
         BbcGoodsInfoVO.DetailVO detailVo = new BbcGoodsInfoVO.DetailVO();
         fillUserType(detailVo, dto);
 

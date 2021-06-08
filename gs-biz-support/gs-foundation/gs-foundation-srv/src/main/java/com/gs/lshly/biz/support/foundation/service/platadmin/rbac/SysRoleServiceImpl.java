@@ -9,10 +9,13 @@ import com.gs.lshly.biz.support.foundation.repository.ISysRoleFuncRepository;
 import com.gs.lshly.biz.support.foundation.repository.ISysRoleRepository;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.common.PermitNodeVO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.rbac.SysRoleDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.qto.rbac.SysRoleQTO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysRoleVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysRoleVO.ListVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,4 +112,10 @@ public class SysRoleServiceImpl implements ISysRoleService {
         }
         roleFuncRepository.saveBatch(list);
     }
+
+	@Override
+	public List<ListVO> listAll(BaseQTO qto) {
+        List<SysRole> list = repository.list();
+        return com.gs.lshly.common.utils.BeanUtils.copyList(ListVO.class, list);
+	}
 }
