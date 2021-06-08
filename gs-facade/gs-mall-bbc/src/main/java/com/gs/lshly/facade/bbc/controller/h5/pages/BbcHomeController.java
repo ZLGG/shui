@@ -156,10 +156,11 @@ public class BbcHomeController {
     
     @ApiOperation("猜你喜欢-v1.1.0")
     @GetMapping("/enjoyList")
-    public ResponseData<PageData<GoodsInfoVO.DetailVO>> listEnjoy(BbcSiteTopicQTO.EnjoyQTO qto) {
-        qto.setSubject(SubjectEnum.默认.getCode());
-        qto.setTerminal(TerminalEnum.BBC.getCode());
-    	return ResponseData.data(bbcSiteTopicRpc.pageEnjoy(qto));
+    public ResponseData<PageData<BbcGoodsInfoVO.GoodsListVO>> listEnjoy(BbcSiteTopicQTO.EnjoyQTO qto) {
+        
+        BbcGoodsInfoQTO.GoodsSearchListQTO qto1 = new BbcGoodsInfoQTO.GoodsSearchListQTO();
+        return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(qto1));
+    
     }
 
     @ApiOperation("公告列表-v1.1.0")
