@@ -113,10 +113,10 @@ public class SysUserAuthController {
             if(PwdUtil.matches(dto.getPassword(), userDetails.getPwd())){
             	return ResponseData.data(true);
             }else{
-            	throw new BusinessException("密码出错输入出错！");
+            	throw new BusinessException("密码错误请重新输入！");
             }
         }else{
-        	throw new BusinessException("验证码输入出错！");
+        	throw new BusinessException("验证码错误请重新输入！");
         }
     }
 
