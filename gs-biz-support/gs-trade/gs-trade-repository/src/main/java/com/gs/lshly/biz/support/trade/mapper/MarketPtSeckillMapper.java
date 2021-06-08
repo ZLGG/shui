@@ -29,8 +29,9 @@ public interface MarketPtSeckillMapper extends BaseMapper<MarketPtSeckill> {
             "FROM\n" +
             "\tgs_market_pt_seckill_goods_spu goods\n" +
             "\tLEFT JOIN gs_market_pt_seckill_merchant merchant ON merchant.seckill_id = goods.seckill_id \n" +
+            "\tLEFT JOIN gs_goods_info g on g.id = goods.goods_id \n" +
             "WHERE\n" +
-            "\tgoods.flag = 0 \n" +
+            "\tgoods.flag = 0 and g.goods_state = 20 \n" +
             "\tAND merchant.flag = 0 \n" +
             "\tAND merchant.state = 10 AND ${ew.sqlSegment}")
     IPage<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods(IPage<BbcMarketSeckillVO.SeckillGoodsVO> pager,@Param(Constants.WRAPPER) QueryWrapper<BbcMarketSeckillQTO.QTO> qw);
