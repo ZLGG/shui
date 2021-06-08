@@ -28,18 +28,15 @@ public abstract class SysUserDTO implements Serializable {
 
         @ApiModelProperty(value = "管理平台用户id", hidden = true)
         private String id;
-
-        @ApiModelProperty("登陆名")
-        private String name;
+        
+        @ApiModelProperty("手机号码")
+        private String phone;
 
         @ApiModelProperty("密码")
         private String pwd;
 
         @ApiModelProperty("状态")
         private Integer state;
-
-        @ApiModelProperty("头像")
-        private String headImg;
 
         @ApiModelProperty("账号类型")
         private Integer type;

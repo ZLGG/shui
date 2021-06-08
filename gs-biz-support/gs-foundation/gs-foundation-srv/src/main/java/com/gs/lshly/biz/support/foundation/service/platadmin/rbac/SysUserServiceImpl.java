@@ -86,6 +86,7 @@ public class SysUserServiceImpl implements ISysUserService {
         this.uniqueCheck(dto);
         SysUser user = new SysUser();
         BeanUtils.copyProperties(dto, user);
+        user.setName(dto.getPhone());
         user.setPwd(PwdUtil.encode(dto.getPwd()));
         repository.save(user);
     }
@@ -139,12 +140,12 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Override
     public void uniqueCheck(SysUserDTO.ETO dto) {
-		QueryWrapper qw = new QueryWrapper<SysUser>().eq("name", dto.getName());
+		QueryWrapper qw = new QueryWrapper<SysUser>().eq("phone", dto.getPhone());
         if (dto.getId() != null) {
             qw.ne("id", dto.getId());
         }
         if (repository.count(qw) > 0) {
-            throw new BusinessException("已有[" + dto.getName() + "]登陆名的管理账号");
+            throw new BusinessException("已有[" + dto.getPhone() + "]登陆名的管理账号");
         }
     }
 

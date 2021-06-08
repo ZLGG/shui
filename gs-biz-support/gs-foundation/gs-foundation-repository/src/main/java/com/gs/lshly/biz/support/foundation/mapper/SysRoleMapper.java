@@ -20,6 +20,6 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
 
     @Select("select r.id roleId,r.name roleName from gs_sys_user_role ur" +
             " inner join gs_sys_role r on ur.role_id=r.id" +
-            " where ur.user_id=#{userId}")
+            " where ur.user_id=#{userId} and ur.flag = 0")
     List<SysUserVO.UserRoleVO> userRoles(@Param("userId") String userId);
 }
