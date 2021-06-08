@@ -28,7 +28,7 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc {
     private IMarketPtSeckillTimeQuantumService marketPtSeckillTimeQantumService;
 
     @Override
-    public PageData<MarketPtSeckillVO.activityListVO> pageData(MarketPtSeckillQTO.QTO qto) {
+    public PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto) {
         return marketPtSeckillService.pageData(qto);
     }
 
@@ -38,7 +38,7 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc {
         marketPtSeckillService.addMarketPtSeckill(eto);
     }
 
-    @Override
+/*    @Override
     public void deleteMarketPtSeckill(MarketPtSeckillDTO.IdListDTO dto) {
         marketPtSeckillService.deleteMarketPtSeckill(dto);
     }
@@ -47,15 +47,20 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc {
     @Override
     public void editMarketPtSeckill(MarketPtSeckillDTO.ETO eto) {
         marketPtSeckillService.editMarketPtSeckill(eto);
+    }*/
+
+    @Override
+    public MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto) {
+        return marketPtSeckillService.detailMarketPtSeckill(qto);
     }
 
     @Override
-    public MarketPtSeckillVO.activityListVO detailMarketPtSeckill(MarketPtSeckillDTO.IdDTO dto) {
-        return marketPtSeckillService.detailMarketPtSeckill(dto);
+    public void addGoods(MarketPtSeckillQTO.GoodsQTO qto) {
+
     }
 
-    @Override
+/*    @Override
     public List<MarketPtSeckillVO.ListVO> list() {
         return marketPtSeckillService.list();
-    }
+    }*/
 }

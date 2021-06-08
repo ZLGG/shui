@@ -1,4 +1,5 @@
 package com.gs.lshly.common.struct.platadmin.trade.vo;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -7,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 
+import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtSeckillDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,9 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- *
- *
- *
  * @author yingjun
  * @date 2021年5月7日 上午10:38:40
  */
@@ -101,6 +100,7 @@ public class MarketPtSeckillVO implements Serializable {
 
 
     }
+
     @Data
     @ApiModel("MarketPtSeckillVO.updateDTO")
     @AllArgsConstructor
@@ -244,7 +244,7 @@ public class MarketPtSeckillVO implements Serializable {
         private String seckillCategory;
 
         @ApiModelProperty("参加秒杀的类目名字")
-        private List<MarketPtSeckillVO.CategoryJoinSearchVO>  seckillCategoryName;
+        private List<MarketPtSeckillVO.CategoryJoinSearchVO> seckillCategoryName;
 
         @ApiModelProperty("会员限购数量上限")
         private Integer buyMax;
@@ -256,9 +256,10 @@ public class MarketPtSeckillVO implements Serializable {
         @ApiModelProperty("商品折扣范围")
         private String discountRange;
     }
+
     @Data
     @ApiModel("MarketPtSeckillVO.CategoryJoinSearchVO")
-    public static class CategoryJoinSearchVO implements Serializable{
+    public static class CategoryJoinSearchVO implements Serializable {
         @ApiModelProperty(value = "商品类别id")
         private String id;
 
@@ -307,9 +308,10 @@ public class MarketPtSeckillVO implements Serializable {
         @ApiModelProperty("Sku信息")
         private List<MarketPtSeckillVO.SeckillGoodsSku> skuInfo;
     }
+
     /**
      * 商家秒杀报名——》操作——》查看详情-->参加秒杀的商品-->查看sku
-     * */
+     */
     @Data
     @Accessors(chain = true)
     @AllArgsConstructor
@@ -335,15 +337,26 @@ public class MarketPtSeckillVO implements Serializable {
     @Data
     @Accessors(chain = true)
     @ApiModel("MarketPtSeckillVO.activityListVO")
-    public static class activityListVO implements Serializable {
+    public static class ActivityListVO implements Serializable {
         @ApiModelProperty("活动id")
         private String id;
+
+/*        @ApiModelProperty("活动状态(10:未开始,20:进行中,30:已结束)")
+        private Integer state;*/
 
         @ApiModelProperty("活动名称")
         private String name;
 
-        @ApiModelProperty("活动状态(10:未开始,20:进行中,30:已结束)")
+        @ApiModelProperty("状态(10:未开始, 20:进行, 30:已结束)")
         private Integer state;
+
+        @ApiModelProperty("报名开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime signStartTime;
+
+        @ApiModelProperty("报名结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime signEndTime;
 
         @ApiModelProperty("开售开始时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -352,5 +365,32 @@ public class MarketPtSeckillVO implements Serializable {
         @ApiModelProperty("开售结束时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime seckillEndTime;
+
+/*        @ApiModelProperty("创建时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime cdate;*/
+    }
+
+    @Data
+    @Accessors(chain = true)
+    @ApiModel("MarketPtSeckillVO.ActivityVO")
+    public static class ActivityVO extends ActivityListVO implements Serializable {
+        @ApiModelProperty("场次时间")
+        private List<MarketPtSeckillVO.SessionVO> sessionTime;
+    }
+
+    @Data
+    @ApiModel("MarketPtSeckillVO.SessionVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SessionVO implements Serializable {
+
+        @ApiModelProperty("场次开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime startTime;
+
+        @ApiModelProperty("场次结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime endTime;
     }
 }

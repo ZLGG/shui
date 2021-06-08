@@ -15,17 +15,19 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
  */
 public interface IMarketPtSeckillService {
 
-    PageData<MarketPtSeckillVO.activityListVO> pageData(MarketPtSeckillQTO.QTO qto);
+    PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto);
 
     void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto);
 
+    MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto);
+/*
     void deleteMarketPtSeckill(MarketPtSeckillDTO.IdListDTO dto);
 
 
     void editMarketPtSeckill(MarketPtSeckillDTO.ETO eto);
 
-    MarketPtSeckillVO.activityListVO detailMarketPtSeckill(MarketPtSeckillDTO.IdDTO dto);
 
-    List<MarketPtSeckillVO.ListVO> list();
+
+    List<MarketPtSeckillVO.ListVO> list();*/
 
 }

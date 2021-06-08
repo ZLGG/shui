@@ -52,44 +52,51 @@ public class MarketPtSeckillController {
     private IMarketPtSeckillTimeQuantumRpc marketPtSeckillTimeQuantumRpc;
 
     @ApiOperation("平台秒杀列表-v1.1.0")
-    @GetMapping("")
+    @PostMapping("")
     @Func(code = "view", name = "查")
-    public ResponseData<PageData<MarketPtSeckillVO.activityListVO>> list(MarketPtSeckillQTO.QTO qto) {
+    public ResponseData<PageData<MarketPtSeckillVO.ActivityListVO>> list(@Valid @RequestBody MarketPtSeckillQTO.QTO qto) {
         return ResponseData.data(marketPtSeckillRpc.pageData(qto));
     }
 
-    @ApiOperation("平台秒杀详情-v1.1.0")
+    @ApiOperation("平台秒杀详情(编辑)-v1.1.0")
     @GetMapping(value = "/{id}")
     @Func(code = "view", name = "查")
-    public ResponseData<MarketPtSeckillVO.activityListVO> get(@PathVariable String id) {
-        return ResponseData.data(marketPtSeckillRpc.detailMarketPtSeckill(new MarketPtSeckillDTO.IdDTO(id)));
+    public ResponseData<MarketPtSeckillVO.ActivityVO> get(MarketPtSeckillQTO.IdQTO qto) {
+        return ResponseData.data(marketPtSeckillRpc.detailMarketPtSeckill(qto));
     }
 
-    @ApiOperation("新增平台秒杀-v1.1.0")
-    @PostMapping("")
+    @ApiOperation("保存平台秒杀-v1.1.0")
+    @PostMapping("/add")
     @Func(code = "add", name = "增")
-    public ResponseData<Void> add(@RequestBody MarketPtSeckillDTO.ETO dto) {
+    public ResponseData<Void> addAndUpdate(@RequestBody MarketPtSeckillDTO.ETO dto) {
         marketPtSeckillRpc.addMarketPtSeckill(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("批量删除平台秒杀-v1.1.0")
+    @ApiOperation("商品列表-v1.1.0")
+    @PostMapping("/goods")
+    @Func(code = "view", name = "查")
+    public ResponseData<Void> addGoods(@RequestBody MarketPtSeckillQTO.GoodsQTO qto) {
+        marketPtSeckillRpc.addGoods(qto);
+        return ResponseData.success(MsgConst.ADD_SUCCESS);
+    }
+/*    @ApiOperation("批量删除平台秒杀-v1.1.0")
     @PostMapping(value = "/deleteBatches")
     @Func(code = "delete", name = "删除")
     public ResponseData<Void> delete(@Valid @RequestBody MarketPtSeckillDTO.IdListDTO dto) {
         marketPtSeckillRpc.deleteMarketPtSeckill(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
-    }
+    }*/
 
 
-    @ApiOperation("修改平台秒杀-v1.1.0")
+/*    @ApiOperation("修改平台秒杀-v1.1.0")
     @PutMapping(value = "/{id}")
     @Func(code = "edit", name = "改")
-    public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody MarketPtSeckillDTO.ETO eto) {
+    public ResponseData<Void> update() {
         eto.setId(id);
         marketPtSeckillRpc.editMarketPtSeckill(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
-    }
+    }*/
 
 /*    @ApiOperation("活动商家参与记录-v1.1.0")
     @GetMapping("/merchant")
@@ -116,7 +123,7 @@ public class MarketPtSeckillController {
      return ResponseData.data(marketPtSeckillRpc.getActivity());
      }
      */
-    @ApiOperation("活动时间段列表-v1.1.0")
+  /*  @ApiOperation("活动时间段列表-v1.1.0")
     @GetMapping("/time")
     @Func(code = "view", name = "查")
     public ResponseData<PageData<MarketPtSeckillTimeQuantumVO.ListVO>> pageTimeQuantumlist(MarketPtSeckillTimeQuantumQTO.QTO qto) {
@@ -151,5 +158,5 @@ public class MarketPtSeckillController {
     public ResponseData<Void> deleteTimeQuantum(MarketPtSeckillTimeQuantumDTO.IdDTO dto) {
         marketPtSeckillTimeQuantumRpc.deleteTimeQuantum(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
-    }
+    }*/
 }

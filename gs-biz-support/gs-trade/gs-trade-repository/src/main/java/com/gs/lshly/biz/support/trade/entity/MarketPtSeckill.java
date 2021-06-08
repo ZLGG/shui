@@ -119,21 +119,21 @@ public class MarketPtSeckill extends Model {
     /**
      * 创建时间
      */
-     @TableField(fill = FieldFill.INSERT)
-     private LocalDateTime cdate;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime cdate;
 
-     /**
+    /**
      * 更新时间
      */
-     @TableField(fill = FieldFill.INSERT_UPDATE)
-     private LocalDateTime udate;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime udate;
 
-     /**
+    /**
      * 逻辑删除标记
      */
-     @TableField(fill = FieldFill.INSERT)
-     @TableLogic
-     private Boolean flag;
+    @TableField(fill = FieldFill.INSERT)
+    @TableLogic
+    private Boolean flag;
 
     /**
      * 提醒方式[10=短信 20=邮件]
@@ -142,4 +142,9 @@ public class MarketPtSeckill extends Model {
 
 
     private Integer timeQuantum;
+
+    /**
+     * 活动状态
+     */
+    private Integer state;
 }

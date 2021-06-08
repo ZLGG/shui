@@ -1,4 +1,5 @@
 package com.gs.lshly.common.struct.platadmin.trade.qto;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
@@ -8,13 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 /**
-* @author zdf
-* @since 2020-12-22
-*/
+ * @author zdf
+ * @since 2020-12-22
+ */
 public abstract class TradeRightsQTO implements Serializable {
 
     @Data
@@ -52,19 +55,19 @@ public abstract class TradeRightsQTO implements Serializable {
         private String rightsId;
 
         @ApiModelProperty("支付开始时间(介于大于等于)")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payStartDate;
 
         @ApiModelProperty("支付开始时间(介于小于等于)")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime payStartLittleDate;
 
         @ApiModelProperty("支付开始时间状态[10=晚于 20=早于 30=是 40=介于]")
         private Integer payStartDateState;
 
 
-
     }
+
     @Data
     @ApiModel("TradeRightsQTO.StateDTO")
     @AllArgsConstructor
@@ -102,6 +105,7 @@ public abstract class TradeRightsQTO implements Serializable {
 /*        @ApiModelProperty("支付创建时间状态[10=晚于 20=早于 30=是 40=介于]")
         private Integer cdateState;*/
     }
+
     @Data
     @ApiModel("TradeRightsQTO.StateDTO")
     @AllArgsConstructor

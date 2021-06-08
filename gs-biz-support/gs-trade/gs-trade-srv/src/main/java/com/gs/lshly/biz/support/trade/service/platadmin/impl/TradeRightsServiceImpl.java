@@ -416,23 +416,19 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
 
     }
 
-    private List<String> getImage(String images) {
+    private String getImage(String images) {
         if (images != null && !images.equals("{}")) {
             JSONArray arr = JSONArray.parseArray(images);
             if (ObjectUtils.isEmpty(arr)) {
                 return null;
             }
-            List<String> tradeRightsImgList = new ArrayList<>();
-            for (int i = 0; i < arr.size(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                String imgUrl = obj.getString("imgSrc");
-                tradeRightsImgList.add(imgUrl);
-            }
-
-            return tradeRightsImgList;
+            JSONObject obj = arr.getJSONObject(0);
+            String imgUrl = obj.getString("imgSrc");
+            return imgUrl;
         }
         return null;
     }
+
 
     @Override
     public PageData<TradeRightsVO.RightsRefundListVO> getRightsRefundList(TradeRightsQTO.StateRefundDTO qto) {
@@ -772,7 +768,10 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
         tradeRightsLog.setState(BbcTradeRightsStateEnum.平台同意.getCode());
-        //tradeRightsLog.setContent("平台")
+        if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
+            tradeRightsLog.setContent("平台处理说明:" + tradeRights.getPlatformCheckReason());
+        }
+        iTradeRightsLogRepository.save(tradeRightsLog);
     }
 
     @Override
@@ -787,17 +786,12 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         tradeRights.setState(BbcTradeRightsStateEnum.平台驳回.getCode());
         tradeRights.setCheckState(TradeRightsNewStateEnum.已完成.getCode());
         iTradeRightsRepository.updateById(tradeRights);
-    }
-
-    private List<TradeRightsImg> getRightsImg(String id, String tradeId) {
-        QueryWrapper<TradeRightsImg> query = MybatisPlusUtil.query();
-        query.and(i -> i.eq("rights_id", id));
-        query.and(i -> i.eq("trade_id", tradeId));
-        List<TradeRightsImg> list = iTradeRightsImgRepository.list(query);
-        if (ObjectUtils.isNotEmpty(list)) {
-            return list;
+        TradeRightsLog tradeRightsLog = new TradeRightsLog();
+        tradeRightsLog.setRightsId(tradeRights.getId());
+        tradeRightsLog.setState(BbcTradeRightsStateEnum.平台驳回.getCode());
+        if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
+            tradeRightsLog.setContent("平台处理说明:" + tradeRights.getPlatformCheckReason());
         }
-        return new ArrayList<>();
+        iTradeRightsLogRepository.save(tradeRightsLog);
     }
-
 }

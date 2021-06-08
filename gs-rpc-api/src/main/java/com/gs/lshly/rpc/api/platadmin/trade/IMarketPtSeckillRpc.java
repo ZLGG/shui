@@ -23,16 +23,18 @@ public interface IMarketPtSeckillRpc {
 	 * @param qto
 	 * @return
 	 */
-    PageData<MarketPtSeckillVO.activityListVO> pageData(MarketPtSeckillQTO.QTO qto);
+    PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto);
 
     void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto);
 
-    void deleteMarketPtSeckill(MarketPtSeckillDTO.IdListDTO dto);
+/*    void deleteMarketPtSeckill(MarketPtSeckillDTO.IdListDTO dto);
 
-    void editMarketPtSeckill(MarketPtSeckillDTO.ETO eto);
+    void editMarketPtSeckill(MarketPtSeckillDTO.ETO eto);*/
 
-    MarketPtSeckillVO.activityListVO detailMarketPtSeckill(MarketPtSeckillDTO.IdDTO dto);
+    MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto);
 
-    List<MarketPtSeckillVO.ListVO> list();
+	void addGoods(MarketPtSeckillQTO.GoodsQTO qto);
+
+	/*    List<MarketPtSeckillVO.ListVO> list();*/
 
 }

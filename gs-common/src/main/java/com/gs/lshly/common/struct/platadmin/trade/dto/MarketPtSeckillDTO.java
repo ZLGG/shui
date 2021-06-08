@@ -1,4 +1,5 @@
 package com.gs.lshly.common.struct.platadmin.trade.dto;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,22 +16,42 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 
- *
- * 
  * @author yingjun
  * @date 2021年5月7日 上午11:21:54
  */
 @SuppressWarnings("serial")
 public abstract class MarketPtSeckillDTO implements Serializable {
 
-	@EqualsAndHashCode(callSuper=false)
+    @EqualsAndHashCode(callSuper = false)
     @Data
     @ApiModel("MarketPtSeckillDTO.ETO")
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
+        @ApiModelProperty(value = "id")
+        private String id;
 
-        @ApiModelProperty(value = "id",hidden = true)
+        @ApiModelProperty("活动名称")
+        private String name;
+
+        @ApiModelProperty("报名开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime signStartTime;
+
+        @ApiModelProperty("报名结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime signEndTime;
+
+        @ApiModelProperty("开售开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime seckillStartTime;
+
+        @ApiModelProperty("开售结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime seckillEndTime;
+
+        @ApiModelProperty("场次时间")
+        private List<MarketPtSeckillDTO.SessionDTO> sessionTime;
+/*        @ApiModelProperty(value = "id",hidden = true)
         private String id;
 
         @ApiModelProperty("秒杀名称")
@@ -91,7 +112,7 @@ public abstract class MarketPtSeckillDTO implements Serializable {
 
 
         @ApiModelProperty("商品类目id")
-        private List<String> categoryIds;
+        private List<String> categoryIds;*/
     }
 
     @Data
@@ -102,6 +123,7 @@ public abstract class MarketPtSeckillDTO implements Serializable {
         @ApiModelProperty(value = "秒杀id")
         private String id;
     }
+
     @Data
     @ApiModel("MarketPtSeckillDTO.IdListDTO")
     @AllArgsConstructor
@@ -112,66 +134,105 @@ public abstract class MarketPtSeckillDTO implements Serializable {
     }
 
     @Data
-    @ApiModel("MarketPtSeckillDTO.updateDTO")
+    @ApiModel("MarketPtSeckillDTO.UpdateDTO")
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class updateDTO extends BaseDTO {
-        /**
-         * 配置秒杀表id
-         */
-        @ApiModelProperty(value = "配置秒杀表id")
+    public static class UpdateDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "id")
         private String id;
 
-        /**
-         * pc端满减
-         */
-        @ApiModelProperty(value = "pc端满减")
-        private Integer pcCut;
+        @ApiModelProperty("活动名称")
+        private String name;
 
-        /**
-         * pc端满赠
-         */
-        @ApiModelProperty(value = "pc端满赠")
-        private Integer pcGift;
+        @ApiModelProperty("报名开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime signStartTime;
 
-        /**
-         * pc端团购
-         */
-        @ApiModelProperty(value = "pc端团购")
-        private Integer pcGroupbuy;
+        @ApiModelProperty("报名结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime signEndTime;
 
-        /**
-         * pc端满折
-         */
-        @ApiModelProperty(value = "pc端满折")
-        private Integer pcDiscount;
+        @ApiModelProperty("开售开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime seckillStartTime;
 
-        /**
-         * h5端满减
-         */
-        @ApiModelProperty(value = "h5端满减")
-        private Integer h5Cut;
+        @ApiModelProperty("开售结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime seckillEndTime;
 
-        /**
-         * h5端满赠
-         */
-        @ApiModelProperty(value = "h5端满赠")
-        private Integer h5Gift;
+        @ApiModelProperty("场次时间")
+        private List<MarketPtSeckillDTO.SessionDTO> sessionTime;
 
-        /**
-         * h5端团购
-         */
-        @ApiModelProperty(value = "h5端团购")
-        private Integer h5Groupbuy;
 
-        /**
-         * h5端满折
-         */
-        @ApiModelProperty(value = "h5端满折")
-        private Integer h5Discount;
+//        /**
+//         * 配置秒杀表id
+//         */
+//        @ApiModelProperty(value = "配置秒杀表id")
+//        private String id;
+//
+//        /**
+//         * pc端满减
+//         */
+//        @ApiModelProperty(value = "pc端满减")
+//        private Integer pcCut;
+//
+//        /**
+//         * pc端满赠
+//         */
+//        @ApiModelProperty(value = "pc端满赠")
+//        private Integer pcGift;
+//
+//        /**
+//         * pc端团购
+//         */
+//        @ApiModelProperty(value = "pc端团购")
+//        private Integer pcGroupbuy;
+//
+//        /**
+//         * pc端满折
+//         */
+//        @ApiModelProperty(value = "pc端满折")
+//        private Integer pcDiscount;
+//
+//        /**
+//         * h5端满减
+//         */
+//        @ApiModelProperty(value = "h5端满减")
+//        private Integer h5Cut;
+//
+//        /**
+//         * h5端满赠
+//         */
+//        @ApiModelProperty(value = "h5端满赠")
+//        private Integer h5Gift;
+//
+//        /**
+//         * h5端团购
+//         */
+//        @ApiModelProperty(value = "h5端团购")
+//        private Integer h5Groupbuy;
+//
+//        /**
+//         * h5端满折
+//         */
+//        @ApiModelProperty(value = "h5端满折")
+//        private Integer h5Discount;
 
     }
 
+    @Data
+    @ApiModel("MarketPtSeckillDTO.SessionDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SessionDTO implements Serializable {
+        @ApiModelProperty("场次开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime startTime;
 
+        @ApiModelProperty("场次结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime endTime;
+    }
 
 }

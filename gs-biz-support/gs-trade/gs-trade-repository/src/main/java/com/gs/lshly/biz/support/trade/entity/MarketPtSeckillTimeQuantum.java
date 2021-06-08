@@ -28,8 +28,14 @@ public class MarketPtSeckillTimeQuantum extends Model {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+
+    private String id;
+
+
+    /**
+     * 秒杀活动id
+     */
+    private String seckillId;
 
     /**
      * 时间段名称
@@ -39,29 +45,29 @@ public class MarketPtSeckillTimeQuantum extends Model {
     /**
      * 开始时间
      */
-    private String startTime;
+    private LocalDateTime startTime;
 
     /**
      * 结束时间
      */
-    private String endTime;
+    private LocalDateTime endTime;
 
     /**
      * 创建时间
      */
-     @TableField(fill = FieldFill.INSERT)
-     private LocalDateTime cdate;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime cdate;
 
-     /**
+    /**
      * 更新时间
      */
-     @TableField(fill = FieldFill.INSERT_UPDATE)
-     private LocalDateTime udate;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime udate;
 
-     /**
+    /**
      * 逻辑删除标记
      */
-     @TableField(fill = FieldFill.INSERT)
-     @TableLogic
-     private Boolean flag;
+    @TableField(fill = FieldFill.INSERT)
+    @TableLogic
+    private Boolean flag;
 }

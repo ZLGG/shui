@@ -1,11 +1,15 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
 import com.gs.lshly.common.enums.MarketPtSeckillActivityEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillStatusEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillTimeQuantumEnum;
@@ -19,11 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivity;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivityGoodsCategory;
-import com.gs.lshly.biz.support.trade.entity.MarketPtActivityJurisdiction;
-import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
-import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsCategory;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsCategoryRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtSeckillService;
@@ -55,14 +54,17 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     private IMarketPtSeckillRepository repository;
 
     @Autowired
+    private IMarketPtSeckillTimeQuantumRepository marketPtSeckillTimeQuantumRepository;
+
+    @Autowired
     private IMarketPtSeckillGoodsCategoryRepository categoryRepository;
 
     @DubboReference
     private IGoodsCategoryRpc iGoodsCategoryRpc;
 
     @Override
-    public PageData<MarketPtSeckillVO.activityListVO> pageData(MarketPtSeckillQTO.QTO qto) {
-        QueryWrapper<MarketPtSeckill> wrapper = MybatisPlusUtil.query();
+    public PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto) {
+/*        QueryWrapper<MarketPtSeckill> wrapper = MybatisPlusUtil.query();
         wrapper.orderByDesc("cdate");
         if (ObjectUtil.isNotEmpty(qto) && StrUtil.isNotEmpty(qto.getAcName())) {
             wrapper.and(i -> i.like("name", qto.getAcName()));
@@ -70,32 +72,134 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         IPage<MarketPtSeckill> page = MybatisPlusUtil.pager(qto);
         repository.page(page, wrapper);
         List<MarketPtSeckill> pageRecords = page.getRecords();
-        List<MarketPtSeckillVO.activityListVO> listVOS = new ArrayList<>();
+        List<MarketPtSeckillVO.ActivityListVO> listVOS = new ArrayList<>();
         for (MarketPtSeckill pageRecord : pageRecords) {
-            MarketPtSeckillVO.activityListVO activityListVO = getActivityListVO(pageRecord);
+            MarketPtSeckillVO.ActivityListVO activityListVO = getActivityListVO(pageRecord);
             listVOS.add(activityListVO);
+        }
+        return MybatisPlusUtil.toPageData(listVOS, qto.getPageNum(), qto.getPageSize(), page.getTotal());*/
+        QueryWrapper<MarketPtSeckill> query = MybatisPlusUtil.query();
+        if (StrUtil.isNotEmpty(qto.getAcName())) {
+            query.and(i -> i.like("name", qto.getAcName()));
+        }
+        if (ObjectUtil.isNotEmpty(qto.getState())) {
+            query.and(i -> i.eq("state", qto.getState()));
+        }
+        if (ObjectUtil.isNotEmpty(qto.getStartTime())) {
+            query.and(i -> i.ge("seckill_start_time", qto.getStartTime()))/*.or(i -> i.ge("seckill_start_time", qto.getStartTime()))*/;
+        }
+        if (ObjectUtil.isNotEmpty(qto.getEndTime())) {
+            query.and(i -> i.le("seckill_end_time", qto.getEndTime()))/*.or(i -> i.ge("seckill_end_time", qto.getStartTime()))*/;
+        }
+        query.orderByDesc("cdate");
+        IPage<MarketPtSeckill> page = MybatisPlusUtil.pager(qto);
+        repository.page(page, query);
+        List<MarketPtSeckill> pageRecords = page.getRecords();
+        List<MarketPtSeckillVO.ActivityListVO> listVOS = new ArrayList<>();
+        if (CollUtil.isNotEmpty(pageRecords)) {
+            for (MarketPtSeckill pageRecord : pageRecords) {
+                MarketPtSeckillVO.ActivityListVO activityListVO = getActivityListVO(pageRecord);
+                repository.updateById(pageRecord);
+                listVOS.add(activityListVO);
+            }
         }
         return MybatisPlusUtil.toPageData(listVOS, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
 
-    private MarketPtSeckillVO.activityListVO getActivityListVO(MarketPtSeckill pageRecord) {
-        LocalDateTime startTime = pageRecord.getSeckillStartTime();
-        LocalDateTime endTime = pageRecord.getSeckillEndTime();
-        MarketPtSeckillVO.activityListVO activityListVO = new MarketPtSeckillVO.activityListVO();
-        BeanUtils.copyProperties(pageRecord, activityListVO);
-        if (DateUtil.compareDate(DateUtil.getTime(), startTime.toString())) {
-            if (DateUtil.compareDate(endTime.toString(), DateUtil.getTime())) {
-                activityListVO.setState(MarketPtSeckillActivityEnum.进行中.getCode());
-            } else {
-                activityListVO.setState(MarketPtSeckillActivityEnum.已结束.getCode());
+    @Override
+    @Transactional
+    public void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto) {
+        if (!ObjectUtil.isAllNotEmpty(eto, eto.getSignStartTime(), eto.getSignEndTime(), eto.getSeckillStartTime(), eto.getSeckillEndTime(), eto.getName())) {
+            throw new BusinessException("参数不能未空!");
+        }
+        if (StrUtil.isEmpty(eto.getId())) {
+            MarketPtSeckill marketPtSeckill = new MarketPtSeckill();
+            BeanUtils.copyProperties(eto, marketPtSeckill);
+            marketPtSeckill.setState(MarketPtSeckillActivityEnum.未开始.getCode());
+            repository.save(marketPtSeckill);
+            for (MarketPtSeckillDTO.SessionDTO sessionDTO : eto.getSessionTime()) {
+                MarketPtSeckillTimeQuantum marketPtSeckillTimeQuantum = new MarketPtSeckillTimeQuantum();
+                marketPtSeckillTimeQuantum.setSeckillId(marketPtSeckill.getId());
+                marketPtSeckillTimeQuantum.setStartTime(sessionDTO.getStartTime());
+                marketPtSeckillTimeQuantum.setEndTime(sessionDTO.getEndTime());
+                marketPtSeckillTimeQuantumRepository.save(marketPtSeckillTimeQuantum);
             }
         } else {
-            activityListVO.setState(MarketPtSeckillActivityEnum.未开始.getCode());
+            MarketPtSeckill marketPtSeckill = repository.getById(eto.getId());
+            if (ObjectUtil.isEmpty(marketPtSeckill)) {
+                throw new BusinessException("未查询到活动信息。");
+            }
+            BeanUtils.copyProperties(eto, marketPtSeckill);
+            repository.updateById(marketPtSeckill);
+            QueryWrapper<MarketPtSeckillTimeQuantum> query = MybatisPlusUtil.query();
+            query.eq("seckill_id", eto.getId());
+            marketPtSeckillTimeQuantumRepository.remove(query);
+            for (MarketPtSeckillDTO.SessionDTO sessionDTO : eto.getSessionTime()) {
+                MarketPtSeckillTimeQuantum marketPtSeckillTimeQuantum = new MarketPtSeckillTimeQuantum();
+                marketPtSeckillTimeQuantum.setSeckillId(marketPtSeckill.getId());
+                marketPtSeckillTimeQuantum.setStartTime(sessionDTO.getStartTime());
+                marketPtSeckillTimeQuantum.setEndTime(sessionDTO.getEndTime());
+                marketPtSeckillTimeQuantumRepository.save(marketPtSeckillTimeQuantum);
+            }
         }
-        return activityListVO;
     }
 
     @Override
+    public MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto) {
+        if (StrUtil.isEmpty(qto.getId())) {
+            throw new BusinessException("参数不能为空");
+        }
+        MarketPtSeckill marketPtSeckill = repository.getById(qto.getId());
+        if (ObjectUtil.isEmpty(marketPtSeckill)) {
+            throw new BusinessException("未查询到活动信息!");
+        }
+        MarketPtSeckillVO.ActivityVO activityVO = new MarketPtSeckillVO.ActivityVO();
+        BeanUtils.copyProperties(marketPtSeckill, activityVO);
+        QueryWrapper<MarketPtSeckillTimeQuantum> query = MybatisPlusUtil.query();
+        query.eq("seckill_id", marketPtSeckill.getId());
+        query.orderByAsc("start_time");
+        List<MarketPtSeckillTimeQuantum> marketPtSeckillTimeQuantumList = marketPtSeckillTimeQuantumRepository.list(query);
+        List<MarketPtSeckillVO.SessionVO> sessionVOList = new ArrayList<>();
+        if (CollUtil.isNotEmpty(marketPtSeckillTimeQuantumList)) {
+            for (MarketPtSeckillTimeQuantum marketPtSeckillTimeQuantum : marketPtSeckillTimeQuantumList) {
+                MarketPtSeckillVO.SessionVO sessionVO = new MarketPtSeckillVO.SessionVO();
+                sessionVO.setStartTime(marketPtSeckillTimeQuantum.getStartTime());
+                sessionVO.setEndTime(marketPtSeckillTimeQuantum.getEndTime());
+                sessionVOList.add(sessionVO);
+            }
+        }
+        activityVO.setSessionTime(sessionVOList);
+        return activityVO;
+    }
+
+    private MarketPtSeckillVO.ActivityListVO getActivityListVO(MarketPtSeckill pageRecord) {
+        //等待开启定时任务 todo
+        String startTime = pageRecord.getSeckillStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String endTime = pageRecord.getSeckillEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        MarketPtSeckillVO.ActivityListVO activityListVO = new MarketPtSeckillVO.ActivityListVO();
+        if (DateUtil.compareDate(DateUtil.getTime(), startTime)) {
+            //现在的时间大于开始时间
+            if (DateUtil.compareDate(endTime, DateUtil.getTime())) {
+                //结束的时间大于现在的时间
+                if (!pageRecord.getState().equals(MarketPtSeckillActivityEnum.进行中.getCode())) {
+                    pageRecord.setState(MarketPtSeckillActivityEnum.进行中.getCode());
+                }
+            } else {
+                //结束的时间小于现在的时间
+                if (!pageRecord.getState().equals(MarketPtSeckillActivityEnum.已结束.getCode())) {
+                    pageRecord.setState(MarketPtSeckillActivityEnum.已结束.getCode());
+                }
+            }
+        } else {
+            if (!pageRecord.getState().equals(MarketPtSeckillActivityEnum.未开始.getCode())) {
+                pageRecord.setState(MarketPtSeckillActivityEnum.未开始.getCode());
+            }
+        }
+        BeanUtils.copyProperties(pageRecord, activityListVO);
+        return activityListVO;
+    }
+
+/*    @Override
     @Transactional
     public void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto) {
         if (null == eto) {
@@ -125,9 +229,9 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             categoryRepository.save(marketPtSeckillGoodsCategory);
         }
 
-    }
+    }*/
 
-    private void checkTime(MarketPtSeckillDTO.ETO eto) {
+ /*   private void checkTime(MarketPtSeckillDTO.ETO eto) {
         if (ObjectUtils.isEmpty(eto.getSeckillEndTime())) {
             throw new BusinessException("时间为空");
         }
@@ -187,17 +291,17 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     }
 
     @Override
-    public MarketPtSeckillVO.activityListVO detailMarketPtSeckill(MarketPtSeckillDTO.IdDTO dto) {
-        if (StrUtil.isEmpty(dto.getId())) {
+    public MarketPtSeckillVO.ActivityListVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto) {
+        if (StrUtil.isEmpty(qto.getId())) {
             throw new BusinessException("参数不能为空");
         }
-        MarketPtSeckill marketPtSeckill = repository.getById(dto.getId());
+        MarketPtSeckill marketPtSeckill = repository.getById(qto.getId());
         //       MarketPtSeckillVO.activityListVO activityListVO = new MarketPtSeckillVO.activityListVO();
         if (ObjectUtils.isEmpty(marketPtSeckill)) {
             throw new BusinessException("没有数据");
         }
         //       BeanUtils.copyProperties(marketPtSeckill, activityListVO);
-/*        QueryWrapper<MarketPtSeckillGoodsCategory> query = MybatisPlusUtil.query();
+*//*        QueryWrapper<MarketPtSeckillGoodsCategory> query = MybatisPlusUtil.query();
         query.and(i -> i.eq("seckill_id", dto.getId()));
         List<MarketPtSeckillGoodsCategory> list = categoryRepository.list(query);
         if (ObjectUtils.isNotEmpty(list)) {
@@ -209,8 +313,8 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
                 List<GoodsCategoryVO.CategoryJoinSearchVO> categoryJoinSearchVOS = iGoodsCategoryRpc.innerGetIdAndName(categoryIds);
                 activityListVO.setCategory(categoryJoinSearchVOS);
             }
-        }*/
-        MarketPtSeckillVO.activityListVO activityListVO = getActivityListVO(marketPtSeckill);
+        }*//*
+        MarketPtSeckillVO.ActivityListVO activityListVO = getActivityListVO(marketPtSeckill);
         return activityListVO;
     }
 
@@ -224,5 +328,5 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             ListVO.add(VO);
         }
         return ListVO;
-    }
+    }*/
 }
