@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/platadmin/coupon")
 @Api(tags = "优惠券管理")
-@Module(code = "listCoupon",parent = "transaction",name = "优惠券",index = 1)
+@Module(code = "listCoupon",parent = "marketing",name = "优惠券",index = 1)
 public class CouponController {
 
     @DubboReference

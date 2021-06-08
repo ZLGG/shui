@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/platadmin/ctccPtActivity")
 @Api(tags = "平台电信国际管理-v1.1.0")
-@Module(code = "listCtccPtActivity",parent = "transaction",name = "电信国际",index = 1)
+@Module(code = "listCtccPtActivity",parent = "marketing",name = "电信国际",index = 1)
 public class CtccPtActivityController {
     @DubboReference
     private ICtccPtActivityRpc iCtccPtActivityRpc;

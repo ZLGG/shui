@@ -29,7 +29,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/marketMerchantCard")
 @Api(tags = "平台优惠卷管理")
-@Module(code = "merchantCoupons",parent = "marketing",name = "商家优惠券",index = 5)
+//@Module(code = "merchantCoupons",parent = "marketing",name = "商家优惠券",index = 5)
 public class MerchMarketMerchantCardController {
 
     @DubboReference
@@ -37,20 +37,20 @@ public class MerchMarketMerchantCardController {
 
     @ApiOperation("平台优惠卷列表")
     @GetMapping("")
-    @Func(code = "view",name = "查")
+    ////@Func(code = "view",name = "查")
     public ResponseData<PageData<PCMerchMarketMerchantCardVO.DetailVO>> list(PCMerchMarketMerchantCardQTO.QTO qto) {
         return ResponseData.data(iMarketPtMerchantCardRpc.view(qto));
     }
 
     @ApiOperation("查看")
     @GetMapping(value = "/{id}")
-    @Func(code = "view",name = "查")
+    ////@Func(code = "view",name = "查")
     public ResponseData<PCMerchMarketMerchantCardVO.PlatformView> get(@PathVariable String id) {
         return ResponseData.data(iMarketPtMerchantCardRpc.get(new PCMerchMarketMerchantCardDTO.IdDTO(id)));
     }
     @ApiOperation("审核")
     @PostMapping(value = "/check/{id}")
-    @Func(code = "edit",name = "改")
+    //@Func(code = "edit",name = "改")
     public ResponseData<Void> check(@Valid @RequestBody PCMerchMarketMerchantCardDTO.Check dto) {
         iMarketPtMerchantCardRpc.check(dto);
 

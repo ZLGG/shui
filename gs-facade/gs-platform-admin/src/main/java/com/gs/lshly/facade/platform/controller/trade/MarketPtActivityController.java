@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platadmin/marketPtActivity")
 @Api(tags = "平台活动管理")
-@Module(code = "active",parent = "marketing",name = "活动",index = 6)
+//@Module(code = "active",parent = "marketing",name = "活动",index = 6)
 public class MarketPtActivityController {
 
     @DubboReference
@@ -35,21 +35,21 @@ public class MarketPtActivityController {
 
     @ApiOperation("平台活动列表")
     @GetMapping("")
-    @Func(code = "view",name = "查")
+    //@Func(code = "view",name = "查")
     public ResponseData<PageData<MarketPtActivityVO.ListVO>> list(MarketPtActivityQTO.QTO qto) {
         return ResponseData.data(MarketPtActivityRpc.pageData(qto));
     }
 
     @ApiOperation("平台活动详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view",name = "查")
+    //@Func(code = "view",name = "查")
     public ResponseData<MarketPtActivityVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(MarketPtActivityRpc.detailMarketPtActivity(new MarketPtActivityDTO.IdDTO(id)));
     }
 
     @ApiOperation("新增平台活动")
     @PostMapping("")
-    @Func(code = "add",name = "增")
+    //@Func(code = "add",name = "增")
     public ResponseData<Void> add(@RequestBody MarketPtActivityDTO.ETO dto) {
             MarketPtActivityRpc.addMarketPtActivity(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
@@ -57,7 +57,7 @@ public class MarketPtActivityController {
 
     @ApiOperation("批量删除平台活动")
     @PostMapping(value = "/deleteBatches")
-    @Func(code = "delete",name = "删除")
+    //@Func(code = "delete",name = "删除")
     public ResponseData<Void> delete(@Valid @RequestBody  MarketPtActivityDTO.IdListDTO dto) {
         MarketPtActivityRpc.deleteMarketPtActivity(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -66,7 +66,7 @@ public class MarketPtActivityController {
 
     @ApiOperation("修改平台活动")
     @PutMapping(value = "/{id}")
-    @Func(code = "edit",name = "改")
+    //@Func(code = "edit",name = "改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody MarketPtActivityDTO.ETO eto) {
         eto.setId(id);
         MarketPtActivityRpc.editMarketPtActivity(eto);
@@ -75,14 +75,14 @@ public class MarketPtActivityController {
 
     @ApiOperation("配置活动权限")
     @PutMapping(value = "/updateActivity")
-    @Func(code = "edit",name = "改")
+    //@Func(code = "edit",name = "改")
     public ResponseData<Void> updateActivity( @Valid @RequestBody MarketPtActivityDTO.updateDTO eto) {
         MarketPtActivityRpc.updateActivity(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
     @ApiOperation("获取活动权限")
     @PutMapping(value = "/getActivity")
-    @Func(code = "edit",name = "改")
+    //@Func(code = "edit",name = "改")
     public ResponseData<MarketPtActivityVO.updateDTO> getActivity() {
         return ResponseData.data(MarketPtActivityRpc.getActivity());
     }

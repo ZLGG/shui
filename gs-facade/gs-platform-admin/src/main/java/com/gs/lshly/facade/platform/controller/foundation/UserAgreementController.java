@@ -28,7 +28,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/userAgreement")
 @Api(tags = "会员入驻协议",description = " ")
-@Module(code = "membersRgreement", parent = "members", name = "会员注册协议配置", index = 6)
+//@Module(code = "membersRgreement", parent = "members", name = "会员注册协议配置", index = 6)
 public class UserAgreementController {
 
     @DubboReference
@@ -36,7 +36,7 @@ public class UserAgreementController {
 
     @ApiOperation("查询2B会员协议")
     @GetMapping(value = "")
-    @Func(code="view", name="查")
+//    @Func(code="view", name="查")
     public ResponseData<CommonUserAgreementVO.DetailVO> get() {
         CommonUserAgreementQTO.QTO qto  = new CommonUserAgreementQTO.QTO();
         qto.setUserType(UserTypeEnum._2B用户.getCode());
@@ -46,7 +46,7 @@ public class UserAgreementController {
 
     @ApiOperation("保存2B会员协议")
     @PostMapping(value = "")
-    @Func(code="edit", name="改")
+//    @Func(code="edit", name="改")
     public ResponseData<Void> update(@Valid @RequestBody CommonUserAgreementDTO.ETO eto) {
         eto.setUserType(UserTypeEnum._2B用户.getCode());
         commonUserAgreementRpc.editUserAgreement(eto);
@@ -55,7 +55,7 @@ public class UserAgreementController {
 
     @ApiOperation("查询2C会员协议")
     @GetMapping(value = "/2c")
-    @Func(code="view", name="查")
+//    @Func(code="view", name="查")
     public ResponseData<CommonUserAgreementVO.DetailVO> get2c() {
         CommonUserAgreementQTO.QTO qto  = new CommonUserAgreementQTO.QTO();
         qto.setUserType(UserTypeEnum._2C用户.getCode());
@@ -65,7 +65,7 @@ public class UserAgreementController {
 
     @ApiOperation("保存2C会员协议")
     @PostMapping(value = "/2c")
-    @Func(code="edit", name="改")
+//    @Func(code="edit", name="改")
     public ResponseData<Void> update2c(@Valid @RequestBody CommonUserAgreementDTO.ETO eto) {
         eto.setUserType(UserTypeEnum._2C用户.getCode());
         commonUserAgreementRpc.editUserAgreement(eto);

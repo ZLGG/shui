@@ -36,7 +36,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platadmin/settlement")
 @Api(tags = "结算管理")
-@Module(code = "summarySettlement",parent = "finance",name = "结算汇总" ,index = 1)
+//@Module(code = "summarySettlement",parent = "finance",name = "结算汇总" ,index = 1)
 public class SettlementController {
 
     @DubboReference
@@ -47,14 +47,14 @@ public class SettlementController {
 
     @ApiOperation("商家列表")
     @GetMapping("/merchantList")
-    @Func(code = "view" ,name = "查看")
+    //@Func(code = "view" ,name = "查看")
     public ResponseData<List<CommonShopVO.MerchantListVO>> merchantList() {
         return ResponseData.data(commonShopRpc.merchantList(new BaseDTO()));
     }
 
     @ApiOperation("结算数据汇总")
     @GetMapping("/summaryOrderData")
-    @Func(code = "add" ,name = "新增")
+    //@Func(code = "add" ,name = "新增")
     public ResponseData summaryOrderData() {
 
         //此处将订单表数据根据商家汇总到结算表
@@ -68,21 +68,21 @@ public class SettlementController {
 
     @ApiOperation("结算汇总表列表")
     @PostMapping("/list")
-    @Func(code = "view" ,name = "查看")
+    //@Func(code = "view" ,name = "查看")
     public ResponseData<PageData<TradeSettlementVO.ListVO>> list(@RequestBody TradeSettlementQTO.settlementList qto) {
         return ResponseData.data(iTradeSettlementRpc.pageData(qto));
     }
 
     @ApiOperation("结算汇总表详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view" ,name = "查看")
+    //@Func(code = "view" ,name = "查看")
     public ResponseData<TradeSettlementVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(iTradeSettlementRpc.detailTradeSettlement(new TradeSettlementDTO.IdOfDTO(id)));
     }
 
     @ApiOperation("新增结算汇总表")
     @PostMapping("")
-    @Func(code = "add" ,name = "新增")
+    //@Func(code = "add" ,name = "新增")
     public ResponseData<Void> add(@Valid @RequestBody TradeSettlementDTO.ETO dto) {
         iTradeSettlementRpc.addTradeSettlement(dto);
         return ResponseData.data(MsgConst.ADD_SUCCESS);
@@ -91,7 +91,7 @@ public class SettlementController {
     @ApiOperation("导出结算汇总表")
     @Log(module = "结算汇总表管理", func = "导出结算汇总表")
     @GetMapping(value = "/export")
-    @Func(code = "export" ,name = "导出")
+    //@Func(code = "export" ,name = "导出")
     public void export(TradeSettlementQTO.settlementList qo, @ApiIgnore HttpServletResponse response) throws Exception {
         ExportDataDTO exportData = iTradeSettlementRpc.export(qo);
         ExcelUtil.export(exportData, response);
@@ -99,7 +99,7 @@ public class SettlementController {
 
     @ApiOperation("结算确认")
     @GetMapping("/settleConfirmation/{tradeCode}")
-    @Func(code = "edit" ,name = "修改")
+    //@Func(code = "edit" ,name = "修改")
     public ResponseData settleConfirmation(@PathVariable String tradeCode) {
         String result=iTradeSettlementRpc.settleConfirmation(tradeCode);
         if("结算清分业务已完成".equals(result)|| "结算清分业务已受理成功".equals(result)){

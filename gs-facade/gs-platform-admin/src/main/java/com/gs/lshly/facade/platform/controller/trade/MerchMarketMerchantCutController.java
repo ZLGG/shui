@@ -28,7 +28,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/marketMerchantCut")
 @Api(tags = "平台满减管理")
-@Module(code = "fullReduction",parent = "marketing",name = "满减",index = 3)
+//@Module(code = "fullReduction",parent = "marketing",name = "满减",index = 3)
 public class MerchMarketMerchantCutController {
 
     @DubboReference
@@ -36,20 +36,20 @@ public class MerchMarketMerchantCutController {
 
     @ApiOperation("平台满减列表")
     @GetMapping("")
-    @Func(code = "view",name = "查")
+    //@Func(code = "view",name = "查")
     public ResponseData<PageData<PCMerchMarketMerchantCutVO.PlatformView>> list(PCMerchMarketMerchantCutQTO.QTO qto) {
         return ResponseData.data(iMarketPtMerchantCutRpc.view(qto));
     }
 
     @ApiOperation("查看")
     @GetMapping(value = "/{id}")
-    @Func(code = "view",name = "查")
+    //@Func(code = "view",name = "查")
     public ResponseData<PCMerchMarketMerchantCutVO.PlatformCutView> get(@PathVariable String id) {
         return ResponseData.data(iMarketPtMerchantCutRpc.get(new PCMerchMarketMerchantCutDTO.IdDTO(id)));
     }
     @ApiOperation("审核")
     @PostMapping(value = "/check/{id}")
-    @Func(code = "edit",name = "改")
+    //@Func(code = "edit",name = "改")
     public ResponseData<Void> check(@Valid @RequestBody PCMerchMarketMerchantCutDTO.Check dto) {
         iMarketPtMerchantCutRpc.check(dto);
 

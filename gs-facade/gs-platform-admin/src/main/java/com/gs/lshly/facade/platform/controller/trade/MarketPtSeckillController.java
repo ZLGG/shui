@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/platadmin/marketPtSeckill")
 @Api(tags = "平台秒杀管理-v1.1.0")
-@Module(code = "seckill", parent = "marketing", name = "秒杀", index = 8)
+@Module(code = "seckill", parent = "marketing", name = "秒杀", index = 3)
 @SuppressWarnings("unchecked")
 public class MarketPtSeckillController {
 
