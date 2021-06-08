@@ -204,7 +204,11 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 if (ObjectUtils.isNotEmpty(shopIdList)) {
                     //return new PageData<>();
                     boost.in("gs.shop_id", shopIdList);
+                }else{
+                	boost.in("gs.shop_id", "AAAAA");
                 }
+            }else{
+            	 boost.in("gs.shop_id",  "AAAAA");
             }
 /*            List<String> shopIdList = ListUtil.getIdList(CommonShopVO.SimpleVO.class, simpleVOS);
             if (ObjectUtils.isEmpty(shopIdList)) {
