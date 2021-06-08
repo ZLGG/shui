@@ -212,10 +212,37 @@ public class TradeRights extends Model {
      * 隐藏订单:1:是
      */
     private Integer isHide;
+
+    /**
+     * 买家收货地址ID
+     */
+    private String recvAddresId;
+
+    /**
+     * 买家收货人姓名
+     */
+    private String recvPersonName;
+
+    /**
+     * 买家电话
+     */
+    private String recvPhone;
+
     /**
      * 买家地址全文本
      */
     private String recvFullAddres;
+
+    /**
+     * 卖家收货姓名
+     */
+    private String merPersonName;
+
+    /**
+     * 卖家收货电话
+     */
+    private String merPhone;
+
     /**
      * 卖家地址全文本
      */

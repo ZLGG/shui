@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -767,7 +769,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             if (ObjectUtil.isNotEmpty(goodsInfo)) {
                 tradeRightsGoodsVO.setGoodsTitle(goodsInfo.getGoodsTitle());
                 tradeRightsGoodsVO.setGoodsPriceUnit(goodsInfo.getGoodsPriceUnit());
-                tradeRightsGoodsVO.setGoodsImage(goodsInfo.getGoodsImage());
+                tradeRightsGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "{}" : getImage(goodsInfo.getGoodsImage()));
                 tradeRightsGoodsVOS.add(tradeRightsGoodsVO);
             }
         }
@@ -785,4 +787,16 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         }
     }
 
+    private String getImage(String images) {
+        if (images != null && !images.equals("{}")) {
+            JSONArray arr = JSONArray.parseArray(images);
+            if (ObjectUtils.isEmpty(arr)) {
+                return null;
+            }
+            JSONObject obj = arr.getJSONObject(0);
+            String imgUrl = obj.getString("imgSrc");
+            return imgUrl;
+        }
+        return null;
+    }
 }

@@ -51,6 +51,15 @@ public abstract class BbcTradeRightsBuildDTO implements Serializable {
         @ApiModelProperty(value = "凭证图片集合")
         private List<RightsImgData> rightsImgData;
 
+        @ApiModelProperty("买家收货地址Id")
+        private String recvAddresId;
+
+        @ApiModelProperty("买家收货人姓名")
+        private String recvPersonName;
+
+        @ApiModelProperty("买家电话")
+        private String recvPhone;
+
         @ApiModelProperty(value = "买家收货地址全文本")
         private String recvFullAddres;
 

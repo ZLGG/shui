@@ -114,17 +114,27 @@ public abstract class BbcTradeRightsVO implements Serializable {
 
         /*        @ApiModelProperty("交易商品集合")
                 List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVOS;*/
+
+        @ApiModelProperty("买家收货人姓名")
+        private String recvPersonName;
+
+        @ApiModelProperty("买家电话")
+        private String recvPhone;
+
+        @ApiModelProperty("买家收货地址全文本")
+        private String recvFullAddres;
+
+        @ApiModelProperty("卖家收货姓名")
+        private String merPersonName;
+
+        @ApiModelProperty("卖家收货电话")
+        private String merPhone;
+
         @ApiModelProperty("卖家地址全文本")
         private String merFullAddres;
 
         @ApiModelProperty("申请时间")
         private LocalDateTime cdate;
-
-        /**
-         * 收货地址全文本
-         */
-        @ApiModelProperty("收货地址全文本")
-        private String recvFullAddres;
 
         @ApiModelProperty("商品详情")
         List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVO;

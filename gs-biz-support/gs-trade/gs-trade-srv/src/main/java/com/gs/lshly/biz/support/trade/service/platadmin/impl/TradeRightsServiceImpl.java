@@ -88,6 +88,8 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private ITradePayRepository iTradePayRepository;
     @Autowired
     private ITradeCancelRepository iTradeCancelRepository;
+    @Autowired
+    private ITradeRightsLogRepository iTradeRightsLogRepository;
     @DubboReference
     private IGoodsInfoRpc iGoodsInfoRpc;
     @DubboReference
@@ -767,6 +769,10 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         tradeRights.setState(BbcTradeRightsStateEnum.平台同意.getCode());
         tradeRights.setCheckState(TradeRightsNewStateEnum.已完成.getCode());
         iTradeRightsRepository.updateById(tradeRights);
+        TradeRightsLog tradeRightsLog = new TradeRightsLog();
+        tradeRightsLog.setRightsId(tradeRights.getId());
+        tradeRightsLog.setState(BbcTradeRightsStateEnum.平台同意.getCode());
+        //tradeRightsLog.setContent("平台")
     }
 
     @Override

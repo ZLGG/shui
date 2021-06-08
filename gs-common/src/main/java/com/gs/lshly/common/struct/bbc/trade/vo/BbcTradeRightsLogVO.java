@@ -1,5 +1,6 @@
 package com.gs.lshly.common.struct.bbc.trade.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,7 +24,9 @@ public abstract class BbcTradeRightsLogVO implements Serializable {
         private Integer state;
         @ApiModelProperty("状态说明")
         private String content;
+
         @ApiModelProperty("申请时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
     }
 }

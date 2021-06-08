@@ -53,21 +53,21 @@ public class TradeRightsController {
 
     @ApiOperation("提交平台处理说明")
     @PostMapping(value = "/{id}")
-    public ResponseData<String> setPlatformCheckReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
+    public ResponseData<Void> setPlatformCheckReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
         iTradeRightsRpc.setPlatformChenkReason(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
     @ApiOperation("平台审核通过")
     @GetMapping(value = "/pass/{id}")
-    public ResponseData<String> platformPass(TradeRightsDTO.IdDTO dto) {
+    public ResponseData<Void> platformPass(TradeRightsDTO.IdDTO dto) {
         iTradeRightsRpc.platformCheckReason(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
     @ApiOperation("平台审核拒绝")
     @GetMapping(value = "/disPass/{id}")
-    public ResponseData<String> platformDisPass(TradeRightsDTO.IdDTO dto) {
+    public ResponseData<Void> platformDisPass(TradeRightsDTO.IdDTO dto) {
         iTradeRightsRpc.platformDisPass(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
