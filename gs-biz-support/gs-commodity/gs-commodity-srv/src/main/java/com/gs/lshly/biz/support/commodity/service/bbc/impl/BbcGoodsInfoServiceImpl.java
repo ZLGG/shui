@@ -1503,7 +1503,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.in("category_id", categoryIds);
-        wrapper.in("goods_state", GoodsStateEnum.已上架.getCode());
+        wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
         List<GoodsInfo> goodsInfoList = repository.list(wrapper);
 
         List<Integer> counts = StringManageUtil.randomdBetween(0, goodsInfoList.size(), 4);

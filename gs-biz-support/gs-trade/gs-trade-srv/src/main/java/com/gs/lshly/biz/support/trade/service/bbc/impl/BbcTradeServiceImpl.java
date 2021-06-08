@@ -564,7 +564,18 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 	private List<ListCouponVO> listCoupon1() {
 		
 		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
+		
 		ListCouponVO listCouponVO = new ListCouponVO();
+		listCouponVO.setCouponType(1);
+		listCouponVO.setUseTime("2021/01/01 2021/08/01");
+		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+		listCouponVO.setDeduction(new BigDecimal("20.00"));
+		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+		listCouponVO.setDeductionType(Integer.valueOf(1));
+		listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
+		retList.add(listCouponVO);
+		
+		listCouponVO = new ListCouponVO();
 		listCouponVO.setCouponType(1);
 		listCouponVO.setUseTime("2021/01/01 2021/11/01");
 		listCouponVO.setCouponName("仅购买IN会员商品可以使用");

@@ -10,10 +10,10 @@ import com.gs.lshly.middleware.auth.rbac.MenuMessage;
 public enum MenuEnum implements MenuMessage {
 
 //    站点("site", "站点", 1),
-    会员("members", "用户", 4),
+    用户("members", "用户", 4),
     类目("category", "类目", 3),
     交易("transaction", "交易", 2),
-    商家("bussiness", "商家", 5),
+//    商家("bussiness", "商家", 5),
     商品("commodity", "商品", 1),
 //    财务("finance", "财务", 7),
 //    物流("logistics", "物流", 8),

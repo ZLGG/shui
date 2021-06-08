@@ -64,10 +64,10 @@ public class GoodsLabelController {
     @Func(code="add", name = "新增")
     public ResponseData<Void> add(@Valid @RequestBody GoodsLabelDTO.ETO dto) {
     	
-    	if(StringUtils.isEmpty(dto.getLabelName())||dto.getLabelName().length()>10){
+    	if(dto.getLabelName().length()>10){
     		throw new BusinessException("标签名称请小于10个字符");
     	}
-    	if(StringUtils.isEmpty(dto.getLabelRemark())||dto.getLabelRemark().length()>10){
+    	if(dto.getLabelRemark().length()>10){
     		throw new BusinessException("标签备注请小于10个字符");
     	}
         goodsLabelRpc.addGoodsLabel(dto);
@@ -87,6 +87,14 @@ public class GoodsLabelController {
     @PutMapping(value = "/{id}")
     @Func(code="edit", name = "修改")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody GoodsLabelDTO.ETO eto) {
+    	
+    	if(eto.getLabelName().length()>10){
+    		throw new BusinessException("标签名称请小于10个字符");
+    	}
+    	if(eto.getLabelRemark().length()>10){
+    		throw new BusinessException("标签备注请小于10个字符");
+    	}
+    	
         eto.setId(id);
         goodsLabelRpc.editGoodsLabel(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
