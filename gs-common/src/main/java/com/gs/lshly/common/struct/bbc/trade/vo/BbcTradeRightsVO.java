@@ -88,8 +88,13 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime sendBackLogisticsDate;*/
 
-/*        @ApiModelProperty("申请售后原因(10:不想要或多拍了,15:商品信息拍错(规格/尺码/颜色等),20:地址/电话信息填写错误,25:没用或少用优惠券,30:协商退款一致,35:缺货,40:其他,45:与商品详情不符,50:生产日期/保质期与商品不符,55:图片/产地/规格等描述不符,60:商品变质,65:商品破损/缺少配件,70:卖家发错货,75:不喜欢/不想要,80:空包裹,85:快递一直未送达,90:快递无跟踪记录,95:货物破损已拒签)")
-        private Integer rightsReasonType;*/
+        @ApiModelProperty("申请售后原因(10:不想要或多拍了,15:商品信息拍错(规格/尺码/颜色等)," +
+                "20:地址/电话信息填写错误,25:没用或少用优惠券," +
+                "30:协商退款一致,35:缺货,40:其他,45:与商品详情不符," +
+                "50:生产日期/保质期与商品不符,55:图片/产地/规格等描述不符,60:商品变质,65:商品破损/缺少配件,70:卖家发错货," +
+                "75:不喜欢/不想要,80:空包裹,85:快递一直未送达,90:快递无跟踪记录,95:货物破损已拒签,100:取消订单" +
+                ",105:充值未到账,110充值少到账)")
+        private Integer rightsReasonType;
 
         @ApiModelProperty("申请售后说明")
         private String rightsRemark;
@@ -134,6 +139,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
         private String merFullAddres;
 
         @ApiModelProperty("申请时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
 
         @ApiModelProperty("商品详情")

@@ -1,18 +1,22 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import java.net.CookieHandler;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
-import com.gs.lshly.common.enums.MarketPtSeckillActivityEnum;
-import com.gs.lshly.common.enums.MarketPtSeckillStatusEnum;
-import com.gs.lshly.common.enums.MarketPtSeckillTimeQuantumEnum;
+import com.gs.lshly.biz.support.trade.repository.*;
+import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
 import com.lakala.boss.api.utils.DateUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -23,8 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsCategoryRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtSeckillService;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -59,8 +61,20 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     @Autowired
     private IMarketPtSeckillGoodsCategoryRepository categoryRepository;
 
+    @Autowired
+    private IMarketPtSeckillGoodsSpuRepository iMarketPtSeckillGoodsSpuRepository;
+
+    @Autowired
+    private IMarketPtSeckillGoodsSkuRepository iMarketPtSeckillGoodsSkuRepository;
+
     @DubboReference
     private IGoodsCategoryRpc iGoodsCategoryRpc;
+
+    @DubboReference
+    private IGoodsInfoRpc iGoodsInfoRpc;
+
+    @DubboReference
+    private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
 
     @Override
     public PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto) {
@@ -170,6 +184,95 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         }
         activityVO.setSessionTime(sessionVOList);
         return activityVO;
+    }
+
+    @Override
+    public PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto) {
+        if (!ObjectUtil.isAllNotEmpty(qto, qto.getSeckillId(), qto.getTimeQuanTumId())) {
+            throw new BusinessException("参数不能未空！");
+        }
+        List<MarketPtSeckillVO.KillGoodsVO> killGoodsVOList = new ArrayList<>();
+        QueryWrapper<MarketPtSeckillGoodsSpu> query = MybatisPlusUtil.query();
+        if (ObjectUtil.isNotEmpty(qto.getBrandId())) {
+            query.and(i -> i.eq("brand_id", qto.getBrandId()));
+        }
+        if (ObjectUtil.isNotEmpty(qto.getCategoryId())) {
+            query.and(i -> i.eq("category_id", qto.getCategoryId()));
+        }
+        query.eq("seckill_id", qto.getSeckillId());
+        query.eq("time_quantum_id", qto.getTimeQuanTumId());
+        query.orderByDesc("cdate");
+        IPage<MarketPtSeckillGoodsSpu> page = MybatisPlusUtil.pager(qto);
+        iMarketPtSeckillGoodsSpuRepository.page(page, query);
+        if (CollUtil.isNotEmpty(page.getRecords())) {
+            for (MarketPtSeckillGoodsSpu record : page.getRecords()) {
+                MarketPtSeckillVO.KillGoodsVO killGoodsVO = new MarketPtSeckillVO.KillGoodsVO();
+                BeanUtil.copyProperties(record, killGoodsVO);
+                GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(record.getGoodsId()));
+                killGoodsVO.setKillSpuId(record.getId());
+                killGoodsVO.setGoodsName(goodsDetail.getGoodsName());
+                killGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());
+                killGoodsVO.setGoodsType(goodsDetail.getIsPointGood() ? MarketPtSeckillSpuTypeEnum.普通商品.getCode() : MarketPtSeckillSpuTypeEnum.积分商品.getCode());
+                killGoodsVOList.add(killGoodsVO);
+            }
+        }
+        return MybatisPlusUtil.toPageData(killGoodsVOList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
+    }
+
+    @Override
+    public void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto) {
+        if (!ObjectUtil.isAllNotEmpty(qto, qto.getKillSpuIdList())) {
+            throw new BusinessException("参数不能未空!");
+        }
+        for (MarketPtSeckillDTO.SeckillSpuSkuGoodsDTO seckillSpuSkuGoodsDTO : qto.getKillSpuIdList()) {
+            if (ObjectUtil.isEmpty(seckillSpuSkuGoodsDTO)) {
+                throw new BusinessException("参数不能未空!");
+            }
+            MarketPtSeckillGoodsSpu spu = iMarketPtSeckillGoodsSpuRepository.getById(seckillSpuSkuGoodsDTO.getKillSpuId());
+            if (ObjectUtil.isEmpty(spu)) {
+                throw new BusinessException("未查询到报名的spu商品信息!");
+            }
+            spu.setChoose(MarketPtSeckillSpuChoseEnum.已选择.getCode());
+            iMarketPtSeckillGoodsSpuRepository.updateById(spu);
+            QueryWrapper<MarketPtSeckillGoodsSku> query = MybatisPlusUtil.query();
+            query.eq("goods_spu_item_id", seckillSpuSkuGoodsDTO.getKillSpuId());
+            List<MarketPtSeckillGoodsSku> skuList = iMarketPtSeckillGoodsSkuRepository.list(query);
+            if (CollUtil.isEmpty(skuList)) {
+                throw new BusinessException("未查询到报名的sku商品信息!");
+            }
+            for (MarketPtSeckillGoodsSku sku : skuList) {
+                for (String killSkuId : seckillSpuSkuGoodsDTO.getKillSkuId()) {
+                    sku.setState(MarketPtSeckillSkuStateEnum.已驳回.getCode());
+                    if (sku.getId().equals(killSkuId)) {
+                        sku.setState(MarketPtSeckillSkuStateEnum.已通过.getCode());
+                    }
+                    iMarketPtSeckillGoodsSkuRepository.updateById(sku);
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto) {
+        if (ObjectUtil.isEmpty(qto.getKillSpuId())) {
+            throw new BusinessException("参数不能未空!");
+        }
+        List<MarketPtSeckillVO.KillSkuGoods> killSkuGoodsList = new ArrayList<>();
+        QueryWrapper<MarketPtSeckillGoodsSku> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("goods_spu_item_id", qto.getKillSpuId());
+        List<MarketPtSeckillGoodsSku> skuList = iMarketPtSeckillGoodsSkuRepository.list(wrapper);
+        for (MarketPtSeckillGoodsSku marketPtSeckillGoodsSku : skuList) {
+            MarketPtSeckillVO.SkuGoodsInfo skuGoodsInfo = iSkuGoodsInfoRpc.selectOne(marketPtSeckillGoodsSku.getSkuId());
+            MarketPtSeckillVO.KillSkuGoods killSkuGoods = new MarketPtSeckillVO.KillSkuGoods();
+            BeanUtil.copyProperties(marketPtSeckillGoodsSku, killSkuGoods);
+            killSkuGoods.setKillSkuId(marketPtSeckillGoodsSku.getId());
+            if (ObjectUtil.isNotEmpty(skuGoodsInfo)) {
+                killSkuGoods.setSpecsValue(skuGoodsInfo.getSpecsValue());
+                killSkuGoods.setSaleSkuPrice(skuGoodsInfo.getSaleSkuPrice());
+            }
+            killSkuGoodsList.add(killSkuGoods);
+        }
+        return killSkuGoodsList;
     }
 
     private MarketPtSeckillVO.ActivityListVO getActivityListVO(MarketPtSeckill pageRecord) {

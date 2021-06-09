@@ -29,6 +29,8 @@ import com.gs.lshly.rpc.api.platadmin.trade.IMarketPtSeckillRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.List;
+
 /**
  * 平台秒杀秒杀管理
  *
@@ -44,12 +46,6 @@ public class MarketPtSeckillController {
 
     @DubboReference
     private IMarketPtSeckillRpc marketPtSeckillRpc;
-
-    @DubboReference
-    private IMarketPtSeckillMerchantRpc marketPtSeckillMerchantRpc;
-
-    @DubboReference
-    private IMarketPtSeckillTimeQuantumRpc marketPtSeckillTimeQuantumRpc;
 
     @ApiOperation("平台秒杀列表-v1.1.0")
     @PostMapping("")
@@ -73,12 +69,25 @@ public class MarketPtSeckillController {
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
-    @ApiOperation("商品列表-v1.1.0")
-    @PostMapping("/goods")
+    @ApiOperation("已报名商品spu列表-v1.1.0")
+    @PostMapping("/spuGoods")
     @Func(code = "view", name = "查")
-    public ResponseData<Void> addGoods(@RequestBody MarketPtSeckillQTO.GoodsQTO qto) {
-        marketPtSeckillRpc.addGoods(qto);
-        return ResponseData.success(MsgConst.ADD_SUCCESS);
+    public ResponseData<PageData<MarketPtSeckillVO.KillGoodsVO>> seckillGoods(@RequestBody MarketPtSeckillQTO.GoodsQTO qto) {
+        return ResponseData.data(marketPtSeckillRpc.seckillGoods(qto));
+    }
+
+    @ApiOperation("已报名商品sku列表(编辑)-v1.1.0")
+    @PostMapping("/skuGoods")
+    @Func(code = "view", name = "查")
+    public ResponseData<List<MarketPtSeckillVO.KillSkuGoods>> seckillSkuGoods(@RequestBody MarketPtSeckillQTO.SkuGoodsQTO qto) {
+        return ResponseData.data(marketPtSeckillRpc.seckillSkuGoods(qto));
+    }
+
+    @ApiOperation("保存已报名的商品-v1.1.0")
+    @PutMapping("/goods")
+    public ResponseData<Void> saveKillGoods(@RequestBody MarketPtSeckillDTO.SeckillGoodsDTO dto) {
+        marketPtSeckillRpc.saveKillGoods(dto);
+        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 /*    @ApiOperation("批量删除平台秒杀-v1.1.0")
     @PostMapping(value = "/deleteBatches")

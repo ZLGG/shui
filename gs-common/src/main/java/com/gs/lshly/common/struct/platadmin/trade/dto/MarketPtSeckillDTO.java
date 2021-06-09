@@ -235,4 +235,23 @@ public abstract class MarketPtSeckillDTO implements Serializable {
         private LocalDateTime endTime;
     }
 
+    @Data
+    @ApiModel("MarketPtSeckillDTO.SeckillGoodsDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SeckillGoodsDTO implements Serializable {
+        @ApiModelProperty("商家报名的商品集合")
+        private List<MarketPtSeckillDTO.SeckillSpuSkuGoodsDTO> killSpuIdList;
+    }
+
+    @Data
+    @ApiModel("MarketPtSeckillDTO.SeckillSpuSkuGoodsDTO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SeckillSpuSkuGoodsDTO implements Serializable {
+        @ApiModelProperty("商家报名的商品spu表Id")
+        private String killSpuId;
+        @ApiModelProperty("商家报名的商品sku表Id集合")
+        private List<String> killSkuId;
+    }
 }

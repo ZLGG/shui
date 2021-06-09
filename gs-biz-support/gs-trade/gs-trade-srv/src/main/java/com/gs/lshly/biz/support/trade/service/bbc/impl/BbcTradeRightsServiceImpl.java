@@ -555,6 +555,11 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 throw new BusinessException("查询不到售后单");
             }
             repository.updateById(tradeRights);
+            Trade trade = tradeRepository.getById(tradeRights.getTradeId());
+            if (ObjectUtil.isEmpty(trade)){
+                throw new BusinessException("查询不到订单");
+            }
+            trade.setTradeState(TradeStateEnum.已完成.getCode());
             TradeRightsLog tradeRightsLog = new TradeRightsLog();
             tradeRightsLog.setRightsId(tradeRights.getId());
             tradeRightsLog.setState(BbcTradeRightsStateEnum.换货完成.getCode());

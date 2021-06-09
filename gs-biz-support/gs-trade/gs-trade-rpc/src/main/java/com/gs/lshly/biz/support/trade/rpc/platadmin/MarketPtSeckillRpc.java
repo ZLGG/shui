@@ -55,8 +55,18 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc {
     }
 
     @Override
-    public void addGoods(MarketPtSeckillQTO.GoodsQTO qto) {
+    public PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto) {
+        return marketPtSeckillService.seckillGoods(qto);
+    }
 
+    @Override
+    public void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto) {
+        marketPtSeckillService.saveKillGoods(qto);
+    }
+
+    @Override
+    public List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto) {
+        return marketPtSeckillService.seckillSkuGoods(qto);
     }
 
 /*    @Override

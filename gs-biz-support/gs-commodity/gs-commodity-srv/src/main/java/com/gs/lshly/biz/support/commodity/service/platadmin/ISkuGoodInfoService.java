@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.service.platadmin;
 
 import com.gs.lshly.common.struct.platadmin.commodity.dto.SkuGoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface ISkuGoodInfoService {
      * @return
      */
     List<SkuGoodsInfoVO.DetailVO> listSku(SkuGoodsInfoDTO.GoodsIdDTO dto);
+
+    MarketPtSeckillVO.SkuGoodsInfo selectOne(String id);
 }

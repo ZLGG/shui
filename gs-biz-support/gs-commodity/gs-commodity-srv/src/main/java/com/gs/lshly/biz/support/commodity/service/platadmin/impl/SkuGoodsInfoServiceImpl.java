@@ -3,6 +3,9 @@ package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,5 +40,22 @@ public class SkuGoodsInfoServiceImpl implements ISkuGoodInfoService {
             }
         }
         return listVOS;
+    }
+
+    @Override
+    public MarketPtSeckillVO.SkuGoodsInfo selectOne(String id) {
+        SkuGoodInfo skuGoodInfo = repository.getById(id);
+        MarketPtSeckillVO.SkuGoodsInfo goodsInfo = new MarketPtSeckillVO.SkuGoodsInfo();
+        if (ObjectUtil.isNotEmpty(skuGoodInfo)){
+            if (StrUtil.isNotEmpty(skuGoodInfo.getSpecsValue())){
+                goodsInfo.setSpecsValue(skuGoodInfo.getSpecsValue());
+            }
+            if (ObjectUtil.isNotEmpty(skuGoodInfo.getSalePrice())){
+                goodsInfo.setSaleSkuPrice(skuGoodInfo.getSalePrice());
+            }else if (ObjectUtil.isNotEmpty(skuGoodInfo.getPointPrice())){
+                goodsInfo.setSaleSkuPrice(skuGoodInfo.getPointPrice());
+            }
+        }
+        return goodsInfo;
     }
 }

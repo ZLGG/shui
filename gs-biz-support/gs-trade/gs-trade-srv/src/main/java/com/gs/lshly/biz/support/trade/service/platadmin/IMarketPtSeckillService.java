@@ -20,6 +20,12 @@ public interface IMarketPtSeckillService {
     void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto);
 
     MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto);
+
+    PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto);
+
+    void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto);
+
+    List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto);
 /*
     void deleteMarketPtSeckill(MarketPtSeckillDTO.IdListDTO dto);
 
