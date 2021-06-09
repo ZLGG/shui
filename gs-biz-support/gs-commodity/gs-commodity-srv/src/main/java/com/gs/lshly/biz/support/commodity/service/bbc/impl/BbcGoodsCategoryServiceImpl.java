@@ -336,7 +336,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
 	@Override
 	public CtccHomeVO ctcchome(CtccDTO ctccDTO) {
 		BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
-		listQTO.setParentId("ctcc");
+		listQTO.setParentId("09");
 		List<GoodsCategory> categorysList = this.getGoodsCategories(listQTO);
 		List<CtccCategoryVO> categorys = new ArrayList<CtccCategoryVO>();
 		CtccCategoryVO ctccCategoryVO = null;

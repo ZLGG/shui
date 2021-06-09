@@ -358,4 +358,5 @@ public interface TradeMapper extends BaseMapper<Trade> {
 
     @Update("update gs_trade set recv_addres_id = #{recvAddressId}, recv_person_name = #{recvPersonName}, recv_phone = #{recvPhone}, recv_full_addres = #{recvFullAddress}, is_modify_address = 1, udate = now() where id = #{id}")
     void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
+    
 }

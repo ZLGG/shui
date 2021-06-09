@@ -218,4 +218,5 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
 
     @Select("select count(*) from gs_user_favorites_goods where goods_id = #{goodsId} and user_id = #{userId}")
     Integer isCollectGoods(@Param("goodsId") String goodsId, @Param("userId") String jwtUserId);
+
 }

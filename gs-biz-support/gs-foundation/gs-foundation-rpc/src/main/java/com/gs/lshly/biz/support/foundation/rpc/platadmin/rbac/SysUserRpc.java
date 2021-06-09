@@ -45,8 +45,8 @@ public class SysUserRpc implements ISysUserRpc {
     @Override
     public void addSysUser(SysUserDTO.ETO dto) {
         //设置随机密码
-        String pwd = "123456";
-        dto.setPwd(PwdUtil.encode(pwd));
+//        String pwd = "123456";
+        dto.setPwd("$2a$10$nnAoI6wIjkoZyn.hgZ464.Enym6Muq.tW5Lh8KXe/x3brDHC.kENy");
         sysUserService.saveUser(dto);
     }
 

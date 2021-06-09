@@ -127,7 +127,12 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setCode(PointHomeTypeEnum.电信产品.getCode());
 		listVO.setIdx(PointHomeTypeEnum.电信产品.getIdx());
 		listVO.setName(PointHomeTypeEnum.电信产品.getRemark());
-		listVO.setList(bbcSiteTopicService.listTopicByCategory(10));
+		List<BbcSiteTopicVO.CategoryDetailVO> categoryDetailVOList = bbcSiteTopicService.listTopicByCategory(10);
+		
+//		for(BbcSiteTopicVO.CategoryDetailVO categoryDetailVO :categoryDetailVOList){
+//			if(categoryDetailVO.getName().equals(""))
+//		}
+		listVO.setList(categoryDetailVOList);
 		retList.add(listVO);
 		
 		BbcMarketActivityVO.SeckillHome seckill = bbcMarketSeckillRpc.seckillHome(new BbcMarketSeckillDTO.DTO());

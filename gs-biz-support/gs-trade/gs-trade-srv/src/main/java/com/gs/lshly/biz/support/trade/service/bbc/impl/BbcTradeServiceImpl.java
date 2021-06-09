@@ -2293,7 +2293,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 		 */
 		Integer telecomsIntegral = detailVO.getTelecomsIntegral();
 		
-		List<String> tradeIds = dto.getTradeIds();
+		List<String>  tradeIds = dto.getTradeIds();
 		if(CollectionUtil.isNotEmpty(tradeIds)){
 			//跟据id查询要支付的订单
 			
@@ -2305,6 +2305,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 			if(totalTelecomsIntegral>telecomsIntegral){
 				throw new BusinessException("您的积分值不够！");
 			}
+			
+			
 			
 			/**
 			 * 减积分
@@ -2329,6 +2331,20 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 		return ResponseData.success(responseJson.toString());
 	}
 	
+	
+	private void sendB2I(List<String> tradeIds){
+		
+		if(tradeIds.size()==1){
+			QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+	        tradeGoodsWrapper.eq("trade_id",tradeIds.get(0));
+	        List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+	        
+	        if(tradeGoodsList.size()==1){
+	        	String goodsId = ((TradeGoods)tradeGoodsList.get(0)).getGoodsId();
+	        }
+		}
+			
+	}
 	/**
      * 根据交易订单编号修改状态
      * @param tradeCode
