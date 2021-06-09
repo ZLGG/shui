@@ -280,7 +280,8 @@ public abstract class TradeRightsVO implements Serializable {
     public static class RefundBasicVO implements Serializable {
         @ApiModelProperty("售后编号")
         private String id;
-
+        @ApiModelProperty("订单流水号")
+        private String tradeId;
         @ApiModelProperty("手机号码")
         private String phone;
 
@@ -305,7 +306,8 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("申请售后原因")
         private Integer rightsReasonType;
 
-        @ApiModelProperty("支付方式")
+        @ApiModelProperty("支付方式(10:支付扫码,20:支付宝APP,30:微信扫码,40:微信公众号,50:微信APP支付,60:微信小程序支付," +
+                "70:银联PC,80:银联移动,90:线下支付,100:积分支付,510:混合支付积分_微信小程序,511:混合支付积分_支付宝)")
         private Integer payType;
 
         @ApiModelProperty("商品图片凭证")

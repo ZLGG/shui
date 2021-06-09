@@ -366,9 +366,9 @@ public class MarketPtSeckillVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime seckillEndTime;
 
-/*        @ApiModelProperty("创建时间")
+        @ApiModelProperty("创建时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-        private LocalDateTime cdate;*/
+        private LocalDateTime cdate;
     }
 
     @Data
@@ -384,6 +384,8 @@ public class MarketPtSeckillVO implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SessionVO implements Serializable {
+        @ApiModelProperty("场次id")
+        private String id;
 
         @ApiModelProperty("场次开始时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -393,4 +395,63 @@ public class MarketPtSeckillVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime endTime;
     }
+
+
+    @Data
+    @ApiModel("MarketPtSeckillVO.KillGoodsVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class KillGoodsVO implements Serializable {
+        @ApiModelProperty("商家报名的spu商品表id")
+        private String killSpuId;
+        @ApiModelProperty("秒杀活动id")
+        private String seckillId;
+        @ApiModelProperty("秒杀场次Id")
+        private String timeQuantumId;
+        @ApiModelProperty("是否被选择(10:已选择,20:未选择)")
+        private Integer choose;
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+        @ApiModelProperty("商品编号")
+        private String goodsId;
+        @ApiModelProperty("商品类型(10:普通商品,20:积分商品)")
+        private Integer goodsType;
+        @ApiModelProperty("商品图片")
+        private String goodsImage;
+    }
+
+    @Data
+    @ApiModel("MarketPtSeckillVO.KillSkuGoods")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class KillSkuGoods implements Serializable {
+        @ApiModelProperty("商家报名的sku商品表id")
+        private String killSkuId;
+        @ApiModelProperty("审核状态")
+        private Integer state;
+        @ApiModelProperty("商品skuId")
+        private String skuId;
+        @ApiModelProperty("规格")
+        private String specsValue;
+        @ApiModelProperty("原价")
+        private BigDecimal saleSkuPrice;
+        @ApiModelProperty("秒杀价")
+        private BigDecimal seckillSaleSkuPrice;
+        @ApiModelProperty("秒杀数量")
+        private Integer seckillQuantity;
+        @ApiModelProperty("剩余库存")
+        private Integer seckillInventory;
+        @ApiModelProperty("限购数量")
+        private Integer restrictQuantity;
+    }
+
+    @Data
+    @ApiModel("MarketPtSeckillVO.SkuGoodsInfo")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SkuGoodsInfo implements Serializable {
+        private String specsValue;
+        private BigDecimal saleSkuPrice;
+    }
+
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
 
 import io.swagger.annotations.ApiModel;
@@ -60,11 +61,28 @@ public abstract class MarketPtSeckillQTO implements Serializable {
     @EqualsAndHashCode(callSuper = false)
     @ApiModel("MarketPtSeckillQTO.GoodsQTO")
     @Accessors(chain = true)
-    public static class GoodsQTO implements Serializable {
+    public static class GoodsQTO extends BaseQTO {
         @ApiModelProperty("秒杀活动id")
         private String seckillId;
 
         @ApiModelProperty("场次id")
         private String timeQuanTumId;
+
+        @ApiModelProperty("品牌id")
+        private String brandId;
+
+        @ApiModelProperty("类目id")
+        private String categoryId;
+    }
+
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    @ApiModel("MarketPtSeckillQTO.SkuGoodsQTO")
+    @Accessors(chain = true)
+    public static class SkuGoodsQTO implements Serializable {
+
+        @ApiModelProperty("商家报名的spu商品表id")
+        private String killSpuId;
     }
 }

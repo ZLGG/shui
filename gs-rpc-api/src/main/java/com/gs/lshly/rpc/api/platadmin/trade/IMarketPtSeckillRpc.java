@@ -33,8 +33,12 @@ public interface IMarketPtSeckillRpc {
 
     MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto);
 
-	void addGoods(MarketPtSeckillQTO.GoodsQTO qto);
+	PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto);
 
-	/*    List<MarketPtSeckillVO.ListVO> list();*/
+	void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto);
+
+	List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto);
+
+    /*    List<MarketPtSeckillVO.ListVO> list();*/
 
 }

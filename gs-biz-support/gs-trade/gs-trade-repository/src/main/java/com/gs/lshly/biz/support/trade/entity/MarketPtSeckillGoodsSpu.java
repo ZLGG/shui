@@ -1,9 +1,12 @@
 package com.gs.lshly.biz.support.trade.entity;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.util.Date;
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -28,12 +31,20 @@ public class MarketPtSeckillGoodsSpu implements Serializable {
      * id
      */
     private String id;
+    /**
+     * 是否被选中
+     */
+    private Integer choose;
 
     /**
      * 秒杀id
      */
     private String seckillId;
 
+    /**
+     * 活动场次Id
+     */
+    private String timeQuantumId;
     /**
      * 店铺ID
      */
@@ -65,6 +76,16 @@ public class MarketPtSeckillGoodsSpu implements Serializable {
      * 商品ID
      */
     private String goodsId;
+
+    /**
+     * 品牌id
+     */
+    private String brandId;
+
+    /**
+     * 类目id
+     */
+    private String categoryId;
 
     /**
      * 创建时间

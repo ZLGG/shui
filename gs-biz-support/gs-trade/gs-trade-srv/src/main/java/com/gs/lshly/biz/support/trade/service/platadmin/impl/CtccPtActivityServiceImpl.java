@@ -124,7 +124,12 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         if (StringUtils.isNotBlank(dto.getGoodsName())) {
             // 根据商品名称模糊匹配商品id
             List<String> goodsIds = bbcGoodsInfoRpc.getGoodsIdsByName(dto.getGoodsName());
-            queryWrapper.in("goods_id",goodsIds);
+            if(CollectionUtil.isNotEmpty(goodsIds)){
+            	queryWrapper.in("goods_id",goodsIds);
+            }else{
+            	queryWrapper.in("goods_id","AAAAA");
+            }
+            
         }
         if (null != dto.getStatus()) {
             queryWrapper.eq("goods_state", dto.getStatus());

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ctcctest
+    active: hztest
   application:
     name: facade-bbc
   cloud:

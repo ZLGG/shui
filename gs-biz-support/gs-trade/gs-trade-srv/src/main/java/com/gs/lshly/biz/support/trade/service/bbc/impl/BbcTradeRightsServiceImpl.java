@@ -215,7 +215,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 TradeRightsLog tradeRightsLog = new TradeRightsLog();
                 tradeRightsLog.setRightsId(tradeRights.getId());
                 tradeRightsLog.setState(BbcTradeRightsStateEnum.待处理.getCode());
-                tradeRightsLog.setContent("发起了退款申请，金额：" + tradeRights.getShouldRefundAmount() + "元，" + tradeRights.getShouldRefundPoint() + "积分。");
+                tradeRightsLog.setContent("买家发起了退款申请，金额：" + tradeRights.getShouldRefundAmount() + "元，" + tradeRights.getShouldRefundPoint() + "积分。");
                 tradeRightsLogRepository.save(tradeRightsLog);
             }
         } else {
@@ -292,7 +292,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             TradeRightsLog tradeRightsLog = new TradeRightsLog();
             tradeRightsLog.setRightsId(tradeRights.getId());
             tradeRightsLog.setState(BbcTradeRightsStateEnum.待处理.getCode());
-            tradeRightsLog.setContent("发起了换货申请，待商家审核。");
+            tradeRightsLog.setContent("买家发起了换货申请，待商家审核。");
             tradeRightsLogRepository.save(tradeRightsLog);
         }
         return tradeRightsIdList;
@@ -442,6 +442,14 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             throw new BusinessException("没有数据");
         }
         BbcTradeRightsVO.ListVO listVO = fillTradeVO(tradeRights);
+        QueryWrapper<TradeRightsImg> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("rights_id", tradeRights.getId());
+        List<TradeRightsImg> tradeRightsImgList = tradeRightsImgRepository.list(wrapper);
+        List<String> rightsImg = new ArrayList<>();
+        if (CollUtil.isNotEmpty(tradeRightsImgList)) {
+            rightsImg = CollUtil.getFieldValues(tradeRightsImgList, "rightsImg", String.class);
+        }
+        detailVo.setTradeRightImg(rightsImg);
         BeanUtil.copyProperties(listVO, detailVo);
        /* BeanUtils.copyProperties(tradeRights, detailVo);
         QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
@@ -555,6 +563,11 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 throw new BusinessException("查询不到售后单");
             }
             repository.updateById(tradeRights);
+            Trade trade = tradeRepository.getById(tradeRights.getTradeId());
+            if (ObjectUtil.isEmpty(trade)) {
+                throw new BusinessException("查询不到订单");
+            }
+            trade.setTradeState(TradeStateEnum.已完成.getCode());
             TradeRightsLog tradeRightsLog = new TradeRightsLog();
             tradeRightsLog.setRightsId(tradeRights.getId());
             tradeRightsLog.setState(BbcTradeRightsStateEnum.换货完成.getCode());

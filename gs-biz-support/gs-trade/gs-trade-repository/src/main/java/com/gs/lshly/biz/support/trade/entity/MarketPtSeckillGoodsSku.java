@@ -41,6 +41,16 @@ public class MarketPtSeckillGoodsSku extends Model {
     private String seckillId;
 
     /**
+     * 场次ID
+     */
+    private String timeQuantumId;
+
+    /**
+     * 审核状态
+     */
+    private Integer state;
+
+    /**
      * 店铺ID
      */
     private String shopId;
@@ -63,7 +73,7 @@ public class MarketPtSeckillGoodsSku extends Model {
     private String goodsId;
 
     /**
-     * sku活动价
+     * 秒杀价(金额/积分)
      */
     private BigDecimal seckillSaleSkuPrice;
 
@@ -71,17 +81,31 @@ public class MarketPtSeckillGoodsSku extends Model {
     private LocalDateTime cdate;
 
     /**
-    * 更新时间
-    */
+     * 更新时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime udate;
 
     /**
-    * 逻辑删除标记
-    */
+     * 逻辑删除标记
+     */
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;
-
-
+    /**
+     *秒杀数量
+     */
+    private Integer seckillQuantity;
+    /**
+     *限购数量
+     */
+    private Integer restrictQuantity;
+    /**
+     *秒杀库存
+     */
+    private Integer seckillInventory;
+    /**
+     *销售数量
+     */
+    private Integer saleQuantity;
 }
