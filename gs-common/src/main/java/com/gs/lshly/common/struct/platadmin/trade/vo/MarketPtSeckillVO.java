@@ -366,9 +366,9 @@ public class MarketPtSeckillVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime seckillEndTime;
 
-/*        @ApiModelProperty("创建时间")
+        @ApiModelProperty("创建时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-        private LocalDateTime cdate;*/
+        private LocalDateTime cdate;
     }
 
     @Data

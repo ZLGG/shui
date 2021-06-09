@@ -79,11 +79,11 @@ public abstract class PCMerchTradeRightsDTO implements Serializable {
         @ApiModelProperty(value = "售后表ID")
         private String id;
 
-        @ApiModelProperty("退款金额")
+/*        @ApiModelProperty("退款金额")
         private BigDecimal refundAmount;
 
         @ApiModelProperty(value = "退款备注")
-        private String refundNotes;
+        private String refundNotes;*/
     }
     @Data
     @ApiModel("PCMerchTradeRightsDTO.IdCheckDTO")
