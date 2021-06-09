@@ -72,6 +72,7 @@ public class SysUserController {
             throw new BusinessException("密码长度需要在6至32位间");
         }*/
         dto.setId(null);
+        
         userRpc.addSysUser(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
