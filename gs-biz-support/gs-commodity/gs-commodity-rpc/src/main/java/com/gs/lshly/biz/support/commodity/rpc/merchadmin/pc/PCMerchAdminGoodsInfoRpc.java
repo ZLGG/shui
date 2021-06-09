@@ -238,6 +238,11 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         return goodsInfoService.innerByNoSkuId(posSku69);
     }
 
+    @Override
+    public String selectGoodsNo(String tradeGoodsId) {
+        return goodsInfoService.selectGoodsNo(tradeGoodsId);
+    }
+
 
     private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto,String goodsId){
         if (ObjectUtils.isNotEmpty(eto.getFuPinEto())){

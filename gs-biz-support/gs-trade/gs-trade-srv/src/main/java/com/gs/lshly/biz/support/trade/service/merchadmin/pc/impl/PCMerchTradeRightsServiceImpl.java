@@ -24,10 +24,14 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeRightsVO;
 import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminSkuGoodsInfoRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -79,10 +83,13 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     @DubboReference
     private IPCMerchUserRpc ipcMerchUserRpc;
     @DubboReference
-    private IGoodsInfoRpc iGoodsInfoRpc;
+    private IPCMerchAdminGoodsInfoRpc iGoodsInfoRpc;
+    @DubboReference
+    private IPCMerchAdminSkuGoodsInfoRpc ipcMerchAdminSkuGoodsInfoRpc;
 
     @Override
     public PageData<PCMerchTradeRightsVO.RightList> pageData(PCMerchTradeRightsQTO.QTO qto) {
+        List<PCMerchTradeRightsVO.RightList> rightListS = new ArrayList<>();
         IPage<TradeRights> page = MybatisPlusUtil.pager(qto);
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
         query.eq("shop_id", qto.getJwtShopId());
@@ -94,16 +101,16 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 QueryWrapper<TradeRightsGoods> wrapper = MybatisPlusUtil.query();
                 wrapper.like("goods_name", qto.getKeyWord());
                 List<TradeRightsGoods> rightsGoodsList = iTradeRightsGoodsRepository.list(wrapper);
-                if (CollUtil.isNotEmpty(rightsGoodsList)) {
-                    query.in("id", CollUtil.getFieldValues(rightsGoodsList, "rightsId", String.class));
+                if (CollUtil.isEmpty(rightsGoodsList)) {
+                    return new PageData<>(rightListS, qto.getPageNum(), qto.getPageSize(), page.getTotal());
                 }
+                query.in("id", CollUtil.getFieldValues(rightsGoodsList, "rightsId", String.class));
             } else {
-                query.or(i -> i.like("id", qto.getKeyWord())).or(i -> i.like("phone", qto.getKeyWord()));
+                query.and(i -> i.like("id", qto.getKeyWord()).or(s -> s.like("phone", qto.getKeyWord())));
             }
         }
         query.orderByDesc("udate");
         repository.page(page, query);
-        List<PCMerchTradeRightsVO.RightList> rightListS = new ArrayList<>();
         if (CollUtil.isNotEmpty(page.getRecords())) {
             for (TradeRights record : page.getRecords()) {
                 PCMerchTradeRightsVO.RightList rightList = new PCMerchTradeRightsVO.RightList();
@@ -257,7 +264,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
         }
         PCMerchTradeRightsVO.DetailVO detailVO = new PCMerchTradeRightsVO.DetailVO();
         BeanUtil.copyProperties(tradeRights, detailVO);
-        Trade trade = iTradeRepository.getById(tradeRights.getId());
+        Trade trade = iTradeRepository.getById(tradeRights.getTradeId());
         if (ObjectUtil.isEmpty(trade)) {
             throw new BusinessException("未查询到订单数据!");
         }
@@ -276,9 +283,16 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 detailVO.setTradeAmount(tradeGoods.getTradeAmount());
                 detailVO.setTradePointAmount(tradeGoods.getTradePointAmount());
             }
+
             BeanUtil.copyProperties(tradeRightsGoods, goodsVO);
-            GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getTradeGoodsId()));
-            goodsVO.setGoodsNo(goodsDetail.getGoodsNo());
+            String skuImg = ipcMerchAdminSkuGoodsInfoRpc.selectSkuImg(tradeRightsGoods.getSkuId());
+            if (StrUtil.isNotEmpty(skuImg)) {
+                goodsVO.setSkuImg(skuImg);
+            }
+            String goodsNo = iGoodsInfoRpc.selectGoodsNo(tradeRightsGoods.getTradeGoodsId());
+            if (StrUtil.isNotEmpty(goodsNo)) {
+                goodsVO.setGoodsNo(goodsNo);
+            }
             goodsVOList.add(goodsVO);
         }
         detailVO.setGoodsVOList(goodsVOList);
@@ -294,6 +308,12 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 BeanUtil.copyProperties(tradeRightsLog, logVO);
                 logVOS.add(logVO);
             }
+        }
+        QueryWrapper<TradeRightsImg> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.eq("rights_id", tradeRights.getId());
+        List<TradeRightsImg> rightsImgList = iTradeRightsImgRepository.list(queryWrapper);
+        if (CollUtil.isNotEmpty(rightsImgList)) {
+            detailVO.setRightsImge(CollUtil.getFieldValues(rightsImgList, "rightsImg", String.class));
         }
         detailVO.setLogVOList(logVOS);
         return detailVO;
@@ -430,7 +450,60 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     @Override
     @Transactional
     public void check(PCMerchTradeRightsDTO.IdCheckDTO dto) {
-        //售后表的状态是是否为申请
+        if (ObjectUtil.isAllNotEmpty(dto.getId(), dto.getState(), dto.getRightsType())) {
+            throw new BusinessException("参数不能为空!");
+        }
+        TradeRights tradeRights = repository.getById(dto.getId());
+        if (ObjectUtil.isEmpty(tradeRights)) {
+            throw new BusinessException("未查询到售后数据!");
+        }
+        TradeRightsLog tradeRightsLog = new TradeRightsLog();
+        tradeRightsLog.setRightsId(tradeRights.getId());
+        if (dto.getState().equals(TradeRightsEndStateEnum.商家同意.getCode())) {
+            if (dto.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())) {
+                saveTradeRights(dto, tradeRights);
+                tradeRightsLog.setState(dto.getState());
+                tradeRightsLog.setContent("收件人:" + dto.getMerPersonName() + "。收件人电话：" +
+                        dto.getMerPhone() + "。退货地址：" + dto.getMerFullAddres() + "。");
+            } else if (dto.getRightsType().equals(TradeRightsTypeEnum.退货退款.getCode())) {
+                tradeRights.setMerFullAddres(dto.getMerFullAddres());
+                tradeRights.setRefundAmount(dto.getRefundAmount());
+                saveTradeRights(dto, tradeRights);
+                tradeRights.setRefundPoint(dto.getRefundPoint());
+                repository.updateById(tradeRights);
+                saveTradeRightsGoods(dto, tradeRights);
+                tradeRightsLog.setState(dto.getState());
+                tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint()
+                        + "，收件人:" + dto.getMerPersonName() + "。收件人电话：" + dto.getMerPhone()
+                        + "。退货地址：" + dto.getMerFullAddres() + "。");
+            } else if (dto.getRightsType().equals(TradeRightsTypeEnum.仅退款.getCode())) {
+                tradeRights.setState(dto.getState());
+                tradeRights.setRefundAmount(dto.getRefundAmount());
+                tradeRights.setRefundPoint(dto.getRefundPoint());
+                repository.updateById(tradeRights);
+                saveTradeRightsGoods(dto, tradeRights);
+                tradeRightsLog.setState(dto.getState());
+                tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint());
+                iTradeRightsLogRepository.save(tradeRightsLog);
+                //todo yingjun 仅退款 退款
+            }
+        } else if (dto.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
+            tradeRights.setState(dto.getState());
+            tradeRights.setRejectReason(dto.getRejectReason());
+            repository.updateById(tradeRights);
+            tradeRightsLog.setState(dto.getState());
+            tradeRightsLog.setContent("驳回原因：" + dto.getRejectReason());
+        } else if (dto.getState().equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode())) {
+            tradeRights.setState(dto.getState());
+            repository.updateById(tradeRights);
+            tradeRightsLog.setState(dto.getState());
+            tradeRightsLog.setContent("商家确认收货且退款");
+            //todo 回库存
+            //todo yingjun 仅退款 退款
+        }
+        iTradeRightsLogRepository.save(tradeRightsLog);
+
+     /*   //售后表的状态是是否为申请
         TradeRights tradeRights = repository.getById(dto);
         TradeRightsRecord tradeRightsRecord = new TradeRightsRecord();
         if (ObjectUtils.isNotEmpty(tradeRights)) {
@@ -479,7 +552,24 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
         BeanUtils.copyProperties(tradeRights, tradeRightsRecord);
         tradeRightsRecord.setId(null).setCdate(LocalDateTime.now()).setUdate(LocalDateTime.now());
         iTradeRightsRecordRepository.save(tradeRightsRecord);
+        repository.updateById(tradeRights);*/
+    }
+
+    private void saveTradeRights(PCMerchTradeRightsDTO.IdCheckDTO dto, TradeRights tradeRights) {
+        tradeRights.setState(dto.getState());
+        tradeRights.setMerPersonName(dto.getMerPersonName());
+        tradeRights.setMerPhone(dto.getMerPhone());
+        tradeRights.setMerFullAddres(dto.getMerFullAddres());
         repository.updateById(tradeRights);
+    }
+
+    private void saveTradeRightsGoods(PCMerchTradeRightsDTO.IdCheckDTO dto, TradeRights tradeRights) {
+        QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
+        query.eq("rights_id", tradeRights.getId());
+        TradeRightsGoods tradeRightsGoods = iTradeRightsGoodsRepository.getOne(query);
+        tradeRightsGoods.setRefundAmount(dto.getRefundAmount());
+        tradeRightsGoods.setRefundPoint(dto.getRefundPoint());
+        iTradeRightsGoodsRepository.updateById(tradeRightsGoods);
     }
 
     /**

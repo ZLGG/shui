@@ -23,4 +23,5 @@ public class SkuGoodsInfoRpc implements ISkuGoodsInfoRpc {
     public MarketPtSeckillVO.SkuGoodsInfo selectOne(String skuId) {
         return skuGoodInfoService.selectOne(skuId);
     }
+
 }

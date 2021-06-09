@@ -29,4 +29,6 @@ public interface IPCMerchSkuGoodInfoService {
 
     void updateSkuInfo(SkuGoodInfo skuGoodInfo);
     void addSkuInfo(SkuGoodInfo skuGoodInfo);
+
+    String selectSkuImg(String skuId);
 }

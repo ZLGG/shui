@@ -20,4 +20,6 @@ public interface ISkuGoodInfoService {
     List<SkuGoodsInfoVO.DetailVO> listSku(SkuGoodsInfoDTO.GoodsIdDTO dto);
 
     MarketPtSeckillVO.SkuGoodsInfo selectOne(String id);
+
+    String selectSkuImg(String skuId);
 }

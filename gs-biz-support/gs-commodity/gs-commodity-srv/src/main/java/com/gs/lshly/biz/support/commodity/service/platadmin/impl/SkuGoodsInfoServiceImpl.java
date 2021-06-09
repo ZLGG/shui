@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,13 @@ public class SkuGoodsInfoServiceImpl implements ISkuGoodInfoService {
     @Override
     public List<SkuGoodsInfoVO.DetailVO> listSku(SkuGoodsInfoDTO.GoodsIdDTO dto) {
         QueryWrapper<SkuGoodInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("good_id",dto.getGoodsId());
+        queryWrapper.eq("good_id", dto.getGoodsId());
         List<SkuGoodInfo> skuGoodInfos = repository.list(queryWrapper);
         List<SkuGoodsInfoVO.DetailVO> listVOS = new ArrayList<>();
-        if (skuGoodInfos != null && skuGoodInfos.size() >0){
-            for (SkuGoodInfo sku: skuGoodInfos) {
+        if (skuGoodInfos != null && skuGoodInfos.size() > 0) {
+            for (SkuGoodInfo sku : skuGoodInfos) {
                 SkuGoodsInfoVO.DetailVO listVO = new SkuGoodsInfoVO.DetailVO();
-                BeanUtils.copyProperties(sku,listVO);
+                BeanUtils.copyProperties(sku, listVO);
                 listVOS.add(listVO);
             }
         }
@@ -46,16 +47,31 @@ public class SkuGoodsInfoServiceImpl implements ISkuGoodInfoService {
     public MarketPtSeckillVO.SkuGoodsInfo selectOne(String id) {
         SkuGoodInfo skuGoodInfo = repository.getById(id);
         MarketPtSeckillVO.SkuGoodsInfo goodsInfo = new MarketPtSeckillVO.SkuGoodsInfo();
-        if (ObjectUtil.isNotEmpty(skuGoodInfo)){
-            if (StrUtil.isNotEmpty(skuGoodInfo.getSpecsValue())){
+        if (ObjectUtil.isNotEmpty(skuGoodInfo)) {
+            if (StrUtil.isNotEmpty(skuGoodInfo.getSpecsValue())) {
                 goodsInfo.setSpecsValue(skuGoodInfo.getSpecsValue());
             }
-            if (ObjectUtil.isNotEmpty(skuGoodInfo.getSalePrice())){
+            if (ObjectUtil.isNotEmpty(skuGoodInfo.getSalePrice())) {
                 goodsInfo.setSaleSkuPrice(skuGoodInfo.getSalePrice());
-            }else if (ObjectUtil.isNotEmpty(skuGoodInfo.getPointPrice())){
+            } else if (ObjectUtil.isNotEmpty(skuGoodInfo.getPointPrice())) {
                 goodsInfo.setSaleSkuPrice(skuGoodInfo.getPointPrice());
             }
         }
         return goodsInfo;
+    }
+
+    @Override
+    public String selectSkuImg(String skuId) {
+        if (StrUtil.isNotEmpty(skuId)) {
+            throw new BusinessException("skuId为空");
+        }
+        SkuGoodInfo byId = repository.getById(skuId);
+        if (ObjectUtil.isEmpty(byId)) {
+            throw new BusinessException("未查询到sku商品数据");
+        }
+        if (StrUtil.isEmpty(byId.getImage())) {
+            return null;
+        }
+        return byId.getImage();
     }
 }

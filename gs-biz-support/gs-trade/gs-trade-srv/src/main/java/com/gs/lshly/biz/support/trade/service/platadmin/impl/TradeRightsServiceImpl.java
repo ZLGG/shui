@@ -7,22 +7,17 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.enums.PayTypeEnum;
 import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
-import com.gs.lshly.biz.support.trade.enums.TradeRightsListStatusEnum;
 import com.gs.lshly.biz.support.trade.enums.TradeRightsNewStateEnum;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.platadmin.ITradeRightsService;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
@@ -762,12 +757,12 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("售后表信息不存在!");
         }
-        tradeRights.setState(BbcTradeRightsStateEnum.平台同意.getCode());
+        tradeRights.setState(TradeRightsEndStateEnum.平台同意.getCode());
         tradeRights.setCheckState(TradeRightsNewStateEnum.已完成.getCode());
         iTradeRightsRepository.updateById(tradeRights);
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
-        tradeRightsLog.setState(BbcTradeRightsStateEnum.平台同意.getCode());
+        tradeRightsLog.setState(TradeRightsEndStateEnum.平台同意.getCode());
         if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
             tradeRightsLog.setContent("平台处理说明:" + tradeRights.getPlatformCheckReason());
         }
@@ -783,12 +778,12 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("售后表信息不存在!");
         }
-        tradeRights.setState(BbcTradeRightsStateEnum.平台驳回.getCode());
+        tradeRights.setState(TradeRightsEndStateEnum.平台驳回.getCode());
         tradeRights.setCheckState(TradeRightsNewStateEnum.已完成.getCode());
         iTradeRightsRepository.updateById(tradeRights);
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
-        tradeRightsLog.setState(BbcTradeRightsStateEnum.平台驳回.getCode());
+        tradeRightsLog.setState(TradeRightsEndStateEnum.平台驳回.getCode());
         if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
             tradeRightsLog.setContent("平台处理说明:" + tradeRights.getPlatformCheckReason());
         }

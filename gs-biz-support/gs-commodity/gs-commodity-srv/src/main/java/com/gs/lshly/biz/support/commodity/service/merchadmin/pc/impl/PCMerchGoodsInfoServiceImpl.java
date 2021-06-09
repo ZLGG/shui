@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -1551,6 +1552,19 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             if (ObjectUtils.isNotEmpty(list)) {
                 PCMerchGoodsInfoVO.SkuIdByGoodsNoVO skuIdByGoodsNoVO = new PCMerchGoodsInfoVO.SkuIdByGoodsNoVO();
                 skuIdByGoodsNoVO.setSkuId(list.getId()).setGoodsId(list.getGoodId());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String selectGoodsNo(String tradeGoodsId) {
+        if (StrUtil.isNotEmpty(tradeGoodsId)){
+            GoodsInfo byId = repository.getById(tradeGoodsId);
+            if (ObjectUtil.isNotEmpty(byId)){
+                if (ObjectUtil.isNotEmpty(byId.getGoodsNo())){
+                    return byId.getGoodsNo();
+                }
             }
         }
         return null;

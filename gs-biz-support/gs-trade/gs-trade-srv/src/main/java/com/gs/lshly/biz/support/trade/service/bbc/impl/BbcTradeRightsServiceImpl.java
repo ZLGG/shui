@@ -6,37 +6,24 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.enums.PlatformCardCheckStatusEnum;
-import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
-import com.gs.lshly.biz.support.trade.enums.TradeRightsListStatusEnum;
 import com.gs.lshly.biz.support.trade.enums.TradeRightsNewStateEnum;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeRightsService;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeRightsBuildDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeRightsDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeRightsQTO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsGoodsVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
-import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
-import com.gs.lshly.common.struct.common.CommonShopVO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.MerchantHomeDashboardVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
-import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
@@ -166,7 +153,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 tradeRights.setOrderCode(trade.getTradeCode());
                 tradeRights.setShouldRefundAmount(dto.getRefundAmount());
                 tradeRights.setShouldRefundPoint(dto.getRefundPoint());
-                tradeRights.setState(BbcTradeRightsStateEnum.待处理.getCode());
+                tradeRights.setState(TradeRightsEndStateEnum.待处理.getCode());
                 tradeRights.setRightsRemark(dto.getRightsRemark());
                 tradeRights.setReturnType(TradeRightsReturnTypeEnum.自行寄回.getCode());
                 tradeRights.setApplyTime(LocalDateTime.now());
@@ -214,7 +201,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 //rightsGoodsAndImage(dto, tradeRightsGoodsS, rights);
                 TradeRightsLog tradeRightsLog = new TradeRightsLog();
                 tradeRightsLog.setRightsId(tradeRights.getId());
-                tradeRightsLog.setState(BbcTradeRightsStateEnum.待处理.getCode());
+                tradeRightsLog.setState(TradeRightsEndStateEnum.待处理.getCode());
                 tradeRightsLog.setContent("买家发起了退款申请，金额：" + tradeRights.getShouldRefundAmount() + "元，" + tradeRights.getShouldRefundPoint() + "积分。");
                 tradeRightsLogRepository.save(tradeRightsLog);
             }
@@ -238,7 +225,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             tradeRights.setOrderCode(trade.getTradeCode());
             //tradeRights.setShouldRefundAmount(dto.getRefundAmount());
             //tradeRights.setShouldRefundPoint(dto.getRefundPoint());
-            tradeRights.setState(BbcTradeRightsStateEnum.待处理.getCode());
+            tradeRights.setState(TradeRightsEndStateEnum.待处理.getCode());
             tradeRights.setRightsRemark(dto.getRightsRemark());
             tradeRights.setReturnType(TradeRightsReturnTypeEnum.自行寄回.getCode());
             tradeRights.setApplyTime(LocalDateTime.now());
@@ -291,7 +278,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
 
             TradeRightsLog tradeRightsLog = new TradeRightsLog();
             tradeRightsLog.setRightsId(tradeRights.getId());
-            tradeRightsLog.setState(BbcTradeRightsStateEnum.待处理.getCode());
+            tradeRightsLog.setState(TradeRightsEndStateEnum.待处理.getCode());
             tradeRightsLog.setContent("买家发起了换货申请，待商家审核。");
             tradeRightsLogRepository.save(tradeRightsLog);
         }
@@ -316,7 +303,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         rights.setOrderCode(trade.getTradeCode());
         rights.setShouldRefundAmount(dto.getRefundAmount());
         rights.setShouldRefundPoint(dto.getRefundPoint());
-        rights.setState(BbcTradeRightsStateEnum.提交申请.getCode());
+        rights.setState(TradeRightsEndStateEnum.提交申请.getCode());
         rights.setRightsType(dto.getRightsType());
         rights.setRightsReasonType(dto.getRightsReasonType());
         rights.setRightsRemark(dto.getRightsRemark());
@@ -537,11 +524,11 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (ObjectUtils.isNull(tradeRights)) {
             throw new BusinessException("无售后单数据");
         }
-        if (tradeRights.getState().equals(BbcTradeRightsStateEnum.商家确认收货并退款.getCode())) {
+        if (tradeRights.getState().equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode())) {
             tradeRights.setReturnGoodsLogisticsName(dto.getReturnGoodsLogisticsName());
             tradeRights.setReturnGoodsLogisticsNum(dto.getReturnGoodsLogisticsNum());
             tradeRights.setReturnGoodsLogisticsDate(LocalDateTime.now());
-            tradeRights.setState(BbcTradeRightsStateEnum.商家同意.getCode());
+            tradeRights.setState(TradeRightsEndStateEnum.商家同意.getCode());
             repository.saveOrUpdate(tradeRights);
         } else {
             throw new BusinessException("不允许操作");
@@ -554,8 +541,8 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (StringUtils.isNotBlank(dto.getId())) {
             TradeRights tradeRights = repository.getById(dto.getId());
             if (ObjectUtils.isNotEmpty(tradeRights)) {
-                if (tradeRights.getState().equals(BbcTradeRightsStateEnum.商家同意.getCode()) /*&& tradeRights.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())*/) {
-                    tradeRights.setState(BbcTradeRightsStateEnum.换货完成.getCode());
+                if (tradeRights.getState().equals(TradeRightsEndStateEnum.商家同意.getCode()) /*&& tradeRights.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())*/) {
+                    tradeRights.setState(TradeRightsEndStateEnum.换货完成.getCode());
                 } else {
                     throw new BusinessException("不能修改状态");
                 }
@@ -570,7 +557,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             trade.setTradeState(TradeStateEnum.已完成.getCode());
             TradeRightsLog tradeRightsLog = new TradeRightsLog();
             tradeRightsLog.setRightsId(tradeRights.getId());
-            tradeRightsLog.setState(BbcTradeRightsStateEnum.换货完成.getCode());
+            tradeRightsLog.setState(TradeRightsEndStateEnum.换货完成.getCode());
             tradeRightsLog.setContent("换货完成。");
             tradeRightsLogRepository.save(tradeRightsLog);
         } else {
@@ -588,17 +575,17 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("查询不到售后单");
         }
-        if (tradeRights.getState().equals(BbcTradeRightsStateEnum.用户取消.getCode())) {
+        if (tradeRights.getState().equals(TradeRightsEndStateEnum.用户取消.getCode())) {
             throw new BusinessException("用户已取消");
         }
         //删除售后商品表数据
         tradeRightsGoodsRepository.remove(Wrappers.<TradeRightsGoods>lambdaQuery().eq(TradeRightsGoods::getRightsId, tradeRights.getId()));
         //删除售后表数据
-        tradeRights.setState(BbcTradeRightsStateEnum.用户取消.getCode());
+        tradeRights.setState(TradeRightsEndStateEnum.用户取消.getCode());
         repository.updateById(tradeRights);
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
-        tradeRightsLog.setState(BbcTradeRightsStateEnum.用户取消.getCode());
+        tradeRightsLog.setState(TradeRightsEndStateEnum.用户取消.getCode());
         tradeRightsLog.setContent("用户撤销售后申请。");
         tradeRightsLogRepository.save(tradeRightsLog);
     }
@@ -672,7 +659,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         }
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
-        tradeRightsLog.setState(BbcTradeRightsStateEnum.用户修改申请.getCode());
+        tradeRightsLog.setState(TradeRightsEndStateEnum.用户修改申请.getCode());
         tradeRightsLog.setContent("用户修改了售后申请。");
         tradeRightsLogRepository.save(tradeRightsLog);
     }
@@ -715,15 +702,15 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("未查询到售后数据!");
         }
-        if (!tradeRights.getState().equals(BbcTradeRightsStateEnum.商户驳回.getCode())) {
+        if (!tradeRights.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
             throw new BusinessException("售后未处于商家驳回状态");
         }
-        tradeRights.setState(BbcTradeRightsStateEnum.买家二次申诉.getCode());
+        tradeRights.setState(TradeRightsEndStateEnum.买家二次申诉.getCode());
         tradeRights.setCheckState(TradeRightsNewStateEnum.待审核.getCode());
         repository.updateById(tradeRights);
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
-        tradeRightsLog.setState(BbcTradeRightsStateEnum.买家二次申诉.getCode());
+        tradeRightsLog.setState(TradeRightsEndStateEnum.买家二次申诉.getCode());
         tradeRightsLog.setContent("用户进行二次申诉。");
         tradeRightsLogRepository.save(tradeRightsLog);
     }
@@ -760,7 +747,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         tradeVO.setTradeRightsGoodsVOS(tradeGoodsVOS);*/
         BbcTradeRightsVO.ListVO listVO = new BbcTradeRightsVO.ListVO();
         BeanUtil.copyProperties(tradeRights, listVO);
-        if (!tradeRights.getState().equals(BbcTradeRightsStateEnum.商家确认收货并退款.getCode())) {
+        if (!tradeRights.getState().equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode())) {
             listVO.setRefundAmount(tradeRights.getShouldRefundAmount());
             listVO.setRefundPoint(tradeRights.getShouldRefundPoint());
         } else {
