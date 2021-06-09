@@ -24,9 +24,11 @@ public abstract class BbcTradeRightsVO implements Serializable {
 
         @ApiModelProperty("售后表ID")
         private String id;
-/*
+
         @ApiModelProperty("订单ID")
-        private String tradeId;*/
+        private String tradeId;
+        /*
+         */
 
 /*        @ApiModelProperty("会员ID")
         private String userId;*/
@@ -260,7 +262,7 @@ public abstract class BbcTradeRightsVO implements Serializable {
 
     @Data
     @ApiModel("BbcTradeRightsVO.IdVO")
-    public static class IdVO implements Serializable{
+    public static class IdVO implements Serializable {
         @ApiModelProperty("售后Id")
         private String id;
     }

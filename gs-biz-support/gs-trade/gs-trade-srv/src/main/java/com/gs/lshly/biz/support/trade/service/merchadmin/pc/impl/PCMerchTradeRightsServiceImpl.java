@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.enums.MarketPtRightCheckStatusEnum;
 import com.gs.lshly.biz.support.trade.enums.TradeRefundStatusEnum;
+import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeRightsService;
 import com.gs.lshly.common.enums.*;
@@ -21,9 +22,12 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeRightsDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeRightsQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeRightsVO;
 import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -65,11 +69,17 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     @Autowired
     private ITradeRepository iTradeRepository;
     @Autowired
+    private ITradeGoodsRepository iTradeGoodsRepository;
+    @Autowired
     private ITradeRightsImgRepository iTradeRightsImgRepository;
+    @Autowired
+    private ITradeRightsLogRepository iTradeRightsLogRepository;
     @DubboReference
     private IPCMerchShopRpc ipcMerchShopRpc;
     @DubboReference
     private IPCMerchUserRpc ipcMerchUserRpc;
+    @DubboReference
+    private IGoodsInfoRpc iGoodsInfoRpc;
 
     @Override
     public PageData<PCMerchTradeRightsVO.RightList> pageData(PCMerchTradeRightsQTO.QTO qto) {
@@ -247,8 +257,46 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
         }
         PCMerchTradeRightsVO.DetailVO detailVO = new PCMerchTradeRightsVO.DetailVO();
         BeanUtil.copyProperties(tradeRights, detailVO);
-        PCMerchTradeRightsVO.DetailVO detailVo = new PCMerchTradeRightsVO.DetailVO();
-        return detailVo;
+        Trade trade = iTradeRepository.getById(tradeRights.getId());
+        if (ObjectUtil.isEmpty(trade)) {
+            throw new BusinessException("未查询到订单数据!");
+        }
+        detailVO.setDeliveryAmount(trade.getDeliveryAmount());
+        QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
+        query.eq("rights_id", tradeRights.getId());
+        List<TradeRightsGoods> tradeRightsGoodsList = iTradeRightsGoodsRepository.list(query);
+        List<PCMerchTradeRightsVO.GoodsVO> goodsVOList = new ArrayList<>();
+        for (TradeRightsGoods tradeRightsGoods : tradeRightsGoodsList) {
+            PCMerchTradeRightsVO.GoodsVO goodsVO = new PCMerchTradeRightsVO.GoodsVO();
+            if (tradeRightsGoods.getGoodsType().equals(TradeRightsGoodsTypeEnum.原商品.getCode())) {
+                QueryWrapper<TradeGoods> wrapper = MybatisPlusUtil.query();
+                wrapper.eq("trade_id", tradeRightsGoods.getTradeId());
+                wrapper.eq("sku_id", tradeRightsGoods.getSkuId());
+                TradeGoods tradeGoods = iTradeGoodsRepository.getOne(wrapper);
+                detailVO.setTradeAmount(tradeGoods.getTradeAmount());
+                detailVO.setTradePointAmount(tradeGoods.getTradePointAmount());
+            }
+            BeanUtil.copyProperties(tradeRightsGoods, goodsVO);
+            GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getTradeGoodsId()));
+            goodsVO.setGoodsNo(goodsDetail.getGoodsNo());
+            goodsVOList.add(goodsVO);
+        }
+        detailVO.setGoodsVOList(goodsVOList);
+
+        List<PCMerchTradeRightsVO.LogVO> logVOS = new ArrayList<>();
+        QueryWrapper<TradeRightsLog> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("rights_id", tradeRights.getId());
+        wrapper.orderByAsc("cdate");
+        List<TradeRightsLog> logList = iTradeRightsLogRepository.list(wrapper);
+        if (CollUtil.isNotEmpty(logList)) {
+            for (TradeRightsLog tradeRightsLog : logList) {
+                PCMerchTradeRightsVO.LogVO logVO = new PCMerchTradeRightsVO.LogVO();
+                BeanUtil.copyProperties(tradeRightsLog, logVO);
+                logVOS.add(logVO);
+            }
+        }
+        detailVO.setLogVOList(logVOS);
+        return detailVO;
        /* TradeRights tradeRights = repository.getById(dto.getId());
         PCMerchTradeRightsVO.DetailVO detailVo = new PCMerchTradeRightsVO.DetailVO();
         if (ObjectUtils.isEmpty(tradeRights)) {

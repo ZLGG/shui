@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -260,8 +261,13 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
     @Accessors(chain = true)
     @ApiModel("PCMerchTradeRightsVO.GoodsVO")
     public static class GoodsVO implements Serializable {
+        @ApiModelProperty("商品名称")
         private String goodsName;
+        @ApiModelProperty("售后数量")
         private Integer quantity;
+        @ApiModelProperty("售后商品类型(10:原商品,20:换货商品)")
+        private String goodsType;
+        @ApiModelProperty("商品货号")
         private String goodsNo;
     }
 
