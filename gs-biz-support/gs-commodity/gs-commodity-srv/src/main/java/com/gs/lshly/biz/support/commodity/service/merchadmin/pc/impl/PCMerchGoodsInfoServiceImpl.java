@@ -300,7 +300,23 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         goodsInfo.setIsShowOldPrice(ObjectUtils.isEmpty(goodsInfo.getIsShowOldPrice()) ? ShowOldPriceEnum.不显示原价.getCode() : goodsInfo.getIsShowOldPrice());
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId()) ? eto.getJwtShopId() : eto.getShopId());
         goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId()) ? eto.getJwtMerchantId() : eto.getMerchantId());
-        goodsInfo.setGoodsState(GoodsStateEnum.未上架.getCode());
+        goodsInfo.setGoodsState(GoodsStateEnum.待审核.getCode());
+
+        switch (eto.getCtccMold()) {
+            case 20:
+                goodsInfo.setIsPointGood(true);
+                goodsInfo.setIsInMemberGift(false);
+                break;
+            case 30:
+                goodsInfo.setIsPointGood(false);
+                goodsInfo.setIsInMemberGift(true);
+                break;
+            default:
+                goodsInfo.setIsPointGood(false);
+                goodsInfo.setIsInMemberGift(false);
+                break;
+        }
+
         boolean flag = repository.save(goodsInfo);
         if (!flag) {
             throw new BusinessException("添加商品失败");
@@ -393,7 +409,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             //商品关联拓展id
             JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
 
-
             //sku商品关联spec拓展id组
             JoinSkuSpecIds(specBuffer, goodsInfo.getId());
 
@@ -444,8 +459,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             sb.append(goodsServeId + ",");
         }
         String serveIds = sb.toString();
-        if(StringUtils.isNotEmpty(serveIds)){
-        	goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
+        if (StringUtils.isNotEmpty(serveIds)) {
+            goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
         }
         goodsServeCorRepository.save(goodsServeCor);
         return goodsIdVO;
@@ -1172,7 +1187,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
-    public PageData<PCMerchGoodsInfoVO.ShopFloorCommodityVO> getShopFloorCommodityVO(PCMerchGoodsInfoQTO.ShopFloorQTO qto) {
+    public PageData<PCMerchGoodsInfoVO.ShopFloorCommodityVO> getShopFloorCommodityVO
+            (PCMerchGoodsInfoQTO.ShopFloorQTO qto) {
 
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
         boost.eq("shop_id", qto.getJwtShopId());
@@ -1209,7 +1225,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
-    public PageData<PCMerchGoodsInfoVO.ShopNavigationCommodityVO> pageShopNavigationCommodityVO(PCMerchGoodsInfoQTO.ShopNavigationQTO qto) {
+    public PageData<PCMerchGoodsInfoVO.ShopNavigationCommodityVO> pageShopNavigationCommodityVO
+            (PCMerchGoodsInfoQTO.ShopNavigationQTO qto) {
         QueryWrapper<PCMerchGoodsInfoVO.ShopNavigationCommodityVO> boost = MybatisPlusUtil.query();
         boost.eq("gs.shop_id", qto.getJwtShopId());
         boost.eq("gs.merchant_id", qto.getJwtMerchantId());
@@ -1404,7 +1421,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
 
     @Override
-    public List<PCMerchGoodsInfoVO.InnerServiceGoodsVO> innerServiceGoodsVO(PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    public List<PCMerchGoodsInfoVO.InnerServiceGoodsVO> innerServiceGoodsVO(PCMerchGoodsInfoDTO.IdsInnerServiceDTO
+                                                                                    dto) {
         return getInnerServiceGoodsVO(GoodsStateEnum.已上架.getCode(), dto);
     }
 
@@ -1414,12 +1432,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
-    public List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceGoodsInfo(PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    public List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceGoodsInfo
+            (PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
         return getInnerServiceGoodsInfo(GoodsStateEnum.已上架.getCode(), dto);
     }
 
     @Override
-    public List<PCMerchGoodsInfoVO.InnerServiceGoodsVO> innerServiceAllGoodsVO(PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    public List<PCMerchGoodsInfoVO.InnerServiceGoodsVO> innerServiceAllGoodsVO
+            (PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
         return getInnerServiceGoodsVO(null, dto);
     }
 
@@ -1429,7 +1449,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
-    public List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceAllGoodsInfo(PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    public List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> innerServiceAllGoodsInfo
+            (PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
         return getInnerServiceGoodsInfo(null, dto);
     }
 
@@ -1633,7 +1654,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         repository.remove(goodsWrapper);
     }
 
-    private void JoinGoodsExtendIds(StringBuffer attributeBuffer, StringBuffer specBuffer, StringBuffer paramsBuffer, String id) {
+    private void JoinGoodsExtendIds(StringBuffer attributeBuffer, StringBuffer specBuffer, StringBuffer
+            paramsBuffer, String id) {
 
         String attributeIds = "";
         String specIds = "";
@@ -1722,7 +1744,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return intersection;
     }
 
-    private void initGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto, List<CommonStockDTO.InnerChangeStockItem> items) {
+    private void initGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO
+                                        eto, List<CommonStockDTO.InnerChangeStockItem> items) {
         CommonStockDTO.InnerChangeStockDTO dto = new CommonStockDTO.InnerChangeStockDTO();
         dto.setShopId(StringUtils.isEmpty(eto.getShopId()) ? eto.getJwtShopId() : eto.getShopId());
         dto.setMerchantId(StringUtils.isEmpty(eto.getMerchantId()) ? eto.getJwtMerchantId() : eto.getMerchantId());
@@ -1750,7 +1773,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return false;
     }
 
-    private void deleteSurplusAttribute(List<PCMerchGoodsAttributeInfoVO.ListVO> beforeEto, List<PCMerchGoodsAttributeInfoDTO.ETO> afterEto) {
+    private void deleteSurplusAttribute
+            (List<PCMerchGoodsAttributeInfoVO.ListVO> beforeEto, List<PCMerchGoodsAttributeInfoDTO.ETO> afterEto) {
         List<String> beforeIdList = new ArrayList<>();
         List<String> afterIdList = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(beforeEto)) {
@@ -1784,14 +1808,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             throw new BusinessException("请填写商品标题");
         }
         if (StringUtils.isBlank(eto.getGoodsTitle())) {
-            throw new BusinessException("请填写商品副标题");
+            throw new BusinessException("请填写商品简介");
         }
         if (StringUtils.isBlank(eto.getCategoryId())) {
-            throw new BusinessException("请选择分类");
+            throw new BusinessException("请选择商品平台分类");
         }
-        if (ObjectUtils.isEmpty(eto.getUsePlatform())) {
+        /*if (ObjectUtils.isEmpty(eto.getUsePlatform())) {
             throw new BusinessException("请选择商品发布的平台");
-        }
+        }*/
         if (StringUtils.isBlank(eto.getBrandId())) {
             throw new BusinessException("请选择品牌，若没有品牌请先去绑定品牌");
         }
@@ -1846,8 +1870,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 //        if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.C商城.getCode())) && StringUtils.isBlank(eto.getShopNavigationId())){
 //            throw new BusinessException("请选择店铺2b自定义类目");
 //        }
-        if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城.getCode())) && StringUtils.isBlank(eto.getShop2cNavigationId())) {
+        /*if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城.getCode())) && StringUtils.isBlank(eto.getShop2cNavigationId())) {
             throw new BusinessException("请选择店铺2c自定义类目");
+        }*/
+        if (StringUtils.isEmpty(eto.getShopNavigationId())) {
+            throw new BusinessException("请选择店铺商品分类");
+        }
+        if (ObjectUtil.isEmpty(eto.getCtccMold())) {
+            throw new BusinessException("请选择商品类型");
         }
     }
 
@@ -1933,7 +1963,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return categorySkuGoodsVOS;
     }
 
-    private List<PCMerchGoodsInfoVO.InnerServiceGoodsVO> getInnerServiceGoodsVO(Integer state, PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    private List<PCMerchGoodsInfoVO.InnerServiceGoodsVO> getInnerServiceGoodsVO(Integer
+                                                                                        state, PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
         List<GoodsInfo> goodsInfos = null;
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
         if (ObjectUtils.isNotEmpty(state)) {
@@ -1957,7 +1988,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return new ArrayList<>();
     }
 
-    private List<PCMerchGoodsInfoVO.ListVO> getInnerServiceSpuGoodsInfo(Integer state, PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    private List<PCMerchGoodsInfoVO.ListVO> getInnerServiceSpuGoodsInfo(Integer
+                                                                                state, PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
 
         List<GoodsInfo> goodsInfos = null;
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
@@ -1982,7 +2014,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return new ArrayList<>();
     }
 
-    private List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> getInnerServiceGoodsInfo(Integer state, PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
+    private List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> getInnerServiceGoodsInfo(Integer
+                                                                                              state, PCMerchGoodsInfoDTO.IdsInnerServiceDTO dto) {
         List<PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> list = new ArrayList<>();
         List<String> goodsIdList = new ArrayList<>();
         Map<String, PCMerchGoodsInfoVO.InnerServiceGoodsInfoVO> voMap = new HashMap<>();
@@ -2033,7 +2066,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return list;
     }
 
-    private void createGoodsShopNaigationBind(String merchantId, String shopId, String goodsId, String navigationId, Integer terminal) {
+    private void createGoodsShopNaigationBind(String merchantId, String shopId, String goodsId, String
+            navigationId, Integer terminal) {
         GoodsShopNavigation shopNavigation = new GoodsShopNavigation();
         shopNavigation.setMerchantId(merchantId);
         shopNavigation.setShopId(shopId);

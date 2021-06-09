@@ -53,7 +53,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty("商品标题")
+        @ApiModelProperty("商品简介")
         private String goodsTitle;
 
         @ApiModelProperty("商品状态")
@@ -150,7 +150,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty(value = "减库存方式(10-付款减库存，下单减库存)")
         private Integer stockSubtractType;
 
-        @ApiModelProperty(value = "店铺自定义2b类目id")
+        @ApiModelProperty(value = "店铺商品分类")
         private String shopNavigationId;
 
         @ApiModelProperty(value = "店铺自定义2c类目id")
@@ -182,6 +182,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty("服务列表")
         private List<String> goodsServeIdS = new ArrayList<>();
+
+        @ApiModelProperty("商品类型 10：普通商品 20：积分商品 30：IN会员商品")
+        private Integer ctccMold;
 
     }
 
