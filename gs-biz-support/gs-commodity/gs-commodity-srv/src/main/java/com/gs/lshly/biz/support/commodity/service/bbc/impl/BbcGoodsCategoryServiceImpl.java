@@ -14,6 +14,9 @@ import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
+
+import cn.hutool.core.collection.CollectionUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -227,6 +230,26 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
                 }
             }
         }
+        //查下一级
+        
+        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("parent_id", categoryIdQTO.getCategoryId());
+        List<GoodsCategory> list = repository.list(queryWrapper);
+        if(CollectionUtil.isNotEmpty(list)){
+        	for(GoodsCategory child:list){
+        		ret.add(child.getId());
+        		
+        		QueryWrapper<GoodsCategory> queryWrapper1 = new QueryWrapper<>();
+        		queryWrapper1.in("parent_id", child.getId());
+                List<GoodsCategory> list2 = repository.list(queryWrapper1);
+                if(CollectionUtil.isNotEmpty(list2)){
+                	for(GoodsCategory child2:list2){
+                		ret.add(child2.getId());
+                	}
+                }
+        	}
+        }
+        
         return ret;
     }
 
