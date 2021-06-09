@@ -126,7 +126,7 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
     @ApiModel("PCMerchTradeRightsVO.DetailVO")
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class DetailVO extends ListVO {
+    public static class DetailVO implements Serializable {
         //会员名称，商家名称，下单时间，订单完成状态，收货信息，
 /*        @ApiModelProperty("会员名称")
         private String userName;
