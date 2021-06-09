@@ -36,6 +36,11 @@ public class SwaggerConfig implements WebMvcConfigurer {
     public Docket create2BFYApi() {
         return DocketUtils.create2CFYApi("测试");
     }
+    
+    @Bean
+    public Docket createCtccApi() {
+        return DocketUtils.createCtccApi("电信接口DEMO");
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

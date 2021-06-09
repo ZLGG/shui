@@ -258,4 +258,10 @@ public class GoodsInfo extends Model {
      * in会员优惠券类型（20,30,50,99,200）
      */
     private Integer inCouponType;
+    
+    
+    /**
+     * 关联电信API入口 10:b2i;  20:统一支付；30:bss3.0；40:itv；50:信天游
+     */
+    private Integer ctccApi;
 }

@@ -1441,6 +1441,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
         QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
         wrapper.eq("is_in_member_gift", TrueFalseEnum.是.getCode());
+        wrapper.eq("goods_state", GoodsStateEnum.已上架.getCode());
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> goodsInfoIPage = repository.page(page, wrapper);
         if (ObjectUtils.isEmpty(goodsInfoIPage) || ObjectUtils.isEmpty(goodsInfoIPage.getRecords())) {

@@ -99,6 +99,10 @@ public class DocketUtils {
     public static Docket create2CFYApi(String swaggerTitle) {
         return createAPI(swaggerTitle, "", "测试", BBCTerminal, "test");
     }
+    
+    public static Docket createCtccApi(String swaggerTitle) {
+        return createAPI(swaggerTitle, "", "电信接口", BBCTerminal, "ctcc");
+    }
 
     private static Docket createAPI(String swaggerTitle, String defaultJWTValue, String groupName, String terminal, String module){
         String terminalPackage = "";
