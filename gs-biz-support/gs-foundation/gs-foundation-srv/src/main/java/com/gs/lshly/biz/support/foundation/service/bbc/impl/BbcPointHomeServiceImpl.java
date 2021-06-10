@@ -29,6 +29,7 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcCtccCategoryGoodsRpc;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcCtccPtActivityGoodsRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
@@ -65,6 +66,9 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
     
     @DubboReference
     private IBbcCtccCategoryGoodsRpc bbcCtccCategoryGoodsRpc;
+    
+    @DubboReference
+    private IBbcCtccPtActivityGoodsRpc bbcCtccPtActivityGoodsRpc;
     
 	@Override
 	public List<ListVO> getHome(QTO qto) {
@@ -160,7 +164,7 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		retList.add(listVO);
 		
 		qto2.setName(PointHomeTypeEnum.电信国际.getRemark());
-		List<BbcGoodsInfoVO.DetailVO>  listCtcc = bbcCtccCategoryGoodsRpc.listGoodsInfo();
+		List<BbcGoodsInfoVO.DetailVO>  listCtcc = bbcCtccPtActivityGoodsRpc.listCtccPtActivityGoods(6);
 		
 		listVO = new ListVO();
 		listVO.setId(PointHomeTypeEnum.电信国际.getCode());

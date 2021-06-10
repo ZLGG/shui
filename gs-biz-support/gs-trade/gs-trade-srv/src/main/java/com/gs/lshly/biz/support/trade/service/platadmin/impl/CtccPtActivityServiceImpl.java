@@ -117,7 +117,7 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         // 查询电信国际活动商品
         QueryWrapper<CtccActivityGoods> queryWrapper = MybatisPlusUtil.query();
         queryWrapper.eq("flag",false);
-        queryWrapper.orderByDesc("idx");
+        queryWrapper.orderByAsc("idx");
         if (StringUtils.isNotBlank(dto.getCategoryId())) {
             queryWrapper.eq("category_id", dto.getCategoryId());
         }

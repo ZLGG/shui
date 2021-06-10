@@ -102,7 +102,7 @@ public class CtccPtActivityController {
         iCtccPtActivityRpc.updateGoodsState(list);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
-
+    
     @ApiOperation("添加活动商品")
     @PostMapping("/addGoods")
     @Func(code = "add",name = "增")

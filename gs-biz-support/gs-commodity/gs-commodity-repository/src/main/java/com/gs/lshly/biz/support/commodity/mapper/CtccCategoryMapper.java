@@ -24,7 +24,7 @@ public interface CtccCategoryMapper extends BaseMapper<CtccCategory> {
 	 * @param categoryId
 	 * @return
 	 */
-    @Select("select * from gs_goods_info where id in(select goods_id from gs_ctcc_pt_activity_goods where category_id= #{categoryId} )")
+    @Select("select * from gs_goods_info where id in(select goods_id from gs_ctcc_pt_activity_goods where category_id= #{categoryId} and goods_state = 20  order by idx )")
     List<BbcCtccCategoryGoodsVO.GoodsListVO> listGoodsByCategoryId(@Param("categoryId") String categoryId);
 
 }

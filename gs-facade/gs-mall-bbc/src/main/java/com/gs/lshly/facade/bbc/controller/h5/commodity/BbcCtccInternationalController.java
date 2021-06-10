@@ -20,12 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/bbc/international")
 @Api(tags = "2C电信国际-v1.1.0")
+@SuppressWarnings("unchecked")
 public class BbcCtccInternationalController {
 
     @DubboReference
     private IBbcCtccCategoryGoodsRpc bbcCtccCategoryGoodsRpc;
 
-    @ApiOperation("2C电信商城-v1.1.0")
+	@ApiOperation("2C电信国际-v1.1.0")
     @GetMapping("")
     public ResponseData<BbcCtccCategoryGoodsVO.CtccInternationalHomeVO> home(BbcCtccCategoryGoodsDTO.DTO dto) {
         return ResponseData.data(bbcCtccCategoryGoodsRpc.ctccInternationalHomeVO(dto));
