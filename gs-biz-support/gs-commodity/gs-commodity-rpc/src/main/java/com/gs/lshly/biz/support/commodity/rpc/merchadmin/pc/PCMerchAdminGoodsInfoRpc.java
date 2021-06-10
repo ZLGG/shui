@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.rpc.merchadmin.pc;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsFupinService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
@@ -37,6 +38,8 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     private IPCMerchGoodsInfoService goodsInfoService;
     @Autowired
     private IPCMerchGoodsFupinService goodsFupinService;
+    @Autowired
+    private IPCMerchGoodsInfoTempService goodsInfoTempService;
 
     @Override
     public PageData<PCMerchGoodsInfoVO.SpuListVO> pageData(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto){
@@ -69,10 +72,19 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
     @Override
     public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto){
-        goodsInfoService.editGoodsInfo(eto);
+
+        //用户编辑商品，需要先审核，若只是修改库存则直接修改
+        //包含非库存字段修改
+        if(ObjectUtils.isNotEmpty(eto) && ObjectUtils.isNotEmpty(eto.getIsIncludeOthers()) && eto.getIsIncludeOthers()){
+            goodsInfoService.updateGoodsStock(eto);
+        }else{
+            goodsInfoTempService.editGoodsInfo(eto);
+        }
+
+        //goodsInfoService.editGoodsInfo(eto);
 
         //如果该商品是扶贫商品
-        settingFuPin(eto,eto.getId());
+        //settingFuPin(eto,eto.getId());
 
     }
 
