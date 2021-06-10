@@ -233,4 +233,5 @@ public interface IPCMerchAdminGoodsInfoRpc {
      * */
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69);
 
+    String selectGoodsNo(String tradeGoodsId);
 }

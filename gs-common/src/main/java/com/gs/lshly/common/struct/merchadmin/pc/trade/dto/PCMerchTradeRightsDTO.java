@@ -1,17 +1,20 @@
 package com.gs.lshly.common.struct.merchadmin.pc.trade.dto;
+
 import com.gs.lshly.common.struct.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 /**
-* @author zdf
-* @since 2020-12-17
-*/
+ * @author zdf
+ * @since 2020-12-17
+ */
 public abstract class PCMerchTradeRightsDTO implements Serializable {
 
     @Data
@@ -19,7 +22,7 @@ public abstract class PCMerchTradeRightsDTO implements Serializable {
     @Accessors(chain = true)
     public static class ETO extends BaseDTO {
 
-        @ApiModelProperty(value = "售后表ID",hidden = true)
+        @ApiModelProperty(value = "售后表ID", hidden = true)
         private String id;
 
         @ApiModelProperty("订单ID")
@@ -85,19 +88,33 @@ public abstract class PCMerchTradeRightsDTO implements Serializable {
         @ApiModelProperty(value = "退款备注")
         private String refundNotes;*/
     }
+
     @Data
     @ApiModel("PCMerchTradeRightsDTO.IdCheckDTO")
     @AllArgsConstructor
     public static class IdCheckDTO extends BaseDTO {
 
-        @ApiModelProperty(value = "售后表ID")
+        @ApiModelProperty("售后表ID")
         private String id;
-        @ApiModelProperty(value = "10=通过审核 20=审核驳回")
-        private Integer checkState;
-        @ApiModelProperty(value = "驳回原因")
+        @ApiModelProperty("处理状态(20:商家同意,30:商户驳回,80:商家确认收货并退款)")
+        private Integer state;
+        @ApiModelProperty("售后类型(10:换货,20:仅退款,30:退货退款)")
+        private Integer rightsType;
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+        @ApiModelProperty("实退积分")
+        private BigDecimal refundPoint;
+        @ApiModelProperty("驳回原因")
         private String rejectReason;
+        @ApiModelProperty("卖家收货人姓名")
+        private String merPersonName;
+        @ApiModelProperty("卖家收货人手机号")
+        private String merPhone;
+        @ApiModelProperty("卖家收货人地址")
+        private String merFullAddres;
 
     }
+
     @Data
     @ApiModel("PCMerchTradeRightsDTO.SendDTO")
     @AllArgsConstructor
@@ -111,9 +128,5 @@ public abstract class PCMerchTradeRightsDTO implements Serializable {
 
         @ApiModelProperty("换货商机寄回物流单号")
         private String sendBackLogisticsNum;
-
-
     }
-
-
 }

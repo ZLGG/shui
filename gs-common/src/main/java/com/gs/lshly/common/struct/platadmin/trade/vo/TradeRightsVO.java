@@ -234,7 +234,7 @@ public abstract class TradeRightsVO implements Serializable {
     @Data
     @ApiModel("TradeRightsVO.RightsListViewVO")
     public static class RightsListViewVO implements Serializable {
-        @ApiModelProperty("退货基本信息")
+        @ApiModelProperty("退换货基本信息")
         private TradeRightsVO.RefundBasicVO refundBasicVO;
 
         @ApiModelProperty("订单商品信息")
@@ -404,6 +404,9 @@ public abstract class TradeRightsVO implements Serializable {
 
         @ApiModelProperty("积分")
         private BigDecimal pointPrice;
+
+        @ApiModelProperty("商品类型(10:原商品,20:换货商品)")
+        private Integer goodsType;
     }
 
 

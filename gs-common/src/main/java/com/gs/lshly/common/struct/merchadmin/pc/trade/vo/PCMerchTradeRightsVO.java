@@ -201,6 +201,9 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("运费")
         private BigDecimal deliveryAmount;
 
+        @ApiModelProperty("售后凭证图片")
+        private List<String> rightsImge;
+
         @ApiModelProperty("商品信息")
         private List<PCMerchTradeRightsVO.GoodsVO> goodsVOList;
 
@@ -222,7 +225,7 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         private String goodsName;
 
         @ApiModelProperty("订单编号")
-        private String tradeCode;
+        private String orderCode;
 
         @ApiModelProperty("手机号")
         private String phone;
@@ -269,6 +272,8 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         private String goodsType;
         @ApiModelProperty("商品货号")
         private String goodsNo;
+        @ApiModelProperty("商品sku图片")
+        private String skuImg;
     }
 
     @Data

@@ -3,6 +3,8 @@ package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,13 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 
 /**
-* <p>
-*  服务实现类
-* </p>
-* @author Starry
-* @since 2020-10-08
-*/
+ * <p>
+ * 服务实现类
+ * </p>
+ *
+ * @author Starry
+ * @since 2020-10-08
+ */
 @Component
 public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService {
 
@@ -61,6 +64,7 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
     public void deleteSkuGoodInfo(PCMerchSkuGoodInfoDTO.IdDTO dto) {
         repository.removeById(dto.getId());
     }
+
     @Override
     public void editSkuGoodInfo(PCMerchSkuGoodInfoDTO.ETO eto) {
         SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
@@ -72,7 +76,7 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
     public PCMerchSkuGoodInfoVO.DetailVO detailSkuGoodInfo(PCMerchSkuGoodInfoDTO.IdDTO dto) {
         SkuGoodInfo skuGoodInfo = repository.getById(dto.getId());
         PCMerchSkuGoodInfoVO.DetailVO detailVo = new PCMerchSkuGoodInfoVO.DetailVO();
-        if(ObjectUtils.isEmpty(skuGoodInfo)){
+        if (ObjectUtils.isEmpty(skuGoodInfo)) {
             throw new BusinessException("没有数据");
         }
         BeanUtils.copyProperties(skuGoodInfo, detailVo);
@@ -82,15 +86,15 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
     @Override
     public List<PCMerchSkuGoodInfoVO.DetailVO> getByGoodsId(PCMerchSkuGoodInfoDTO.GoodIdDTO goodId) {
         QueryWrapper<SkuGoodInfo> skuBoost = MybatisPlusUtil.query();
-        skuBoost.eq("good_id",goodId.getGoodId());
+        skuBoost.eq("good_id", goodId.getGoodId());
         List<SkuGoodInfo> skuGoodInfos = repository.list(skuBoost);
-        if (ObjectUtils.isNotEmpty(skuGoodInfos)){
+        if (ObjectUtils.isNotEmpty(skuGoodInfos)) {
             List<PCMerchSkuGoodInfoVO.DetailVO> detailVOS = new ArrayList<>();
-            for (SkuGoodInfo skuGoodInfo : skuGoodInfos){
+            for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
                 PCMerchSkuGoodInfoVO.DetailVO detailVO = new PCMerchSkuGoodInfoVO.DetailVO();
-                BeanUtils.copyProperties(skuGoodInfo,detailVO);
+                BeanUtils.copyProperties(skuGoodInfo, detailVO);
                 //获取sku存数量
-                detailVO.setSkuStock(getSkuStockNum(goodId.getJwtShopId(),skuGoodInfo.getId()));
+                detailVO.setSkuStock(getSkuStockNum(goodId.getJwtShopId(), skuGoodInfo.getId()));
                 detailVOS.add(detailVO);
             }
             return detailVOS;
@@ -101,8 +105,8 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
     @Override
     public void updateSkuInfo(SkuGoodInfo skuGoodInfo) {
         QueryWrapper<SkuGoodInfo> wrapper = new QueryWrapper<>();
-        wrapper.eq("good_id",skuGoodInfo.getGoodId());
-        repository.update(skuGoodInfo,wrapper);
+        wrapper.eq("good_id", skuGoodInfo.getGoodId());
+        repository.update(skuGoodInfo, wrapper);
     }
 
     @Override
@@ -110,10 +114,23 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
         repository.save(skuGoodInfo);
     }
 
-    private Integer getSkuStockNum(String shopId,String skuId){
-        CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStock(null,shopId,skuId).getData();
-        if (stockVO != null && stockVO.getQuantity() != null){
-            return  stockVO.getQuantity();
+    @Override
+    public String selectSkuImg(String skuId) {
+        if (StrUtil.isNotEmpty(skuId)) {
+            SkuGoodInfo byId = repository.getById(skuId);
+            if (ObjectUtil.isNotEmpty(byId)) {
+                if (StrUtil.isNotEmpty(byId.getImage())) {
+                    return byId.getImage();
+                }
+            }
+        }
+        return null;
+    }
+
+    private Integer getSkuStockNum(String shopId, String skuId) {
+        CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStock(null, shopId, skuId).getData();
+        if (stockVO != null && stockVO.getQuantity() != null) {
+            return stockVO.getQuantity();
         }
         return 0;
     }

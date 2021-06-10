@@ -254,4 +254,6 @@ public interface IPCMerchGoodsInfoService {
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerSkuIdByGoodsNo(String goodsNo);
 
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69);
+
+    String selectGoodsNo(String tradeGoodsId);
 }

@@ -7,4 +7,5 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
  */
 public interface ISkuGoodsInfoRpc {
     MarketPtSeckillVO.SkuGoodsInfo selectOne(String skuId);
+
 }

@@ -29,7 +29,7 @@ public class PCMerchTradeRightsController {
     @DubboReference
     private IPCMerchTradeRightsRpc pcMerchTradeRightsRpc;
 
-    @ApiOperation("退换货管理")
+    @ApiOperation("商家售后表")
     @PostMapping("")
     public ResponseData<PageData<PCMerchTradeRightsVO.RightList>> list(@Valid @RequestBody PCMerchTradeRightsQTO.QTO qto) {
         return ResponseData.data(pcMerchTradeRightsRpc.pageData(qto));
@@ -40,12 +40,15 @@ public class PCMerchTradeRightsController {
     public ResponseData<PCMerchTradeRightsVO.DetailVO> get(PCMerchTradeRightsDTO.IdDTO qto) {
         return ResponseData.data(pcMerchTradeRightsRpc.detailTradeRights(qto));
     }
-    @ApiOperation("审核")
+
+    @ApiOperation("处理售后")
     @PostMapping(value = "/check")
     public ResponseData<Void> check(@Valid @RequestBody PCMerchTradeRightsDTO.IdCheckDTO dto) {
         pcMerchTradeRightsRpc.check(dto);
         return ResponseData.success(MsgConst.APPLY_SUCCESS);
     }
+
+/*
 
     @ApiOperation("收到退货")
     @GetMapping(value = "/received/{id}")
@@ -58,6 +61,6 @@ public class PCMerchTradeRightsController {
     public ResponseData<Void> send(@Valid @RequestBody PCMerchTradeRightsDTO.SendDTO qto) {
         pcMerchTradeRightsRpc.send(qto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
-    }
+    }*/
 
 }
