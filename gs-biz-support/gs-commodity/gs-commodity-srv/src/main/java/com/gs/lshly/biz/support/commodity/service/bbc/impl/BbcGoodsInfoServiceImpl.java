@@ -581,10 +581,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
             boost.eq("is_point_good", true);
-            // in会员
+            /** in会员
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties() == 50) {
                 boost.eq("is_in_member_gift", true);
-            }
+            }**/
             // 按价格排序
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
                 boost.orderByAsc("point_price");
