@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gs.lshly.biz.support.trade.entity.CtccCategoryGoods;
@@ -24,12 +25,13 @@ import cn.hutool.core.collection.CollectionUtil;
  * @author yingjun
  * @date 2021年6月10日 下午3:18:45
  */
+@Component
 public class BbcCtccPtActivityGoodsServiceImpl implements IBbcCtccPtActivityGoodsService{
 	
 	@Autowired
 	private ICtccCategoryGoodsRepository ctccCategoryGoodsRepository;
 	
-	@DubboReference
+    @DubboReference
 	private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
 
 	@Override
