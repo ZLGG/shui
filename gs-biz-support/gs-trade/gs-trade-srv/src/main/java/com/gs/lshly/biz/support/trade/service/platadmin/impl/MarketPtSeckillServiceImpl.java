@@ -58,8 +58,8 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     @Autowired
     private IMarketPtSeckillTimeQuantumRepository marketPtSeckillTimeQuantumRepository;
 
-    @Autowired
-    private IMarketPtSeckillGoodsCategoryRepository categoryRepository;
+//    @Autowired
+//    private IMarketPtSeckillGoodsCategoryRepository categoryRepository;
 
     @Autowired
     private IMarketPtSeckillGoodsSpuRepository iMarketPtSeckillGoodsSpuRepository;

@@ -9,13 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import com.gs.lshly.common.struct.bbc.commodity.vo.*;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
-import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -31,6 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCtccApi;
 import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
 import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
@@ -42,6 +36,7 @@ import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsSearchHistoryMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCtccApiRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
@@ -75,27 +70,36 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGood
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SkuIdListQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsLabelQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsServeQTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsCategoryVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.AttributeVOS;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.GoodsCtccApiVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListCouponVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.PromiseVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.utils.AesCbcUtil;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsServeRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
@@ -111,8 +115,9 @@ import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -152,6 +157,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private IGoodsAttributeInfoRepository goodsAttributeInfoRepository;
     @Autowired
     private IBbcGoodsCategoryService bbcGoodsCategoryService;
+    @Autowired
+    private IGoodsCtccApiRepository goodsCtccApiRepository;
+    
 
 
     @DubboReference
@@ -1803,5 +1811,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         retList.add(listCouponVO);
         return retList;
     }
+
+	@Override
+	public GoodsCtccApiVO getCtccApiByGoodId(String goodId) {
+		GoodsCtccApiVO goodsCtccApiVO = new GoodsCtccApiVO();
+		QueryWrapper<GoodsCtccApi> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("good_id", goodId);
+        GoodsCtccApi goodsCtccApi = goodsCtccApiRepository.getOne(wrapper);
+        if(goodsCtccApi!=null){
+        	BeanCopyUtils.copyProperties(goodsCtccApi, goodsCtccApiVO);
+        	return goodsCtccApiVO;
+        }
+		return null;
+	}
 
 }

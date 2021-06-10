@@ -32,6 +32,8 @@ public abstract class BbcTradeListVO implements Serializable {
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
 
+    	@ApiModelProperty("订单编号")
+    	private String tradeId;
         /**
          * 店铺信息
          */
@@ -449,7 +451,7 @@ public abstract class BbcTradeListVO implements Serializable {
 
     }
 
-    @Data
+    @Setter
     @ApiModel("BbcTradeListVO.TradeGoodsVO")
     @Accessors(chain = true)
     public static class TradeGoodsVO implements Serializable {
@@ -532,6 +534,144 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("兑换类型（20实物，10虚拟）")
         private Integer exchangeType;
+        
+        @ApiModelProperty("售后状态")
+        private Integer rightsState;
+        
+        @ApiModelProperty("售后状态内容")
+        private String rightsStateText;
+        
+        @ApiModelProperty("售后状态明细")
+        private Integer rightsStateDetail;
+        
+        @ApiModelProperty("售后状态明细内容")
+        private String rightsStateDetailText;
+        
+        @ApiModelProperty("订单状态")
+        private Integer tradeState;
+        
+        @ApiModelProperty("订单状态内容")
+        private String tradeStateText;
+
+		public String getId() {
+			return id;
+		}
+
+		public String getTradeId() {
+			return tradeId;
+		}
+
+		public String getGoodsId() {
+			return goodsId;
+		}
+
+		public String getGoodsName() {
+			return goodsName;
+		}
+
+		public String getGoodsTitle() {
+			return goodsTitle;
+		}
+
+		public String getGoodsNo() {
+			return goodsNo;
+		}
+
+		public String getSkuId() {
+			return skuId;
+		}
+
+		public String getSkuSpecValue() {
+			return skuSpecValue;
+		}
+
+		public String getSkuImg() {
+			return skuImg;
+		}
+
+		public String getSkuGoodsNo() {
+			return skuGoodsNo;
+		}
+
+		public Integer getQuantity() {
+			return quantity;
+		}
+
+		public BigDecimal getGoodsAmount() {
+			return goodsAmount;
+		}
+
+		public BigDecimal getGoodsPointAmount() {
+			return goodsPointAmount;
+		}
+
+		public BigDecimal getDiscountAmount() {
+			return discountAmount;
+		}
+
+		public BigDecimal getDiscountPointAmount() {
+			return discountPointAmount;
+		}
+
+		public BigDecimal getTradeAmount() {
+			return tradeAmount;
+		}
+
+		public BigDecimal getTradePointAmount() {
+			return tradePointAmount;
+		}
+
+		public BigDecimal getGiftIntegral() {
+			return giftIntegral;
+		}
+
+		public BigDecimal getTradeAmountPercent() {
+			return tradeAmountPercent;
+		}
+
+		public Integer getCommentFlag() {
+			return commentFlag;
+		}
+
+		public BigDecimal getPayablePointAmount() {
+			return payablePointAmount;
+		}
+
+		public BigDecimal getPayableAmount() {
+			return payableAmount;
+		}
+
+		public Integer getExchangeType() {
+			return exchangeType;
+		}
+
+		public Integer getRightsState() {
+			return rightsState;
+		}
+
+		public String getRightsStateText() {
+			return rightsStateText;
+		}
+
+		public Integer getTradeState() {
+			return tradeState;
+		}
+
+		public String getTradeStateText() {
+            if (tradeState != null) {
+                tradeStateText = TradeStateEnum.getRemarkByCode(tradeState);
+            }
+            return tradeStateText;
+        }
+
+		public Integer getRightsStateDetail() {
+			return rightsStateDetail;
+		}
+
+		public String getRightsStateDetailText() {
+			return rightsStateDetailText;
+		}
+        
     }
 
     @Data

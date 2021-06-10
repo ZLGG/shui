@@ -64,7 +64,7 @@ public class CodeGenerator {
         //路径G
         globalConfig.setOutputDir("C:/works/program/citydo/gs-mall-new/gs-biz-support/gs-commodity/gs-commodity-repository/src/main/java");
         //表名
-        strategy.setInclude("gs_ctcc_category","gs_ctcc_category_goods");
+        strategy.setInclude("gs_goods_ctcc_api");
         // 作者
         globalConfig.setAuthor("yingjun");
 

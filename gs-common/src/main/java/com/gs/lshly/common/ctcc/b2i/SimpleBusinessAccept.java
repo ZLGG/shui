@@ -1,45 +1,27 @@
-package com.gs.lshly.facade.bbc.controller.ctcc;
-
+package com.gs.lshly.common.ctcc.b2i;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.ctcc.dto.B2IDTO;
 import com.gs.lshly.common.utils.HttpClientUtils;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * B2I接口
+ * 
  *
  * 
  * @author yingjun
- * @date 2021年6月9日 上午9:22:52
+ * @date 2020年6月22日 下午2:59:05
  */
-@RestController
-@RequestMapping("/ctcc/b2i")
-@Api(tags = "B2I接口")
 @Slf4j
-public class B2IController {
-
-	/**
-	 * 简单加包业务受理接口
-	 * @param goodsId
-	 * @return
-	 */
-    @ApiOperation("简单加包业务受理接口")
-    @GetMapping("/create")
-    public ResponseData<Void> create(String codeNumber) {
+public class SimpleBusinessAccept {
+    
+	public static String create(B2IDTO dto) {
     	Map<String,String> headers = new HashMap<String,String>();
     	
     	Map<String,String> params = new HashMap<String,String>();
@@ -50,7 +32,7 @@ public class B2IController {
     	params.put("yxqdCode", "dxsc");//营销渠道编码
     	params.put("c3Name", "杭州市");//地市
     	params.put("c4Name", "杭州市");//县市
-    	params.put("codeNumber", codeNumber);//办理号码
+//    	params.put("codeNumber", dto.);//办理号码
     	params.put("assetsType", "手机");//资产类型
     	params.put("linkMan", "应君");//联系人
     	params.put("linkPhone", "13675899916");//联系电话
@@ -70,14 +52,15 @@ public class B2IController {
     	json.put("attrId", "20000101022");//优惠名称
     	json.put("attrValue", "12000");//优惠类型
     	params.put("remarks3", remarks3.toJSONString());
+    	
+    	String str = "";
     	try {
-    		String str = HttpClientUtils.postForm("http://134.96.185.193:30009/b2i/openapi/simpleBusinessAccept/create", params, headers);
+    		str = HttpClientUtils.postForm("http://134.96.185.193:30009/b2i/openapi/simpleBusinessAccept/create", params, headers);
     		log.info("请求B2I返回信息==>"+str);
     	} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	return ResponseData.success("导入成功");
+    	return str;
     }
-
 }

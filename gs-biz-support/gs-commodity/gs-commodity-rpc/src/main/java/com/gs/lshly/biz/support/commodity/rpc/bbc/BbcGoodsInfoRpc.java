@@ -20,6 +20,7 @@ import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.InMemberGood
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SkuIdListQTO;
 import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.SpecInfoByGoodsQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.GoodsCtccApiVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InMemberHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListCouponVO;
@@ -213,5 +214,10 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
     public BbcTradeRightsVO.GoodsInfo selectOne(String tradeGoodsId) {
         return bbcGoodsInfoService.selectOne(tradeGoodsId);
     }
+
+	@Override
+	public GoodsCtccApiVO getCtccApiByGoodId(String goodId) {
+		return bbcGoodsInfoService.getCtccApiByGoodId(goodId);
+	}
 
 }

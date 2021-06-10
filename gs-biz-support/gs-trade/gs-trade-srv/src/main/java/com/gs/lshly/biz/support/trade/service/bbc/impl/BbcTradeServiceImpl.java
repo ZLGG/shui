@@ -2128,7 +2128,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             tradeGoodsVO.setExchangeType(goodsDetail.getExchangeType());
             if(tradeGoods.getQuantity()!=null)
             	quantity = quantity+tradeGoods.getQuantity();
+            
+            tradeGoodsVO.setTradeState(tradeVO.getTradeState());
+            
             tradeGoodsVOS.add(tradeGoodsVO);
+            
+//            tradeGoodsVOS.
         }
         tradeVO.setQuantity(quantity);
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
@@ -2332,7 +2337,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 	}
 	
 	
-	private void sendB2I(List<String> tradeIds){
+	private void sendCtcc(List<String> tradeIds){
 		
 		if(tradeIds.size()==1){
 			QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
@@ -2341,6 +2346,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 	        
 	        if(tradeGoodsList.size()==1){
 	        	String goodsId = ((TradeGoods)tradeGoodsList.get(0)).getGoodsId();
+	        	
+	        	//获取商户是否走B2I;
+	        	BbcGoodsInfoVO.GoodsCtccApiVO goodsCtccApiVO = bbcGoodsInfoRpc.getCtccApiByGoodId(goodsId);
+	        	if(goodsCtccApiVO!=null&&goodsCtccApiVO.getCtccApi().equals(GoodsCtccApiEnum.B2I.getCode())){
+	        		//走B2I
+//	        		SimpleBusinessAccept
+	        	}
 	        }
 		}
 			

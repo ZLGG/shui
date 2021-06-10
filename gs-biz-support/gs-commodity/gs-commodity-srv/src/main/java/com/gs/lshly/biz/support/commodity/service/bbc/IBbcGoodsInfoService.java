@@ -223,4 +223,11 @@ public interface IBbcGoodsInfoService {
     PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO qto);
 
     BbcTradeRightsVO.GoodsInfo selectOne(String tradeGoodsId);
+    
+    /**
+     * 跟据商品ID获取第三方API
+     * @param goodId
+     * @return
+     */
+    BbcGoodsInfoVO.GoodsCtccApiVO getCtccApiByGoodId(String goodId);
 }

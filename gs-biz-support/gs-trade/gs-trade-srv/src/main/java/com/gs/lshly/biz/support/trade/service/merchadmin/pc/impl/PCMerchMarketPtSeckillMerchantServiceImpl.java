@@ -70,8 +70,8 @@ public class PCMerchMarketPtSeckillMerchantServiceImpl implements IPCMerchMarket
     @Autowired
     private IMarketPtSeckillGoodsSkuRepository goodsSkuRepository;
     
-    @Autowired
-    private IMarketPtSeckillService iMarketPtSeckillService;
+//    @Autowired
+//    private IMarketPtSeckillService iMarketPtSeckillService;
     @Autowired
     private IMarketPtSeckillRepository iMarketPtSeckillRepository;
     @Autowired

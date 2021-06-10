@@ -237,4 +237,11 @@ public interface IBbcGoodsInfoRpc {
     PageData<BbcGoodsInfoVO.GoodsListVO> allFirstCategoryGoods(GoodsInfoQTO.CategoryGoodsQTO categoryIdQTO);
 
     BbcTradeRightsVO.GoodsInfo selectOne(String tradeGoodsId);
+    
+    /**
+     * 跟据商品ID获取第三方支付API
+     * @param goodId
+     * @return
+     */
+    BbcGoodsInfoVO.GoodsCtccApiVO getCtccApiByGoodId(String goodId);
 }

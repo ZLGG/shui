@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.enums.GoodsCouponStatusEnum;
@@ -1202,4 +1205,43 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 		
 
 	}
+	
+    @Data
+    @ApiModel("BbcGoodsInfoVO.GoodsCtccApiVO")
+    public static class GoodsCtccApiVO implements Serializable {
+    	
+    	private String id;
+
+        /**
+         * 商家id
+         */
+        private String goodId;
+
+        private Integer ctccApi;
+
+        /**
+         * 优惠编码
+         */
+        private String couponCode;
+
+        /**
+         * 优惠名称
+         */
+        private String couponName;
+
+        /**
+         * 对应优惠编码
+         */
+        private String replyCouponCode;
+
+        private String replyCouponName;
+
+        private String attrId;
+
+        private String attrValue;
+
+        private String attrIdPoint;
+
+        private String attrValuePoint;
+    }
 }
