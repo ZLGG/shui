@@ -2342,11 +2342,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 	@Override
 	public ResponseData<Void> checkAndPointDoPay(CheckAndPointDoPayETO dto) {
 		JSONObject responseJson = new JSONObject();
+		
 		/**
 		 * 判断用户积分帐户的钱够不够了
 		 */
 		BbcUserVO.DetailVO detailVO = iBbcUserRpc.getUserInfoNoLogin(dto);
-		if(detailVO==null||StringUtils.isEmpty(detailVO.getId())||!detailVO.getIsInUser().equals(1)){
+		if(detailVO==null||StringUtils.isEmpty(detailVO.getId())){
 			throw new BusinessException("无有效的用户信息");
 		}
 		/**
