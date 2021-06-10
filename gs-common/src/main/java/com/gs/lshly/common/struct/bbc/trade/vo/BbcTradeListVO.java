@@ -680,8 +680,10 @@ public abstract class BbcTradeListVO implements Serializable {
 		}
 
 		public String getRightsStateDetailText() {
-			if(rightsStateDetail != null){
+			if(rightsStateDetail != null&&!rightsStateDetail.equals(0)){
 				rightsStateDetailText = TradeRightsEndStateEnum.getRemarkByCode(rightsStateDetail);
+			}else{
+				rightsStateDetailText = "无售后";
 			}
 			return rightsStateDetailText;
 		}
