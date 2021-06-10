@@ -251,6 +251,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 //保存售后商品信息
                 TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
                 BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
+                tradeRightsGoods.setId(null);
                 tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
                 tradeRightsGoods.setOrderCode(trade.getTradeCode());
                 if (productData.getQuantity() > tradeGoods.getQuantity()) {
@@ -438,6 +439,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         }
         detailVo.setTradeRightImg(rightsImg);
         BeanUtil.copyProperties(listVO, detailVo);
+        listVO.setStateDetails(TradeRightsEndStateEnum.getRemarkByCode(tradeRights.getState()));
        /* BeanUtils.copyProperties(tradeRights, detailVo);
         QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
         query.and(i -> i.eq("rights_id", tradeRights.getId()));
@@ -746,6 +748,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         }
         tradeVO.setTradeRightsGoodsVOS(tradeGoodsVOS);*/
         BbcTradeRightsVO.ListVO listVO = new BbcTradeRightsVO.ListVO();
+        listVO.setStateDetails(TradeRightsEndStateEnum.getRemarkByCode(tradeRights.getState()));
         BeanUtil.copyProperties(tradeRights, listVO);
         if (!tradeRights.getState().equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode())) {
             listVO.setRefundAmount(tradeRights.getShouldRefundAmount());

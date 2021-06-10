@@ -145,6 +145,9 @@ public abstract class BbcTradeRightsVO implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
 
+        @ApiModelProperty("状态文本")
+        private String stateDetails;
+
         @ApiModelProperty("商品详情")
         List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVO;
     }

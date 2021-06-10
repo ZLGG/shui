@@ -56,16 +56,15 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillMerchantVO.DetailVO")
+    @ApiModel("PCMerchMarketPtSeckillVO.DetailVO")
     public static class QuanTumVO extends ListVO {
         @ApiModelProperty("场次时间")
-        private List<MarketPtSeckillVO.SessionVO> sessionTime;
-
+        private List<PCMerchMarketPtSeckillVO.SessionVO> sessionTime;
 
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillMerchantVO.SessionVO")
+    @ApiModel("PCMerchMarketPtSeckillVO.SessionVO")
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SessionVO implements Serializable {
@@ -81,8 +80,17 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         private LocalDateTime endTime;
     }
 
+
     @Data
-    @ApiModel("PCMerchMarketPtSeckillMerchantVO.GoodsInfoVO")
+    @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoListVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GoodsInfoListVO implements Serializable {
+        List<PCMerchMarketPtSeckillVO.GoodsInfoVO> goodsInfoVOList;
+    }
+
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoVO")
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GoodsInfoVO implements Serializable {
