@@ -7,7 +7,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.enums.TradePayTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsEndStateEnum;
 import com.gs.lshly.common.enums.TradeRightsStateEnum;
+import com.gs.lshly.common.enums.TradeRightsStateTradeEnum;
+import com.gs.lshly.common.enums.TradeRightsTypeEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.enums.TradeStateRemarkEnum;
 import com.gs.lshly.common.enums.TradeStateTitleEnum;
@@ -552,6 +555,12 @@ public abstract class BbcTradeListVO implements Serializable {
         
         @ApiModelProperty("订单状态内容")
         private String tradeStateText;
+        
+        @ApiModelProperty("售后类型")
+        private Integer rightsType;
+
+        @ApiModelProperty("售后类型内容")
+        private String rightsTypeText;
 
 		public String getId() {
 			return id;
@@ -650,6 +659,8 @@ public abstract class BbcTradeListVO implements Serializable {
 		}
 
 		public String getRightsStateText() {
+			if(rightsState != null)
+				rightsStateText = TradeRightsStateTradeEnum.getRemarkByCode(rightsState);
 			return rightsStateText;
 		}
 
@@ -669,9 +680,23 @@ public abstract class BbcTradeListVO implements Serializable {
 		}
 
 		public String getRightsStateDetailText() {
+			if(rightsStateDetail != null){
+				rightsStateDetailText = TradeRightsEndStateEnum.getRemarkByCode(rightsStateDetail);
+			}
 			return rightsStateDetailText;
 		}
+
+		public Integer getRightsType() {
+			return rightsType;
+		}
+
+		public String getRightsTypeText() {
+			if(rightsType!=null)
+				rightsTypeText = TradeRightsTypeEnum.getRemarkByCode(rightsType);
+			return rightsTypeText;
+		}
         
+		
     }
 
     @Data

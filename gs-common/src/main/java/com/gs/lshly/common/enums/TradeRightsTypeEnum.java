@@ -28,4 +28,14 @@ public enum TradeRightsTypeEnum implements EnumMessage {
     public String getRemark() {
         return remark;
     }
+    
+    public static String getRemarkByCode(Integer code) {
+
+        for (TradeRightsTypeEnum  tradeRightsTypeEnum: TradeRightsTypeEnum.values()) {
+            if (code.equals(tradeRightsTypeEnum.getCode())) {
+                return tradeRightsTypeEnum.remark;
+            }
+        }
+        return TradeRightsTypeEnum.换货.remark;
+    }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.gs.lshly.common.enums.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -57,13 +56,37 @@ import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
+import com.gs.lshly.common.enums.GoodsCtccApiEnum;
+import com.gs.lshly.common.enums.GoodsStateEnum;
+import com.gs.lshly.common.enums.ResponseCodeEnum;
+import com.gs.lshly.common.enums.StockAddressTypeEnum;
+import com.gs.lshly.common.enums.StockCheckStateEnum;
+import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
+import com.gs.lshly.common.enums.TradeCancelRefundStateEnum;
+import com.gs.lshly.common.enums.TradeCancelStateEnum;
+import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
+import com.gs.lshly.common.enums.TradeHideEnum;
+import com.gs.lshly.common.enums.TradePayOfficeEnum;
+import com.gs.lshly.common.enums.TradePayResultStateEnum;
+import com.gs.lshly.common.enums.TradePayStateEnum;
+import com.gs.lshly.common.enums.TradePayTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsEndStateEnum;
+import com.gs.lshly.common.enums.TradeRightsReasonTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsRefundMoneyTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsRefundTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsStateEnum;
+import com.gs.lshly.common.enums.TradeRightsStateTradeEnum;
+import com.gs.lshly.common.enums.TradeRightsTypeEnum;
+import com.gs.lshly.common.enums.TradeSourceTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.enums.TradeTimeOutCancelEnum;
+import com.gs.lshly.common.enums.TradeTrueFalseEnum;
 import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
-import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO.GoodsIdQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.merchant.dto.BbcShopDTO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
@@ -185,6 +208,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     
     @Autowired
     private ISMSService ismsService;
+    
+    @Autowired
+    private ITradeRightsGoodsRepository tradeRightsGoodsRepository;
+    
+    @Autowired
+    private ITradeRightsRepository tradeRightsRepository;
 
     @Value("${lakala.wxpay.notifyurl}")
     private String notifyUrl;
@@ -2130,8 +2159,35 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             	quantity = quantity+tradeGoods.getQuantity();
             
             tradeGoodsVO.setTradeState(tradeVO.getTradeState());
+            tradeGoodsVO.setRightsStateDetail(0);
+            tradeGoodsVO.setRightsState(0);
             
-            tradeGoodsVOS.add(tradeGoodsVO);
+            //判断当前订单有没有售后
+            QueryWrapper<TradeRightsGoods> tradeGoodsWrapper = new QueryWrapper<>();
+	        tradeGoodsWrapper.eq("trade_goods_id",tradeGoods.getId());
+	        TradeRightsGoods tradeRightsGoods = tradeRightsGoodsRepository.getOne(tradeGoodsWrapper);
+            if(tradeRightsGoods!=null){//有售后
+            	String rightsId = tradeRightsGoods.getRightsId();
+            	TradeRights tradeRights = tradeRightsRepository.getById(rightsId);
+            	if(tradeRights!=null){
+            		Integer state = tradeRights.getState();
+            		Integer rightsType = tradeRights.getRightsType();
+            		tradeGoodsVO.setRightsStateDetail(state);
+            		tradeGoodsVO.setRightsType(rightsType);
+            		
+            		//50,60,70,80,90,
+            		if(state.equals(TradeRightsEndStateEnum.平台同意.getCode())||
+            				state.equals(TradeRightsEndStateEnum.平台驳回.getCode())||
+            				state.equals(TradeRightsEndStateEnum.换货完成.getCode())||
+            				state.equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode())||
+            				state.equals(TradeRightsEndStateEnum.用户取消.getCode())){
+            			tradeGoodsVO.setRightsState(TradeRightsStateTradeEnum.完成售后.getCode());
+            		}else{
+            			tradeGoodsVO.setRightsState(TradeRightsStateTradeEnum.售后中.getCode());
+            		}
+            	}
+            }
+	        tradeGoodsVOS.add(tradeGoodsVO);
             
 //            tradeGoodsVOS.
         }
