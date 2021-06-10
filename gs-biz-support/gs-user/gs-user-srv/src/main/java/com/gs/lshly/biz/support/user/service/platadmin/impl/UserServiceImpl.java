@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.entity.UserLabel;
+import com.gs.lshly.biz.support.user.entity.UserLabelDict;
 import com.gs.lshly.biz.support.user.enums.IntegralFromTypeEnum;
 import com.gs.lshly.biz.support.user.enums.UserQueryTypeEnum;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
@@ -24,6 +25,7 @@ import com.gs.lshly.biz.support.user.mapper.UserMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
 import com.gs.lshly.biz.support.user.mapper.view.UserView;
 import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
+import com.gs.lshly.biz.support.user.repository.IUserLabelDictRepository;
 import com.gs.lshly.biz.support.user.repository.IUserLabelRepository;
 import com.gs.lshly.biz.support.user.repository.IUserLeveDictRepository;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
@@ -45,6 +47,8 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
 * <p>
@@ -76,6 +80,9 @@ public class UserServiceImpl implements IUserService {
 
     @DubboReference
     private ILegalDictRpc legalDictRpc;
+    
+    @Autowired
+    private IUserLabelDictRepository userLabelDictRepository;
 
     @Override
     public PageData<UserVO.ListVO> fullSearchList(UserQTO.FullSearchQTO qto) {
@@ -436,10 +443,30 @@ public class UserServiceImpl implements IUserService {
         if (ObjectUtils.isEmpty(users)){
             throw new BusinessException("查询异常！！！");
         }
+        
         List<UserVO.ExportListVO> listVOS = users.parallelStream().map(e ->{
             UserVO.ExportListVO listVO = new UserVO.ExportListVO();
             BeanCopyUtils.copyProperties(e,listVO);
-
+            //设置标签
+            QueryWrapper<UserLabel> wrapper = MybatisPlusUtil.query();
+            wrapper.in("userId",e.getId());
+            List<UserLabel> list = userLabelRepository.list(wrapper);
+            String tags = "";
+            if(CollectionUtil.isNotEmpty(list)){
+            	for(UserLabel userLabel:list){
+            		String userLabelId = userLabel.getLabelId();
+            		UserLabelDict userLabelDict = userLabelDictRepository.getById(userLabelId);
+            		if(userLabelDict!=null){
+            			tags +=userLabelDict.getLabelName()+",";
+            		}
+            		
+            	}
+            }
+            if(tags.length()>2){
+            	tags = tags.substring(0, tags.length());
+            }
+            
+            listVO.setTags(tags);
             return listVO;
         }).collect(Collectors.toList());
         return listVOS;
