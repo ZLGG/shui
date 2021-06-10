@@ -329,7 +329,7 @@ public interface TradeMapper extends BaseMapper<Trade> {
             "WHERE\n" +
             "\ttg.goods_id = #{goodsId} \n" +
             "\tAND tg.flag = 0 \n" +
-            "\tAND t.trade_state = 40\n" +
+            "\tAND (t.trade_state != 10 and t.trade_state != 50)\n" +
             "\tand DATE_FORMAT(tg.cdate,'%Y%m')=DATE_FORMAT(CURDATE(),'%Y%m')")
     /**
      * 获取当月的销售数量

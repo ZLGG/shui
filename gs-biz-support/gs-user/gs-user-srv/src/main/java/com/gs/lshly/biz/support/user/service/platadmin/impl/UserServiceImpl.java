@@ -449,7 +449,7 @@ public class UserServiceImpl implements IUserService {
             BeanCopyUtils.copyProperties(e,listVO);
             //设置标签
             QueryWrapper<UserLabel> wrapper = MybatisPlusUtil.query();
-            wrapper.in("userId",e.getId());
+            wrapper.in("user_id",e.getId());
             List<UserLabel> list = userLabelRepository.list(wrapper);
             String tags = "";
             if(CollectionUtil.isNotEmpty(list)){

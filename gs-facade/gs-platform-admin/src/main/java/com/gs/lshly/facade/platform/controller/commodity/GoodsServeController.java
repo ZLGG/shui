@@ -12,6 +12,9 @@ import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsServeRpc;
 import com.sun.xml.bind.v2.model.core.ID;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import javax.validation.Valid;
+
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,7 +65,7 @@ public class GoodsServeController {
     @ApiOperation("新增服务")
     @PutMapping(value = "addGoodsServe")
 //    @Func(code = "add", name = "新增")
-    public ResponseData<Void> addGoodsServe(GoodsServeDTO.ETO eto) {
+    public ResponseData<Void> addGoodsServe(@Valid @RequestBody GoodsServeDTO.ETO eto) {
         goodsServeRpc.addGoodsServe(eto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
@@ -75,7 +78,7 @@ public class GoodsServeController {
     @ApiOperation("修改服务信息")
     @PutMapping(value = "editGoodsServe")
 //    @Func(code = "edit", name = "修改")
-    public ResponseData<Void> editGoodsServe(GoodsServeDTO.EditDTO eto) {
+    public ResponseData<Void> editGoodsServe(@Valid @RequestBody GoodsServeDTO.EditDTO eto) {
         goodsServeRpc.editGoodsServe(eto);
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }

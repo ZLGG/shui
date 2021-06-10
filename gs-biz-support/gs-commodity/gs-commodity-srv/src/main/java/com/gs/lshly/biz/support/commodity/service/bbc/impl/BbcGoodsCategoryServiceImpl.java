@@ -155,7 +155,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
     @Override
     public List<BbcGoodsCategoryVO.CategoryTreeVO> goodsCategoryTree(BbcGoodsCategoryQTO.ListQTO listQTO) {
         QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.and(q -> q.eq("use_filed", listQTO.getUseFiled())
+        queryWrapper.and(q -> q.eq("use_filed", GoodsUsePlatformEnums.C商城.getCode())
                 .or()
                 .eq("use_filed", GoodsUsePlatformEnums.B商城和C商城.getCode())
                 .or()
@@ -199,7 +199,7 @@ public class BbcGoodsCategoryServiceImpl implements IBbcGoodsCategoryService {
         BbcGoodsCategoryQTO.ListQTO listQTO = new BbcGoodsCategoryQTO.ListQTO();
         listQTO.setShowAll(true);
         listQTO.setParentId(categoryIdQTO.getCategoryId());
-        listQTO.setUseFiled(categoryIdQTO.getUseFiled());
+        listQTO.setUseFiled(30);
 
         //获取树结构
         List<BbcGoodsCategoryVO.CategoryTreeVO> categoryTreeVOS = goodsCategoryTree(listQTO);
