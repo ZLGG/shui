@@ -428,7 +428,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserVO.ListVO> exportData(UserDTO.ExportDTO dto) {
+    public List<UserVO.ExportListVO> exportData(UserDTO.ExportDTO dto) {
         if (null == dto || ObjectUtils.isEmpty(dto.getUserIdList())){
             throw new BusinessException("请选择要导出的会员信息！！");
         }
@@ -436,8 +436,8 @@ public class UserServiceImpl implements IUserService {
         if (ObjectUtils.isEmpty(users)){
             throw new BusinessException("查询异常！！！");
         }
-        List<UserVO.ListVO> listVOS = users.parallelStream().map(e ->{
-            UserVO.ListVO listVO = new UserVO.ListVO();
+        List<UserVO.ExportListVO> listVOS = users.parallelStream().map(e ->{
+            UserVO.ExportListVO listVO = new UserVO.ExportListVO();
             BeanCopyUtils.copyProperties(e,listVO);
 
             return listVO;

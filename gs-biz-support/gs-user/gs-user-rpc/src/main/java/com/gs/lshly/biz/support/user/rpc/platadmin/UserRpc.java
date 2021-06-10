@@ -102,7 +102,7 @@ public class UserRpc implements IUserRpc {
 
     @Override
     public ExportDataDTO export(UserDTO.ExportDTO dto) throws Exception {
-        return ExcelUtil.treatmentBean(userService.exportData(dto), UserVO.ListVO.class);
+        return ExcelUtil.treatmentBean(userService.exportData(dto), UserVO.ExportListVO.class);
     }
 
     @Override

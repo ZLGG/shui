@@ -98,7 +98,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    List<UserVO.ListVO> exportData(UserDTO.ExportDTO dto);
+    List<UserVO.ExportListVO> exportData(UserDTO.ExportDTO dto);
 
     /**
      * 设置会员等级

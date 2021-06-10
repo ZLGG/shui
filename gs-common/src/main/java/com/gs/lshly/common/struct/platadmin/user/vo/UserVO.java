@@ -16,8 +16,45 @@ import lombok.experimental.Accessors;
 * @author xxfc
 * @since 2020-10-05
 */
+@SuppressWarnings("serial")
 public abstract class UserVO implements Serializable {
 
+	
+	@Data
+    @ApiModel("UserVO.ExportListVO")
+    @Accessors(chain = true)
+    public static class ExportListVO implements Serializable{
+
+        @ApiModelProperty(value ="id",position = 1)
+        private String id;
+        @ApiModelProperty(value = "手机号",position = 2)
+        private String phone;
+        @ApiModelProperty(value="姓名",position = 3)
+        private String realName;
+        @ApiModelProperty(value="地址",position = 4)
+        private String address;
+        @ApiModelProperty(value = "性别[10=男  20=女]",position = 5)
+        private Integer sex;
+        @ApiModelProperty(value = "年龄",position = 6)
+        private Integer age;
+        @ApiModelProperty(value = "生日",position = 7)
+        private Integer birthday;
+        @ApiModelProperty(value = "积分",position = 8)
+        private Integer telecomsIntegral;
+        @ApiModelProperty(value = "星级",position = 9)
+        private Integer telecomsLevel;
+        @ApiModelProperty(value = "IN会员",position = 10)
+        private Integer isInUser;
+        @ApiModelProperty(value = "会员标签",position = 11 )
+        private String tags;
+        @ApiModelProperty(value = "注册IP",position = 12)
+        private String regIp;
+        @ApiModelProperty(value = "注册时间",position = 13)
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime cdate;
+        
+    }
+	
     @Setter
     @ApiModel("UserVO.ListVO")
     @Accessors(chain = true)
