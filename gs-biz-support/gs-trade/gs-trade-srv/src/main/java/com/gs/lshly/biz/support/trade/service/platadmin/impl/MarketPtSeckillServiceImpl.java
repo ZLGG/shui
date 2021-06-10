@@ -276,7 +276,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     }
 
     private MarketPtSeckillVO.ActivityListVO getActivityListVO(MarketPtSeckill pageRecord) {
-        //等待开启定时任务 todo
+        //等待开启 todo 定时任务
         String startTime = pageRecord.getSeckillStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String endTime = pageRecord.getSeckillEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         MarketPtSeckillVO.ActivityListVO activityListVO = new MarketPtSeckillVO.ActivityListVO();

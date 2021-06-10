@@ -15,11 +15,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 
- *
- * 
- * @author yingjun
- * @date 2021年5月8日 上午10:32:05
+ * @author hanly
+ * @date 2021年6月10日 上午10:32:05
  */
 @SuppressWarnings("serial")
 public abstract class PCMerchMarketPtSeckillVO implements Serializable {
@@ -27,88 +24,78 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
     @Data
     @ApiModel("PCMerchMarketPtSeckillVO.ListVO")
     @Accessors(chain = true)
-    public static class ListVO implements Serializable{
+    public static class ListVO implements Serializable {
 
-        @ApiModelProperty("id")
+        @ApiModelProperty("活动id")
         private String id;
 
-
-        @ApiModelProperty("秒杀ID")
-        private String seckillId;
-
-
-        @ApiModelProperty("店铺ID")
-        private String shopId;
-
-
-        @ApiModelProperty("商家ID")
-        private String merchantId;
-
-
-        @ApiModelProperty("秒杀名称")
+        @ApiModelProperty("活动名称")
         private String name;
 
-
-        @ApiModelProperty("标签")
-        private String label;
-
-
-        @ApiModelProperty("描述")
-        private String seckillDescribe;
-
-        @ApiModelProperty("状态[10=审核 20=未审核 30=审核驳回]")
-        private String  state;
-
-        @ApiModelProperty("审核驳回原因")
-        private String reasonsForRejection;
+        @ApiModelProperty("活动状态")
+        private Integer state;
 
         @ApiModelProperty("报名开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime signStartTime;
 
-
         @ApiModelProperty("报名结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime signEndTime;
 
-
-        @ApiModelProperty("秒杀上线时间")
-        private LocalDateTime onlineStartTime;
-
-
         @ApiModelProperty("开售开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime seckillStartTime;
 
-
         @ApiModelProperty("开售结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime seckillEndTime;
 
+        @ApiModelProperty("报名状态")
+        private Integer applyState;
+    }
 
-        @ApiModelProperty("会员限购数量上限")
-        private Integer userBuyMax;
-
-
-        @ApiModelProperty("店铺参加商品数上限")
-        private Integer shopGoodsMax;
-
-
-        @ApiModelProperty("秒杀封面图")
-        private String coverImage;
-
-
-        @ApiModelProperty("开销提醒提前分钟数")
-        private Integer smsBefore;
-
-
-        @ApiModelProperty("是否短信提醒[10=是 20=否]")
-        private Integer smsIsTell;
-
-
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillMerchantVO.DetailVO")
+    public static class QuanTumVO extends ListVO {
+        @ApiModelProperty("场次时间")
+        private List<MarketPtSeckillVO.SessionVO> sessionTime;
 
 
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillMerchantVO.DetailVO")
-    public static class DetailVO extends ListVO {
+    @ApiModel("PCMerchMarketPtSeckillMerchantVO.SessionVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SessionVO implements Serializable {
+        @ApiModelProperty("场次id")
+        private String id;
 
+        @ApiModelProperty("场次开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime startTime;
+
+        @ApiModelProperty("场次结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime endTime;
+    }
+
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillMerchantVO.GoodsInfoVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GoodsInfoVO implements Serializable {
+        @ApiModelProperty("商品spuId,商品编号")
+        private String id;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品类型")
+        private Integer goodsType;
+
+        @ApiModelProperty("原价")
+        private BigDecimal salePrice;
     }
 }

@@ -53,7 +53,7 @@ public class TradeRightsController {
 
     @ApiOperation("提交平台处理说明")
     @PostMapping(value = "/reason")
-    public ResponseData<Void> setPlatformCheckReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
+    public ResponseData<Void> setPlatformCheckReason(@RequestBody TradeRightsDTO.PlatformCheckReasonDTO dto) {
         iTradeRightsRpc.setPlatformChenkReason(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
