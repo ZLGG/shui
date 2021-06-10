@@ -380,6 +380,27 @@ public class MarketPtSeckillVO implements Serializable {
     }
 
     @Data
+    @ApiModel("MarketPtSeckillVO.QuantumSessionVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class QuantumSessionVO implements Serializable {
+
+        @ApiModelProperty("秒杀活动id")
+        private String seckillId;
+
+        @ApiModelProperty("场次id")
+        private String id;
+
+        @ApiModelProperty("场次开始时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime startTime;
+
+        @ApiModelProperty("场次结束时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime endTime;
+    }
+
+    @Data
     @ApiModel("MarketPtSeckillVO.SessionVO")
     @AllArgsConstructor
     @NoArgsConstructor

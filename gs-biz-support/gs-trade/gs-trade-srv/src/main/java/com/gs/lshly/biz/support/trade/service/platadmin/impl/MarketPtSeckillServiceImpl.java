@@ -275,6 +275,26 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         return killSkuGoodsList;
     }
 
+    @Override
+    public PageData<MarketPtSeckillVO.QuantumSessionVO> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto) {
+        if (StrUtil.isEmpty(dto.getId())) {
+            throw new BusinessException("参数不能为空！");
+        }
+        IPage<MarketPtSeckillTimeQuantum> pager = MybatisPlusUtil.pager(dto);
+        QueryWrapper<MarketPtSeckillTimeQuantum> query = MybatisPlusUtil.query();
+        query.eq("seckill_id", dto.getId());
+        marketPtSeckillTimeQuantumRepository.page(pager, query);
+        List<MarketPtSeckillVO.QuantumSessionVO> quantumVOList = new ArrayList<>();
+        if (CollUtil.isNotEmpty(pager.getRecords())) {
+            for (MarketPtSeckillTimeQuantum record : pager.getRecords()) {
+                MarketPtSeckillVO.QuantumSessionVO quantumVO = new MarketPtSeckillVO.QuantumSessionVO();
+                BeanUtil.copyProperties(record, quantumVO);
+                quantumVOList.add(quantumVO);
+            }
+        }
+        return MybatisPlusUtil.toPageData(quantumVOList, dto.getPageNum(), dto.getPageSize(), pager.getTotal());
+    }
+
     private MarketPtSeckillVO.ActivityListVO getActivityListVO(MarketPtSeckill pageRecord) {
         //等待开启 todo 定时任务
         String startTime = pageRecord.getSeckillStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

@@ -1,4 +1,5 @@
 package com.gs.lshly.rpc.api.platadmin.trade;
+
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
@@ -12,17 +13,17 @@ import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 /**
  * 秒杀活动
  *
- * 
  * @author yingjun
  * @date 2021年5月7日 上午10:34:45
  */
 public interface IMarketPtSeckillRpc {
 
-	/**
-	 * 分页显示秒杀活动列表
-	 * @param qto
-	 * @return
-	 */
+    /**
+     * 分页显示秒杀活动列表
+     *
+     * @param qto
+     * @return
+     */
     PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto);
 
     void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto);
@@ -33,11 +34,13 @@ public interface IMarketPtSeckillRpc {
 
     MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto);
 
-	PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto);
+    PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto);
 
-	void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto);
+    void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto);
 
-	List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto);
+    List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto);
+
+    PageData<MarketPtSeckillVO.QuantumSessionVO> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto);
 
     /*    List<MarketPtSeckillVO.ListVO> list();*/
 

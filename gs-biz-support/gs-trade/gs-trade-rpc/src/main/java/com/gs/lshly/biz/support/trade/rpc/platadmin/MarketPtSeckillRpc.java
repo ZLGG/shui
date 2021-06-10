@@ -69,6 +69,11 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc {
         return marketPtSeckillService.seckillSkuGoods(qto);
     }
 
+    @Override
+    public PageData<MarketPtSeckillVO.QuantumSessionVO> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto) {
+        return marketPtSeckillService.getKillQuanTum(dto);
+    }
+
 /*    @Override
     public List<MarketPtSeckillVO.ListVO> list() {
         return marketPtSeckillService.list();

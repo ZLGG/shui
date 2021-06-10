@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
 import com.gs.lshly.biz.support.trade.enums.TradeRightsNewStateEnum;
 import com.gs.lshly.biz.support.trade.repository.*;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeRightsService;
@@ -252,13 +253,15 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
                 BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
                 tradeRightsGoods.setId(null);
-                tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
                 tradeRightsGoods.setOrderCode(trade.getTradeCode());
                 if (productData.getQuantity() > tradeGoods.getQuantity()) {
                     throw new BusinessException("申请售后商品数量不能大于订单商品数量");
                 }
                 tradeRightsGoods.setQuantity(productData.getQuantity());
                 tradeRightsGoods.setGoodsType(productData.getGoodsType());
+                if (productData.getGoodsType().equals(TradeRightsGoodsTypeEnum.原商品.getCode())){
+                    tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
+                }
                 tradeRightsGoods.setRightsId(tradeRights.getId());
                 tradeRightsGoodsRepository.save(tradeRightsGoods);
             }

@@ -26,6 +26,8 @@ public interface IMarketPtSeckillService {
     void saveKillGoods(MarketPtSeckillDTO.SeckillGoodsDTO qto);
 
     List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto);
+
+    PageData<MarketPtSeckillVO.QuantumSessionVO> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto);
 /*
     void deleteMarketPtSeckill(MarketPtSeckillDTO.IdListDTO dto);
 

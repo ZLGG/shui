@@ -59,6 +59,15 @@ public abstract class MarketPtSeckillQTO implements Serializable {
 
     @Data
     @EqualsAndHashCode(callSuper = false)
+    @ApiModel("MarketPtSeckillQTO.QuantumQTO")
+    @Accessors(chain = true)
+    public static class QuantumQTO extends BaseQTO {
+        @ApiModelProperty("秒杀活动id")
+        private String id;
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
     @ApiModel("MarketPtSeckillQTO.GoodsQTO")
     @Accessors(chain = true)
     public static class GoodsQTO extends BaseQTO {

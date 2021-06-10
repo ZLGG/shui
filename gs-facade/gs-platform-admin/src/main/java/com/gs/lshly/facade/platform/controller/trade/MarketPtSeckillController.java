@@ -89,6 +89,13 @@ public class MarketPtSeckillController {
         marketPtSeckillRpc.saveKillGoods(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
+
+
+    @ApiOperation("秒杀活动时间段-v1.1.0")
+    @GetMapping("/quantum/{id}")
+    public ResponseData<PageData<MarketPtSeckillVO.QuantumSessionVO>> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto) {
+        return ResponseData.data(marketPtSeckillRpc.getKillQuanTum(dto));
+    }
 /*    @ApiOperation("批量删除平台秒杀-v1.1.0")
     @PostMapping(value = "/deleteBatches")
     @Func(code = "delete", name = "删除")
