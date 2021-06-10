@@ -52,7 +52,7 @@ public class TradeRightsController {
     }*/
 
     @ApiOperation("提交平台处理说明")
-    @PostMapping(value = "/{id}")
+    @PostMapping(value = "/reason")
     public ResponseData<Void> setPlatformCheckReason(TradeRightsDTO.PlatformCheckReasonDTO dto) {
         iTradeRightsRpc.setPlatformChenkReason(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);

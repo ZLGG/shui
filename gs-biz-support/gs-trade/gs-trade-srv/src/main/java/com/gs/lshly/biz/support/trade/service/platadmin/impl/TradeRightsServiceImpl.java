@@ -363,7 +363,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             platformResultVO.setCheckState(tradeRights.getCheckState());
         }
         if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
-            List<String> platformCheckReasonList = StrUtil.split(tradeRights.getPlatformCheckReason(), ',');
+            List<String> platformCheckReasonList = StrUtil.split(tradeRights.getPlatformCheckReason(), '&');
             platformResultVO.setPlatformCheckReason(platformCheckReasonList);
         }
         rightsListViewVO.setPlatformResultVO(platformResultVO);
@@ -742,7 +742,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         if (StrUtil.isEmpty(tradeRights.getPlatformCheckReason())) {
             tradeRights.setPlatformCheckReason(dto.getPlatformCheckReason());
         } else {
-            tradeRights.setPlatformCheckReason(tradeRights.getPlatformCheckReason() + "," + dto.getPlatformCheckReason());
+            tradeRights.setPlatformCheckReason(tradeRights.getPlatformCheckReason() + "&" + dto.getPlatformCheckReason());
         }
         tradeRights.setCheckState(TradeRightsNewStateEnum.处理中.getCode());
         iTradeRightsRepository.updateById(tradeRights);

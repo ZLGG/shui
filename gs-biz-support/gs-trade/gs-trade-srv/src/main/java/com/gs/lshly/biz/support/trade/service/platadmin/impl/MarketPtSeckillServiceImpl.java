@@ -94,16 +94,16 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         return MybatisPlusUtil.toPageData(listVOS, qto.getPageNum(), qto.getPageSize(), page.getTotal());*/
         QueryWrapper<MarketPtSeckill> query = MybatisPlusUtil.query();
         if (StrUtil.isNotEmpty(qto.getAcName())) {
-            query.and(i -> i.like("name", qto.getAcName()));
+            query.like("name", qto.getAcName());
         }
         if (ObjectUtil.isNotEmpty(qto.getState())) {
-            query.and(i -> i.eq("state", qto.getState()));
+            query.eq("state", qto.getState());
         }
         if (ObjectUtil.isNotEmpty(qto.getStartTime())) {
-            query.and(i -> i.ge("seckill_start_time", qto.getStartTime()))/*.or(i -> i.ge("seckill_start_time", qto.getStartTime()))*/;
+            query.and(i -> i.ge("seckill_start_time", qto.getStartTime()).or(s -> s.ge("seckill_start_time", qto.getStartTime())))/*.or(i -> i.ge("seckill_start_time", qto.getStartTime()))*/;
         }
         if (ObjectUtil.isNotEmpty(qto.getEndTime())) {
-            query.and(i -> i.le("seckill_end_time", qto.getEndTime()))/*.or(i -> i.ge("seckill_end_time", qto.getStartTime()))*/;
+            query.and(i -> i.le("seckill_end_time", qto.getEndTime()).or(s -> s.le("seckill_end_time", qto.getStartTime())))/*.or(i -> i.le("seckill_end_time", qto.getStartTime()))*/;
         }
         query.orderByDesc("cdate");
         IPage<MarketPtSeckill> page = MybatisPlusUtil.pager(qto);
