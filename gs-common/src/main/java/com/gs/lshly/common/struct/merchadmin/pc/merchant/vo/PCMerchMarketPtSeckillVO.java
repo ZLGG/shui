@@ -56,14 +56,6 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillVO.DetailVO")
-    public static class QuanTumVO extends ListVO {
-        @ApiModelProperty("场次时间")
-        private List<PCMerchMarketPtSeckillVO.SessionVO> sessionTime;
-
-    }
-
-    @Data
     @ApiModel("PCMerchMarketPtSeckillVO.SessionVO")
     @AllArgsConstructor
     @NoArgsConstructor
@@ -80,21 +72,12 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         private LocalDateTime endTime;
     }
 
-
-    @Data
-    @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoListVO")
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class GoodsInfoListVO implements Serializable {
-        List<PCMerchMarketPtSeckillVO.GoodsInfoVO> goodsInfoVOList;
-    }
-
     @Data
     @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoVO")
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GoodsInfoVO implements Serializable {
-        @ApiModelProperty("商品spuId,商品编号")
+        @ApiModelProperty("商品编号")
         private String id;
 
         @ApiModelProperty("商品名称")
@@ -106,4 +89,41 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         @ApiModelProperty("原价")
         private BigDecimal salePrice;
     }
+
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillVO.SpuGoodsInfoVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SpuGoodsInfoVO implements Serializable {
+        @ApiModelProperty("商品报名spuId")
+        private String id;
+
+        @ApiModelProperty("商品编号")
+        private String goodsId;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品类型")
+        private Integer goodsType;
+    }
+
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillVO.SpuGoodsInfoVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SkuGoodsInfoVO implements Serializable {
+        @ApiModelProperty("商品报名skuId")
+        private String id;
+
+        @ApiModelProperty("商品编号")
+        private String goodsId;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("商品类型")
+        private Integer goodsType;
+    }
+
 }

@@ -259,7 +259,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 }
                 tradeRightsGoods.setQuantity(productData.getQuantity());
                 tradeRightsGoods.setGoodsType(productData.getGoodsType());
-                if (productData.getGoodsType().equals(TradeRightsGoodsTypeEnum.原商品.getCode())){
+                if (productData.getGoodsType().equals(TradeRightsGoodsTypeEnum.原商品.getCode())) {
                     tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
                 }
                 tradeRightsGoods.setRightsId(tradeRights.getId());
@@ -639,7 +639,9 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
             BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
             tradeRightsGoods.setId(null);
-            tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
+            if (productData.getGoodsType().equals(TradeRightsGoodsTypeEnum.原商品.getCode())) {
+                tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
+            }
             tradeRightsGoods.setOrderCode(trade.getTradeCode());
             if (productData.getQuantity() > tradeGoods.getQuantity()) {
                 throw new BusinessException("申请售后商品数量不能大于订单商品数量");
