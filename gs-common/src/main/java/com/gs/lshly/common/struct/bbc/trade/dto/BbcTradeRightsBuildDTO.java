@@ -1,16 +1,17 @@
 package com.gs.lshly.common.struct.bbc.trade.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gs.lshly.common.struct.BaseDTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.BaseDTO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author oy

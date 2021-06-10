@@ -1,23 +1,43 @@
 package com.gs.lshly.common.struct.platadmin.trade.dto;
 
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.BaseQTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @Author yangxi
  * @create 2021/5/7 16:17
  */
+@SuppressWarnings("serial")
 public class CtccPtActivityDTO implements Serializable {
 
+	/**
+	 * 修改排序
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年6月10日 下午3:44:41
+	 */
+	@Data
+    @ApiModel("CtccPtActivityDTO.UpdateIdxDTO")
+    public static class UpdateIdxDTO implements Serializable {
+        
+		@ApiModelProperty("商品id")
+        private String goodsId;
+
+        @ApiModelProperty("排序值")
+        private Integer idx;
+    }
+	
     @Data
     @ApiModel("CtccPtActivityDTO.RemoveGoodsDTO")
     public static class RemoveGoodsDTO implements Serializable {
