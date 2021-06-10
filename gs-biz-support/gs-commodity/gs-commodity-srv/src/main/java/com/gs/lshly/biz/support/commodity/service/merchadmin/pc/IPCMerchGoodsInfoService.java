@@ -256,4 +256,6 @@ public interface IPCMerchGoodsInfoService {
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69);
 
     String selectGoodsNo(String tradeGoodsId);
+
+    void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto);
 }

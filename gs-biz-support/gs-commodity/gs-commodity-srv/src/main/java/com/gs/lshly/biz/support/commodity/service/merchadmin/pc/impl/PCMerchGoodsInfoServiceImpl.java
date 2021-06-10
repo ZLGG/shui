@@ -800,7 +800,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         //填充spu库存数
         spuDetail.setSpuStockNum(getSpuStockNum(goodsInfo.getId(), dto.getJwtShopId()));
 
-
         spuDetail.setDetailVOList(skuDetailList);
 
         //填充运费模板id
@@ -1568,6 +1567,40 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             }
         }
         return null;
+    }
+
+    @Override
+    public void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
+        if(ObjectUtils.isNotEmpty(eto)){
+
+            GoodsInfo goodsInfo = new GoodsInfo();
+            BeanUtils.copyProperties(eto, goodsInfo);
+
+            //多规格
+            List<CommonStockDTO.InnerChangeStockItem> items = new ArrayList<>();
+            if (ObjectUtils.isNotEmpty(eto.getSpecList())) {
+                for (PCMerchSkuGoodInfoDTO.AddETO skuInfo : eto.getEtoList()) {
+                    CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
+                    stockItem.setGoodsId(goodsInfo.getId());
+                    stockItem.setSkuId(skuInfo.getId());
+                    stockItem.setQuantity(skuInfo.getSkuStock() != null ? skuInfo.getSkuStock() : 0);
+                    items.add(stockItem);
+                }
+
+            }
+            //单规格
+            else{
+                QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
+                boost.eq("good_id", goodsInfo.getId());
+                SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getOne(boost);
+                CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
+                stockItem.setGoodsId(goodsInfo.getId());
+                stockItem.setSkuId(skuGoodInfo.getId());
+                stockItem.setQuantity(eto.getSpuStock() != null ? eto.getSpuStock() : 0);
+                items.add(stockItem);
+            }
+            initGoodsStock(eto, items);
+        }
     }
 
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
