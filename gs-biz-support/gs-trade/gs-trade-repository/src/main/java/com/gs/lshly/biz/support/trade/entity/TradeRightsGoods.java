@@ -13,13 +13,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
-* <p>
-* 售后商品表
-* </p>
-*
-* @author oy
-* @since 2020-12-06
-*/
+ * <p>
+ * 售后商品表
+ * </p>
+ *
+ * @author oy
+ * @since 2020-12-06
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -29,90 +29,95 @@ public class TradeRightsGoods extends Model {
     private static final long serialVersionUID = 1L;
 
     /**
-    * 售后商品表ID
-    */
+     * 售后商品表ID
+     */
     private String id;
 
     /**
-    * 售后表ID
-    */
+     * 售后表ID
+     */
     private String rightsId;
 
     /**
-    * 订单ID
-    */
+     * 订单ID
+     */
     private String tradeId;
 
     /**
-    * 订单商品ID
-    */
+     * 商品ID
+     */
+    private String goodsId;
+
+    /**
+     * 订单商品表ID
+     */
     private String tradeGoodsId;
 
     /**
-    * 会员ID
-    */
+     * 会员ID
+     */
     private String userId;
 
     /**
-    * 店铺ID
-    */
+     * 店铺ID
+     */
     private String shopId;
 
     /**
-    * 商家ID
-    */
+     * 商家ID
+     */
     private String merchantId;
 
     /**
-    * 订单编号
-    */
+     * 订单编号
+     */
     private String orderCode;
 
     /**
-    * 商品名称
-    */
+     * 商品名称
+     */
     private String goodsName;
 
     /**
-    * SKU ID
-    */
+     * SKU ID
+     */
     private String skuId;
 
     /**
-    * 格规值
-    */
+     * 格规值
+     */
     private String skuSpecValue;
 
     /**
-    * 售后数量
-    */
+     * 售后数量
+     */
     private Integer quantity;
 
     /**
-    * 销售价
-    */
+     * 销售价
+     */
     private BigDecimal salePrice;
 
     /**
-    * 退款金额
-    */
+     * 退款金额
+     */
     private BigDecimal refundAmount;
 
     /**
-    * 创建时间
-    */
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdate;
 
     /**
-    * 更新时间
-    */
+     * 更新时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime udate;
 
     /**
-    * 逻辑删除标记
-    */
+     * 逻辑删除标记
+     */
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;

@@ -289,7 +289,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             if (StrUtil.isNotEmpty(skuImg)) {
                 goodsVO.setSkuImg(skuImg);
             }
-            String goodsNo = iGoodsInfoRpc.selectGoodsNo(tradeRightsGoods.getTradeGoodsId());
+            String goodsNo = iGoodsInfoRpc.selectGoodsNo(tradeRightsGoods.getGoodsId());
             if (StrUtil.isNotEmpty(goodsNo)) {
                 goodsVO.setGoodsNo(goodsNo);
             }
@@ -448,7 +448,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     private ITradeCancelRepository iTradeCancelRepository;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void check(PCMerchTradeRightsDTO.IdCheckDTO dto) {
         if (ObjectUtil.isAllNotEmpty(dto.getId(), dto.getState(), dto.getRightsType())) {
             throw new BusinessException("参数不能为空!");
@@ -498,6 +498,10 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             repository.updateById(tradeRights);
             tradeRightsLog.setState(dto.getState());
             tradeRightsLog.setContent("商家确认收货且退款");
+            //修改主订单状态为完成
+            Trade trade = iTradeRepository.getById(tradeRights.getTradeId());
+            trade.setTradeState(TradeStateEnum.已完成.getCode());
+            iTradeRepository.updateById(trade);
             //todo 回库存
             //todo yingjun 仅退款 退款
         }

@@ -293,12 +293,12 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         for (TradeRightsGoods tradeRightsGoods : tradeRightsGoodsList) {
             TradeRightsVO.TradeRightsGoodsVO tradeRightsGoodsVO = new TradeRightsVO.TradeRightsGoodsVO();
             BeanUtil.copyProperties(tradeRightsGoods, tradeRightsGoodsVO);
-            tradeRightsGoodsVO.setGoodsId(tradeRightsGoods.getTradeGoodsId());
+            tradeRightsGoodsVO.setGoodsId(tradeRightsGoods.getGoodsId());
             ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(tradeRights.getShopId()));
             if (ObjectUtil.isNotEmpty(detailVO)) {
                 tradeRightsGoodsVO.setShopName(detailVO.getShopName());
             }
-            GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getTradeGoodsId()));
+            GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getGoodsId()));
             tradeRightsGoodsVO.setGoodsTitle(goodsDetail.getGoodsTitle());
             tradeRightsGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());
             if (ObjectUtil.isNotEmpty(goodsDetail.getSalePrice())) {

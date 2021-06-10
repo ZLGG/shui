@@ -175,7 +175,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 //保存售后商品信息
                 TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
                 BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
-                tradeRightsGoods.setTradeGoodsId(tradeGoods.getGoodsId());
+                tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
                 tradeRightsGoods.setOrderCode(trade.getTradeCode());
                 if (productData.getQuantity() > tradeGoods.getQuantity()) {
                     throw new BusinessException("申请售后商品数量不能大于订单商品数量");
@@ -251,7 +251,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 //保存售后商品信息
                 TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
                 BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
-                tradeRightsGoods.setTradeGoodsId(tradeGoods.getGoodsId());
+                tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
                 tradeRightsGoods.setOrderCode(trade.getTradeCode());
                 if (productData.getQuantity() > tradeGoods.getQuantity()) {
                     throw new BusinessException("申请售后商品数量不能大于订单商品数量");
@@ -634,7 +634,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
             BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
             tradeRightsGoods.setId(null);
-            tradeRightsGoods.setTradeGoodsId(tradeGoods.getGoodsId());
+            tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
             tradeRightsGoods.setOrderCode(trade.getTradeCode());
             if (productData.getQuantity() > tradeGoods.getQuantity()) {
                 throw new BusinessException("申请售后商品数量不能大于订单商品数量");
@@ -764,8 +764,8 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         for (TradeRightsGoods tradeRightsGoods : rightsGoodsList) {
             BbcTradeRightsVO.TradeRightsGoodsVO tradeRightsGoodsVO = new BbcTradeRightsVO.TradeRightsGoodsVO();
             BeanUtil.copyProperties(tradeRightsGoods, tradeRightsGoodsVO);
-            tradeRightsGoodsVO.setGoodsId(tradeRightsGoods.getTradeGoodsId());
-            BbcTradeRightsVO.GoodsInfo goodsInfo = iBbcGoodsInfoRpc.selectOne(tradeRightsGoods.getTradeGoodsId());
+            tradeRightsGoodsVO.setGoodsId(tradeRightsGoods.getGoodsId());
+            BbcTradeRightsVO.GoodsInfo goodsInfo = iBbcGoodsInfoRpc.selectOne(tradeRightsGoods.getGoodsId());
             if (ObjectUtil.isNotEmpty(goodsInfo)) {
                 tradeRightsGoodsVO.setGoodsTitle(goodsInfo.getGoodsTitle());
                 tradeRightsGoodsVO.setGoodsPriceUnit(goodsInfo.getGoodsPriceUnit());
