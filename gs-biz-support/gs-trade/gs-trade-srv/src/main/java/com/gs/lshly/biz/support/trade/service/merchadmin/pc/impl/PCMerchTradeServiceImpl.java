@@ -294,6 +294,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 		}
 		if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
 			if (ObjectUtils.isNotEmpty(dto.getOrderAmount())) {// 改价格
+				BigDecimal total = trade.getTradePointAmount();
 				// 修改交易总金额
 				BigDecimal differencePrice = (trade.getTradeAmount() != null ? trade.getTradeAmount() : BigDecimal.ZERO)
 						.subtract(dto.getOrderAmount());
@@ -313,7 +314,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 						
 						
 						// 计算百分比
-						BigDecimal rate = tradeGoods.getTradePointAmount().divide(trade.getTradePointAmount());
+						BigDecimal rate = tradeGoods.getTradePointAmount().divide(total);
 						
 						tradeGoods.setTradeAmount(dto.getOrderAmount().multiply(rate));
 
@@ -326,7 +327,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
 			}
 			if (ObjectUtils.isNotEmpty(dto.getOrderPointAmount())) {
-
+				BigDecimal total = trade.getTradePointAmount();
 				BigDecimal differencePrice = trade.getTradePointAmount().subtract(dto.getOrderPointAmount());
 
 				trade.setTradePointAmount(dto.getOrderPointAmount());
@@ -340,7 +341,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 					for (TradeGoods tradeGoods : tradeGoodsList) {
 
 						// 计算百分比
-						BigDecimal rate = tradeGoods.getTradePointAmount().divide(trade.getTradePointAmount());
+						BigDecimal rate = tradeGoods.getTradePointAmount().divide(total);
 						tradeGoods.setTradePointAmount(dto.getOrderPointAmount().multiply(rate));
 
 						tradeGoods.setDiscountPointAmount(tradeGoods.getDiscountPointAmount() != null
