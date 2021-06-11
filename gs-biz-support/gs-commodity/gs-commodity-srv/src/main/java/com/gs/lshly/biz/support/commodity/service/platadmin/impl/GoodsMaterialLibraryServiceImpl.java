@@ -175,9 +175,9 @@ public class GoodsMaterialLibraryServiceImpl implements IGoodsMaterialLibrarySer
         if (StringUtils.isBlank(eto.getGoodsName())){
             throw new BusinessException("请填写商品名称");
         }
-//        if (StringUtils.isBlank(eto.getGoodsTitle())){
-//            throw new BusinessException("请填写商品");
-//        }
+/*        if (StringUtils.isBlank(eto.getGoodsTitle())){
+            throw new BusinessException("请填写商品");
+        }*/
         if (StringUtils.isBlank(eto.getBrandId())){
             throw new BusinessException("请选择品牌");
         }

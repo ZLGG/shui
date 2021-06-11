@@ -89,9 +89,9 @@ public class GoodsServeController {
      * @param dto
      */
     @ApiOperation("删除服务")
-    @DeleteMapping(value = "deleteGoodsServe")
+    @PutMapping(value = "deleteGoodsServe")
 //    @Func(code = "delete", name = "删除")
-    public ResponseData<Void> deleteGoodsServe(GoodsServeDTO.IdListDTO dto) {
+    public ResponseData<Void> deleteGoodsServe(@Valid @RequestBody GoodsServeDTO.IdListDTO dto) {
         goodsServeRpc.deleteGoodsServe(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
