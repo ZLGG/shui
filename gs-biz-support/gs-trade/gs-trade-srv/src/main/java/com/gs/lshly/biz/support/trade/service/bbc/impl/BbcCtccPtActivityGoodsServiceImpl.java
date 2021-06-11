@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gs.lshly.biz.support.trade.entity.CtccCategoryGoods;
-import com.gs.lshly.biz.support.trade.repository.ICtccCategoryGoodsRepository;
+import com.gs.lshly.biz.support.trade.entity.CtccActivityGoods;
+import com.gs.lshly.biz.support.trade.entity.CtccPtActivity;
+import com.gs.lshly.biz.support.trade.repository.ICtccActivityGoodsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcCtccPtActivityGoodsService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
@@ -29,22 +30,23 @@ import cn.hutool.core.collection.CollectionUtil;
 public class BbcCtccPtActivityGoodsServiceImpl implements IBbcCtccPtActivityGoodsService{
 	
 	@Autowired
-	private ICtccCategoryGoodsRepository ctccCategoryGoodsRepository;
+	private ICtccActivityGoodsRepository ctccActivityGoodsRepository;
 	
     @DubboReference
 	private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
+    
+    
 
 	@Override
 	public List<BbcGoodsInfoVO.DetailVO> listCtccPtActivityGoods(Integer limit) {
-		QueryWrapper<CtccCategoryGoods> queryWrapper = new QueryWrapper<>();
+		QueryWrapper<CtccActivityGoods> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
         queryWrapper.last("limit 0,6");
-        List<CtccCategoryGoods> list = ctccCategoryGoodsRepository.list(queryWrapper);
+        List<CtccActivityGoods> list = ctccActivityGoodsRepository.list(queryWrapper);
         List<BbcGoodsInfoVO.DetailVO> retList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
         if(CollectionUtil.isNotEmpty(list)){
-        	for(CtccCategoryGoods ctccCategoryGoods:list){
-        		String goodsId = ctccCategoryGoods.getGoodsId();
-        		
+        	for(CtccActivityGoods ctccPtActivity:list){
+        		String goodsId = ctccPtActivity.getGoodsId();
         		retList.add(bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId)));
         	}
         }
