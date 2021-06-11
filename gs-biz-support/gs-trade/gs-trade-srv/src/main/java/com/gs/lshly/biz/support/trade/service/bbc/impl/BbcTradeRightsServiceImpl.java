@@ -173,6 +173,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 tradeRightsGoods.setQuantity(productData.getQuantity());
                 tradeRightsGoods.setGoodsType(productData.getGoodsType());
                 tradeRightsGoods.setRightsId(tradeRights.getId());
+                tradeRightsGoods.setId(null);
                 tradeRightsGoodsRepository.save(tradeRightsGoods);
 
                 //保存售后图片信息
