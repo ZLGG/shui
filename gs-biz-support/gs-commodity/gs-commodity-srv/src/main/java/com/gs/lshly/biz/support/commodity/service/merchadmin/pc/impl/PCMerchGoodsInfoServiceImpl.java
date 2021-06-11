@@ -11,10 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -55,17 +60,6 @@ import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsExtendParamsService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsSpecInfoService;
-import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
-import com.gs.lshly.common.enums.GoodsQueryTypeEnum;
-import com.gs.lshly.common.enums.GoodsStateEnum;
-import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
-import com.gs.lshly.common.enums.SettingGoodsAuditEnum;
-import com.gs.lshly.common.enums.ShopTypeEnum;
-import com.gs.lshly.common.enums.ShowOldPriceEnum;
-import com.gs.lshly.common.enums.SingleStateEnum;
-import com.gs.lshly.common.enums.StockDataFromTypeEnum;
-import com.gs.lshly.common.enums.StockLocationEnum;
-import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.enums.merchant.ShopStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -193,7 +187,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @DubboReference
     private IPCMerchGoodsServeRpc goodsServeRpc;
-    
+
     @DubboReference
     private ICtccPtActivityGoodsRpc ctccPtActivityGoodsRpc;
 
@@ -764,7 +758,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @Override
     public void changeTempToGoodsInfo(String goodId) {
-         //查询商品信息
+        //查询商品信息
         PCMerchGoodsInfoVO.EditDetailVO editDetailVO = merchGoodsInfoTempService.getEditDetailEto(new PCMerchGoodsInfoDTO.IdDTO(goodId));
         GoodsInfo oldGoodsInfo = repository.getById(goodId);
         GoodsInfo goodsInfo = new GoodsInfo();
@@ -789,14 +783,14 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isNotEmpty(editDetailVO.getAttributeList())) {
             //先删除商品属性
             Map<String, Object> columnMap = new HashMap<>();
-            columnMap.put("good_id",goodId);
+            columnMap.put("good_id", goodId);
             attributeInfoRepository.removeByMap(columnMap);
 
             PCMerchGoodsAttributeInfoDTO.ETO attributeInfo;
             for (PCMerchGoodsAttributeInfoVO.ListVO attributeInfoListVO : editDetailVO.getAttributeList()) {
 
                 attributeInfo = new PCMerchGoodsAttributeInfoDTO.ETO();
-                BeanCopyUtils.copyProperties(attributeInfoListVO,attributeInfo);
+                BeanCopyUtils.copyProperties(attributeInfoListVO, attributeInfo);
                 attributeInfo.setGoodId(goodId);
                 attributeInfo.setId("");
                 String attributeId = attributeInfoService.addGoodsAttributeInfo(attributeInfo);
@@ -809,13 +803,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isNotEmpty(editDetailVO.getParamsList())) {
             //先删除商品参数
             Map<String, Object> columnMap = new HashMap<>();
-            columnMap.put("good_id",goodId);
+            columnMap.put("good_id", goodId);
             extendParamsRepository.removeByMap(columnMap);
 
             PCMerchGoodsExtendParamsDTO.ETO paramsInfo;
             for (PCMerchGoodsExtendParamsVO.ListVO paramsInfoListVO : editDetailVO.getParamsList()) {
                 paramsInfo = new PCMerchGoodsExtendParamsDTO.ETO();
-                BeanCopyUtils.copyProperties(paramsInfoListVO,paramsInfo);
+                BeanCopyUtils.copyProperties(paramsInfoListVO, paramsInfo);
                 paramsInfo.setGoodId(goodsInfo.getId());
                 paramsInfo.setId("");
                 String paramsId = extendParamsService.addGoodsExtendParams(paramsInfo);
@@ -832,13 +826,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isNotEmpty(editDetailVO.getSpecList())) {
             //先删除商品规格拓展
             Map<String, Object> columnMap = new HashMap<>();
-            columnMap.put("good_id",goodId);
+            columnMap.put("good_id", goodId);
             goodsSpecInfoRepository.removeByMap(columnMap);
 
             PCMerchGoodsSpecInfoDTO.ETO specInfo;
             for (PCMerchGoodsSpecInfoVO.ListVO specInfoListVO : editDetailVO.getSpecList()) {
                 specInfo = new PCMerchGoodsSpecInfoDTO.ETO();
-                BeanCopyUtils.copyProperties(specInfoListVO,specInfo);
+                BeanCopyUtils.copyProperties(specInfoListVO, specInfo);
                 specInfo.setGoodId(goodsInfo.getId());
                 specInfo.setId("");
                 String specId = goodsSpecInfoService.addGoodsSpecInfo(specInfo);
@@ -849,7 +843,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
             //先删除商品sku
             columnMap = new HashMap<>();
-            columnMap.put("good_id",goodId);
+            columnMap.put("good_id", goodId);
             skuGoodInfoRepository.removeByMap(columnMap);
 
             List<SkuGoodInfo> skuGoodInfos = new ArrayList<>();
@@ -1756,10 +1750,10 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @Override
     public String selectGoodsNo(String tradeGoodsId) {
-        if (StrUtil.isNotEmpty(tradeGoodsId)){
+        if (StrUtil.isNotEmpty(tradeGoodsId)) {
             GoodsInfo byId = repository.getById(tradeGoodsId);
-            if (ObjectUtil.isNotEmpty(byId)){
-                if (ObjectUtil.isNotEmpty(byId.getGoodsNo())){
+            if (ObjectUtil.isNotEmpty(byId)) {
+                if (ObjectUtil.isNotEmpty(byId.getGoodsNo())) {
                     return byId.getGoodsNo();
                 }
             }
@@ -1769,7 +1763,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @Override
     public void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-        if(ObjectUtils.isNotEmpty(eto)){
+        if (ObjectUtils.isNotEmpty(eto)) {
 
             GoodsInfo goodsInfo = new GoodsInfo();
             BeanUtils.copyProperties(eto, goodsInfo);
@@ -1785,7 +1779,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 }
             }
             //单规格
-            else{
+            else {
                 QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
                 boost.eq("good_id", goodsInfo.getId());
                 SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getOne(boost);
@@ -1799,6 +1793,40 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
     }
 
+
+    @Override
+    public PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
+        PCMerchMarketPtSeckillVO.SpuVO spuVO = new PCMerchMarketPtSeckillVO.SpuVO();
+        IPage<GoodsInfo> pager = MybatisPlusUtil.pager(qto);
+        QueryWrapper<GoodsInfo> query = MybatisPlusUtil.query();
+        query.eq("shop_id", qto.getJwtShopId());
+        if (CollUtil.isNotEmpty(qto.getSpuIdList())) {
+
+        }
+        if (StrUtil.isNotEmpty(qto.getKeyWord())) {
+
+        }
+        if (ObjectUtil.isNotEmpty(qto.getGoodsType())) {
+
+        }
+        repository.page(pager, query);
+        if (CollUtil.isEmpty(pager.getRecords())) {
+            return spuVO;
+        }
+        List<PCMerchMarketPtSeckillVO.AllSpuVO> allSpuVOList = new ArrayList<>();
+        for (GoodsInfo record : pager.getRecords()) {
+            PCMerchMarketPtSeckillVO.AllSpuVO allSpuVO = new PCMerchMarketPtSeckillVO.AllSpuVO();
+            allSpuVO.setId(record.getId());
+            allSpuVO.setGoodsName(record.getGoodsName());
+            allSpuVO.setSalePrice(record.getPointPrice());
+            allSpuVO.setGoodsType(record.getIsPointGood() ? MarketPtSeckillSpuTypeEnum.积分商品.getCode() : MarketPtSeckillSpuTypeEnum.普通商品.getCode());
+            allSpuVOList.add(allSpuVO);
+        }
+        PageData<PCMerchMarketPtSeckillVO.AllSpuVO> allSpuVOPageData = MybatisPlusUtil.toPageData(allSpuVOList, qto.getPageNum(), qto.getPageSize(), pager.getTotal());
+        spuVO.setCount(Convert.toInt(pager.getTotal()));
+        spuVO.setAllSpuVOList(allSpuVOPageData);
+        return spuVO;
+    }
 
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
         List<String> stringList = Arrays.asList(attributeInfos.split(",")).stream().distinct().collect(toList());
@@ -1966,13 +1994,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             if (state.intValue() == GoodsStateEnum.已上架.getCode().intValue()) {
                 goodsInfo.setPublishTime(LocalDateTime.now());//上架
             }
-            
+
             repository.update(goodsInfo, wrapper);
         }
-        
-        if(state.intValue() == GoodsStateEnum.未上架.getCode().intValue()){
-        	//电信国际里面下架
-        	ctccPtActivityGoodsRpc.underStateByGoodsId(dto.getIdList());
+
+        if (state.intValue() == GoodsStateEnum.未上架.getCode().intValue()) {
+            //电信国际里面下架
+            ctccPtActivityGoodsRpc.underStateByGoodsId(dto.getIdList());
         }
     }
 

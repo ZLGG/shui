@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.merchadmin.pc.merchant.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -76,7 +77,19 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoVO")
+    @ApiModel("PCMerchMarketPtSeckillVO.SpuVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SpuVO implements Serializable {
+
+        @ApiModelProperty("已选择的数量")
+        private Integer count;
+        @ApiModelProperty("商品信息集合")
+        PageData<AllSpuVO> allSpuVOList;
+    }
+
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillVO.AllSpuVO")
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AllSpuVO implements Serializable {
@@ -91,13 +104,10 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
 
         @ApiModelProperty("spu原价")
         private BigDecimal salePrice;
-
-        @ApiModelProperty("已选择的数量")
-        private Integer count;
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoVO")
+    @ApiModel("PCMerchMarketPtSeckillVO.AllSkuVO")
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AllSkuVO implements Serializable {
@@ -106,9 +116,6 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
 
         @ApiModelProperty("规格")
         private String specsValue;
-
-        @ApiModelProperty("剩余库存")
-        private Integer seckillInventory;
 
         @ApiModelProperty("sku原价")
         private BigDecimal saleSkuPrice;

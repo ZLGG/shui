@@ -212,7 +212,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
                 killGoodsVO.setKillSpuId(record.getId());
                 killGoodsVO.setGoodsName(goodsDetail.getGoodsName());
                 killGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());
-                killGoodsVO.setGoodsType(goodsDetail.getIsPointGood() ? MarketPtSeckillSpuTypeEnum.普通商品.getCode() : MarketPtSeckillSpuTypeEnum.积分商品.getCode());
+                //killGoodsVO.setGoodsType(goodsDetail.getIsPointGood() ? MarketPtSeckillSpuTypeEnum.普通商品.getCode() : MarketPtSeckillSpuTypeEnum.积分商品.getCode());
                 killGoodsVOList.add(killGoodsVO);
             }
         }

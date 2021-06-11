@@ -108,21 +108,8 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("订单不存在");
         }
-/*        else if (trade.getTradeState().intValue() != TradeStateEnum.已完成.getCode()) {
-            throw new BusinessException("请确认收货后再申请售后");
-        }*/
-        QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
-        query.eq("trade_id", dto.getTradeId());
-        //售后状态不等于驳回
-        TradeRights tradeRights = repository.getOne(query);
-        if (ObjectUtil.isNotEmpty(tradeRights) && !tradeRights.getState().equals(TradeRightsStateEnum.驳回.getCode())) {
-            throw new BusinessException("已经在执行售后操作");
-        }
-        //根据订单id以及订单商品id查询商品数据
-/*        String tradeCode = trade.getTradeCode();
-        List<TradeRightsGoods> tradeRightsGoodsS = addTradeRightsGoodsList(dto, tradeCode, refundAmount, refundPoint);
-        TradeRights rights = addTradeRights(dto, trade);*/
         List<String> tradeRightsIdList = new ArrayList<>();
+        TradeRights tradeRights;
         if (!dto.getRightsType().equals(TradeRightsTypeEnum.换货.getCode())) {
             BbcTradeRightsVO.GoodsTotalVO goodsTotalVO;
             //获取当前全部退款商品的金额与积分
@@ -133,6 +120,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             goodsTotalVO = goodsTotal(goodsTotalDTO);
             //保存售后商品与图片凭证信息
             for (BbcTradeRightsBuildDTO.ETO.ProductData productData : dto.getProductData()) {
+
                 BigDecimal refundAmount = BigDecimal.ZERO;
                 BigDecimal refundPoint = BigDecimal.ZERO;
                 QueryWrapper<TradeGoods> wrapper = MybatisPlusUtil.query();
@@ -212,6 +200,17 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             //保存售后商品与图片凭证信息
             /*BigDecimal refundAmount = BigDecimal.ZERO;
             BigDecimal refundPoint = BigDecimal.ZERO;*/
+
+            //如果申请过换货，不让申请
+            String skuId = dto.getProductData().get(0).getSkuId();
+            QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
+            query.eq("trade_id", dto.getTradeId());
+            query.eq("sku_id", skuId);
+            int count = tradeRightsGoodsRepository.count(query);
+            if (count != 0) {
+                throw new BusinessException("您已申请过换货申请!");
+            }
+
             //保存售后信息
             tradeRights = new TradeRights();
             BeanUtil.copyProperties(trade, tradeRights);
@@ -584,13 +583,9 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (tradeRights.getState().equals(TradeRightsEndStateEnum.用户取消.getCode())) {
             throw new BusinessException("用户已取消");
         }
-        //删除售后商品表数据
-        QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
-        query.eq("rights_id", tradeRights.getId());
-        tradeRightsGoodsRepository.remove(query);
         //删除售后表数据
         tradeRights.setState(TradeRightsEndStateEnum.用户取消.getCode());
-        repository.updateById(tradeRights);
+        repository.removeById(tradeRights);
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
         tradeRightsLog.setState(TradeRightsEndStateEnum.用户取消.getCode());

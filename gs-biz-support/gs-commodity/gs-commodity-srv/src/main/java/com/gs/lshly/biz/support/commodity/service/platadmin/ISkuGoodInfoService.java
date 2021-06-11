@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin;
 
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.SkuGoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
@@ -22,4 +23,5 @@ public interface ISkuGoodInfoService {
     MarketPtSeckillVO.SkuGoodsInfo selectOne(String id);
 
     String selectSkuImg(String skuId);
+
 }

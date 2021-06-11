@@ -4,9 +4,12 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchSkuGoodInfo
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchSkuGoodInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoService;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminSkuGoodInfoRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
 *
@@ -43,6 +46,11 @@ public class PCMerchAdminSkuGoodInfoRpc implements IPCMerchAdminSkuGoodInfoRpc {
     @Override
     public PCMerchSkuGoodInfoVO.DetailVO detailSkuGoodInfo(PCMerchSkuGoodInfoDTO.IdDTO dto){
         return skuGoodInfoService.detailSkuGoodInfo(dto);
+    }
+
+    @Override
+    public List<PCMerchMarketPtSeckillVO.AllSkuVO> selectByGoodsId(String goodsId) {
+        return skuGoodInfoService.selectByGoodsId(goodsId);
     }
 
 }

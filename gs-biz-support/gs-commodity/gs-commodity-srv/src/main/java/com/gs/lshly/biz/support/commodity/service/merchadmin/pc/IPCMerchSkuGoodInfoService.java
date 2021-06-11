@@ -4,6 +4,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchSkuGoodInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchSkuGoodInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 
 import java.util.List;
 
@@ -31,4 +32,6 @@ public interface IPCMerchSkuGoodInfoService {
     void addSkuInfo(SkuGoodInfo skuGoodInfo);
 
     String selectSkuImg(String skuId);
+
+    List<PCMerchMarketPtSeckillVO.AllSkuVO> selectByGoodsId(String goodsId);
 }

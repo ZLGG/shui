@@ -83,6 +83,11 @@ public class MarketPtSeckillGoodsSpu implements Serializable {
     private String goodsId;
 
     /**
+     * 商品名称
+     */
+    private String goodsName;
+
+    /**
      * 品牌id
      */
     private String brandId;

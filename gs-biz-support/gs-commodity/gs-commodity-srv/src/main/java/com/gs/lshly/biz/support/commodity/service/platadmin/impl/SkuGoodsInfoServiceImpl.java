@@ -3,10 +3,13 @@ package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

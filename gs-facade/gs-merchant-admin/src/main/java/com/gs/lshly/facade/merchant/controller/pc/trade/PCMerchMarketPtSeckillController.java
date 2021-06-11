@@ -52,7 +52,7 @@ public class PCMerchMarketPtSeckillController {
 
     @ApiOperation("可参加的spu商品列表(添加商品)-v1.1.0")
     @PostMapping("/allSpu")
-    public ResponseData<PageData<PCMerchMarketPtSeckillVO.AllSpuVO>> allSpu(@RequestBody PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
+    public ResponseData<PCMerchMarketPtSeckillVO.SpuVO> allSpu(@RequestBody PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
         return ResponseData.data(ipcMerchMarketPtSeckillRpc.allSpu(qto));
     }
 

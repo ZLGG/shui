@@ -25,13 +25,9 @@ public interface IPCMerchMarketPtSeckillRpc {
 
     PageData<PCMerchMarketPtSeckillVO.SessionVO> seckillTimeQuantum(PCMerchMarketPtSeckillQTO.IdQTO qto);
 
-    PageData<PCMerchMarketPtSeckillVO.AllSpuVO> allSpu(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
-
-    PageData<PCMerchMarketPtSeckillVO.AllSkuVO> allSku(PCMerchMarketPtSeckillQTO.AllSkuQTO qto);
+    PCMerchMarketPtSeckillVO.SpuVO allSpu(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
 
     PageData<PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO> seckillSpuGoods(PCMerchMarketPtSeckillQTO.SpuQTO qto);
-
-    PageData<PCMerchMarketPtSeckillVO.SkuGoodsInfoVO> seckillSkuGoods(PCMerchMarketPtSeckillQTO.SkuQTO qto);
 
     void addSpuGoods(PCMerchMarketPtSeckillDTO.SpuIdETO dto);
 

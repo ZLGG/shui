@@ -14,6 +14,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.*;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;

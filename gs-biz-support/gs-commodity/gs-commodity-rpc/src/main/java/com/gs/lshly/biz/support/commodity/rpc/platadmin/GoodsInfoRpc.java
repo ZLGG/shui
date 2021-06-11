@@ -2,6 +2,8 @@ package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
 import java.util.List;
 
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
 import org.apache.dubbo.config.annotation.DubboService;

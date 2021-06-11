@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
@@ -166,5 +168,6 @@ public interface IGoodsInfoRpc {
      * @return
      */
     PageData<GoodsInfoVO.ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto);
+
 }
 

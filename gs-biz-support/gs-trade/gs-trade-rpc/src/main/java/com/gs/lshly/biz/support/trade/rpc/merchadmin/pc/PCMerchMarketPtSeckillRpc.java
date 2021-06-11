@@ -30,23 +30,13 @@ public class PCMerchMarketPtSeckillRpc implements IPCMerchMarketPtSeckillRpc {
     }
 
     @Override
-    public PageData<PCMerchMarketPtSeckillVO.AllSpuVO> allSpu(PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
+    public PCMerchMarketPtSeckillVO.SpuVO allSpu(PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
         return ipcMerchMarketPtSeckillService.allSpu(qto);
-    }
-
-    @Override
-    public PageData<PCMerchMarketPtSeckillVO.AllSkuVO> allSku(PCMerchMarketPtSeckillQTO.AllSkuQTO qto) {
-        return ipcMerchMarketPtSeckillService.allSku(qto);
     }
 
     @Override
     public PageData<PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO> seckillSpuGoods(PCMerchMarketPtSeckillQTO.SpuQTO qto) {
         return ipcMerchMarketPtSeckillService.seckillSpuGoods(qto);
-    }
-
-    @Override
-    public PageData<PCMerchMarketPtSeckillVO.SkuGoodsInfoVO> seckillSkuGoods(PCMerchMarketPtSeckillQTO.SkuQTO qto) {
-        return ipcMerchMarketPtSeckillService.seckillSkuGoods(qto);
     }
 
     @Override

@@ -3,8 +3,10 @@ package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +127,28 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
             }
         }
         return null;
+    }
+
+    @Override
+    public List<PCMerchMarketPtSeckillVO.AllSkuVO> selectByGoodsId(String goodsId) {
+        if (StrUtil.isNotEmpty(goodsId)) {
+            throw new BusinessException("goodsId为空");
+        }
+        QueryWrapper<SkuGoodInfo> query = MybatisPlusUtil.query();
+        query.eq("goods_id", goodsId);
+        List<SkuGoodInfo> skuGoodInfoList = repository.list(query);
+        if (CollUtil.isEmpty(skuGoodInfoList)) {
+            return null;
+        }
+        List<PCMerchMarketPtSeckillVO.AllSkuVO> allSkuVOList = new ArrayList<>();
+        for (SkuGoodInfo skuGoodInfo : skuGoodInfoList) {
+            PCMerchMarketPtSeckillVO.AllSkuVO allSkuVO = new PCMerchMarketPtSeckillVO.AllSkuVO();
+            BeanUtils.copyProperties(skuGoodInfo, allSkuVO);
+            allSkuVO.setSkuId(skuGoodInfo.getId());
+            allSkuVO.setSaleSkuPrice(skuGoodInfo.getPointPrice());
+            allSkuVOList.add(allSkuVO);
+        }
+        return allSkuVOList;
     }
 
     private Integer getSkuStockNum(String shopId, String skuId) {

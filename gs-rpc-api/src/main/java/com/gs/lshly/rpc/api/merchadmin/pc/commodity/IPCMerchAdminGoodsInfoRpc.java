@@ -6,6 +6,8 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDT
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 
 import java.util.List;
 
@@ -234,4 +236,6 @@ public interface IPCMerchAdminGoodsInfoRpc {
     PCMerchGoodsInfoVO.SkuIdByGoodsNoVO innerByNoSkuId(String posSku69);
 
     String selectGoodsNo(String tradeGoodsId);
+
+    PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
 }
