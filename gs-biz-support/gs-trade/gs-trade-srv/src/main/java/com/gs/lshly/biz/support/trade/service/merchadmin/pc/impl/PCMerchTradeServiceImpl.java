@@ -59,6 +59,8 @@ import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
 import com.lakala.boss.api.common.Common;
 
+import cn.hutool.core.collection.CollectionUtil;
+
 /**
 * <p>
 *  服务实现类
@@ -280,48 +282,93 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
 
     }
-    @Override
-    public void editOrderAmount(PCMerchTradeDTO.orderAmountOrFreight dto) {
-        if (StringUtils.isBlank(dto.getId())){
-            throw new BusinessException("请传入订单ID");
-        }
-        Trade trade = tradeRepository.getById(dto.getId());
-        if (ObjectUtils.isEmpty(trade)){
-            throw new BusinessException("没有查询到订单");
-        }
-        if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())){
-            if (ObjectUtils.isNotEmpty(dto.getOrderAmount())){
-                //修改交易总金额
-                BigDecimal differencePrice = dto.getOrderAmount().subtract(trade.getTradeAmount());
-                trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
-                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
-                //修改优惠
-                trade.setDiscountAmount(trade.getDiscountAmount()!=null ? trade.getDiscountAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
-            }
-            if (ObjectUtils.isNotEmpty(dto.getFreight())){
-                //修改运费
-                BigDecimal differencePrice=dto.getFreight().subtract(trade.getDeliveryAmount());
-                trade.setDeliveryAmount(dto.getFreight());
-                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
-            }
-            trade.setChangePriceCause(dto.getChangePriceCause());
-            //改订单编号
-            trade.setTradeCode(TradeUtils.getTradeCode());
-            //改支付单支付信息
-            tradePayRepository.update(new UpdateWrapper<TradePay>()
-                    .set("trade_code", trade.getTradeCode())
-                    .set("token", "")
-                    .set("pay_code", "")
-                    .set("pay_info", "")
-                    .set("total_amount", trade.getTradeAmount())
-                    .eq("trade_id", trade.getId()));
-            //改定订单
-            tradeRepository.saveOrUpdate(trade);
-        } else {
-            throw new BusinessException("该订单状态已无法修改价格");
-        }
 
-    }
+	@Override
+	public void editOrderAmount(PCMerchTradeDTO.orderAmountOrFreight dto) {
+		if (StringUtils.isBlank(dto.getId())) {
+			throw new BusinessException("请传入订单ID");
+		}
+		Trade trade = tradeRepository.getById(dto.getId());
+		if (ObjectUtils.isEmpty(trade)) {
+			throw new BusinessException("没有查询到订单");
+		}
+		if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
+			if (ObjectUtils.isNotEmpty(dto.getOrderAmount())) {// 改价格
+				// 修改交易总金额
+				BigDecimal differencePrice = (trade.getTradeAmount() != null ? trade.getTradeAmount() : BigDecimal.ZERO)
+						.subtract(dto.getOrderAmount());
+				// trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
+				trade.setTradeAmount(dto.getOrderAmount());
+
+				// 修改优惠
+				trade.setDiscountAmount(trade.getDiscountAmount() != null
+						? trade.getDiscountAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
+
+				// 更新订单明细
+				QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+				tradeGoodsWrapper.eq("trade_id", dto.getId());
+				List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+				if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
+					for (TradeGoods tradeGoods : tradeGoodsList) {
+						
+						
+						// 计算百分比
+						BigDecimal rate = tradeGoods.getTradePointAmount().divide(trade.getTradePointAmount());
+						
+						tradeGoods.setTradeAmount(dto.getOrderAmount().multiply(rate));
+
+						tradeGoods.setDiscountAmount(tradeGoods.getDiscountAmount() != null
+								? tradeGoods.getDiscountAmount().add(differencePrice.multiply(rate))
+								: BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+						tradeGoodsRepository.saveOrUpdate(tradeGoods);
+					}
+				}
+
+			}
+			if (ObjectUtils.isNotEmpty(dto.getOrderPointAmount())) {
+
+				BigDecimal differencePrice = trade.getTradePointAmount().subtract(dto.getOrderPointAmount());
+
+				trade.setTradePointAmount(dto.getOrderPointAmount());
+				trade.setDiscountPointAmount(trade.getDiscountPointAmount() != null
+						? trade.getDiscountPointAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
+
+				QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+				tradeGoodsWrapper.eq("trade_id", dto.getId());
+				List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+				if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
+					for (TradeGoods tradeGoods : tradeGoodsList) {
+
+						// 计算百分比
+						BigDecimal rate = tradeGoods.getTradePointAmount().divide(trade.getTradePointAmount());
+						tradeGoods.setTradePointAmount(dto.getOrderPointAmount().multiply(rate));
+
+						tradeGoods.setDiscountPointAmount(tradeGoods.getDiscountPointAmount() != null
+								? tradeGoods.getDiscountPointAmount().add(differencePrice.multiply(rate))
+								: BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+
+						tradeGoodsRepository.saveOrUpdate(tradeGoods);
+					}
+				}
+
+			}
+
+			trade.setChangePriceCause(dto.getChangePriceCause());
+			// 改订单编号
+			trade.setTradeCode(TradeUtils.getTradeCode());
+			// 改支付单支付信息
+			tradePayRepository.update(new UpdateWrapper<TradePay>()
+					// .set("trade_code", trade.getTradeCode())
+					.set("token", "").set("pay_code", "").set("pay_info", "")
+					.set("total_amount", trade.getTradeAmount()).set("total_point_amount", trade.getTradePointAmount())
+					.eq("trade_id", trade.getId()));
+			// 改定订单
+			tradeRepository.saveOrUpdate(trade);
+		} else {
+			throw new BusinessException("该订单状态已无法修改价格");
+		}
+
+	}
 
     private void fillUserInfo(PCMerchTradeListVO.tradeVO tradeVO) {
         PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(tradeVO.getUserId());

@@ -8,6 +8,9 @@ import com.gs.lshly.common.struct.merchadmin.h5.trade.vo.H5MerchTradeListVO;
 import com.gs.lshly.rpc.api.merchadmin.h5.trade.IH5MerchTradeRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import javax.validation.Valid;
+
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +44,8 @@ public class H5MerchTradeController {
     }
 
     @ApiOperation("修改订单金额/修改运费")
-    @GetMapping(value = "/editOrderAmount")
-    public ResponseData<Void> editOrderAmount(H5MerchTradeDTO.orderAmountOrFreight dto) {
+    @PostMapping(value = "/editOrderAmount")
+    public ResponseData<Void> editOrderAmount(@Valid @RequestBody H5MerchTradeDTO.orderAmountOrFreight dto) {
         h5MerchTradeRpc.editOrderAmount(dto);
         return ResponseData.data(MsgConst.UPDATE_SUCCESS);
     }

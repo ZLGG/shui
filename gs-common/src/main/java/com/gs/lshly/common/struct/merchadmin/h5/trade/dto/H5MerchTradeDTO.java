@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 * @author oy
 * @since 2020-11-16
 */
+@SuppressWarnings("serial")
 public abstract class H5MerchTradeDTO implements Serializable {
 
     @Data
@@ -113,17 +114,19 @@ public abstract class H5MerchTradeDTO implements Serializable {
         private String id;
     }
 
-    @Data
+	@Data
     @ApiModel("H5MerchTradeDTO.orderAmountOrFreight")
     @AllArgsConstructor
     public static class orderAmountOrFreight extends BaseDTO {
 
         @ApiModelProperty(value = "id")
         private String id;
-        @ApiModelProperty(value = "运费")
-        private BigDecimal freight;
-        @ApiModelProperty(value = "折扣价（涨多少价或减多少）")
+//        @ApiModelProperty(value = "运费")
+//        private BigDecimal freight;
+        @ApiModelProperty(value = "现金价格")
         private BigDecimal orderAmount;
+        @ApiModelProperty(value = "积分价格")
+        private BigDecimal orderPointAmount;
         @ApiModelProperty(value = "改价原因")
         private String  changePriceCause;
     }

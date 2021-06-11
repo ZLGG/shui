@@ -537,6 +537,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
+    	
+//    	userRpc.getUserInfoNoLogin(dto)
+    	
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
         // 1. 通用查询条件
         if (StringUtils.isNotBlank(qto.getGoodsName())) {
@@ -558,10 +561,12 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             }
         } else {
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
-                boost.orderByAsc("point_price");
+                //判断当前用户是不是in_user
+            	boost.orderByAsc("point_price");
             }
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
-                boost.orderByDesc("point_price");
+                
+            	boost.orderByDesc("point_price");
             }
         }
         // 按上架时间降序排序

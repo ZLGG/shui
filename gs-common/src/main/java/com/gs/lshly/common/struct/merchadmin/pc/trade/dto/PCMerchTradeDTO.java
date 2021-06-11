@@ -130,17 +130,19 @@ public abstract class PCMerchTradeDTO implements Serializable {
         private String goodsId;
     }
 
-    @Data
+    @SuppressWarnings("serial")
+	@Data
     @ApiModel("PCMerchTradeDTO.IdDTO")
-    @AllArgsConstructor
     public static class orderAmountOrFreight extends BaseDTO {
 
         @ApiModelProperty(value = "交易订单表售后(ID)")
         private String id;
-        @ApiModelProperty(value = "运费")
-        private BigDecimal freight;
+//        @ApiModelProperty(value = "运费")
+//        private BigDecimal freight;
         @ApiModelProperty(value = "支付金额")
         private BigDecimal orderAmount;
+        @ApiModelProperty(value = "积分价格")
+        private BigDecimal orderPointAmount;
         @ApiModelProperty(value = "改价原因")
         private String  changePriceCause;
     }

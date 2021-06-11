@@ -1,5 +1,14 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.h5.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -14,7 +23,6 @@ import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.h5.IH5MerchTradeService;
-import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -32,14 +40,8 @@ import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.gs.lshly.rpc.api.merchadmin.h5.user.IH5MerchUserRpc;
 import com.lakala.boss.api.common.Common;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
 * <p>
@@ -81,33 +83,81 @@ public class H5MerchTradeServiceImpl implements IH5MerchTradeService {
             throw new BusinessException("没有查询到订单");
         }
         if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())){
-            if (ObjectUtils.isNotEmpty(dto.getOrderAmount())){
+            if (ObjectUtils.isNotEmpty(dto.getOrderAmount())){//改价格
                 //修改交易总金额
-                BigDecimal differencePrice = dto.getOrderAmount().subtract(trade.getTradeAmount());
-                trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
-                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
+                BigDecimal differencePrice = trade.getTradeAmount().subtract(dto.getOrderAmount());
+//                trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
+                trade.setTradeAmount(trade.getTradeAmount());
+                
                 //修改优惠
                 trade.setDiscountAmount(trade.getDiscountAmount()!=null ? trade.getDiscountAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
+            
+                //更新订单明细
+                QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+                tradeGoodsWrapper.eq("trade_id", dto.getId());
+                List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+                if(CollectionUtil.isNotEmpty(tradeGoodsList)){
+                	for(TradeGoods tradeGoods:tradeGoodsList){
+                		
+                		//计算百分比
+                		BigDecimal rate = tradeGoods.getTradeAmount().divide(trade.getTradeAmount());
+                		tradeGoods.setTradeAmount(dto.getOrderAmount().multiply(rate));
+                		
+                		tradeGoods.setDiscountAmount(tradeGoods.getDiscountAmount()!=null ? tradeGoods.getDiscountAmount().add(differencePrice.multiply(rate)) : BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+                        
+                		tradeGoodsRepository.saveOrUpdate(tradeGoods);
+                	}
+                }
+                
+                
             }
-            if (ObjectUtils.isNotEmpty(dto.getFreight())){
-                //修改运费
-                BigDecimal differencePrice=dto.getFreight().subtract(trade.getDeliveryAmount());
-                trade.setDeliveryAmount(dto.getFreight());
-                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
+            if(ObjectUtils.isNotEmpty(dto.getOrderPointAmount())){
+            	
+            	BigDecimal differencePrice = trade.getTradePointAmount().subtract(dto.getOrderPointAmount());
+            	
+            	trade.setTradePointAmount(dto.getOrderPointAmount());
+            	trade.setDiscountPointAmount(trade.getDiscountPointAmount()!=null ? trade.getDiscountPointAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
+                
+            	
+            	QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+                tradeGoodsWrapper.eq("trade_id", dto.getId());
+                List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+                if(CollectionUtil.isNotEmpty(tradeGoodsList)){
+                	for(TradeGoods tradeGoods:tradeGoodsList){
+                		
+                		//计算百分比
+                		BigDecimal rate = tradeGoods.getTradePointAmount().divide(trade.getTradePointAmount());
+                		tradeGoods.setTradePointAmount(dto.getOrderPointAmount().multiply(rate));
+                		
+                		tradeGoods.setDiscountPointAmount(tradeGoods.getDiscountPointAmount()!=null ? tradeGoods.getDiscountPointAmount().add(differencePrice.multiply(rate)) : BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+                        
+                		tradeGoodsRepository.saveOrUpdate(tradeGoods);
+                	}
+                }
+                
             }
-            trade.setChangePriceCause(dto.getChangePriceCause());
+//            if (ObjectUtils.isNotEmpty(dto.getFreight())){
+//                //修改运费
+//                BigDecimal differencePrice=dto.getFreight().subtract(trade.getDeliveryAmount());
+//                trade.setDeliveryAmount(dto.getFreight());
+//                trade.setTradeAmount(trade.getTradeAmount().add(differencePrice));
+//            }
+            trade.setChangePriceCause(dto.getChangePriceCause());	//
             //改订单编号
-            trade.setTradeCode(TradeUtils.getTradeCode());
+//            trade.setTradeCode(TradeUtils.getTradeCode());
             //改支付单支付信息
             tradePayRepository.update(new UpdateWrapper<TradePay>()
-                    .set("trade_code", trade.getTradeCode())
+//                    .set("trade_code", trade.getTradeCode())
                     .set("token", "")
                     .set("pay_code", "")
                     .set("pay_info", "")
                     .set("total_amount", trade.getTradeAmount())
+                    .set("total_point_amount", trade.getTradePointAmount())
                     .eq("trade_id", trade.getId()));
             //改定订单
             tradeRepository.saveOrUpdate(trade);
+            
+            
 
         } else {
             throw new BusinessException("该订单状态已无法修改价格");
