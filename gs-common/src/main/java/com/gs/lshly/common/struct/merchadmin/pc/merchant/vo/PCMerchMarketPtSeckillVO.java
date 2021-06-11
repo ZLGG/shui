@@ -63,6 +63,9 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         @ApiModelProperty("场次id")
         private String id;
 
+        @ApiModelProperty("活动id")
+        private String seckillId;
+
         @ApiModelProperty("场次开始时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime startTime;
@@ -76,7 +79,7 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
     @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoVO")
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class GoodsInfoVO implements Serializable {
+    public static class AllSpuVO implements Serializable {
         @ApiModelProperty("商品编号")
         private String id;
 
@@ -86,17 +89,41 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         @ApiModelProperty("商品类型")
         private Integer goodsType;
 
-        @ApiModelProperty("原价")
+        @ApiModelProperty("spu原价")
         private BigDecimal salePrice;
+
+        @ApiModelProperty("已选择的数量")
+        private Integer count;
     }
 
     @Data
-    @ApiModel("PCMerchMarketPtSeckillVO.SpuGoodsInfoVO")
+    @ApiModel("PCMerchMarketPtSeckillVO.GoodsInfoVO")
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class SpuGoodsInfoVO implements Serializable {
+    public static class AllSkuVO implements Serializable {
+        @ApiModelProperty("商品skuId")
+        private String skuId;
+
+        @ApiModelProperty("规格")
+        private String specsValue;
+
+        @ApiModelProperty("剩余库存")
+        private Integer seckillInventory;
+
+        @ApiModelProperty("sku原价")
+        private BigDecimal saleSkuPrice;
+    }
+
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SeckillGoodsInfoVO implements Serializable {
         @ApiModelProperty("商品报名spuId")
-        private String id;
+        private String spuId;
+
+        @ApiModelProperty("是否被选择(10:已选择,20:未选择)")
+        private Integer choose;
 
         @ApiModelProperty("商品编号")
         private String goodsId;
@@ -106,6 +133,9 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
 
         @ApiModelProperty("商品类型")
         private Integer goodsType;
+
+        @ApiModelProperty("点击编辑的sku信息")
+        private List<PCMerchMarketPtSeckillVO.SkuGoodsInfoVO> spuGoodsInfoVOList;
     }
 
     @Data
@@ -113,17 +143,32 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SkuGoodsInfoVO implements Serializable {
-        @ApiModelProperty("商品报名skuId")
-        private String id;
+        @ApiModelProperty("商家报名sku的Id")
+        private String seckillSkuId;
 
-        @ApiModelProperty("商品编号")
-        private String goodsId;
+        @ApiModelProperty("商品sku的Id")
+        private String skuId;
 
-        @ApiModelProperty("商品名称")
-        private String goodsName;
+        @ApiModelProperty("规格")
+        private String specsValue;
 
-        @ApiModelProperty("商品类型")
-        private Integer goodsType;
+        @ApiModelProperty("审核状态")
+        private Integer state;
+
+        @ApiModelProperty("原价")
+        private BigDecimal saleSkuPrice;
+
+        @ApiModelProperty("秒杀价")
+        private BigDecimal seckillSaleSkuPrice;
+
+        @ApiModelProperty("秒杀数量")
+        private Integer seckillQuantity;
+
+        @ApiModelProperty("剩余库存")
+        private Integer seckillInventory;
+
+        @ApiModelProperty("限购数量")
+        private Integer restrictQuantity;
     }
 
 }

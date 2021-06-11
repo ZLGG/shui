@@ -55,6 +55,11 @@ public class MarketPtSeckillGoodsSpu implements Serializable {
      */
     private String merchantId;
 
+    /**
+     * 商品类型
+     */
+    private String goodsType;
+
     private BigDecimal seckillSalePrice;
 
     /**

@@ -33,8 +33,8 @@ public abstract class GoodsMaterialLibraryDTO implements Serializable {
         @ApiModelProperty("商品标题（商品名称）")
         private String goodsName;
 
-        @ApiModelProperty("商品副标题")
-        private String goodsTitle;
+/*        @ApiModelProperty("商品副标题")
+        private String goodsTitle;*/
 
         @ApiModelProperty("商品移动端描述")
         private String goodsH5Desc;

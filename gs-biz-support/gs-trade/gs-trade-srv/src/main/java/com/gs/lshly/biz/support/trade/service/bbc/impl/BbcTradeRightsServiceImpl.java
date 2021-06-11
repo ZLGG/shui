@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -584,7 +585,9 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             throw new BusinessException("用户已取消");
         }
         //删除售后商品表数据
-        tradeRightsGoodsRepository.remove(Wrappers.<TradeRightsGoods>lambdaQuery().eq(TradeRightsGoods::getRightsId, tradeRights.getId()));
+        QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
+        query.eq("rights_id", tradeRights.getId());
+        tradeRightsGoodsRepository.remove(query);
         //删除售后表数据
         tradeRights.setState(TradeRightsEndStateEnum.用户取消.getCode());
         repository.updateById(tradeRights);
