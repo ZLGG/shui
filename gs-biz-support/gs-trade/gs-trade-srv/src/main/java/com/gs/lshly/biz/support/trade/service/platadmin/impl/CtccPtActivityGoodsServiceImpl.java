@@ -56,4 +56,18 @@ public class CtccPtActivityGoodsServiceImpl implements ICtccPtActivityGoodsServi
         List<String> goodsIdList = CollUtil.getFieldValues(activityGoods, "goodsId", String.class);
         return goodsIdList;
     }
+
+	@Override
+	public void underStateByGoodsId(List<String> goodsIds) {
+		 QueryWrapper<CtccActivityGoods> query = MybatisPlusUtil.query();
+		 query.in("goods_id", goodsIds);
+		 List<CtccActivityGoods> list = ctccActivityGoodsRepository.list(query);
+		 if(CollectionUtil.isNotEmpty(list)){
+			 for(CtccActivityGoods goods:list){
+				 goods.setGoodsState(10);
+				 ctccActivityGoodsRepository.saveOrUpdate(goods);
+			 }
+		 }
+		
+	}
 }

@@ -1,11 +1,5 @@
 package com.gs.lshly.rpc.api.platadmin.trade;
 
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityGoodsVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
-
 import java.util.List;
 
 /**
@@ -16,4 +10,10 @@ import java.util.List;
 public interface ICtccPtActivityGoodsRpc {
 
     List<String> getList();
+    
+    /**
+     * 跟据商品ID批量下架
+     * @param goodsIds
+     */
+    void underStateByGoodsId(List<String> goodsIds);
 }

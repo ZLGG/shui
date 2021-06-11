@@ -114,6 +114,7 @@ import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.stock.IPCMerchStockTemplateRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityGoodsRpc;
 
 import cn.hutool.core.util.ObjectUtil;
 
@@ -193,6 +194,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @DubboReference
     private IPCMerchGoodsServeRpc goodsServeRpc;
+    
+    @DubboReference
+    private ICtccPtActivityGoodsRpc ctccPtActivityGoodsRpc;
 
     @Override
     public PageData<PCMerchGoodsInfoVO.SpuListVO> pageGoodsData(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto) {
@@ -1767,9 +1771,15 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             goodsInfo.setGoodsState(state);
             //上架时间
             if (state.intValue() == GoodsStateEnum.已上架.getCode().intValue()) {
-                goodsInfo.setPublishTime(LocalDateTime.now());
+                goodsInfo.setPublishTime(LocalDateTime.now());//上架
             }
+            
             repository.update(goodsInfo, wrapper);
+        }
+        
+        if(state.intValue() == GoodsStateEnum.未上架.getCode().intValue()){
+        	//电信国际里面下架
+        	ctccPtActivityGoodsRpc.underStateByGoodsId(dto.getIdList());
         }
     }
 

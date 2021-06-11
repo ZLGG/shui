@@ -9,4 +9,7 @@ import java.util.List;
 public interface ICtccPtActivityGoodsService {
 
     List<String> getList();
+    
+    
+    void underStateByGoodsId(List<String> goodsIds);
 }

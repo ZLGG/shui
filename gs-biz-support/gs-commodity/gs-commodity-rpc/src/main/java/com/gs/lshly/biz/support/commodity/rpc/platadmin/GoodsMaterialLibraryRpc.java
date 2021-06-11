@@ -50,7 +50,7 @@ public class GoodsMaterialLibraryRpc implements IGoodsMaterialLibraryRpc{
 
     @Override
     public ExportDataDTO export(GoodsMaterialLibraryDTO.IdListDTO dto) throws Exception {
-        return ExcelUtil.treatmentBean(GoodsMaterialLibraryService.exportData(dto), GoodsMaterialLibraryVO.exportDataVO.class);
+        return ExcelUtil.treatmentBean("商品_商品素材库",GoodsMaterialLibraryService.exportData(dto), GoodsMaterialLibraryVO.exportDataVO.class);
     }
 
 }

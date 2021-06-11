@@ -27,4 +27,10 @@ public class CtccPtActivityGoodsRpc implements ICtccPtActivityGoodsRpc {
     public List<String> getList() {
         return ctccPtActivityGoodsService.getList();
     }
+
+	@Override
+	public void underStateByGoodsId(List<String> goodsIds) {
+		ctccPtActivityGoodsService.underStateByGoodsId(goodsIds);
+		
+	}
 }

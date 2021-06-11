@@ -538,7 +538,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
     	
-//    	userRpc.getUserInfoNoLogin(dto)
+    	BbcUserVO.DetailVO detailVO = userRpc.getUserInfoNoLogin(new BaseDTO());
     	
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
         // 1. 通用查询条件
@@ -562,11 +562,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         } else {
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
                 //判断当前用户是不是in_user
-            	boost.orderByAsc("point_price");
+            	if(detailVO.getIsInUser().equals(1)){
+            		boost.orderByAsc("in_member_point_price");
+            	}else{
+            		boost.orderByAsc("point_price");
+            	}
             }
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
-                
-            	boost.orderByDesc("point_price");
+                if(detailVO.getIsInUser().equals(1)){
+                	boost.orderByDesc("in_member_point_price");
+                }else{
+                	boost.orderByDesc("point_price");
+                }
             }
         }
         // 按上架时间降序排序
@@ -581,7 +588,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
         // 3.积分商城-我能兑换
         if (MallCategoryEnum.我能兑换.getCode().equals(qto.getSearchEntry())) {
-            System.out.println(qto.getUserId());
+//            System.out.println(qto.getUserId());
             if (StringUtils.isBlank(qto.getUserId())) {
                 throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
@@ -592,10 +599,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             }**/
             // 按价格排序
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
-                boost.orderByAsc("point_price");
+            	if(detailVO.getIsInUser().equals(1)){
+            		boost.orderByAsc("in_member_point_price");
+            	}else{
+            		boost.orderByAsc("point_price");
+            	}
             }
             if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
-                boost.orderByDesc("point_price");
+            	if(detailVO.getIsInUser().equals(1)){
+                	boost.orderByDesc("in_member_point_price");
+                }else{
+                	boost.orderByDesc("point_price");
+                }
             }
         }
 
@@ -922,6 +937,11 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     }
                     homeAndShopInnerServiceVO.setLabelVOS(getGoodsLabelVO(e.getId()));
                     homeAndShopInnerServiceVO.setOldPrice(e.getOldPrice());
+                    homeAndShopInnerServiceVO.setInMemberPointPrice(e.getInMemberPointPrice());
+                    homeAndShopInnerServiceVO.setIsInMemberGift(e.getIsInMemberGift());
+                    homeAndShopInnerServiceVO.setIsPointGood(e.getIsPointGood());
+                    homeAndShopInnerServiceVO.setOldPointPrice(e.getOldPointPrice());
+                    homeAndShopInnerServiceVO.setPointPrice(e.getPointPrice());
                     return homeAndShopInnerServiceVO;
                 }).collect(toList());
         return shopInnerServiceVOS;

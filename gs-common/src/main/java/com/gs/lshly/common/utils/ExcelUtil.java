@@ -29,6 +29,44 @@ import java.util.*;
  */
 public class ExcelUtil {
 
+	public static <T> ExportDataDTO treatmentBean(String fileName,List<T> content, Class<T> clazz) throws Exception {
+        List<Map<String, Object>> rowData = new ArrayList<>();
+        ExportDataDTO dataDTO = new ExportDataDTO();
+        ApiModel apiModel = AnnotationUtil.getAnnotation(clazz, ApiModel.class);
+        //导出文件名
+        if(StringUtils.isNotEmpty(fileName)){
+        	dataDTO.setFileName(URLEncoder.encode(fileName,"UTF-8"));
+        }else{
+        	dataDTO.setFileName(URLEncoder.encode(apiModel!=null && StringUtils.isNotEmpty(apiModel.value()) ? apiModel.value() : clazz.getSimpleName(),"UTF-8"));
+        }
+        //导出列
+        dataDTO.setHeaders(getHeader(clazz));
+        //导出数据行
+        for (T row : content) {
+            Map<String, Object> rowMap = new HashMap<>();
+            for (ExcelHeader header : dataDTO.getHeaders()) {
+                Object value = BU.getValue(row, header.getProperty());
+                if (value != null){
+                    //处理枚举
+                    if(StringUtils.isNotEmpty(header.getEnumClassName())) {
+                        value = EnumUtil.getText((Integer) value, (Class<? extends EnumMessage>) ClassLoaderUtil.loadClass(header.getEnumClassName()));
+                    }
+                    //处理LocalDateTime
+                    if (value instanceof LocalDateTime) {
+                        value = LocalDateTimeUtil.format((LocalDateTime)value, "yyyy-MM-dd HH:mm:ss");
+                    }
+                    //处理LocalDate
+                    if (value instanceof LocalDate) {
+                        value = LocalDateTimeUtil.format((LocalDate)value, "yyyy-MM-dd");
+                    }
+                }
+                rowMap.put(header.getProperty(), value);
+            }
+            rowData.add(rowMap);
+        }
+        dataDTO.setRowData(rowData);
+        return dataDTO;
+    }
     public static <T> ExportDataDTO treatmentBean(List<T> content, Class<T> clazz) throws Exception {
         List<Map<String, Object>> rowData = new ArrayList<>();
         ExportDataDTO dataDTO = new ExportDataDTO();
