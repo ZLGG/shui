@@ -450,6 +450,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto) {
+
         if (dto == null) {
             throw new BusinessException("参数不能为空！");
         }

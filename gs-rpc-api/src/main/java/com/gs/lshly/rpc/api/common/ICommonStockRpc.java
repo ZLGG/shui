@@ -94,4 +94,18 @@ public interface ICommonStockRpc {
      * @return
      */
     Integer getGoodsQuantity(String goodsId);
+
+    /**
+     * 库存临时表变动
+     * @param dto
+     * @return
+     */
+    Boolean innerChangeStockTemp(CommonStockDTO.InnerChangeStockDTO dto);
+
+    /**
+     * 获取临时表SKU库存
+     * @param dto
+     * @return
+     */
+    ResponseData<CommonStockVO.InnerStockVO> queryStockTemp(BaseDTO dto, String shopId, String skuId);
 }

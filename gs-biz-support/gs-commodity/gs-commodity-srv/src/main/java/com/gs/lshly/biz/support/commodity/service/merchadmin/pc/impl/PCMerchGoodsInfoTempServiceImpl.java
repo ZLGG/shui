@@ -1,21 +1,26 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoTempService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.enums.merchant.ShopStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
+import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.*;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.*;
 import com.gs.lshly.common.utils.GoodsNoUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -31,13 +36,16 @@ import java.util.List;
  * @author chenyang
  */
 @Component
-public class IPCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempService {
+public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempService {
 
     @DubboReference
     private IPCMerchShopRpc shopRpc;
 
     @DubboReference
     private ICommonStockRpc commonStockRpc;
+
+    @DubboReference
+    private IPCMerchGoodsServeRpc goodsServeRpc;
 
     @Autowired
     private IGoodsInfoTempRepository repository;
@@ -50,6 +58,9 @@ public class IPCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSe
 
     @Autowired
     private IGoodsSpecInfoTempService goodsSpecInfoTempService;
+
+    @Autowired
+    private IPCMerchSkuGoodInfoTempService skuGoodInfoTempService;
 
     @Autowired
     private ISkuGoodInfoTempRepository skuGoodInfoTempRepository;
@@ -171,7 +182,7 @@ public class IPCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSe
 
             //sku商品关联spec拓展id组
             JoinSkuSpecIds(specBuffer, goodsInfo.getId());
-        }else {
+        } else {
             //商品关联拓展id
             JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
 
@@ -205,7 +216,7 @@ public class IPCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSe
         }
 
         //sku的库存先不更新的库存表去，等审核通过再更新过去
-        //initGoodsStock(eto, items);
+        initGoodsStock(eto, items);
 
         PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = new PCMerchGoodsInfoVO.GoodsIdVO();
         goodsIdVO.setGoodsId(goodsInfo.getId());
@@ -222,6 +233,95 @@ public class IPCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSe
         }
         goodsServeCorTempRepository.save(goodsServeCor);
 
+    }
+
+    @Override
+    public PCMerchGoodsInfoVO.EditDetailVO getEditDetailEto(PCMerchGoodsInfoDTO.IdDTO dto) {
+        if (dto == null) {
+            throw new BusinessException("参数不能为空！");
+        }
+        GoodsInfoTemp goodsInfoTemp = repository.getById(dto.getId());
+        if (goodsInfoTemp == null) {
+            throw new BusinessException("查询数据异常");
+        }
+        PCMerchGoodsInfoVO.EditDetailVO detailVO = new PCMerchGoodsInfoVO.EditDetailVO();
+        //获取商品信息
+        BeanUtils.copyProperties(goodsInfoTemp, detailVO);
+
+        //sku商品列表
+        PCMerchSkuGoodInfoDTO.GoodIdDTO goodId = new PCMerchSkuGoodInfoDTO.GoodIdDTO();
+        goodId.setGoodId(goodsInfoTemp.getId());
+        goodId.setJwtShopId(goodsInfoTemp.getShopId());
+        List<PCMerchSkuGoodInfoVO.DetailVO> skuList = skuGoodInfoTempService.getByGoodsId(goodId);
+        if (ObjectUtils.isNotEmpty(skuList) && StringUtils.isNotEmpty(skuList.get(0).getSpecsKey())) {
+            detailVO.setSkuVoList(skuList);
+        }
+        //商品拓展属性列表
+        PCMerchGoodsAttributeInfoDTO.GoodIdDTO goodIdDTO = new PCMerchGoodsAttributeInfoDTO.GoodIdDTO(goodId.getGoodId());
+        List<PCMerchGoodsAttributeInfoVO.ListVO> attributeList = attributeInfoTempService.getListVO(goodIdDTO);
+        if (ObjectUtils.isNotEmpty(attributeList)) {
+            detailVO.setAttributeList(attributeList);
+        }
+        //商品拓展规格列表
+        PCMerchGoodsSpecInfoDTO.GoodIdDTO dto1 = new PCMerchGoodsSpecInfoDTO.GoodIdDTO(goodsInfoTemp.getId());
+        List<PCMerchGoodsSpecInfoVO.ListVO> specList = goodsSpecInfoTempService.specInfoListVO(dto1);
+        if (ObjectUtils.isNotEmpty(specList)) {
+            detailVO.setSpecList(specList);
+        }
+
+        //商品拓展参数列表
+        PCMerchGoodsExtendParamsDTO.GoodIdDTO goodIdDTO1 = new PCMerchGoodsExtendParamsDTO.GoodIdDTO(goodsInfoTemp.getId());
+        List<PCMerchGoodsExtendParamsVO.ListVO> extentParamList = extendParamsTempService.extendListVO(goodIdDTO1);
+        if (ObjectUtils.isNotEmpty(extentParamList)) {
+            detailVO.setParamsList(extentParamList);
+        }
+        //运费模板ID
+        QueryWrapper<GoodsTempalteTemp> tempalteBoost = MybatisPlusUtil.query();
+        tempalteBoost.eq("goods_id", goodsInfoTemp.getId());
+        GoodsTempalteTemp tempalte = goodsTempalteTempRepository.getOne(tempalteBoost);
+        if (tempalte == null) {
+            throw new BusinessException("查询异常");
+        }
+        detailVO.setTemplateId(tempalte.getTemplateId());
+
+        //库存计数方式
+        if (ObjectUtils.isNotEmpty(tempalte.getStockSubtractType())) {
+            detailVO.setStockChargeWay(tempalte.getStockSubtractType());
+        }
+
+        //店铺自定义类目id
+        QueryWrapper<GoodsShopNavigationTemp> navigationBoost = MybatisPlusUtil.query();
+        navigationBoost.eq("goods_id", goodsInfoTemp.getId());
+        List<GoodsShopNavigationTemp> navigations = shopNavigationTempRepository.list(navigationBoost);
+        if (ObjectUtils.isNotEmpty(navigations)) {
+            for (GoodsShopNavigationTemp shopNavigation : navigations) {
+                if (ObjectUtils.isNotEmpty(shopNavigation.getTerminal()) && shopNavigation.getTerminal().equals(TerminalEnum.BBB.getCode())) {
+                    detailVO.setShopNavigationId(shopNavigation.getShopNavigation());
+                }
+                if (ObjectUtils.isNotEmpty(shopNavigation.getTerminal()) && shopNavigation.getTerminal().equals(TerminalEnum.BBC.getCode())) {
+                    detailVO.setShop2cNavigationId(shopNavigation.getShopNavigation());
+                }
+            }
+        }
+
+        // spu库存
+        detailVO.setSpuStock(getSpuStockNum(goodsInfoTemp.getId(), dto.getJwtShopId()));
+        PCMerchGoodsServeDTO.IdDTO idDTO = new PCMerchGoodsServeDTO.IdDTO(dto.getId());
+        List<PCMerchGoodsServeVO.ListVO> serveListVO = goodsServeRpc.getGoodsServeDetailByGoodsId(idDTO);
+        if (CollUtil.isNotEmpty(serveListVO)) {
+            detailVO.setGoodsServeList(serveListVO);
+        }
+        return detailVO;
+    }
+
+    @Override
+    public Boolean isUpdateGoodInfo(String goodId) {
+        GoodsInfoTemp goodsInfoTemp = repository.getById(goodId);
+        if(ObjectUtils.isNotEmpty(goodsInfoTemp)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private void checkAddGoodsData(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
@@ -368,6 +468,28 @@ public class IPCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSe
         dto.setLocation(StockLocationEnum.初始化.getCode());
         dto.setDataFromType(StockDataFromTypeEnum.商家运维.getCode());
         dto.setGoodsItemList(ObjectUtils.isEmpty(items) ? new ArrayList<>() : items);
-        commonStockRpc.innerChangeStock(dto);
+        commonStockRpc.innerChangeStockTemp(dto);
+    }
+
+    private Integer getSpuStockNum(String goodsId, String shopId) {
+        QueryWrapper<SkuGoodInfoTemp> boost = MybatisPlusUtil.query();
+        boost.eq("good_id", goodsId);
+        List<SkuGoodInfoTemp> skuGoodInfos = skuGoodInfoTempRepository.list(boost);
+        if (ObjectUtils.isEmpty(skuGoodInfos)) {
+            throw new BusinessException("查询数据异常");
+        }
+        int spuStockNum = 0;
+        for (SkuGoodInfoTemp skuGoodInfo : skuGoodInfos) {
+            spuStockNum += getSkuStockNum(shopId, skuGoodInfo.getId());
+        }
+        return spuStockNum;
+    }
+
+    private Integer getSkuStockNum(String shopId, String skuId) {
+        CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStockTemp(new BaseDTO(), shopId, skuId).getData();
+        if (stockVO != null && stockVO.getQuantity() != null) {
+            return stockVO.getQuantity();
+        }
+        return 0;
     }
 }

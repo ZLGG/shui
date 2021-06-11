@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.stock.rpc.common;
 
 import com.gs.lshly.biz.support.stock.service.common.ICommonStockService;
+import com.gs.lshly.biz.support.stock.service.common.ICommonStockTempService;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
@@ -20,6 +21,9 @@ public class CommonStockRpc implements ICommonStockRpc {
 
     @Autowired
     private ICommonStockService commonStockService;
+
+    @Autowired
+    private ICommonStockTempService commonStockTempService;
 
 
     @Override
@@ -82,6 +86,16 @@ public class CommonStockRpc implements ICommonStockRpc {
     @Override
     public Integer getGoodsQuantity(String goodsId) {
         return commonStockService.getGoodsQuantity(goodsId);
+    }
+
+    @Override
+    public Boolean innerChangeStockTemp(CommonStockDTO.InnerChangeStockDTO dto) {
+        return commonStockTempService.innerChangeStock(dto);
+    }
+
+    @Override
+    public ResponseData<CommonStockVO.InnerStockVO> queryStockTemp(BaseDTO dto, String shopId, String skuId) {
+        return commonStockTempService.queryStock(dto, shopId, skuId);
     }
 
 }

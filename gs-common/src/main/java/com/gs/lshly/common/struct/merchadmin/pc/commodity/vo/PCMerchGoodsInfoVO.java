@@ -161,6 +161,11 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("视频地址")
         private String videoUrl;
 
+        @ApiModelProperty("商品类型 10：普通商品 20：积分商品 30：IN会员商品")
+        private Integer ctccMold;
+
+        @ApiModelProperty("是否包含非库存字段修改")
+        private Boolean isIncludeOthers;
     }
 
     @Data

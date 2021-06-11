@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -48,11 +50,6 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationReposit
 import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsBrandService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsCategoryService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsStockService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
@@ -167,6 +164,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     private IPCMerchGoodsCategoryService merchGoodsCategoryService;
     @Autowired
     private IPCMerchGoodsBrandService merchGoodsBrandService;
+    @Autowired
+    private IPCMerchGoodsInfoTempService merchGoodsInfoTempService;
     @Autowired
     private GoodsCategoryMapper categoryMapper;
     @Autowired
@@ -758,11 +757,206 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             one.setServeId(serveIds.substring(0, sb.length() - 1));
             goodsServeCorRepository.updateById(one);
         }
-
-
         // 建立商品以及sku与库存的关联
         initGoodsStock(eto, items);
+    }
 
+
+    @Override
+    public void changeTempToGoodsInfo(String goodId) {
+         //查询商品信息
+        PCMerchGoodsInfoVO.EditDetailVO editDetailVO = merchGoodsInfoTempService.getEditDetailEto(new PCMerchGoodsInfoDTO.IdDTO(goodId));
+        GoodsInfo oldGoodsInfo = repository.getById(goodId);
+        GoodsInfo goodsInfo = new GoodsInfo();
+        BeanUtils.copyProperties(editDetailVO, goodsInfo);
+        goodsInfo.setId(oldGoodsInfo.getId());
+        goodsInfo.setGoodsState(oldGoodsInfo.getGoodsState());
+
+        UpdateWrapper<GoodsInfo> goodsBoost = MybatisPlusUtil.update();
+        goodsBoost.eq("id", goodId);
+        boolean flag = repository.update(goodsInfo, goodsBoost);
+
+        if (!flag) {
+            throw new BusinessException("修改商品失败");
+        }
+
+        //声明拓展id容器
+        StringBuffer attributeBuffer = new StringBuffer();
+        StringBuffer paramsBuffer = new StringBuffer();
+        StringBuffer specBuffer = new StringBuffer();
+
+        //如果商品属性不为空则向拓展属性表中添加数据
+        if (ObjectUtils.isNotEmpty(editDetailVO.getAttributeList())) {
+            //先删除商品属性
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("good_id",goodId);
+            attributeInfoRepository.removeByMap(columnMap);
+
+            PCMerchGoodsAttributeInfoDTO.ETO attributeInfo;
+            for (PCMerchGoodsAttributeInfoVO.ListVO attributeInfoListVO : editDetailVO.getAttributeList()) {
+
+                attributeInfo = new PCMerchGoodsAttributeInfoDTO.ETO();
+                BeanCopyUtils.copyProperties(attributeInfoListVO,attributeInfo);
+                attributeInfo.setGoodId(goodId);
+                attributeInfo.setId("");
+                String attributeId = attributeInfoService.addGoodsAttributeInfo(attributeInfo);
+
+                //获取属性拓展id组
+                attributeBuffer.append(attributeId + ",");
+            }
+        }
+        //如果商品参数不为空则向拓展参数表中添加数据
+        if (ObjectUtils.isNotEmpty(editDetailVO.getParamsList())) {
+            //先删除商品参数
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("good_id",goodId);
+            extendParamsRepository.removeByMap(columnMap);
+
+            PCMerchGoodsExtendParamsDTO.ETO paramsInfo;
+            for (PCMerchGoodsExtendParamsVO.ListVO paramsInfoListVO : editDetailVO.getParamsList()) {
+                paramsInfo = new PCMerchGoodsExtendParamsDTO.ETO();
+                BeanCopyUtils.copyProperties(paramsInfoListVO,paramsInfo);
+                paramsInfo.setGoodId(goodsInfo.getId());
+                paramsInfo.setId("");
+                String paramsId = extendParamsService.addGoodsExtendParams(paramsInfo);
+                //获取参数拓展id组
+                paramsBuffer.append(paramsId + ",");
+            }
+        }
+
+        //商品关联拓展id
+        JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodId);
+
+        //建立商品以及sku与库存的关联
+        List<CommonStockDTO.InnerChangeStockItem> items = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(editDetailVO.getSpecList())) {
+            //先删除商品规格拓展
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("good_id",goodId);
+            goodsSpecInfoRepository.removeByMap(columnMap);
+
+            PCMerchGoodsSpecInfoDTO.ETO specInfo;
+            for (PCMerchGoodsSpecInfoVO.ListVO specInfoListVO : editDetailVO.getSpecList()) {
+                specInfo = new PCMerchGoodsSpecInfoDTO.ETO();
+                BeanCopyUtils.copyProperties(specInfoListVO,specInfo);
+                specInfo.setGoodId(goodsInfo.getId());
+                specInfo.setId("");
+                String specId = goodsSpecInfoService.addGoodsSpecInfo(specInfo);
+
+                //获取规格拓展id组
+                specBuffer.append(specId + ",");
+            }
+
+            //先删除商品sku
+            columnMap = new HashMap<>();
+            columnMap.put("good_id",goodId);
+            skuGoodInfoRepository.removeByMap(columnMap);
+
+            List<SkuGoodInfo> skuGoodInfos = new ArrayList<>();
+            SkuGoodInfo skuGoodInfo;
+            for (PCMerchSkuGoodInfoVO.DetailVO skuInfo : editDetailVO.getSkuVoList()) {
+
+                skuGoodInfo = new SkuGoodInfo();
+                BeanUtils.copyProperties(skuInfo, skuGoodInfo);
+                skuGoodInfo.setGoodId(goodsInfo.getId());
+                skuGoodInfo.setSkuGoodsNo(StringUtils.isBlank(skuInfo.getSkuGoodsNo()) ? GoodsNoUtil.getGoodsNo() : skuInfo.getSkuGoodsNo());
+                skuGoodInfo.setState(goodsInfo.getGoodsState());
+                skuGoodInfo.setShopId(editDetailVO.getShopId());
+                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
+                skuGoodInfo.setId("");
+                skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
+                skuGoodInfo.setPosSpuId(StringUtils.isBlank(editDetailVO.getPosSpuId()) ? "" : editDetailVO.getPosSpuId());
+                skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
+                skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
+                if (skuInfo.getPointPrice() != null) {
+                    skuGoodInfo.setPointPrice(skuInfo.getPointPrice());
+                }
+                if (skuInfo.getInMemberPointPrice() != null) {
+                    skuGoodInfo.setInMemberPointPrice(skuInfo.getInMemberPointPrice());
+                }
+                skuGoodInfo.setRemarks(editDetailVO.getRemarks());
+                skuGoodInfos.add(skuGoodInfo);
+
+                //添加sku商品信息
+                skuGoodInfoRepository.save(skuGoodInfo);
+                CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
+                stockItem.setGoodsId(goodsInfo.getId());
+                stockItem.setSkuId(skuGoodInfo.getId());
+                stockItem.setQuantity(skuInfo.getSkuStock() != null ? skuInfo.getSkuStock() : 0);
+                items.add(stockItem);
+            }
+
+            //商品关联拓展id
+            JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
+
+            //sku商品关联spec拓展id组
+            JoinSkuSpecIds(specBuffer, goodsInfo.getId());
+
+        } else {
+            //商品关联拓展id
+            JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
+
+            SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
+            skuGoodInfo.setGoodId(goodId);
+            skuGoodInfo.setPosSpuId(editDetailVO.getPosSpuId());
+            skuGoodInfo.setId("");
+            skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
+            skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
+            skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+            skuGoodInfoRepository.save(skuGoodInfo);
+
+            CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
+            stockItem.setGoodsId(goodsInfo.getId());
+            stockItem.setSkuId(skuGoodInfo.getId());
+            stockItem.setQuantity(editDetailVO.getSpuStock() != null ? editDetailVO.getSpuStock() : 0);
+            items.add(stockItem);
+        }
+
+        //修改商品与运费模板的关联关系
+        UpdateWrapper<GoodsTempalte> templateBoost = MybatisPlusUtil.update();
+        templateBoost.eq("goods_id", goodsInfo.getId());
+        GoodsTempalte template = new GoodsTempalte();
+        template.setTemplateId(editDetailVO.getTemplateId());
+        template.setStockSubtractType(editDetailVO.getStockSubtractType());
+        goodsTempalteRepository.update(template, templateBoost);
+
+        //建立商品与店铺自定义类目的关联关系
+        QueryWrapper<GoodsShopNavigation> wrapper = MybatisPlusUtil.query();
+        wrapper.eq("goods_id", goodsInfo.getId());
+        shopNavigationRepository.remove(wrapper);
+
+        if (StringUtils.isNotBlank(editDetailVO.getShopNavigationId())) {
+            createGoodsShopNaigationBind(editDetailVO.getMerchantId(), editDetailVO.getShopId(), goodsInfo.getId(), editDetailVO.getShopNavigationId(), TerminalEnum.BBB.getCode());
+        }
+
+        //添加商品与服务关联数据
+        GoodsServeCor one = goodsServeCorRepository.getOne(Wrappers.<GoodsServeCor>lambdaQuery().eq(GoodsServeCor::getGoodsId, editDetailVO.getId()));
+        if (ObjectUtil.isEmpty(one)) {
+            one = new GoodsServeCor();
+            one.setGoodsId(goodId);
+            StringBuilder sb = new StringBuilder();
+            for (PCMerchGoodsServeVO.ListVO goodsServe : editDetailVO.getGoodsServeList()) {
+                sb.append(goodsServe.getId() + ",");
+            }
+            String serveIds = sb.toString();
+            one.setServeId(serveIds.substring(0, sb.length() - 1));
+            goodsServeCorRepository.save(one);
+        } else {
+            one.setGoodsId(goodId);
+            StringBuilder sb = new StringBuilder();
+            for (PCMerchGoodsServeVO.ListVO goodsServe : editDetailVO.getGoodsServeList()) {
+                sb.append(goodsServe.getId() + ",");
+            }
+            String serveIds = sb.toString();
+            one.setServeId(serveIds.substring(0, sb.length() - 1));
+            goodsServeCorRepository.updateById(one);
+        }
+        // 建立商品以及sku与库存的关联
+        PCMerchGoodsInfoDTO.AddGoodsETO eto = new PCMerchGoodsInfoDTO.AddGoodsETO();
+        eto.setShopId(editDetailVO.getShopId());
+        eto.setMerchantId(editDetailVO.getMerchantId());
+        initGoodsStock(eto, items);
     }
 
     @Override
@@ -1579,7 +1773,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
             GoodsInfo goodsInfo = new GoodsInfo();
             BeanUtils.copyProperties(eto, goodsInfo);
-
             //多规格
             List<CommonStockDTO.InnerChangeStockItem> items = new ArrayList<>();
             if (ObjectUtils.isNotEmpty(eto.getSpecList())) {
@@ -1590,7 +1783,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                     stockItem.setQuantity(skuInfo.getSkuStock() != null ? skuInfo.getSkuStock() : 0);
                     items.add(stockItem);
                 }
-
             }
             //单规格
             else{
@@ -1606,6 +1798,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             initGoodsStock(eto, items);
         }
     }
+
 
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
         List<String> stringList = Arrays.asList(attributeInfos.split(",")).stream().distinct().collect(toList());

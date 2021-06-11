@@ -2,6 +2,8 @@ package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
 import java.util.List;
 
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,6 +30,10 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     private IGoodsInfoService goodsInfoService;
     @Autowired
     private IGoodsFupinService fupinService;
+    @Autowired
+    private IPCMerchGoodsInfoService ipcMerchGoodsInfoService;
+    @Autowired
+    private IPCMerchGoodsInfoTempService ipcMerchGoodsInfoTempService;
 
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsData(GoodsInfoQTO.QTO qto) {
@@ -66,11 +72,21 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
 
     @Override
     public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto) {
+        //区分新增与更新
+        if(ipcMerchGoodsInfoTempService.isUpdateGoodInfo(dto.getId())){
+            ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
+        }
         goodsInfoService.checkGoods(dto);
     }
 
     @Override
     public void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
+        //todo 后面优化
+        for (String goodsId : dto.getIdList()) {
+            if(ipcMerchGoodsInfoTempService.isUpdateGoodInfo(goodsId)){
+                ipcMerchGoodsInfoService.changeTempToGoodsInfo(goodsId);
+            }
+        }
         goodsInfoService.checkGoodsBatches(dto);
     }
 

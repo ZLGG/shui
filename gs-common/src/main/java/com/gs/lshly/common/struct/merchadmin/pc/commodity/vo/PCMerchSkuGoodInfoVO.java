@@ -81,11 +81,8 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
         private String operator;
 
 
-
-
         @ApiModelProperty("视频地址")
         private String videoUrl;
-
     }
 
     @Data
@@ -93,6 +90,15 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
     public static class DetailVO extends ListVO {
         @ApiModelProperty(value = "sku库存数量")
         private Integer skuStock;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+        @ApiModelProperty("结算价格")
+        private BigDecimal settlementPrice;
+
+        @ApiModelProperty("in会员积分价格")
+        private BigDecimal inMemberPointPrice;
     }
 
 }
