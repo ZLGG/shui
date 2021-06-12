@@ -584,6 +584,10 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (tradeRights.getState().equals(TradeRightsEndStateEnum.用户取消.getCode())) {
             throw new BusinessException("用户已取消");
         }
+        //删除售后商品数据
+        QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
+        query.eq("rights_id", tradeRights.getId());
+        tradeRightsGoodsRepository.remove(query);
         //删除售后表数据
         tradeRights.setState(TradeRightsEndStateEnum.用户取消.getCode());
         repository.removeById(tradeRights);

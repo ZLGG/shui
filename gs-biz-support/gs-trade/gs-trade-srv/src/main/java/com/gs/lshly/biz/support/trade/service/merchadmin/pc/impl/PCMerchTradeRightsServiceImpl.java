@@ -450,7 +450,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void check(PCMerchTradeRightsDTO.IdCheckDTO dto) {
-        if (ObjectUtil.isAllNotEmpty(dto.getId(), dto.getState(), dto.getRightsType())) {
+        if (!ObjectUtil.isAllNotEmpty(dto.getId(), dto.getState(), dto.getRightsType())) {
             throw new BusinessException("参数不能为空!");
         }
         TradeRights tradeRights = repository.getById(dto.getId());
