@@ -538,7 +538,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
     	
-    	BbcUserVO.DetailVO detailVO = userRpc.getUserInfoNoLogin(new BaseDTO());
+    	BbcUserVO.DetailVO detailVO = userRpc.getUserInfoNoLogin(qto);
     	
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
         // 1. 通用查询条件
@@ -589,7 +589,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         // 3.积分商城-我能兑换
         if (MallCategoryEnum.我能兑换.getCode().equals(qto.getSearchEntry())) {
 //            System.out.println(qto.getUserId());
-            if (StringUtils.isBlank(qto.getUserId())) {
+            if (StringUtils.isBlank(qto.getJwtUserId())) {
                 throw new BusinessException("请登录后查询我能兑换的积分商品");
             }
             boost.eq("is_point_good", true);
