@@ -1616,7 +1616,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
         if (trade.getTradeState().intValue() != TradeStateEnum.待收货.getCode()) {
             //如果订单状态不是"待收货"则不允许确认收货
-            throw new BusinessException("不允许确认收货");
+        	if(trade.getTradeState().intValue()==TradeStateEnum.待发货.getCode()||
+        			trade.getTradeState().intValue()==TradeStateEnum.待支付.getCode()){
+        		throw new BusinessException("不允许确认收货");
+        	}else{
+        		throw new BusinessException("该商品已收货");
+        	}
         }
         trade.setTradeState(TradeStateEnum.已完成.getCode());
         trade.setRecvTime(LocalDateTime.now());

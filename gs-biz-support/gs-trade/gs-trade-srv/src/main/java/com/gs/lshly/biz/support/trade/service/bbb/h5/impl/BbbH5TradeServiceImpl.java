@@ -1076,7 +1076,7 @@ public class BbbH5TradeServiceImpl implements IBbbH5TradeService {
         }
         if(trade.getTradeState().intValue() != TradeStateEnum.待收货.getCode()){
             //如果订单状态不是"待收货"则不允许确认收货
-            throw new BusinessException("不允许确认收货");
+            throw new BusinessException("该商品已收货");
         }
         trade.setTradeState(TradeStateEnum.已完成.getCode());
         trade.setRecvTime(LocalDateTime.now());
