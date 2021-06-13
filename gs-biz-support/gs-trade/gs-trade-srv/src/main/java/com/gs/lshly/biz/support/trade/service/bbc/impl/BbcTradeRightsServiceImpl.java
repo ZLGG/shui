@@ -598,7 +598,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
 
         //删除售后表数据
         tradeRights.setState(TradeRightsEndStateEnum.用户取消.getCode());
-        repository.removeById(tradeRights);
+        repository.updateById(tradeRights);
 
         //记录售后信息
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
