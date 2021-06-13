@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserIntegral;
 import com.gs.lshly.biz.support.user.entity.UserLabel;
@@ -45,6 +45,7 @@ import com.gs.lshly.common.struct.platadmin.user.vo.UserLabelDictVO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
+import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 
@@ -459,7 +460,6 @@ public class UserServiceImpl implements IUserService {
             		if(userLabelDict!=null){
             			tags +=userLabelDict.getLabelName()+",";
             		}
-            		
             	}
             }
             if(tags.length()>2){
@@ -467,6 +467,29 @@ public class UserServiceImpl implements IUserService {
             }
             
             listVO.setTags(tags);
+            
+            //男女[10=男  20=女]
+            Integer sex = e.getSex();
+            if(sex!=null){
+	            if(sex.equals(10)){
+	            	listVO.setSex("男");
+	            }else if(sex.equals(20)){
+	            	listVO.setSex("女");
+	            }
+            }else{
+            	listVO.setSex("未知");
+            }
+            
+            Integer isInUser = e.getIsInUser();
+            if(isInUser!=null&&isInUser.equals(1)){
+            	listVO.setIsInUser("是");
+            }else{
+            	listVO.setIsInUser("否");
+            }
+            if(StringUtils.isNotEmpty(e.getBirthday())){
+            	listVO.setAge(StringManageUtil.getAge(e.getBirthday()));
+            }
+            
             return listVO;
         }).collect(Collectors.toList());
         return listVOS;
