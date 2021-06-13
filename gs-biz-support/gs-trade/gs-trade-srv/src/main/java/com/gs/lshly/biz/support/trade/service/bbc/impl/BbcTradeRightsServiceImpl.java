@@ -782,7 +782,6 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVOS = new ArrayList<>();
         QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
         query.eq("rights_id", tradeRights.getId());
-        query.eq("is_revocation", false);
         List<TradeRightsGoods> rightsGoodsList = tradeRightsGoodsRepository.list(query);
         for (TradeRightsGoods tradeRightsGoods : rightsGoodsList) {
             BbcTradeRightsVO.TradeRightsGoodsVO tradeRightsGoodsVO = new BbcTradeRightsVO.TradeRightsGoodsVO();
