@@ -41,6 +41,7 @@ public class BbcCtccPtActivityGoodsServiceImpl implements IBbcCtccPtActivityGood
 	public List<BbcGoodsInfoVO.DetailVO> listCtccPtActivityGoods(Integer limit) {
 		QueryWrapper<CtccActivityGoods> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("goods_state",GoodsStateEnum.已上架.getCode());
+        queryWrapper.orderByAsc("idx");
         queryWrapper.last("limit 0,6");
         List<CtccActivityGoods> list = ctccActivityGoodsRepository.list(queryWrapper);
         List<BbcGoodsInfoVO.DetailVO> retList = new ArrayList<BbcGoodsInfoVO.DetailVO>();
