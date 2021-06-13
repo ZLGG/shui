@@ -16,6 +16,7 @@ import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.IUserThirdLoginRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserAuthService;
+import com.gs.lshly.biz.support.user.service.bbc.IBbcUserCtccPointService;
 import com.gs.lshly.common.constants.SecurityConstants;
 import com.gs.lshly.common.enums.GenderEnum;
 import com.gs.lshly.common.enums.UserStateEnum;
@@ -25,6 +26,7 @@ import com.gs.lshly.common.struct.AuthDTO;
 import com.gs.lshly.common.struct.JwtUser;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO.CreateCtccPointDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.UserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
@@ -69,6 +71,9 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     
     @Autowired
     private UserIntegralMapper userIntegralMapper;
+    
+    @Autowired
+	private IBbcUserCtccPointService bbcUserCtccPointService;
 
 
     @Override
@@ -150,7 +155,9 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             //1、获取加密对象
             String AESPhone = AESUtil.aesEncrypt(dto.getPhone());
             User user = repository.getOne(new QueryWrapper<User>().eq("phone", AESPhone));
+            Boolean isCreate = false;
             if (user == null) {
+            	isCreate = true;
                 user = new User();
                 UserDTO.ETO userDTO = new UserDTO.ETO();
                 userDTO.setState(UserStateEnum.启用.getCode()).setPhone(AESPhone).setType(UserTypeEnum._2C用户.getCode()).setId(String.valueOf(IdWorker.getId())).setFlag(false);
@@ -165,6 +172,12 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             Integer isExist = userIntegralMapper.goodsIsInCart(vo.getId());
             vo.setGoodsIsInCart(isExist);
             
+            if(isCreate){
+            	CreateCtccPointDTO createCtccPointDTO = new CreateCtccPointDTO();
+            	createCtccPointDTO.setUserId(vo.getId());
+            	createCtccPointDTO.setPointBalance(100000);
+            	bbcUserCtccPointService.createCtccPoint(createCtccPointDTO);;
+            }
             return vo;
     	}else{
     		

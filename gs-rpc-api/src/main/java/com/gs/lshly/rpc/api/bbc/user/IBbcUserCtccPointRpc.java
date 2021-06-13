@@ -28,4 +28,10 @@ public interface IBbcUserCtccPointRpc {
 	 * @param dto
 	 */
 	void addCtccPoint(String userId,BigDecimal point);
+	
+	/**
+	 * 创建订单
+	 * @param dto
+	 */
+	void createCtccPoint(BbcUserCtccPointDTO.CreateCtccPointDTO dto);
 }
