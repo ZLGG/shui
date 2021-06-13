@@ -35,13 +35,25 @@ public abstract class BbcUserCtccPointDTO implements Serializable {
     
     @EqualsAndHashCode(callSuper=false)
 	@Data
-    @ApiModel("BbcUserCtccPointDTO.AddCtccPointDTO")
+    @ApiModel("BbcUserCtccPointDTO.CreateCtccPointDTO")
 //    @AllArgsConstructor
-    public static class AddCtccPointDTO extends BaseDTO {
+    public static class CreateCtccPointDTO extends BaseDTO {
     	@ApiModelProperty("会员ID")
         private String userId;
 
-    	@ApiModelProperty("添加的积分值")
-        private Integer point;
+    	@ApiModelProperty("电信积分账号")
+        private Long pointAcctId;
+    	
+    	@ApiModelProperty("电信账号")
+        private Long custId;
+    	
+    	@ApiModelProperty("积分值")
+        private Integer pointBalance;
+    	
+    	@ApiModelProperty("年积分值")
+        private Integer yearBalance;
+    	
+    	@ApiModelProperty("积分类型组编码")
+        private Integer pointTypeNum;
     }
 }

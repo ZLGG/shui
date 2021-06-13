@@ -1,7 +1,6 @@
 package com.gs.lshly.rpc.api.bbc.user;
 
 import com.gs.lshly.common.struct.AuthDTO;
-import com.gs.lshly.common.struct.bbb.h5.user.vo.BbbH5UserVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
