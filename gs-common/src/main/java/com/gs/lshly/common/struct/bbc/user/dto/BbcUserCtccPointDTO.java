@@ -32,4 +32,16 @@ public abstract class BbcUserCtccPointDTO implements Serializable {
         private Integer point;
     }
 
+    
+    @EqualsAndHashCode(callSuper=false)
+	@Data
+    @ApiModel("BbcUserCtccPointDTO.AddCtccPointDTO")
+//    @AllArgsConstructor
+    public static class AddCtccPointDTO extends BaseDTO {
+    	@ApiModelProperty("会员ID")
+        private String userId;
+
+    	@ApiModelProperty("添加的积分值")
+        private Integer point;
+    }
 }

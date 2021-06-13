@@ -1,52 +1,60 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.enums.MarketPtRightCheckStatusEnum;
-import com.gs.lshly.biz.support.trade.enums.TradeRefundStatusEnum;
-import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
-import com.gs.lshly.biz.support.trade.repository.*;
-import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeRightsService;
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeRightsDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeRightsQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeRightsVO;
-import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
-import com.gs.lshly.common.utils.ListUtil;
-import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminSkuGoodsInfoRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
-import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
-import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
-import io.swagger.annotations.ApiModelProperty;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.trade.entity.Trade;
+import com.gs.lshly.biz.support.trade.entity.TradeGoods;
+import com.gs.lshly.biz.support.trade.entity.TradeRights;
+import com.gs.lshly.biz.support.trade.entity.TradeRightsGoods;
+import com.gs.lshly.biz.support.trade.entity.TradeRightsImg;
+import com.gs.lshly.biz.support.trade.entity.TradeRightsLog;
+import com.gs.lshly.biz.support.trade.enums.TradeRightsGoodsTypeEnum;
+import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeComplaintRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsImgRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsLogRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsRecordRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsRefundRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
+import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeRightsService;
+import com.gs.lshly.common.enums.TradeRightsEndStateEnum;
+import com.gs.lshly.common.enums.TradeRightsStateEnum;
+import com.gs.lshly.common.enums.TradeRightsTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeRightsDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeRightsQTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeRightsVO;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminSkuGoodsInfoRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 
 
 /**
@@ -86,6 +94,9 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     private IPCMerchAdminGoodsInfoRpc iGoodsInfoRpc;
     @DubboReference
     private IPCMerchAdminSkuGoodsInfoRpc ipcMerchAdminSkuGoodsInfoRpc;
+    
+    @DubboReference
+    private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
 
     @Override
     public PageData<PCMerchTradeRightsVO.RightList> pageData(PCMerchTradeRightsQTO.QTO qto) {
@@ -486,6 +497,8 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint());
                 iTradeRightsLogRepository.save(tradeRightsLog);
                 //todo yingjun 仅退款 退款
+                bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(),dto.getRefundPoint());
+                
             }
         } else if (dto.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
             tradeRights.setState(dto.getState());
@@ -504,6 +517,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             iTradeRepository.updateById(trade);
             //todo 回库存
             //todo yingjun 仅退款 退款
+            bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(),dto.getRefundPoint());
         }
         iTradeRightsLogRepository.save(tradeRightsLog);
 

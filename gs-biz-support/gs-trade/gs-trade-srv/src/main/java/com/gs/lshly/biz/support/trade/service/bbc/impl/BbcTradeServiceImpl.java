@@ -2369,11 +2369,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 			 */
 			String idsStr = CollUtil.isNotEmpty(tradeIds) ? CollUtil.join(tradeIds, "','") : "-1";
 			Integer totalTelecomsIntegral = tradeMapper.sumTradePointAmount(idsStr);
+			if(totalTelecomsIntegral==null){
+				throw new BusinessException("您的积分值不够！");
+			}
 			if(totalTelecomsIntegral>telecomsIntegral){
 				throw new BusinessException("您的积分值不够！");
 			}
-			
-			
 			
 			/**
 			 * 减积分
