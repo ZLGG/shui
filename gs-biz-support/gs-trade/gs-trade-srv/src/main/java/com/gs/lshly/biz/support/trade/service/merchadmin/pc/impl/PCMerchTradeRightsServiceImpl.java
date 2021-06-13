@@ -90,6 +90,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     @Override
     public PageData<PCMerchTradeRightsVO.RightList> pageData(PCMerchTradeRightsQTO.QTO qto) {
         List<PCMerchTradeRightsVO.RightList> rightListS = new ArrayList<>();
+        //查询条件
         IPage<TradeRights> page = MybatisPlusUtil.pager(qto);
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
         query.eq("shop_id", qto.getJwtShopId());
@@ -111,6 +112,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
         }
         query.orderByDesc("udate");
         repository.page(page, query);
+        //封装数据
         if (CollUtil.isNotEmpty(page.getRecords())) {
             for (TradeRights record : page.getRecords()) {
                 PCMerchTradeRightsVO.RightList rightList = new PCMerchTradeRightsVO.RightList();

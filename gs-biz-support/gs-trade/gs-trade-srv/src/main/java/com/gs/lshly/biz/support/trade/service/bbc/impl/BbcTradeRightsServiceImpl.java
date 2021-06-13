@@ -174,6 +174,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 tradeRightsGoods.setGoodsType(productData.getGoodsType());
                 tradeRightsGoods.setRightsId(tradeRights.getId());
                 tradeRightsGoods.setId(null);
+                tradeRightsGoods.setIsRevocation(false);
                 tradeRightsGoodsRepository.save(tradeRightsGoods);
 
                 //保存售后图片信息
@@ -264,6 +265,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                     tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
                 }
                 tradeRightsGoods.setRightsId(tradeRights.getId());
+                tradeRightsGoods.setIsRevocation(false);
                 tradeRightsGoodsRepository.save(tradeRightsGoods);
             }
             //保存售后图片信息
@@ -587,10 +589,18 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         //删除售后商品数据
         QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
         query.eq("rights_id", tradeRights.getId());
-        tradeRightsGoodsRepository.remove(query);
+        query.eq("is_revocation", false);
+        List<TradeRightsGoods> tradeRightsGoodsList = tradeRightsGoodsRepository.list(query);
+        for (TradeRightsGoods tradeRightsGoods : tradeRightsGoodsList) {
+            tradeRightsGoods.setIsRevocation(true);
+            tradeRightsGoodsRepository.updateById(tradeRightsGoods);
+        }
+
         //删除售后表数据
         tradeRights.setState(TradeRightsEndStateEnum.用户取消.getCode());
         repository.removeById(tradeRights);
+
+        //记录售后信息
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
         tradeRightsLog.setState(TradeRightsEndStateEnum.用户取消.getCode());
@@ -652,6 +662,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             tradeRightsGoods.setQuantity(productData.getQuantity());
             tradeRightsGoods.setGoodsType(productData.getGoodsType());
             tradeRightsGoods.setRightsId(tradeRights.getId());
+            tradeRightsGoods.setIsRevocation(false);
             tradeRightsGoodsRepository.save(tradeRightsGoods);
         }
         //保存售后图片信息
@@ -771,6 +782,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         List<BbcTradeRightsVO.TradeRightsGoodsVO> tradeRightsGoodsVOS = new ArrayList<>();
         QueryWrapper<TradeRightsGoods> query = MybatisPlusUtil.query();
         query.eq("rights_id", tradeRights.getId());
+        query.eq("is_revocation", false);
         List<TradeRightsGoods> rightsGoodsList = tradeRightsGoodsRepository.list(query);
         for (TradeRightsGoods tradeRightsGoods : rightsGoodsList) {
             BbcTradeRightsVO.TradeRightsGoodsVO tradeRightsGoodsVO = new BbcTradeRightsVO.TradeRightsGoodsVO();

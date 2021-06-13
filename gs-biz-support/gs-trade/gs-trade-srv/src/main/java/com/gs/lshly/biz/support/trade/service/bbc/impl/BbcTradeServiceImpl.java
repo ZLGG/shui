@@ -154,15 +154,16 @@ import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-* <p>
-*  服务实现类
-* </p>
-* @author oy
-* @since 2020-10-28
-*/
+ * <p>
+ * 服务实现类
+ * </p>
+ *
+ * @author oy
+ * @since 2020-10-28
+ */
 @Component
 @Slf4j
-@SuppressWarnings({"unchecked","unused","rawtypes"})
+@SuppressWarnings({"unchecked", "unused", "rawtypes"})
 public class BbcTradeServiceImpl implements IBbcTradeService {
 
     private final ITradeRepository tradeRepository;
@@ -178,10 +179,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     private final ITradeCancelRepository tradeCancelRepository;
     @Autowired
     private ITradePayOfflineImgRepository iTradePayOfflineImgRepository;
-    
+
     @Autowired
     private ProducerService producerService;
-    
+
     @Autowired
     private IMarketMerchantCardUsersRepository iMarketMerchantCardUsersRepository;
 
@@ -205,13 +206,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Autowired
     private TradePayMapper tradePayMapper;
-    
+
     @Autowired
     private ISMSService ismsService;
-    
+
     @Autowired
     private ITradeRightsGoodsRepository tradeRightsGoodsRepository;
-    
+
     @Autowired
     private ITradeRightsRepository tradeRightsRepository;
 
@@ -257,7 +258,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
 
-    
+
     @Autowired
     private ICommonMarketCardServiceImpl commonMarketCardService;
 
@@ -274,13 +275,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<BbcTradeSettlementVO.DetailVO> settlementVO(BbcTradeBuildDTO.cartIdsDTO dto) {
-    	
-    	/**
-    	 * 如果是立即支付时，会有考虑是不是要扣优惠券的值 
-    	 */
-    	
-    	Integer isInCar = 1;
-    	//返回地址、商家、商品（图片、名称、规格、单价）、商品总金额、商品数量、运费
+
+        /**
+         * 如果是立即支付时，会有考虑是不是要扣优惠券的值
+         */
+
+        Integer isInCar = 1;
+        //返回地址、商家、商品（图片、名称、规格、单价）、商品总金额、商品数量、运费
         BbcTradeSettlementVO.DetailVO settlementVO = new BbcTradeSettlementVO.DetailVO();
         Integer exchangeType = 20;
         // 获取用户信息，获取是否是IN会员
@@ -289,18 +290,18 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         BbcUserQTO.QTO qto = new BbcUserQTO.QTO();
         qto.setJwtUserId(jwtUserId);
         BbcUserVO.DetailVO userInfo = iBbcUserRpc.getUserInfoNoLogin(qto);//当前用户类型
-        if (userInfo == null||StringUtils.isEmpty(userInfo.getId())) {
+        if (userInfo == null || StringUtils.isEmpty(userInfo.getId())) {
             throw new BusinessException("无用户信息");
         }
-        Integer memberType = userInfo.getMemberType();	//判断用户类型 1普通用户
+        Integer memberType = userInfo.getMemberType();    //判断用户类型 1普通用户
         // 用户积分
         BigDecimal telecomsIntegral = BigDecimal.ZERO;
-        if(memberType!=null&&memberType.equals(2)){
-        	telecomsIntegral = new BigDecimal(userInfo.getTelecomsIntegral());
+        if (memberType != null && memberType.equals(2)) {
+            telecomsIntegral = new BigDecimal(userInfo.getTelecomsIntegral());
         }
-        
-        Integer isInUser = userInfo.getIsInUser();	//判断是否是IN会员商户。
-        log.info("[settlementVO][userInfo=>{}]",userInfo);
+
+        Integer isInUser = userInfo.getIsInUser();    //判断是否是IN会员商户。
+        log.info("[settlementVO][userInfo=>{}]", userInfo);
 //        //skuid/数量
 //        List<CommonStockDTO.InnerSkuGoodsInfoItem> goodsItemList = new ArrayList<>();
 //
@@ -309,20 +310,20 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         List<ShopSkuVO> shopskuList = new ArrayList<ShopSkuVO>();
         List<ShopListVO> shopList = new ArrayList<ShopListVO>();
-        
+
         BigDecimal goodsAmount = BigDecimal.ZERO;//商品总金额
         BigDecimal goodsPointAmount = BigDecimal.ZERO;//商品总积分金额
         Integer goodsCount = 0;//商品总数
-        
-        if(StringUtils.isNotEmpty(dto.getGoodsSkuId())){//立即购买
-        	isInCar = 0;
+
+        if (StringUtils.isNotEmpty(dto.getGoodsSkuId())) {//立即购买
+            isInCar = 0;
 
             BbcGoodsInfoVO.InnerServiceVO innerServiceVO = iBbcGoodsInfoRpc.innerSimpleServiceGoodsVO(dto.getGoodsSkuId());
             ShopSkuVO shopSkuVO = new ShopSkuVO();
             shopSkuVO.setShopId(innerServiceVO.getShopId());
             List<SkuQuantityVO> skuQuantity = new ArrayList<SkuQuantityVO>();
             SkuQuantityVO skuQuantityVO = new SkuQuantityVO();
-            
+
             skuQuantityVO.setQuantity(dto.getQuantity());
             skuQuantityVO.setSkuId(dto.getGoodsSkuId());
             skuQuantityVO.setGoodsPointPrice(innerServiceVO.getGoodsPointAmount());
@@ -330,216 +331,215 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             skuQuantityVO.setInMemberPointPrice(innerServiceVO.getInMemberPointPrice());
             skuQuantityVO.setIsInMemberGift(innerServiceVO.getIsInMemberGift());
             skuQuantityVO.setIsPointGood(innerServiceVO.getIsPointGood());
-            
+
             skuQuantity.add(skuQuantityVO);
             shopSkuVO.setSkuQuantity(skuQuantity);
             shopskuList.add(shopSkuVO);
-            
+
             //判断商品类型
             exchangeType = innerServiceVO.getExchangeType();
-        }else{//购物车购买 dto.getCartIds();
-        	//根据购物车id查询实体 //判断商品是否属于同一个店铺
+        } else {//购物车购买 dto.getCartIds();
+            //根据购物车id查询实体 //判断商品是否属于同一个店铺
             BbcUserShoppingCarDTO.InnerIdListDTO innerIdListDTO = new BbcUserShoppingCarDTO.InnerIdListDTO();
             innerIdListDTO.setIdList(dto.getCartIds());
-        	//跟据购物车查询所属什么店铺ids
+            //跟据购物车查询所属什么店铺ids
             shopskuList = bbcUserShoppingCarRpc.groupShopByCarId(innerIdListDTO);
 
         }
-        
+
         //计算总积分，用户够不够
         BigDecimal totalPrice = BigDecimal.ZERO;//总现金值
         BigDecimal totalPointPrice = BigDecimal.ZERO;//总积分值 
         BigDecimal totalInPointPrice = BigDecimal.ZERO;//总IN会员价格
-        
+
         for (ShopSkuVO shopskuvo : shopskuList) {
-        	List<SkuQuantityVO> skuList = shopskuvo.getSkuQuantity();
-        	for (SkuQuantityVO skuQuantityVO : skuList) {
-        		
-        		if((skuQuantityVO.getIsInMemberGift()!=null&&skuQuantityVO.getIsInMemberGift())||isInUser.equals(1)){
-        			totalPointPrice =totalPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
-        			totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getInMemberPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
-        		}else if(skuQuantityVO.getIsPointGood()!=null&&skuQuantityVO.getIsPointGood()){//积分商品
-        			totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
-        			totalPointPrice = totalPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
-        		}else{
-        			totalPrice = totalPrice.add(skuQuantityVO.getGoodsPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
-        		}
-        	}
+            List<SkuQuantityVO> skuList = shopskuvo.getSkuQuantity();
+            for (SkuQuantityVO skuQuantityVO : skuList) {
+
+                if ((skuQuantityVO.getIsInMemberGift() != null && skuQuantityVO.getIsInMemberGift()) || isInUser.equals(1)) {
+                    totalPointPrice = totalPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
+                    totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getInMemberPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
+                } else if (skuQuantityVO.getIsPointGood() != null && skuQuantityVO.getIsPointGood()) {//积分商品
+                    totalInPointPrice = totalInPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
+                    totalPointPrice = totalPointPrice.add(skuQuantityVO.getGoodsPointPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
+                } else {
+                    totalPrice = totalPrice.add(skuQuantityVO.getGoodsPrice().multiply(new BigDecimal(skuQuantityVO.getQuantity())));
+                }
+            }
         }
-        
+
         Boolean flag = false;
         //判断用户是否需要分积分
-        if(isInUser.equals(1)){	//是IN会员
-        	if(telecomsIntegral.compareTo(totalInPointPrice)<0){
-        		flag = true;
-        		totalPrice = totalPrice.add(totalInPointPrice.subtract(telecomsIntegral).divide(new BigDecimal(100)));
-        	}
-        }else{
-        	if(memberType.equals(2)){
-        		if(telecomsIntegral.compareTo(totalPointPrice)<0){
-            		flag = true;
-            		totalPrice = totalPrice.add(totalPointPrice.subtract(telecomsIntegral).divide(new BigDecimal(100)));
-            	}
-        	}else{
-        		totalPrice = totalPrice.add(totalPointPrice.subtract(telecomsIntegral).divide(new BigDecimal(100)));
-        		flag = true;
-        	}
+        if (isInUser.equals(1)) {    //是IN会员
+            if (telecomsIntegral.compareTo(totalInPointPrice) < 0) {
+                flag = true;
+                totalPrice = totalPrice.add(totalInPointPrice.subtract(telecomsIntegral).divide(new BigDecimal(100)));
+            }
+        } else {
+            if (memberType.equals(2)) {
+                if (telecomsIntegral.compareTo(totalPointPrice) < 0) {
+                    flag = true;
+                    totalPrice = totalPrice.add(totalPointPrice.subtract(telecomsIntegral).divide(new BigDecimal(100)));
+                }
+            } else {
+                totalPrice = totalPrice.add(totalPointPrice.subtract(telecomsIntegral).divide(new BigDecimal(100)));
+                flag = true;
+            }
         }
-        
+
         ShopListVO shopListVO = null;
-        
-		for (ShopSkuVO shopskuvo : shopskuList) {
-			String shopId = shopskuvo.getShopId(); // 店铺ID
-			shopListVO = new ShopListVO();
-			fillShop(shopId, shopListVO);
-			// 组装sku
-			List<SkuQuantityVO> skuList = shopskuvo.getSkuQuantity();
-			BigDecimal goodsAmountDetail = BigDecimal.ZERO;//单个商品总金额
-	        BigDecimal goodsPointAmountDetail = BigDecimal.ZERO;//单个商品总积分金额
-	        Integer goodsCountDetail = 0;//商品总数
-	        List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<BbcTradeSettlementVO.ShopListVO.goodsInfoVO>();
 
-	        BigDecimal tradeAmountDetail = BigDecimal.ZERO;//实付现金
-	        BigDecimal tradePointAmountDetail = BigDecimal.ZERO;//实付积分
-	        
-			for (int i=0;i<skuList.size();i++){
-				SkuQuantityVO skuQuantityVO = skuList.get(i);
+        for (ShopSkuVO shopskuvo : shopskuList) {
+            String shopId = shopskuvo.getShopId(); // 店铺ID
+            shopListVO = new ShopListVO();
+            fillShop(shopId, shopListVO);
+            // 组装sku
+            List<SkuQuantityVO> skuList = shopskuvo.getSkuQuantity();
+            BigDecimal goodsAmountDetail = BigDecimal.ZERO;//单个商品总金额
+            BigDecimal goodsPointAmountDetail = BigDecimal.ZERO;//单个商品总积分金额
+            Integer goodsCountDetail = 0;//商品总数
+            List<BbcTradeSettlementVO.ShopListVO.goodsInfoVO> goodsInfoVOS = new ArrayList<BbcTradeSettlementVO.ShopListVO.goodsInfoVO>();
 
-				String skuId = skuQuantityVO.getSkuId();
-				Integer quantity = skuQuantityVO.getQuantity();
-				String carId = skuQuantityVO.getCarId();
-				
-				// 店铺商品
-				// for(BbcUserShoppingCarVO.InnerSimpleItem innerSimpleItem :
-				// itemList){
-				// 根据SKU ID获取商品信息（图片、商品名称、规格值、售价、状态）
-				BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO = bbcGoodsInfoRpc.innerServiceGoodsVO(skuId);
-				if (ObjectUtils.isEmpty(innerServiceGoodsVO) || innerServiceGoodsVO.getGoodsId() == null) {
-					throw new BusinessException("无商品数据或已下架");
-				} else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
-					throw new BusinessException("商品已下架");
-				}
-				// 组装商品信息
-				BbcTradeSettlementVO.ShopListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(carId, quantity,
-						innerServiceGoodsVO);
-		        
-				if(goodsInfoVO.getIsInMemberGift()){
-					if (isInUser.equals(1)) {	//是IN会员用IN会员价格
-						
-						/**
-				         *模拟优惠券数据
-				         */
-				        List<ListCouponVO> couponVOS = this.listCoupon();
-				        goodsInfoVO.setDefaultCouponList(couponVOS);
-				        
-				        List<ListCouponVO> couponVOS1 = this.listCoupon1();
-				        goodsInfoVO.setOptionalCouponList(couponVOS1);
-						
-						BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
-								.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-						
-						
-						
-						if(flag){//需要分积分
-							BigDecimal tradePointAmount = BigDecimal.ZERO;
-							
-							tradePointAmount = pointPrice.divide(totalInPointPrice.setScale(0,BigDecimal.ROUND_HALF_UP)).multiply(telecomsIntegral);
-							goodsInfoVO.setTradePointAmount(tradePointAmount);
-							goodsInfoVO.setTradeAmount(pointPrice.subtract(tradePointAmount).divide(new BigDecimal(100)));
-							tradePointAmountDetail  = tradePointAmountDetail.add(tradePointAmount);
-							tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
-						}else{
-							
-							//本期就考虑不用分积分的
-							ListCouponVO couponVO = couponVOS.get(0);
-							BigDecimal deduction = couponVO.getDeduction().multiply(new BigDecimal("100"));
-							pointPrice = pointPrice.compareTo(deduction)<=0?BigDecimal.ZERO:pointPrice.subtract(deduction);
-							
-							goodsInfoVO.setTradePointAmount(pointPrice);
-							goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
-						}
-						
-						goodsPointAmount = goodsPointAmount.add(pointPrice);
-						goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
-					} else{
-						throw new BusinessException("请先成为IN会员，再买IN会员商品");
-					}
-				}else if (goodsInfoVO.getIsPointGood()) { // 积分商品
-					// 判断用户是不是IN会员，如果是的话，就用IN会员价格
-					if (isInUser.equals(1)) {	//是IN会员用IN会员价格
-						
-						BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
-								.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-						goodsPointAmount = goodsPointAmount.add(pointPrice);
-						goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
-						
-						if(flag){//需要分积分
-							
-							BigDecimal tradePointAmount = pointPrice.divide(totalInPointPrice,2,BigDecimal.ROUND_HALF_UP).multiply(telecomsIntegral);
-							goodsInfoVO.setTradePointAmount(tradePointAmount);
-							goodsInfoVO.setTradeAmount(pointPrice.subtract(tradePointAmount).divide(new BigDecimal(100)));
-							tradePointAmountDetail  = tradePointAmountDetail.add(tradePointAmount);
-							tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
-						}else{
-							goodsInfoVO.setTradePointAmount(pointPrice);
-							goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
-						}
-					} else {
-						
-						// throw new BusinessException("存在IN会员专属商品，请开通IN会员后重试");
-						BigDecimal pointPrice = goodsInfoVO.getPointPrice()
-								.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-						goodsPointAmount = goodsPointAmount.add(pointPrice);
-						goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
-						
-						if(flag){
-							if(memberType.equals(2)){
-								BigDecimal tradePointAmount = BigDecimal.ZERO;
-								
-								tradePointAmount = pointPrice.divide(totalPointPrice,2,BigDecimal.ROUND_HALF_UP).multiply(telecomsIntegral);
-								goodsInfoVO.setTradePointAmount(tradePointAmount);
-								goodsInfoVO.setTradeAmount(pointPrice.subtract(tradePointAmount).divide(new BigDecimal(100)));
-								tradePointAmountDetail  = tradePointAmountDetail.add(tradePointAmount);
-								tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
-							}else{
-								goodsInfoVO.setTradePointAmount(BigDecimal.ZERO);
-								goodsInfoVO.setTradeAmount(pointPrice.divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP));
-							}
-						}else{
-							goodsInfoVO.setTradePointAmount(pointPrice);
-							goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
-						}
-					}
-				} else {
-					BigDecimal productPrice = goodsInfoVO.getSalePrice()
-							.multiply(new BigDecimal(goodsInfoVO.getQuantity()));
-					goodsAmount = goodsAmount.add(productPrice);
-					goodsAmountDetail = goodsAmountDetail.add(productPrice);
-					goodsInfoVO.setTradePointAmount(productPrice);
-					goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
-				}
+            BigDecimal tradeAmountDetail = BigDecimal.ZERO;//实付现金
+            BigDecimal tradePointAmountDetail = BigDecimal.ZERO;//实付积分
 
-				goodsCount = goodsCount + goodsInfoVO.getQuantity();
-				goodsCountDetail = goodsCountDetail + goodsInfoVO.getQuantity();
-				
-				goodsInfoVOS.add(goodsInfoVO);
-			}
-			
-			shopListVO.setGoodsInfoVOS(goodsInfoVOS);
-			
-			shopListVO.setGoodsAmount(goodsAmountDetail);
-			shopListVO.setGoodsPointAmount(goodsPointAmountDetail);
-			if(!flag){
-				shopListVO.setTradeAmount(goodsAmountDetail);//应付的钱
-				shopListVO.setTradePointAmount(goodsPointAmountDetail);//应付的钱
-			}else{
-				shopListVO.setTradeAmount(tradeAmountDetail);//应付的钱
-				shopListVO.setTradePointAmount(tradePointAmountDetail);//应付的钱
-			}
-			
-			shopListVO.setGoodsCount(goodsCountDetail);
-			shopList.add(shopListVO);
-		}
+            for (int i = 0; i < skuList.size(); i++) {
+                SkuQuantityVO skuQuantityVO = skuList.get(i);
+
+                String skuId = skuQuantityVO.getSkuId();
+                Integer quantity = skuQuantityVO.getQuantity();
+                String carId = skuQuantityVO.getCarId();
+
+                // 店铺商品
+                // for(BbcUserShoppingCarVO.InnerSimpleItem innerSimpleItem :
+                // itemList){
+                // 根据SKU ID获取商品信息（图片、商品名称、规格值、售价、状态）
+                BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO = bbcGoodsInfoRpc.innerServiceGoodsVO(skuId);
+                if (ObjectUtils.isEmpty(innerServiceGoodsVO) || innerServiceGoodsVO.getGoodsId() == null) {
+                    throw new BusinessException("无商品数据或已下架");
+                } else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
+                    throw new BusinessException("商品已下架");
+                }
+                // 组装商品信息
+                BbcTradeSettlementVO.ShopListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(carId, quantity,
+                        innerServiceGoodsVO);
+
+                if (goodsInfoVO.getIsInMemberGift()) {
+                    if (isInUser.equals(1)) {    //是IN会员用IN会员价格
+
+                        /**
+                         *模拟优惠券数据
+                         */
+                        List<ListCouponVO> couponVOS = this.listCoupon();
+                        goodsInfoVO.setDefaultCouponList(couponVOS);
+
+                        List<ListCouponVO> couponVOS1 = this.listCoupon1();
+                        goodsInfoVO.setOptionalCouponList(couponVOS1);
+
+                        BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
+                                .multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+
+
+                        if (flag) {//需要分积分
+                            BigDecimal tradePointAmount = BigDecimal.ZERO;
+
+                            tradePointAmount = pointPrice.divide(totalInPointPrice.setScale(0, BigDecimal.ROUND_HALF_UP)).multiply(telecomsIntegral);
+                            goodsInfoVO.setTradePointAmount(tradePointAmount);
+                            goodsInfoVO.setTradeAmount(pointPrice.subtract(tradePointAmount).divide(new BigDecimal(100)));
+                            tradePointAmountDetail = tradePointAmountDetail.add(tradePointAmount);
+                            tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
+                        } else {
+
+                            //本期就考虑不用分积分的
+                            ListCouponVO couponVO = couponVOS.get(0);
+                            BigDecimal deduction = couponVO.getDeduction().multiply(new BigDecimal("100"));
+                            pointPrice = pointPrice.compareTo(deduction) <= 0 ? BigDecimal.ZERO : pointPrice.subtract(deduction);
+
+                            goodsInfoVO.setTradePointAmount(pointPrice);
+                            goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
+                        }
+
+                        goodsPointAmount = goodsPointAmount.add(pointPrice);
+                        goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
+                    } else {
+                        throw new BusinessException("请先成为IN会员，再买IN会员商品");
+                    }
+                } else if (goodsInfoVO.getIsPointGood()) { // 积分商品
+                    // 判断用户是不是IN会员，如果是的话，就用IN会员价格
+                    if (isInUser.equals(1)) {    //是IN会员用IN会员价格
+
+                        BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
+                                .multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                        goodsPointAmount = goodsPointAmount.add(pointPrice);
+                        goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
+
+                        if (flag) {//需要分积分
+
+                            BigDecimal tradePointAmount = pointPrice.divide(totalInPointPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(telecomsIntegral);
+                            goodsInfoVO.setTradePointAmount(tradePointAmount);
+                            goodsInfoVO.setTradeAmount(pointPrice.subtract(tradePointAmount).divide(new BigDecimal(100)));
+                            tradePointAmountDetail = tradePointAmountDetail.add(tradePointAmount);
+                            tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
+                        } else {
+                            goodsInfoVO.setTradePointAmount(pointPrice);
+                            goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
+                        }
+                    } else {
+
+                        // throw new BusinessException("存在IN会员专属商品，请开通IN会员后重试");
+                        BigDecimal pointPrice = goodsInfoVO.getPointPrice()
+                                .multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                        goodsPointAmount = goodsPointAmount.add(pointPrice);
+                        goodsPointAmountDetail = goodsPointAmountDetail.add(pointPrice);
+
+                        if (flag) {
+                            if (memberType.equals(2)) {
+                                BigDecimal tradePointAmount = BigDecimal.ZERO;
+
+                                tradePointAmount = pointPrice.divide(totalPointPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(telecomsIntegral);
+                                goodsInfoVO.setTradePointAmount(tradePointAmount);
+                                goodsInfoVO.setTradeAmount(pointPrice.subtract(tradePointAmount).divide(new BigDecimal(100)));
+                                tradePointAmountDetail = tradePointAmountDetail.add(tradePointAmount);
+                                tradeAmountDetail = tradeAmountDetail.add(goodsInfoVO.getTradeAmount());
+                            } else {
+                                goodsInfoVO.setTradePointAmount(BigDecimal.ZERO);
+                                goodsInfoVO.setTradeAmount(pointPrice.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
+                            }
+                        } else {
+                            goodsInfoVO.setTradePointAmount(pointPrice);
+                            goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
+                        }
+                    }
+                } else {
+                    BigDecimal productPrice = goodsInfoVO.getSalePrice()
+                            .multiply(new BigDecimal(goodsInfoVO.getQuantity()));
+                    goodsAmount = goodsAmount.add(productPrice);
+                    goodsAmountDetail = goodsAmountDetail.add(productPrice);
+                    goodsInfoVO.setTradePointAmount(productPrice);
+                    goodsInfoVO.setTradeAmount(BigDecimal.ZERO);
+                }
+
+                goodsCount = goodsCount + goodsInfoVO.getQuantity();
+                goodsCountDetail = goodsCountDetail + goodsInfoVO.getQuantity();
+
+                goodsInfoVOS.add(goodsInfoVO);
+            }
+
+            shopListVO.setGoodsInfoVOS(goodsInfoVOS);
+
+            shopListVO.setGoodsAmount(goodsAmountDetail);
+            shopListVO.setGoodsPointAmount(goodsPointAmountDetail);
+            if (!flag) {
+                shopListVO.setTradeAmount(goodsAmountDetail);//应付的钱
+                shopListVO.setTradePointAmount(goodsPointAmountDetail);//应付的钱
+            } else {
+                shopListVO.setTradeAmount(tradeAmountDetail);//应付的钱
+                shopListVO.setTradePointAmount(tradePointAmountDetail);//应付的钱
+            }
+
+            shopListVO.setGoodsCount(goodsCountDetail);
+            shopList.add(shopListVO);
+        }
         settlementVO.setShopList(shopList);
 
         //组装收货地址信息
@@ -552,81 +552,81 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         //商品总数
         settlementVO.setGoodsCount(goodsCount);
         settlementVO.setTelecomsIntegral(Integer.valueOf(telecomsIntegral.toString()));
-        
-        if(!flag){
-        	settlementVO.setTradeAmount(goodsAmount);//应付的钱
-        	settlementVO.setTradePointAmount(goodsPointAmount);//应付的钱
-		}else{//要分积分
-			settlementVO.setTradeAmount(totalPrice);//应付的钱
-			settlementVO.setTradePointAmount(telecomsIntegral);//应付的钱
-		}
+
+        if (!flag) {
+            settlementVO.setTradeAmount(goodsAmount);//应付的钱
+            settlementVO.setTradePointAmount(goodsPointAmount);//应付的钱
+        } else {//要分积分
+            settlementVO.setTradeAmount(totalPrice);//应付的钱
+            settlementVO.setTradePointAmount(telecomsIntegral);//应付的钱
+        }
         settlementVO.setDiscountAmount(BigDecimal.ZERO);
         settlementVO.setDiscountPointAmount(BigDecimal.ZERO);
         /**营销结算
-        try {
-            log.info("开始结算:"+ JsonUtils.toJson(settlementVO));
-            marketSettleService.settlement(settlementVO, dto);
-            log.info("结算结果:"+ JsonUtils.toJson(settlementVO));
-        } catch (Exception e) {
-            log.error("营销结算异常:"+e.getMessage(), e);
-        }**/
+         try {
+         log.info("开始结算:"+ JsonUtils.toJson(settlementVO));
+         marketSettleService.settlement(settlementVO, dto);
+         log.info("结算结果:"+ JsonUtils.toJson(settlementVO));
+         } catch (Exception e) {
+         log.error("营销结算异常:"+e.getMessage(), e);
+         }**/
         settlementVO.setExchangeType(exchangeType);
-        
+
         return ResponseData.data(settlementVO);
     }
 
-	private List<ListCouponVO> listCoupon() {
-		
-		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
-		ListCouponVO listCouponVO = new ListCouponVO();
-		listCouponVO.setCouponType(1);
-		listCouponVO.setUseTime("2021/01/01 2021/08/01");
-		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
-		listCouponVO.setDeduction(new BigDecimal("20.00"));
-		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
-		listCouponVO.setDeductionType(Integer.valueOf(1));
-		listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
-		retList.add(listCouponVO);
-		return retList;
-	}
-	
-	private List<ListCouponVO> listCoupon1() {
-		
-		List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
-		
-		ListCouponVO listCouponVO = new ListCouponVO();
-		listCouponVO.setCouponType(1);
-		listCouponVO.setUseTime("2021/01/01 2021/08/01");
-		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
-		listCouponVO.setDeduction(new BigDecimal("20.00"));
-		listCouponVO.setUseThreshold(new BigDecimal("40.00"));
-		listCouponVO.setDeductionType(Integer.valueOf(1));
-		listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
-		retList.add(listCouponVO);
-		
-		listCouponVO = new ListCouponVO();
-		listCouponVO.setCouponType(1);
-		listCouponVO.setUseTime("2021/01/01 2021/11/01");
-		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
-		listCouponVO.setDeduction(new BigDecimal("30.00"));
-		listCouponVO.setUseThreshold(new BigDecimal("50.00"));
-		listCouponVO.setDeductionType(Integer.valueOf(1));
-		listCouponVO.setId("666666666c421f9fd7f4c82bfcab5b");
-		retList.add(listCouponVO);
-		
-		listCouponVO = new ListCouponVO();
-		listCouponVO.setCouponType(1);
-		listCouponVO.setUseTime("2021/01/01 2021/12/01");
-		listCouponVO.setCouponName("仅购买IN会员商品可以使用");
-		listCouponVO.setDeduction(new BigDecimal("40.00"));
-		listCouponVO.setUseThreshold(new BigDecimal("60.00"));
-		listCouponVO.setDeductionType(Integer.valueOf(1));
-		listCouponVO.setId("77777777c421f9fd7f4c82bfcab5b");
-		retList.add(listCouponVO);
-		
-		return retList;
-	}
-	
+    private List<ListCouponVO> listCoupon() {
+
+        List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
+        ListCouponVO listCouponVO = new ListCouponVO();
+        listCouponVO.setCouponType(1);
+        listCouponVO.setUseTime("2021/01/01 2021/08/01");
+        listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+        listCouponVO.setDeduction(new BigDecimal("20.00"));
+        listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+        listCouponVO.setDeductionType(Integer.valueOf(1));
+        listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
+        retList.add(listCouponVO);
+        return retList;
+    }
+
+    private List<ListCouponVO> listCoupon1() {
+
+        List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
+
+        ListCouponVO listCouponVO = new ListCouponVO();
+        listCouponVO.setCouponType(1);
+        listCouponVO.setUseTime("2021/01/01 2021/08/01");
+        listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+        listCouponVO.setDeduction(new BigDecimal("20.00"));
+        listCouponVO.setUseThreshold(new BigDecimal("40.00"));
+        listCouponVO.setDeductionType(Integer.valueOf(1));
+        listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
+        retList.add(listCouponVO);
+
+        listCouponVO = new ListCouponVO();
+        listCouponVO.setCouponType(1);
+        listCouponVO.setUseTime("2021/01/01 2021/11/01");
+        listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+        listCouponVO.setDeduction(new BigDecimal("30.00"));
+        listCouponVO.setUseThreshold(new BigDecimal("50.00"));
+        listCouponVO.setDeductionType(Integer.valueOf(1));
+        listCouponVO.setId("666666666c421f9fd7f4c82bfcab5b");
+        retList.add(listCouponVO);
+
+        listCouponVO = new ListCouponVO();
+        listCouponVO.setCouponType(1);
+        listCouponVO.setUseTime("2021/01/01 2021/12/01");
+        listCouponVO.setCouponName("仅购买IN会员商品可以使用");
+        listCouponVO.setDeduction(new BigDecimal("40.00"));
+        listCouponVO.setUseThreshold(new BigDecimal("60.00"));
+        listCouponVO.setDeductionType(Integer.valueOf(1));
+        listCouponVO.setId("77777777c421f9fd7f4c82bfcab5b");
+        retList.add(listCouponVO);
+
+        return retList;
+    }
+
     public static void main(String[] args) {
         Integer integer = 10;
         Integer integer2 = 10;
@@ -638,33 +638,34 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      * 组装商家信息
      * @param shopId
      * @param settlementVO
-   
+
     private void fillShop(String shopId, BbcTradeSettlementVO.ListVO settlementVO) {
-        //根据店铺ID获取店铺自提、发货地址和店铺状态  //根据店铺信息 、判断店铺状态
-        BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
-        innerShopQTO.setShopId(shopId);
-        BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
-        settlementVO.setShopId(innerDetailVO.getId());
-        settlementVO.setShopLogo(innerDetailVO.getShopLogo());
-        settlementVO.setShopName(innerDetailVO.getShopName());
-        settlementVO.setDeliveryScope(innerDetailVO.getDeliveryScope());
-        settlementVO.setShopFullAddres(innerDetailVO.getShopFullAddres());
-        settlementVO.setShopLongitude(innerDetailVO.getShopLongitude());
-        settlementVO.setShopLatitude(innerDetailVO.getShopLatitude());
-        List<String> strings = iBbcShopRpc.innerShopDelivery(shopId);
-        if (ObjectUtils.isNotEmpty(strings)){
-            settlementVO.setShopDeliveryType(strings);
-        }
+    //根据店铺ID获取店铺自提、发货地址和店铺状态  //根据店铺信息 、判断店铺状态
+    BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
+    innerShopQTO.setShopId(shopId);
+    BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
+    settlementVO.setShopId(innerDetailVO.getId());
+    settlementVO.setShopLogo(innerDetailVO.getShopLogo());
+    settlementVO.setShopName(innerDetailVO.getShopName());
+    settlementVO.setDeliveryScope(innerDetailVO.getDeliveryScope());
+    settlementVO.setShopFullAddres(innerDetailVO.getShopFullAddres());
+    settlementVO.setShopLongitude(innerDetailVO.getShopLongitude());
+    settlementVO.setShopLatitude(innerDetailVO.getShopLatitude());
+    List<String> strings = iBbcShopRpc.innerShopDelivery(shopId);
+    if (ObjectUtils.isNotEmpty(strings)){
+    settlementVO.setShopDeliveryType(strings);
+    }
 
     }
-      */
+     */
     /**
      * 组装商家信息-2
+     *
      * @param shopId
      * @param shopListVO
      */
-    private void fillShop(String shopId,ShopListVO shopListVO){
-    	//根据店铺ID获取店铺自提、发货地址和店铺状态  //根据店铺信息 、判断店铺状态
+    private void fillShop(String shopId, ShopListVO shopListVO) {
+        //根据店铺ID获取店铺自提、发货地址和店铺状态  //根据店铺信息 、判断店铺状态
         BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
         innerShopQTO.setShopId(shopId);
         BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
@@ -676,25 +677,26 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         shopListVO.setShopLongitude(innerDetailVO.getShopLongitude());
         shopListVO.setShopLatitude(innerDetailVO.getShopLatitude());
         List<String> strings = iBbcShopRpc.innerShopDelivery(shopId);
-        if (ObjectUtils.isNotEmpty(strings)){
-        	shopListVO.setShopDeliveryType(strings);
+        if (ObjectUtils.isNotEmpty(strings)) {
+            shopListVO.setShopDeliveryType(strings);
         }
     }
 
     /**
      * 组装收货地址信息
+     *
      * @param dto
      * @param settlementVO
      */
-    private void fillAddress(BbcTradeBuildDTO.cartIdsDTO dto,BbcTradeSettlementVO.DetailVO settlementVO) {
-        if(StringUtils.isNotEmpty(dto.getAddressId())){
+    private void fillAddress(BbcTradeBuildDTO.cartIdsDTO dto, BbcTradeSettlementVO.DetailVO settlementVO) {
+        if (StringUtils.isNotEmpty(dto.getAddressId())) {
             BbcStockAddressDTO.IdDTO idDto = new BbcStockAddressDTO.IdDTO(dto.getAddressId());
             idDto.setJwtUserId(dto.getJwtUserId());
             BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
-            if(!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+            if (!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
                 //根据id查询地址
                 addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
-                if(ObjectUtils.isNotEmpty(addressVO) && addressVO.getId() != null){
+                if (ObjectUtils.isNotEmpty(addressVO) && addressVO.getId() != null) {
                     settlementVO.setRecvAddresId(addressVO.getId());
                     settlementVO.setRecvPersonName(addressVO.getContactsName());
                     settlementVO.setRecvPhone(addressVO.getContactsPhone());
@@ -704,10 +706,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //                    settlementVO.setDeliveryAmount(deliveryAmount);//运费
                 }
             }
-        }else{
+        } else {
             //获取用户默认收货地址
             BbcStockAddressVO.DetailVO addressVO = bbcStockAddressRpc.innerGetDefault(dto, StockAddressTypeEnum.收货.getCode());
-            if(ObjectUtils.isNotEmpty(addressVO)){
+            if (ObjectUtils.isNotEmpty(addressVO)) {
                 settlementVO.setRecvAddresId(addressVO.getId());
                 settlementVO.setRecvPersonName(addressVO.getContactsName());
                 settlementVO.setRecvPhone(addressVO.getContactsPhone());
@@ -722,38 +724,39 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     }
 
     /**
-    private BigDecimal getDeliveryAmount(BbcTradeSettlementVO.ListVO settlementVO) {
-        BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
-        BbcStockDeliveryDTO.DeliveryAmountDTO deliveryAmountDTO = new BbcStockDeliveryDTO.DeliveryAmountDTO();
-        deliveryAmountDTO.setAddressId(settlementVO.getRecvAddresId());
-        deliveryAmountDTO.setDeliveryType(TradeDeliveryTypeEnum.快递配送.getCode());
-        deliveryAmountDTO.setShopId(settlementVO.getShopId());
-        List<BbcStockDeliveryDTO.DeliverySKUDTO> deliverySKUDTOS = new ArrayList<>();
-        for(BbcTradeSettlementVO.ListVO.goodsInfoVO goodsInfoVO : settlementVO.getGoodsInfoVOS()){
-            BbcStockDeliveryDTO.DeliverySKUDTO deliverySKUDTO = new BbcStockDeliveryDTO.DeliverySKUDTO();
-            deliverySKUDTO.setSkuId(goodsInfoVO.getSkuId());
-            deliverySKUDTO.setAmount(new BigDecimal(goodsInfoVO.getQuantity()));
-            deliverySKUDTOS.add(deliverySKUDTO);
-        }
-        deliveryAmountDTO.setSkus(deliverySKUDTOS);
-        BbcStockDeliveryVO.DeliveryAmountVO deliveryAmountVO = bbcStockDeliveryRpc.calculate(deliveryAmountDTO);
-        if(ObjectUtils.isNotEmpty(deliveryAmountVO)){
-            deliveryAmount = deliveryAmountVO.getAmount();
-        }
-        return deliveryAmount;
-    }
-     *组装门店自提联系人信息
+     * private BigDecimal getDeliveryAmount(BbcTradeSettlementVO.ListVO settlementVO) {
+     * BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
+     * BbcStockDeliveryDTO.DeliveryAmountDTO deliveryAmountDTO = new BbcStockDeliveryDTO.DeliveryAmountDTO();
+     * deliveryAmountDTO.setAddressId(settlementVO.getRecvAddresId());
+     * deliveryAmountDTO.setDeliveryType(TradeDeliveryTypeEnum.快递配送.getCode());
+     * deliveryAmountDTO.setShopId(settlementVO.getShopId());
+     * List<BbcStockDeliveryDTO.DeliverySKUDTO> deliverySKUDTOS = new ArrayList<>();
+     * for(BbcTradeSettlementVO.ListVO.goodsInfoVO goodsInfoVO : settlementVO.getGoodsInfoVOS()){
+     * BbcStockDeliveryDTO.DeliverySKUDTO deliverySKUDTO = new BbcStockDeliveryDTO.DeliverySKUDTO();
+     * deliverySKUDTO.setSkuId(goodsInfoVO.getSkuId());
+     * deliverySKUDTO.setAmount(new BigDecimal(goodsInfoVO.getQuantity()));
+     * deliverySKUDTOS.add(deliverySKUDTO);
+     * }
+     * deliveryAmountDTO.setSkus(deliverySKUDTOS);
+     * BbcStockDeliveryVO.DeliveryAmountVO deliveryAmountVO = bbcStockDeliveryRpc.calculate(deliveryAmountDTO);
+     * if(ObjectUtils.isNotEmpty(deliveryAmountVO)){
+     * deliveryAmount = deliveryAmountVO.getAmount();
+     * }
+     * return deliveryAmount;
+     * }
+     * 组装门店自提联系人信息
+     *
      * @param dto
      * @param settlementVO
      */
-	private void fillContacts(BbcTradeBuildDTO.cartIdsDTO dto, BbcTradeSettlementVO.ListVO settlementVO) {
+    private void fillContacts(BbcTradeBuildDTO.cartIdsDTO dto, BbcTradeSettlementVO.ListVO settlementVO) {
         QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
-        tradeWrapper.eq("user_id",dto.getJwtUserId());
+        tradeWrapper.eq("user_id", dto.getJwtUserId());
         tradeWrapper.eq("delivery_type", TradeDeliveryTypeEnum.门店自提.getCode());
         tradeWrapper.orderByDesc("cdate");
         tradeWrapper.last("limit 0,1");
         Trade tradeForContacts = tradeRepository.getOne(tradeWrapper);
-        if(ObjectUtils.isNotEmpty(tradeForContacts)){
+        if (ObjectUtils.isNotEmpty(tradeForContacts)) {
             settlementVO.setContactsName(tradeForContacts.getRecvPersonName());
             settlementVO.setContactsPhone(tradeForContacts.getRecvPhone());
         }
@@ -761,12 +764,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 组装商品信息
+     *
      * @param carId
      * @param quantity
      * @param innerServiceGoodsVO
      * @return
      */
-    private BbcTradeSettlementVO.ShopListVO.goodsInfoVO fillGoodsInfoVO(String carId,Integer quantity, BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO) {
+    private BbcTradeSettlementVO.ShopListVO.goodsInfoVO fillGoodsInfoVO(String carId, Integer quantity, BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO) {
         BbcTradeSettlementVO.ShopListVO.goodsInfoVO goodsInfoVO = new BbcTradeSettlementVO.ShopListVO.goodsInfoVO();
         goodsInfoVO.setGoodsId(innerServiceGoodsVO.getGoodsId());
         goodsInfoVO.setGoodsName(innerServiceGoodsVO.getGoodsName());
@@ -786,16 +790,17 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 检查库存
+     *
      * @param goodsItemList
      */
     private CommonStockVO.InnerListCheckStockVO checkStock(List<CommonStockDTO.InnerSkuGoodsInfoItem> goodsItemList) {
         CommonStockDTO.InnerCheckStockDTO innerListCheckStockDTO = new CommonStockDTO.InnerCheckStockDTO();
         innerListCheckStockDTO.setGoodsItemList(goodsItemList);
         ResponseData<CommonStockVO.InnerListCheckStockVO> checkStockVO = commonStockRpc.innerListCheckStock(innerListCheckStockDTO);
-        if(ResponseCodeEnum.失败.getCode() == checkStockVO.getCode()){
+        if (ResponseCodeEnum.失败.getCode() == checkStockVO.getCode()) {
 //            throw new BusinessException(checkStockVO.getMessage());
         }
-        if(!StockCheckStateEnum.库存正常.getCode().equals(checkStockVO.getData().getCheckState())){//库存状态
+        if (!StockCheckStateEnum.库存正常.getCode().equals(checkStockVO.getData().getCheckState())) {//库存状态
 //            throw new BusinessException(StockCheckStateEnum.库存不足.getRemark());
         }
         checkStockVO.setCode(StockCheckStateEnum.库存正常.getCode());
@@ -804,59 +809,60 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 创建订单
+     *
      * @param dto
      */
-	@Override
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public synchronized ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto) {
-		BbcUserVO.DetailVO userInfo = bbcUserRpc.getUserInfoNoLogin(dto);
-		if(userInfo==null||StringUtils.isEmpty(userInfo.getId())){
-			throw new BusinessException("用户不存在！");
-		}
-		Integer telecomsIntegral = userInfo.getTelecomsIntegral();
+        BbcUserVO.DetailVO userInfo = bbcUserRpc.getUserInfoNoLogin(dto);
+        if (userInfo == null || StringUtils.isEmpty(userInfo.getId())) {
+            throw new BusinessException("用户不存在！");
+        }
+        Integer telecomsIntegral = userInfo.getTelecomsIntegral();
 
-		BigDecimal realTradePointAmount = BigDecimal.ZERO;	//实际应该付的积分值
-    	BbcTradeDTO.ListIdDTO listIdDTO = new BbcTradeDTO.ListIdDTO();
-    	List<String> ids = new ArrayList<String>();
+        BigDecimal realTradePointAmount = BigDecimal.ZERO;    //实际应该付的积分值
+        BbcTradeDTO.ListIdDTO listIdDTO = new BbcTradeDTO.ListIdDTO();
+        List<String> ids = new ArrayList<String>();
         BbcStockAddressDTO.IdDTO idDto = new BbcStockAddressDTO.IdDTO(dto.getAddressId());
         idDto.setJwtUserId(dto.getJwtUserId());
         BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
-        if(!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+        if (!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
             //根据id查询地址
             addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
-            if(ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null){
+            if (ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null) {
                 throw new BusinessException("查询不到收货地址");
             }
         }
         BigDecimal totalAmount = BigDecimal.ZERO;//总金额
         BigDecimal totalPointAmount = BigDecimal.ZERO;//总积分额
-        
+
         //商品价格
-		BigDecimal totalGoodsAmount = BigDecimal.ZERO;
-		BigDecimal totalGoodsPointAmount = BigDecimal.ZERO;
-        
+        BigDecimal totalGoodsAmount = BigDecimal.ZERO;
+        BigDecimal totalGoodsPointAmount = BigDecimal.ZERO;
+
         List<BbcTradeBuildDTO.DTO.ShopData> shopDataList = dto.getShopData();//店铺
-        for(BbcTradeBuildDTO.DTO.ShopData shopData:shopDataList){
-        	
-    		//支付金额
-    		BigDecimal tradePointAmount = BigDecimal.ZERO;	//总分配积分金额
-    		BigDecimal tradeAmount = BigDecimal.ZERO;//总分配金额
-    		
-    		//商品价格
-    		BigDecimal goodsAmount = BigDecimal.ZERO;
-    		BigDecimal goodsPointAmount = BigDecimal.ZERO;
-    		
-        	//校验库存
+        for (BbcTradeBuildDTO.DTO.ShopData shopData : shopDataList) {
+
+            //支付金额
+            BigDecimal tradePointAmount = BigDecimal.ZERO;    //总分配积分金额
+            BigDecimal tradeAmount = BigDecimal.ZERO;//总分配金额
+
+            //商品价格
+            BigDecimal goodsAmount = BigDecimal.ZERO;
+            BigDecimal goodsPointAmount = BigDecimal.ZERO;
+
+            //校验库存
             List<CommonStockDTO.InnerSkuGoodsInfoItem> goodsItemList = new ArrayList<>();
-            for(BbcTradeBuildDTO.DTO.ProductData productData : shopData.getProductData()){
-                goodsItemList.add(new CommonStockDTO.InnerSkuGoodsInfoItem(null,productData.getGoodsSkuId(),productData.getQuantity()));
+            for (BbcTradeBuildDTO.DTO.ProductData productData : shopData.getProductData()) {
+                goodsItemList.add(new CommonStockDTO.InnerSkuGoodsInfoItem(null, productData.getGoodsSkuId(), productData.getQuantity()));
             }
             //根据SKU ID数组检查库存
 //            checkStock(goodsItemList);
 
             //查询店铺信息
             BbcShopVO.DetailVO shopDetailVO = iBbcShopRpc.detailShop(new BbcShopDTO.IdDTO(shopData.getShopId()));
-            
+
             //购物车ID
             List<String> cartIdList = new ArrayList<>();
 
@@ -867,101 +873,101 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
             //店铺商品总金额
             BigDecimal shopProductAmount = BigDecimal.ZERO;
-            
+
             /**
              *  GoodsAmount(goodsAmount);
-				GoodsPointAmount(goodsPointAmount);
-				PayableAmount(payableAmount);
-				PayablePointAmount(payablePointAmount);
-				DiscountAmount(discountAmount);
-				DiscountPointAmount(discountPointAmount);
-				TradeAmount
-				TradePointAmount
+             GoodsPointAmount(goodsPointAmount);
+             PayableAmount(payableAmount);
+             PayablePointAmount(payablePointAmount);
+             DiscountAmount(discountAmount);
+             DiscountPointAmount(discountPointAmount);
+             TradeAmount
+             TradePointAmount
              */
             //店铺商品
-            for(BbcTradeBuildDTO.DTO.ProductData productData : shopData.getProductData()){
-            	//查询商品、判断上下架)
+            for (BbcTradeBuildDTO.DTO.ProductData productData : shopData.getProductData()) {
+                //查询商品、判断上下架)
                 //获取商品信息
                 BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO = bbcGoodsInfoRpc.innerServiceGoodsVO(productData.getGoodsSkuId());
-                if(ObjectUtils.isEmpty(innerServiceGoodsVO) || innerServiceGoodsVO.getGoodsId() == null){
+                if (ObjectUtils.isEmpty(innerServiceGoodsVO) || innerServiceGoodsVO.getGoodsId() == null) {
                     throw new BusinessException("无商品数据或已下架");
-                }else if(!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())){
+                } else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
                     throw new BusinessException("商品已下架");
                 }
-            	tradePointAmount = tradePointAmount.add(productData.getPointAmount().multiply(new BigDecimal(productData.getQuantity())));
+                tradePointAmount = tradePointAmount.add(productData.getPointAmount().multiply(new BigDecimal(productData.getQuantity())));
 
-            	totalPointAmount = totalPointAmount.add(tradePointAmount);
-            	
+                totalPointAmount = totalPointAmount.add(tradePointAmount);
+
                 if ("gift".equals(productData.getGoodsSkuId())) {
                     continue;
                 }
-                
+
                 //单品小计金额
                 BigDecimal goodsPrice = innerServiceGoodsVO.getSalePrice().multiply(new BigDecimal(productData.getQuantity()));//单品小计金额
                 totalGoodsAmount = totalGoodsAmount.add(goodsPrice);//商品总金额
-                
+
                 //判断当前用户的是不是IN会员
                 BigDecimal goodsPointPrice = BigDecimal.ZERO;
-                if(userInfo.getIsInUser().equals(1)||innerServiceGoodsVO.getIsInMemberGift()){
-                	goodsPointPrice = innerServiceGoodsVO.getInMemberPointPrice().multiply(new BigDecimal(productData.getQuantity()));//单品小计金额
-                }else{
-                	goodsPointPrice = innerServiceGoodsVO.getPointPrice().multiply(new BigDecimal(productData.getQuantity()));//单品小计金额
+                if (userInfo.getIsInUser().equals(1) || innerServiceGoodsVO.getIsInMemberGift()) {
+                    goodsPointPrice = innerServiceGoodsVO.getInMemberPointPrice().multiply(new BigDecimal(productData.getQuantity()));//单品小计金额
+                } else {
+                    goodsPointPrice = innerServiceGoodsVO.getPointPrice().multiply(new BigDecimal(productData.getQuantity()));//单品小计金额
                 }
                 totalGoodsPointAmount = totalGoodsAmount.add(goodsPointPrice);//商品总金额
                 BigDecimal diffAmount = BigDecimal.ZERO;
-                if(productData.getPointAmount().compareTo(goodsPointPrice)<0){
-                	diffAmount = goodsPointPrice.subtract(productData.getPointAmount()).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP);
+                if (productData.getPointAmount().compareTo(goodsPointPrice) < 0) {
+                    diffAmount = goodsPointPrice.subtract(productData.getPointAmount()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
                 }
                 tradeAmount = tradeAmount.add(goodsPrice.add(diffAmount));
                 totalAmount = totalAmount.add(goodsAmount);
-                
+
                 CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
                 innerChangeStockItem.setSkuId(productData.getGoodsSkuId());
                 innerChangeStockItem.setQuantity(productData.getQuantity());
                 subtractStockItems.add(innerChangeStockItem);
-               
+
                 //组装订单商品表信息
                 BbcTradeGoodsDTO.ETO tradeGoodsDTO = fillTradeGoodsDTO(userInfo,
-                		shopData,productData.getQuantity(),
-                		productData.getPointAmount(),diffAmount,innerServiceGoodsVO,shopDetailVO);
-                
+                        shopData, productData.getQuantity(),
+                        productData.getPointAmount(), diffAmount, innerServiceGoodsVO, shopDetailVO);
+
                 tradeGoodsDTOSet.add(tradeGoodsDTO);
                 //购物车ID
-                if(productData.getCartId() != null){
+                if (productData.getCartId() != null) {
                     cartIdList.add(productData.getCartId());
                 }
-                
+
                 //商品应该付的积分值
-                realTradePointAmount = realTradePointAmount.add((innerServiceGoodsVO.getPointPrice()).multiply(new BigDecimal(productData.getQuantity()+"")));
+                realTradePointAmount = realTradePointAmount.add((innerServiceGoodsVO.getPointPrice()).multiply(new BigDecimal(productData.getQuantity() + "")));
             }
-            
+
             //shopData.setShopProductAmount(shopProductAmount);
             /**计算运费
-            BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
-            if(dto.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) ||
-                    dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())){
-                deliveryAmount = getDeliveryAmount(dto.getShopId(),dto.getProductData(),dto.getDeliveryType(),addressVO.getId());
-            }**/
+             BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
+             if(dto.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) ||
+             dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店配送.getCode())){
+             deliveryAmount = getDeliveryAmount(dto.getShopId(),dto.getProductData(),dto.getDeliveryType(),addressVO.getId());
+             }**/
             //shopData.setDeliveryAmount(new BigDecimal("0"));
             /**营销结算
-            try {
-                marketSettleService.settlement(tradeGoodsDTOSet, dto);
-            }catch (Exception e){
-                log.error("营销结算异常:"+e.getMessage(), e);
-            }**/
+             try {
+             marketSettleService.settlement(tradeGoodsDTOSet, dto);
+             }catch (Exception e){
+             log.error("营销结算异常:"+e.getMessage(), e);
+             }**/
             //创建订单信息
             BbcTradeBuildDTO.SingtonDTO singtonDTO = new BbcTradeBuildDTO.SingtonDTO();
             BeanCopyUtils.copyProperties(dto, singtonDTO);
             BeanCopyUtils.copyProperties(shopData, singtonDTO);
-            
+
             Trade trade = saveTrade(singtonDTO, addressVO,
-            		tradeAmount,tradePointAmount,totalGoodsAmount,totalGoodsPointAmount, BigDecimal.ZERO);
-            try{
+                    tradeAmount, tradePointAmount, totalGoodsAmount, totalGoodsPointAmount, BigDecimal.ZERO);
+            try {
                 producerService.sendHttpMessage(trade.getId());
-               // HttpProducerUtil.sendMessage(trade.getId());
-               // producerService.sendTimeMsg("TradeTimeOutCancel",trade.getId().getBytes(),"5e10ac22eb5348dc928e425c1fbf2841",0);
+                // HttpProducerUtil.sendMessage(trade.getId());
+                // producerService.sendTimeMsg("TradeTimeOutCancel",trade.getId().getBytes(),"5e10ac22eb5348dc928e425c1fbf2841",0);
                 log.info("向队列发送:BbcTradeServiceImpl");
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.info("推送队列失败：");
             }
             //创建交易订单商品信息
@@ -972,97 +978,98 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
             //根据SKU ID、数量减库存
             boolean subtractStockResult = commonStockRpc.innerSubtractStockForTrade(subtractStockItems);
-            if(!subtractStockResult){
+            if (!subtractStockResult) {
                 throw new BusinessException("库存不足");
             }
             //根据购物车ID删除记录
-            if(ObjectUtils.isNotEmpty(cartIdList)){
+            if (ObjectUtils.isNotEmpty(cartIdList)) {
                 bbcUserShoppingCarRpc.innerClearShopCarList(cartIdList);
             }
             ids.add(trade.getId());
         }
-        
-        
-        return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids,totalAmount,totalPointAmount));
+
+
+        return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids, totalAmount, totalPointAmount));
     }
-	/**
+
+    /**
      * 创建订单
+     *
      * @param dto
      * @param addressVO
-     * @param discountAmount
      * @param deliveryAmount
      * @return
      */
-	private Trade saveTrade(BbcTradeBuildDTO.SingtonDTO dto, BbcStockAddressVO.ListVO addressVO, BigDecimal tradeAmount,
-			BigDecimal tradePointAmount, BigDecimal goodsAmount,BigDecimal goodsPointAmount,
-			BigDecimal deliveryAmount) {
-		Trade trade = new Trade();
-		trade.setUserId(dto.getJwtUserId());
-		trade.setShopId(dto.getShopId());
-		trade.setTradeCode(TradeUtils.getTradeCode());
-		trade.setTradeState(TradeStateEnum.待支付.getCode());
-		trade.setCreateTime(LocalDateTime.now());
-		trade.setPayType(TradePayTypeEnum.积分支付.getCode());
-		trade.setDeliveryType(dto.getDeliveryType());
-		// 优惠券id
-		// if (dto.getUserCardVO() != null &&
-		// StrUtil.isNotBlank(dto.getUserCardVO().getCardId())) {
-		// trade.setUserCardId(dto.getUserCardVO().getCardId());
-		// }
-		// if(dto.getDeliveryType() != null && dto.getDeliveryType().intValue()
-		// == TradeDeliveryTypeEnum.门店自提.getCode()){
-		// trade.setTakeGoodsCode(TradeUtils.getTakeGoodsCode());
-		// }
-		// if(dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
-		// trade.setRecvPersonName(dto.getContactsName());
-		// trade.setRecvPhone(dto.getContactsPhone());
-		// }else{
-		trade.setRecvAddresId(addressVO.getId());
-		trade.setRecvPersonName(addressVO.getContactsName());
-		trade.setRecvPhone(addressVO.getContactsPhone());
-		trade.setRecvFullAddres(
-				addressVO.getProvince() + addressVO.getCity() + addressVO.getCounty() + addressVO.getReals());
-		// }
+    private Trade saveTrade(BbcTradeBuildDTO.SingtonDTO dto, BbcStockAddressVO.ListVO addressVO, BigDecimal tradeAmount,
+                            BigDecimal tradePointAmount, BigDecimal goodsAmount, BigDecimal goodsPointAmount,
+                            BigDecimal deliveryAmount) {
+        Trade trade = new Trade();
+        trade.setUserId(dto.getJwtUserId());
+        trade.setShopId(dto.getShopId());
+        trade.setTradeCode(TradeUtils.getTradeCode());
+        trade.setTradeState(TradeStateEnum.待支付.getCode());
+        trade.setCreateTime(LocalDateTime.now());
+        trade.setPayType(TradePayTypeEnum.积分支付.getCode());
+        trade.setDeliveryType(dto.getDeliveryType());
+        // 优惠券id
+        // if (dto.getUserCardVO() != null &&
+        // StrUtil.isNotBlank(dto.getUserCardVO().getCardId())) {
+        // trade.setUserCardId(dto.getUserCardVO().getCardId());
+        // }
+        // if(dto.getDeliveryType() != null && dto.getDeliveryType().intValue()
+        // == TradeDeliveryTypeEnum.门店自提.getCode()){
+        // trade.setTakeGoodsCode(TradeUtils.getTakeGoodsCode());
+        // }
+        // if(dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
+        // trade.setRecvPersonName(dto.getContactsName());
+        // trade.setRecvPhone(dto.getContactsPhone());
+        // }else{
+        trade.setRecvAddresId(addressVO.getId());
+        trade.setRecvPersonName(addressVO.getContactsName());
+        trade.setRecvPhone(addressVO.getContactsPhone());
+        trade.setRecvFullAddres(
+                addressVO.getProvince() + addressVO.getCity() + addressVO.getCounty() + addressVO.getReals());
+        // }
 
-		trade.setBuyerRemark(dto.getBuyerRemark());
-		trade.setGoodsAmount(dto.getShopProductAmount());
-		trade.setDeliveryAmount(deliveryAmount);
-		
-		trade.setSourceType(TradeSourceTypeEnum._2C.getCode());
-		trade.setGoodsSourceType(20);
-		trade.setChildTradeId(UuidUtil.getUuid());
-		
-		
-		/**
-		 * 补的数据
-		 */
-		trade.setMerchantId(dto.getMerchantId());
-		trade.setGoodsAmount(goodsAmount);
-		trade.setGoodsPointAmount(goodsPointAmount);
-		
-		trade.setPayableAmount(goodsAmount);
-		trade.setPayablePointAmount(goodsPointAmount);
-		
-		trade.setDiscountAmount(BigDecimal.ZERO);
-		trade.setDiscountPointAmount(BigDecimal.ZERO);
-		
-		trade.setTradeAmount(tradeAmount);
-		trade.setTradePointAmount(tradePointAmount);
-		
-		tradeRepository.save(trade);
+        trade.setBuyerRemark(dto.getBuyerRemark());
+        trade.setGoodsAmount(dto.getShopProductAmount());
+        trade.setDeliveryAmount(deliveryAmount);
 
-		return trade;
-	}
+        trade.setSourceType(TradeSourceTypeEnum._2C.getCode());
+        trade.setGoodsSourceType(20);
+        trade.setChildTradeId(UuidUtil.getUuid());
 
 
-    private BigDecimal getDeliveryAmount(String shopId,List<BbcTradeBuildDTO.DTO.ProductData> productDataList,Integer deliveryType, String addressId) {
+        /**
+         * 补的数据
+         */
+        trade.setMerchantId(dto.getMerchantId());
+        trade.setGoodsAmount(goodsAmount);
+        trade.setGoodsPointAmount(goodsPointAmount);
+
+        trade.setPayableAmount(goodsAmount);
+        trade.setPayablePointAmount(goodsPointAmount);
+
+        trade.setDiscountAmount(BigDecimal.ZERO);
+        trade.setDiscountPointAmount(BigDecimal.ZERO);
+
+        trade.setTradeAmount(tradeAmount);
+        trade.setTradePointAmount(tradePointAmount);
+
+        tradeRepository.save(trade);
+
+        return trade;
+    }
+
+
+    private BigDecimal getDeliveryAmount(String shopId, List<BbcTradeBuildDTO.DTO.ProductData> productDataList, Integer deliveryType, String addressId) {
         BbcStockDeliveryDTO.DeliveryAmountDTO deliveryAmountDTO = new BbcStockDeliveryDTO.DeliveryAmountDTO();
         deliveryAmountDTO.setAddressId(addressId);
         deliveryAmountDTO.setDeliveryType(deliveryType);
         deliveryAmountDTO.setShopId(shopId);
         List<BbcStockDeliveryDTO.DeliverySKUDTO> deliverySKUDTOS = new ArrayList<>();
-        for(BbcTradeBuildDTO.DTO.ProductData productData : productDataList){
-            if("gift".equals(productData.getGoodsId())){
+        for (BbcTradeBuildDTO.DTO.ProductData productData : productDataList) {
+            if ("gift".equals(productData.getGoodsId())) {
                 continue;
             }
             BbcStockDeliveryDTO.DeliverySKUDTO deliverySKUDTO = new BbcStockDeliveryDTO.DeliverySKUDTO();
@@ -1072,7 +1079,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
         deliveryAmountDTO.setSkus(deliverySKUDTOS);
         BbcStockDeliveryVO.DeliveryAmountVO deliveryAmountVO = bbcStockDeliveryRpc.calculate(deliveryAmountDTO);
-        if(ObjectUtils.isNotEmpty(deliveryAmountVO)){
+        if (ObjectUtils.isNotEmpty(deliveryAmountVO)) {
             return deliveryAmountVO.getAmount();
         }
         return BigDecimal.ZERO;
@@ -1080,6 +1087,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 创建支付信息
+     *
      * @param trade
      */
     private void saveTradePay(Trade trade) {
@@ -1096,14 +1104,15 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 创建交易订单商品信息
+     *
      * @param tradeId
      * @param tradeGoodsDTOSet
      */
-    private int saveTradeGoods(String tradeId,Set<BbcTradeGoodsDTO.ETO> tradeGoodsDTOSet) {
-        int qty=0;
-        for(BbcTradeGoodsDTO.ETO tradeGoodsDTO : tradeGoodsDTOSet){
+    private int saveTradeGoods(String tradeId, Set<BbcTradeGoodsDTO.ETO> tradeGoodsDTOSet) {
+        int qty = 0;
+        for (BbcTradeGoodsDTO.ETO tradeGoodsDTO : tradeGoodsDTOSet) {
             tradeGoodsDTO.setTradeId(tradeId);
-            qty=qty+tradeGoodsDTO.getQuantity();
+            qty = qty + tradeGoodsDTO.getQuantity();
             TradeGoods tradeGoods = new TradeGoods();
             BeanUtils.copyProperties(tradeGoodsDTO, tradeGoods);
             tradeGoods.setId(null);
@@ -1114,15 +1123,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 组装订单商品表信息
-     * @param userId
-     * @param shopId
+     *
      * @param quantity
      * @param innerServiceGoodsVO
      * @return
      */
-    private BbcTradeGoodsDTO.ETO fillTradeGoodsDTO(BbcUserVO.DetailVO userInfo,ShopData shopData,Integer quantity,
-    		BigDecimal payPointAmount,BigDecimal amount, BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO,
-    		BbcShopVO.DetailVO shopDetailVO) {
+    private BbcTradeGoodsDTO.ETO fillTradeGoodsDTO(BbcUserVO.DetailVO userInfo, ShopData shopData, Integer quantity,
+                                                   BigDecimal payPointAmount, BigDecimal amount, BbcGoodsInfoVO.InnerServiceVO innerServiceGoodsVO,
+                                                   BbcShopVO.DetailVO shopDetailVO) {
         BbcTradeGoodsDTO.ETO tradeGoodsDTO = new BbcTradeGoodsDTO.ETO();
         BeanCopyUtils.copyProperties(innerServiceGoodsVO, tradeGoodsDTO);
         BeanCopyUtils.copyProperties(shopData, tradeGoodsDTO);
@@ -1135,15 +1143,15 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         tradeGoodsDTO.setCommentFlag(TradeTrueFalseEnum.是.getCode());
         tradeGoodsDTO.setTradePointAmount(payPointAmount);
         tradeGoodsDTO.setTradeAmount(amount);
-        
-        if(userInfo.getIsInUser().equals(1)||innerServiceGoodsVO.getIsInMemberGift()){
-        	tradeGoodsDTO.setGoodsPointAmount(innerServiceGoodsVO.getInMemberPointPrice());
-        }else{
-        	tradeGoodsDTO.setGoodsPointAmount(innerServiceGoodsVO.getGoodsPointAmount());
+
+        if (userInfo.getIsInUser().equals(1) || innerServiceGoodsVO.getIsInMemberGift()) {
+            tradeGoodsDTO.setGoodsPointAmount(innerServiceGoodsVO.getInMemberPointPrice());
+        } else {
+            tradeGoodsDTO.setGoodsPointAmount(innerServiceGoodsVO.getGoodsPointAmount());
         }
         tradeGoodsDTO.setPayableAmount(innerServiceGoodsVO.getGoodsAmount());
         tradeGoodsDTO.setPayablePointAmount(innerServiceGoodsVO.getPayablePointAmount());
-        
+
         tradeGoodsDTO.setDiscountAmount(BigDecimal.ZERO);
         tradeGoodsDTO.setDiscountPointAmount(BigDecimal.ZERO);
         return tradeGoodsDTO;
@@ -1448,63 +1456,62 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     private JSONObject payInfoToJSON(String payInfo) {
         String[] str = payInfo.split("\\|");
         JSONObject payInfoJson = new JSONObject(true);
-        for(String s : str){
-            payInfoJson.put(s.substring(0,s.indexOf("=")),s.substring(s.indexOf("=")+1));
+        for (String s : str) {
+            payInfoJson.put(s.substring(0, s.indexOf("=")), s.substring(s.indexOf("=") + 1));
         }
         return payInfoJson;
     }
 
     @Override
     public PageData<BbcTradeListVO.tradeVO> tradeListPageData(BbcTradeQTO.TradeList qto) {
-    	
+
         QueryWrapper<BbcTradeQTO.TradeList> wrapper = new QueryWrapper<>();
-        wrapper.and(i -> i.eq("t.`user_id`",qto.getJwtUserId()));
+        wrapper.and(i -> i.eq("t.`user_id`", qto.getJwtUserId()));
         wrapper.isNull("t.`is_hide`");
-        if(ObjectUtils.isNotEmpty(qto.getKeyword())){
+        if (ObjectUtils.isNotEmpty(qto.getKeyword())) {
             wrapper.and(i -> i.
-                    like("tg.`goods_name`",qto.getKeyword()).or().
-                    eq("tg.`goods_no`",qto.getKeyword()).or().
-                    eq("t.`trade_code`",qto.getKeyword()));
+                    like("tg.`goods_name`", qto.getKeyword()).or().
+                    eq("tg.`goods_no`", qto.getKeyword()).or().
+                    eq("t.`trade_code`", qto.getKeyword()));
         }
-        if(ObjectUtils.isNotEmpty(qto.getTradeState())){
-            if(qto.getTradeState()==60){
-                wrapper.and(i->i.eq("t.`trade_state`",40));
+        if (ObjectUtils.isNotEmpty(qto.getTradeState())) {
+            if (qto.getTradeState() == 60) {
+                wrapper.and(i -> i.eq("t.`trade_state`", 40));
                 wrapper.groupBy("t.`id`");
                 wrapper.having("bc > cc");
-            }else if (qto.getTradeState()==70){
-                wrapper.and(i->i.eq("t.`trade_state`",40));
+            } else if (qto.getTradeState() == 70) {
+                wrapper.and(i -> i.eq("t.`trade_state`", 40));
                 wrapper.having("rightsId is null");
-            }
-            else {
+            } else {
                 wrapper.and(i -> i.eq("t.`trade_state`", qto.getTradeState()));//交易状态,不传则查所有状态数据
             }
         }
-        wrapper.and(i->i.eq("t.`source_type`",10));
+        wrapper.and(i -> i.eq("t.`source_type`", 10));
         wrapper.groupBy("t.`id`");
         List<BbcTradeListVO.tradeVO> count = tradeRepository.selectTradeListPage(wrapper);
         wrapper.orderByDesc("cdate");
         IPage<BbcTradeListVO.tradeVO> pager = MybatisPlusUtil.pager(qto);
-        wrapper.last("limit "+pager.offset()+","+pager.getSize());
+        wrapper.last("limit " + pager.offset() + "," + pager.getSize());
         List<BbcTradeListVO.tradeVO> listPage = tradeRepository.selectTradeListPage(wrapper);
         List<BbcTradeListVO.tradeVO> voList = new ArrayList<>();
-        if (ObjectUtils.isEmpty(listPage)){
+        if (ObjectUtils.isEmpty(listPage)) {
             return new PageData<>();
         }
-        for(BbcTradeListVO.tradeVO tradeVO : listPage){
+        for (BbcTradeListVO.tradeVO tradeVO : listPage) {
             //查询退款表
             QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
-            query.and(i->i.eq("trade_id",tradeVO.getId()));
+            query.and(i -> i.eq("trade_id", tradeVO.getId()));
             query.last("limit 0,1");
             TradeRights one = iTradeRightsRepository.getOne(query);
-            if (ObjectUtils.isNotEmpty(one)){
+            if (ObjectUtils.isNotEmpty(one)) {
                 tradeVO.setRightsState(one.getState());
             }
             //查询店铺信息
             BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
             innerShopQTO.setShopId(tradeVO.getShopId());
             BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
-            if (null != innerDetailVO){
-                tradeVO.setShopName(StringUtils.isBlank(innerDetailVO.getShopName())?"":innerDetailVO.getShopName());
+            if (null != innerDetailVO) {
+                tradeVO.setShopName(StringUtils.isBlank(innerDetailVO.getShopName()) ? "" : innerDetailVO.getShopName());
             }
             //根据交易ID查询交易商品集合
             fillTradeVO(tradeVO);
@@ -1523,31 +1530,31 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public ResponseData<BbcTradeListVO.tradeVO> orderDetail(BbcTradeDTO.IdDTO dto) {
         BbcTradeListVO.tradeVO tradeVO = new BbcTradeListVO.tradeVO();
         Trade trade = tradeRepository.getById(dto.getId());
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("无订单数据");
         }
-        BeanUtils.copyProperties(trade,tradeVO);
+        BeanUtils.copyProperties(trade, tradeVO);
         //填充商家信息
         fillShop(tradeVO);
-        
+
         //填充商品集合
         fillTradeVO(tradeVO);
-        
-        if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
+
+        if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
             tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
         }
         //查询退款表
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("trade_id",tradeVO.getId()));
+        query.and(i -> i.eq("trade_id", tradeVO.getId()));
         query.last("limit 0,1");
         TradeRights one = iTradeRightsRepository.getOne(query);
-        if (ObjectUtils.isNotEmpty(one)){
+        if (ObjectUtils.isNotEmpty(one)) {
             tradeVO.setRightsState(one.getState());
         }
         //查询物流信息
-        if(tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
+        if (tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
                 (tradeVO.getTradeState().equals(TradeStateEnum.待收货.getCode()) ||
-                        tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))){//快递配送/已发货/已收货
+                        tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))) {//快递配送/已发货/已收货
             //填充物流信息
             fillLogisticsCompany(tradeVO);
         }
@@ -1559,7 +1566,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     private void fillUserInfo(BbcTradeListVO.tradeVO tradeVO) {
         BbcUserVO.InnerUserInfoVO innerUserInfoVO = bbcUserRpc.innerGetUserInfo(tradeVO.getUserId());
-        if(ObjectUtils.isNotEmpty(innerUserInfoVO)){
+        if (ObjectUtils.isNotEmpty(innerUserInfoVO)) {
             tradeVO.setUserName(innerUserInfoVO.getUserName());
         }
     }
@@ -1568,7 +1575,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         BbcShopQTO.InnerShopQTO innerShopQTO = new BbcShopQTO.InnerShopQTO();
         innerShopQTO.setShopId(tradeVO.getShopId());
         BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(innerShopQTO);
-        if(ObjectUtils.isNotEmpty(innerDetailVO)){
+        if (ObjectUtils.isNotEmpty(innerDetailVO)) {
             tradeVO.setShopName(innerDetailVO.getShopName());
             tradeVO.setShopLogo(innerDetailVO.getShopLogo());
             tradeVO.setShopManName(innerDetailVO.getShopManName());
@@ -1583,9 +1590,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
         tradeDeliveryQueryWrapper.eq("trade_id", tradeVO.getId());
         TradeDelivery tradeDelivery = tradeDeliveryRepository.getOne(tradeDeliveryQueryWrapper);
-        if(ObjectUtils.isNotEmpty(tradeDelivery)){
+        if (ObjectUtils.isNotEmpty(tradeDelivery)) {
             CommonLogisticsCompanyVO.DetailVO logisticsDetailVO = commonLogisticsCompanyRpc.getLogisticsCompany(tradeDelivery.getLogisticsId());
-            if(ObjectUtils.isNotEmpty(logisticsDetailVO)){
+            if (ObjectUtils.isNotEmpty(logisticsDetailVO)) {
                 tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
                 tradeVO.setLogisticsCompanyCode(logisticsDetailVO.getCode());
                 tradeVO.setLogisticsCompanyName(logisticsDetailVO.getName());
@@ -1596,7 +1603,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @DubboReference
     private IBbcUserIntegralRpc iBbcUserIntegralRpc;
-    
+
     /**
      * 订单确认
      */
@@ -1604,10 +1611,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<Void> orderConfirmReceipt(BbcTradeDTO.IdDTO dto) {
         Trade trade = tradeRepository.getById(dto.getId());
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("无订单信息");
         }
-        if(trade.getTradeState().intValue() != TradeStateEnum.待收货.getCode()){
+        if (trade.getTradeState().intValue() != TradeStateEnum.待收货.getCode()) {
             //如果订单状态不是"待收货"则不允许确认收货
             throw new BusinessException("不允许确认收货");
         }
@@ -1621,7 +1628,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             eto.setUserId(trade.getUserId());
             eto.setFromId(trade.getId());
             iBbcUserIntegralRpc.addUserTradeIntergral(eto);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1630,42 +1637,42 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Override
     public ResponseData<Void> deliveryAmount(BbcTradeBuildDTO.DTO dto) {
-    	/**
-        BbcStockDeliveryDTO.DeliveryAmountDTO deliveryAmountDTO = new BbcStockDeliveryDTO.DeliveryAmountDTO();
-        deliveryAmountDTO.setAddressId(dto.getAddressId());
-        deliveryAmountDTO.setDeliveryType(dto.getDeliveryType());
-        deliveryAmountDTO.setShopId(dto.getShopId());
-        List<BbcStockDeliveryDTO.DeliverySKUDTO> deliverySKUDTOS = new ArrayList<>();
-        for(BbcTradeBuildDTO.DTO.ProductData goodsInfoVO : dto.getProductData()){
-            BbcStockDeliveryDTO.DeliverySKUDTO deliverySKUDTO = new BbcStockDeliveryDTO.DeliverySKUDTO();
-            deliverySKUDTO.setSkuId(goodsInfoVO.getGoodsSkuId());
-            deliverySKUDTO.setAmount(new BigDecimal(goodsInfoVO.getQuantity()));
-            deliverySKUDTOS.add(deliverySKUDTO);
-        }
-        deliveryAmountDTO.setSkus(deliverySKUDTOS);
-        BbcStockDeliveryVO.DeliveryAmountVO deliveryAmountVO = bbcStockDeliveryRpc.calculate(deliveryAmountDTO);
-        if(ObjectUtils.isNotEmpty(deliveryAmountVO)){
-            Map result = new HashMap();
-            result.put("deliveryAmount",deliveryAmountVO.getAmount());
-            return ResponseData.data(result);
-        }
-**/
+        /**
+         BbcStockDeliveryDTO.DeliveryAmountDTO deliveryAmountDTO = new BbcStockDeliveryDTO.DeliveryAmountDTO();
+         deliveryAmountDTO.setAddressId(dto.getAddressId());
+         deliveryAmountDTO.setDeliveryType(dto.getDeliveryType());
+         deliveryAmountDTO.setShopId(dto.getShopId());
+         List<BbcStockDeliveryDTO.DeliverySKUDTO> deliverySKUDTOS = new ArrayList<>();
+         for(BbcTradeBuildDTO.DTO.ProductData goodsInfoVO : dto.getProductData()){
+         BbcStockDeliveryDTO.DeliverySKUDTO deliverySKUDTO = new BbcStockDeliveryDTO.DeliverySKUDTO();
+         deliverySKUDTO.setSkuId(goodsInfoVO.getGoodsSkuId());
+         deliverySKUDTO.setAmount(new BigDecimal(goodsInfoVO.getQuantity()));
+         deliverySKUDTOS.add(deliverySKUDTO);
+         }
+         deliveryAmountDTO.setSkus(deliverySKUDTOS);
+         BbcStockDeliveryVO.DeliveryAmountVO deliveryAmountVO = bbcStockDeliveryRpc.calculate(deliveryAmountDTO);
+         if(ObjectUtils.isNotEmpty(deliveryAmountVO)){
+         Map result = new HashMap();
+         result.put("deliveryAmount",deliveryAmountVO.getAmount());
+         return ResponseData.data(result);
+         }
+         **/
         return ResponseData.fail();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String payNotify(BbcTradeResultNotifyVO.notifyVO notifyVO) {
-        log.info("订单支付回调:"+notifyVO.toString());
+        log.info("订单支付回调:" + notifyVO.toString());
         EntMergeOfflineResultNotify resultNotify = new EntMergeOfflineResultNotify();
-        BeanUtils.copyProperties(notifyVO,resultNotify);
-        if(notifyVO.getReturnMessage() != null){
+        BeanUtils.copyProperties(notifyVO, resultNotify);
+        if (notifyVO.getReturnMessage() != null) {
             resultNotify.setReturnMessage(new String(Base64.decode(notifyVO.getReturnMessage())));
         }
-        if(notifyVO.getBackParam() != null){
+        if (notifyVO.getBackParam() != null) {
             resultNotify.setBackParam(new String(Base64.decode(notifyVO.getBackParam())));
         }
-        if(notifyVO.getFailMsg() != null){
+        if (notifyVO.getFailMsg() != null) {
             resultNotify.setFailMsg(new String(Base64.decode(notifyVO.getFailMsg())));
         }
 
@@ -1678,9 +1685,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             if (client.verify(resultNotify)) {
                 System.out.println("验签成功，开始处理业务逻辑");
                 //判断支付结果
-                if(!resultNotify.getStatus().equals(TradePayResultStateEnum.SUCCESS.getRemark())){
+                if (!resultNotify.getStatus().equals(TradePayResultStateEnum.SUCCESS.getRemark())) {
                     log.error(resultNotify.getFailMsg());
-                    responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+                    responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
                     return responseJson.toString();
                 }
                 //根据交易订单编号修改订单状态
@@ -1697,6 +1704,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 隐藏订单
+     *
      * @param dto
      * @return
      */
@@ -1704,7 +1712,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<Void> orderHide(BbcTradeDTO.IdDTO dto) {
         Trade trade = tradeRepository.getById(dto.getId());
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("无订单信息");
         }
         trade.setIsHide(TradeHideEnum.隐藏.getCode());
@@ -1715,35 +1723,36 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 取消订单
+     *
      * @param dto
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseData<Void> orderCancel(BbcTradeCancelDTO.CancelDTO dto) {
-        if (ObjectUtils.isEmpty(dto.getRemark())){
+        if (ObjectUtils.isEmpty(dto.getRemark())) {
             throw new BusinessException("请输入原因");
         }
         System.out.println(dto);
         TradeCancel tradeCancel = new TradeCancel();
         Trade trade = tradeRepository.getById(dto.getTradeId());
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("无订单信息");
         }
-        if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode())){//直接取消订单
+        if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())) {//直接取消订单
             trade.setTradeState(TradeStateEnum.已取消.getCode());
             trade.setTimeoutCancel(TradeTimeOutCancelEnum.买家取消.getCode());
 
-            fillTradeCancel(dto,tradeCancel,trade,null,TradeCancelStateEnum.完成.getCode(),TradeCancelRefundStateEnum.无需退款.getCode());
+            fillTradeCancel(dto, tradeCancel, trade, null, TradeCancelStateEnum.完成.getCode(), TradeCancelRefundStateEnum.无需退款.getCode());
 
-        }else if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode())){
+        } else if (trade.getTradeState().equals(TradeStateEnum.待发货.getCode())) {
             //添加售后表，状态为
             trade.setTradeState(TradeStateEnum.已取消.getCode());
             trade.setTimeoutCancel(TradeTimeOutCancelEnum.买家取消.getCode());
-            inset(trade,dto);
+            inset(trade, dto);
 
 
-        }else{
+        } else {
             throw new BusinessException("不允许取消订单");
         }
         tradeCancelRepository.save(tradeCancel);
@@ -1753,7 +1762,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         return ResponseData.success();
     }
-    private TradeRights inset(Trade trade,BbcTradeCancelDTO.CancelDTO dto) {
+
+    private TradeRights inset(Trade trade, BbcTradeCancelDTO.CancelDTO dto) {
         TradeRights tradeRights = new TradeRights();
         tradeRights.setTradeId(trade.getId()).
                 setShopId(trade.getShopId()).
@@ -1767,14 +1777,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 setRightsReasonType(TradeRightsReasonTypeEnum.取消订单.getCode()).
                 setRightsRemark(dto.getRemark()).
                 //setRefundRemarks(dto.getRemark()).
-                setApplyTime(LocalDateTime.now()).setIsHide(0).setRefundMoneyType(TradeRightsRefundMoneyTypeEnum.取消订单退款.getCode())
-		.setRefundType(TradeRightsRefundTypeEnum.原路退回.getCode());
+                        setApplyTime(LocalDateTime.now()).setIsHide(0).setRefundMoneyType(TradeRightsRefundMoneyTypeEnum.取消订单退款.getCode())
+                .setRefundType(TradeRightsRefundTypeEnum.原路退回.getCode());
         iTradeRightsRepository.save(tradeRights);
         QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("trade_id",tradeRights.getTradeId()));
+        query.and(i -> i.eq("trade_id", tradeRights.getTradeId()));
         List<TradeGoods> list = tradeGoodsRepository.list(query);
-        if (ObjectUtils.isNotEmpty(list)){
-            for (TradeGoods tradeGoods:list){
+        if (ObjectUtils.isNotEmpty(list)) {
+            for (TradeGoods tradeGoods : list) {
                 TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
                 tradeRightsGoods.setRightsId(tradeRights.getId()).
                         setTradeId(tradeRights.getTradeId()).
@@ -1797,7 +1807,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return tradeRights;
     }
 
-    private void fillTradeCancel(BbcTradeCancelDTO.CancelDTO dto, TradeCancel tradeCancel, Trade trade, String tradePayId,Integer cancelState,Integer cancelRefundState) {
+    private void fillTradeCancel(BbcTradeCancelDTO.CancelDTO dto, TradeCancel tradeCancel, Trade trade, String tradePayId, Integer cancelState, Integer cancelRefundState) {
         tradeCancel.setTradeId(trade.getId());
         tradeCancel.setTradeCode(trade.getTradeCode());
         tradeCancel.setUserId(trade.getUserId());
@@ -1814,6 +1824,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 取消交易,回库存
+     *
      * @param tradeId
      * @return
      */
@@ -1827,9 +1838,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public List<BbcTradeListVO.stateCountVO> tradeStateCount(BbcTradeDTO.IdDTO dto) {
 
         QueryWrapper<BbcTradeQTO> tradeWrapper = new QueryWrapper<>();
-        tradeWrapper.and(i -> i.eq("t.`user_id`",dto.getJwtUserId()));
-        tradeWrapper.and(i->i.eq("t.`source_type`",10));
-        tradeWrapper.in("trade_state",Arrays.asList(TradeStateEnum.待支付.getCode(),TradeStateEnum.待收货.getCode(),TradeStateEnum.待发货.getCode()));
+        tradeWrapper.and(i -> i.eq("t.`user_id`", dto.getJwtUserId()));
+        tradeWrapper.and(i -> i.eq("t.`source_type`", 10));
+        tradeWrapper.in("trade_state", Arrays.asList(TradeStateEnum.待支付.getCode(), TradeStateEnum.待收货.getCode(), TradeStateEnum.待发货.getCode()));
         tradeWrapper.groupBy("trade_state");
 
         List<BbcTradeListVO.stateCountVO> stateCountVO = tradeRepository.selectTradeStateCount(tradeWrapper);
@@ -1839,52 +1850,52 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Override
     public List<BbcTradeListVO.InnerGoodsCompareTo> innerCommpareTo(BbcTradeDTO.innerCommpareTo dto) {
-        if (dto.getCompareToType() == 10){
+        if (dto.getCompareToType() == 10) {
             dto.setCompareToType(20);
-        }else if (dto.getCompareToType() == 20){
+        } else if (dto.getCompareToType() == 20) {
             dto.setCompareToType(10);
         }
-        if (ObjectUtils.isNotEmpty(dto.getGoodsIds())){
-            if (ObjectUtils.isNotEmpty(dto.getCompareToType())){
-                if (dto.getCompareToType()==10){
+        if (ObjectUtils.isNotEmpty(dto.getGoodsIds())) {
+            if (ObjectUtils.isNotEmpty(dto.getCompareToType())) {
+                if (dto.getCompareToType() == 10) {
                     //评分
                     QueryWrapper<BbcTradeDTO.innerCommpareTo> query = MybatisPlusUtil.query();
-                    query.and(i->i.in("trade_goods_id",dto.getGoodsIds()));
+                    query.and(i -> i.in("trade_goods_id", dto.getGoodsIds()));
                     query.groupBy("trade_goods_id");
                     List<BbcTradeVO.InnerCompareTo> innerCompareTos = iTradeCommentRepository.selectBbcCompareTo(query);
-                    if (ObjectUtils.isNotEmpty(innerCompareTos)){
-                        if (ObjectUtils.isNotEmpty(dto.getCompareToMode())){
-                            if (dto.getCompareToMode()==10){
+                    if (ObjectUtils.isNotEmpty(innerCompareTos)) {
+                        if (ObjectUtils.isNotEmpty(dto.getCompareToMode())) {
+                            if (dto.getCompareToMode() == 10) {
                                 //评分升序
                                 innerCompareTos.sort(Comparator.comparing(BbcTradeVO.InnerCompareTo::getGrade));
-                                List<BbcTradeListVO.InnerGoodsCompareTo> list=new ArrayList<>();
-                                int num=0;
+                                List<BbcTradeListVO.InnerGoodsCompareTo> list = new ArrayList<>();
+                                int num = 0;
                                 for (int i = 0; i < innerCompareTos.size(); i++) {
                                     num++;
-                                    list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareTos.get(i).getId(),num));
+                                    list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareTos.get(i).getId(), num));
                                 }
                                 for (String s : dto.getGoodsIds()) {
                                     for (BbcTradeListVO.InnerGoodsCompareTo string : list) {
-                                        if (!s.equals(string.getId())){
-                                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num++));
+                                        if (!s.equals(string.getId())) {
+                                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num++));
                                             break;
                                         }
                                     }
                                 }
                                 return list;
-                            }else if (dto.getCompareToMode()==20){
+                            } else if (dto.getCompareToMode() == 20) {
                                 //评分降序
                                 innerCompareTos.sort(Comparator.comparing(BbcTradeVO.InnerCompareTo::getGrade).reversed());
-                                List<BbcTradeListVO.InnerGoodsCompareTo> list=new ArrayList<>();
-                                int num=0;
+                                List<BbcTradeListVO.InnerGoodsCompareTo> list = new ArrayList<>();
+                                int num = 0;
                                 for (int i = 0; i < innerCompareTos.size(); i++) {
                                     num++;
-                                    list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareTos.get(i).getId(),num));
+                                    list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareTos.get(i).getId(), num));
                                 }
                                 for (String s : dto.getGoodsIds()) {
                                     for (BbcTradeListVO.InnerGoodsCompareTo string : list) {
-                                        if (!s.equals(string.getId())){
-                                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num++));
+                                        if (!s.equals(string.getId())) {
+                                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num++));
                                             break;
                                         }
                                     }
@@ -1892,46 +1903,46 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                                 return list;
                             }
                         }
-                    }else {
-                        List<BbcTradeListVO.InnerGoodsCompareTo> list=new ArrayList<>();
-                        int num=0;
+                    } else {
+                        List<BbcTradeListVO.InnerGoodsCompareTo> list = new ArrayList<>();
+                        int num = 0;
                         for (String s : dto.getGoodsIds()) {
                             num++;
-                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num));
+                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num));
                         }
                         return list;
                     }
 
-                }else if (dto.getCompareToType()==20){
+                } else if (dto.getCompareToType() == 20) {
                     //销量
                     QueryWrapper<BbcTradeDTO.innerCommpareTo> query = MybatisPlusUtil.query();
-                    query.and(i->i.in("goods_id",dto.getGoodsIds()));
+                    query.and(i -> i.in("goods_id", dto.getGoodsIds()));
                     List<BbcTradeVO.InnerCompareToCount> innerCompareToCounts = iTradeCommentRepository.selectBbcCompareToCount(query);
                     if (ObjectUtils.isNotEmpty(innerCompareToCounts)) {
                         if (dto.getCompareToMode() == 10) {
                             //销量升序
                             innerCompareToCounts.sort(Comparator.comparing(BbcTradeVO.InnerCompareToCount::getCount));
-                            List<BbcTradeListVO.InnerGoodsCompareTo> list=new ArrayList<>();
-                            int num=0;
+                            List<BbcTradeListVO.InnerGoodsCompareTo> list = new ArrayList<>();
+                            int num = 0;
                             for (int i = 0; i < innerCompareToCounts.size(); i++) {
                                 num++;
-                                list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareToCounts.get(i).getId(),num));
+                                list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareToCounts.get(i).getId(), num));
                             }
                             if (ObjectUtils.isNotEmpty(list)) {
                                 for (String s : dto.getGoodsIds()) {
                                     for (BbcTradeListVO.InnerGoodsCompareTo string : list) {
-                                        if (!s.equals(string.getId())){
-                                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num++));
+                                        if (!s.equals(string.getId())) {
+                                            list.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num++));
                                             break;
                                         }
                                     }
                                 }
-                            }else {
-                                List<BbcTradeListVO.InnerGoodsCompareTo> list1=new ArrayList<>();
-                                int num1=0;
+                            } else {
+                                List<BbcTradeListVO.InnerGoodsCompareTo> list1 = new ArrayList<>();
+                                int num1 = 0;
                                 for (String s : dto.getGoodsIds()) {
                                     num++;
-                                    list1.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num));
+                                    list1.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num));
                                 }
                                 return list1;
                             }
@@ -1939,25 +1950,25 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                         } else if (dto.getCompareToMode() == 20) {
                             //销量降序
                             innerCompareToCounts.sort(Comparator.comparing(BbcTradeVO.InnerCompareToCount::getCount).reversed());
-                            List<BbcTradeListVO.InnerGoodsCompareTo> list=new ArrayList<>();
-                            int num=0;
+                            List<BbcTradeListVO.InnerGoodsCompareTo> list = new ArrayList<>();
+                            int num = 0;
                             for (int i = 0; i < innerCompareToCounts.size(); i++) {
                                 num++;
-                                list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareToCounts.get(i).getId(),num));
+                                list.add(new BbcTradeListVO.InnerGoodsCompareTo(innerCompareToCounts.get(i).getId(), num));
                             }
-                            if (ObjectUtils.isEmpty(list)){
-                                List<BbcTradeListVO.InnerGoodsCompareTo> list1=new ArrayList<>();
-                                int num1=0;
+                            if (ObjectUtils.isEmpty(list)) {
+                                List<BbcTradeListVO.InnerGoodsCompareTo> list1 = new ArrayList<>();
+                                int num1 = 0;
                                 for (String s : dto.getGoodsIds()) {
                                     num++;
-                                    list1.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num));
+                                    list1.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num));
                                 }
                                 return list1;
                             }
                             for (String s : dto.getGoodsIds()) {
                                 for (BbcTradeListVO.InnerGoodsCompareTo string : list) {
-                                    if (!s.equals(string.getId())){
-                                        list.add(new BbcTradeListVO.InnerGoodsCompareTo(s,num++));
+                                    if (!s.equals(string.getId())) {
+                                        list.add(new BbcTradeListVO.InnerGoodsCompareTo(s, num++));
                                         break;
                                     }
                                 }
@@ -1975,28 +1986,38 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public PageData<BbcTradeListVO.PageData> myUserCard(BbcTradeQTO.UserCardQTO qto) {
         QueryWrapper<BbcTradeQTO.UserCardQTO> query = MybatisPlusUtil.query();
         IPage<BbcTradeListVO.PageData> pager = MybatisPlusUtil.pager(qto);
-        query.and(i->i.eq("td.`user_id`",qto.getJwtUserId()));
-        if (ObjectUtils.isNotEmpty(qto.getState())){
-            switch (qto.getState()){
-                case 10:query.and(i->i.eq("td.`state`",MarketPtCardStatusEnum.未使用.getCode()));break;
-                case 20:query.and(i->i.eq("td.`state`",MarketPtCardStatusEnum.已使用.getCode()));break;
-                case 30:query.and(i->i.lt("td.`valid_end_time`",LocalDateTime.now()));break;
+        query.and(i -> i.eq("td.`user_id`", qto.getJwtUserId()));
+        if (ObjectUtils.isNotEmpty(qto.getState())) {
+            switch (qto.getState()) {
+                case 10:
+                    query.and(i -> i.eq("td.`state`", MarketPtCardStatusEnum.未使用.getCode()));
+                    break;
+                case 20:
+                    query.and(i -> i.eq("td.`state`", MarketPtCardStatusEnum.已使用.getCode()));
+                    break;
+                case 30:
+                    query.and(i -> i.lt("td.`valid_end_time`", LocalDateTime.now()));
+                    break;
             }
         }
-        if (ObjectUtils.isNotEmpty(qto.getExpirationTime())){
-            switch (qto.getExpirationTime()){
-                case 10:query.orderByAsc("td.`valid_end_time`");
-                case 20:query.orderByDesc("td.`valid_end_time`");
+        if (ObjectUtils.isNotEmpty(qto.getExpirationTime())) {
+            switch (qto.getExpirationTime()) {
+                case 10:
+                    query.orderByAsc("td.`valid_end_time`");
+                case 20:
+                    query.orderByDesc("td.`valid_end_time`");
             }
-        }else if (ObjectUtils.isNotEmpty(qto.getPreferentialAmount())){
-            switch (qto.getPreferentialAmount()){
-                case 10:query.orderByAsc("td.`cut_price`");
-                case 20:query.orderByDesc("td.`cut_price`");
+        } else if (ObjectUtils.isNotEmpty(qto.getPreferentialAmount())) {
+            switch (qto.getPreferentialAmount()) {
+                case 10:
+                    query.orderByAsc("td.`cut_price`");
+                case 20:
+                    query.orderByDesc("td.`cut_price`");
             }
         }
-        repository.selectBbcListPage(pager,query);
-        if (ObjectUtils.isNotEmpty(query) || ObjectUtils.isNotEmpty(pager)){
-          return   MybatisPlusUtil.toPageData(qto, BbcTradeListVO.PageData.class, pager);
+        repository.selectBbcListPage(pager, query);
+        if (ObjectUtils.isNotEmpty(query) || ObjectUtils.isNotEmpty(pager)) {
+            return MybatisPlusUtil.toPageData(qto, BbcTradeListVO.PageData.class, pager);
         }
 
         return new PageData<>();
@@ -2006,31 +2027,31 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public List<BbcTradeListVO.UseCard> useCard(BbcTradeDTO.UseCard dto) {
         //查询会员领取的所有优惠卷
         QueryWrapper<BbcTradeDTO.UseCard> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("td.`user_id`",dto.getJwtUserId()));
-        query.and(i->i.gt("td.`valid_end_time`",LocalDateTime.now()).lt("td.`valid_start_time`",LocalDateTime.now()));
-        if (StringUtils.isEmpty(dto.getShopId())){
+        query.and(i -> i.eq("td.`user_id`", dto.getJwtUserId()));
+        query.and(i -> i.gt("td.`valid_end_time`", LocalDateTime.now()).lt("td.`valid_start_time`", LocalDateTime.now()));
+        if (StringUtils.isEmpty(dto.getShopId())) {
             throw new BusinessException("请传入shopId");
         }
-        query.and(i->i.eq("td.`shop_id`",dto.getShopId()));
+        query.and(i -> i.eq("td.`shop_id`", dto.getShopId()));
         List<BbcTradeListVO.UseCard> useCards = iMarketMerchantCardUsersRepository.selectBbcUseCard(query);
         List<String> cardId = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(useCards)) {
             for (BbcTradeListVO.UseCard useCard : useCards) {
                 QueryWrapper<MarketMerchantCardGoods> query1 = MybatisPlusUtil.query();
-                query1.and(i->i.eq(ObjectUtils.isNotEmpty(useCard.getCardId()),"card_id",cardId));
+                query1.and(i -> i.eq(ObjectUtils.isNotEmpty(useCard.getCardId()), "card_id", cardId));
                 List<MarketMerchantCardGoods> list = iMarketMerchantCardGoodsRepository.list(query1);
-                BigDecimal total=new BigDecimal(0);
-                if (ObjectUtils.isNotEmpty(list)){
+                BigDecimal total = new BigDecimal(0);
+                if (ObjectUtils.isNotEmpty(list)) {
                     for (MarketMerchantCardGoods marketMerchantCardGoods : list) {
                         for (BbcTradeDTO.UseCardGoods useCardGoods : dto.getGoodsInfo()) {
-                            if (marketMerchantCardGoods.getGoodsId().equals(useCardGoods.getGoodsId())){
+                            if (marketMerchantCardGoods.getGoodsId().equals(useCardGoods.getGoodsId())) {
                                 total.add(useCardGoods.getTotalAmount());
                             }
                         }
 
                     }
                 }
-                if (total.compareTo(useCard.getToPrice())==-1){
+                if (total.compareTo(useCard.getToPrice()) == -1) {
                     useCard.setIsHide(10);
                 }
             }
@@ -2046,22 +2067,22 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public void offlinePay(BbcTradeDTO.OfflinePayDTO dto) {
         //根据订单ID查询数据
         Trade trade = tradeRepository.getById(dto.getId());
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             throw new BusinessException("无订单数据");
-        }else if(trade.getTradeState().intValue() == TradeStateEnum.待发货.getCode()){
+        } else if (trade.getTradeState().intValue() == TradeStateEnum.待发货.getCode()) {
             throw new BusinessException("订单已支付");
-        }else if(trade.getTradeState().intValue() != TradeStateEnum.待支付.getCode()){
+        } else if (trade.getTradeState().intValue() != TradeStateEnum.待支付.getCode()) {
             throw new BusinessException("请退出登录后重试");
         }
         //修改支付主表
         QueryWrapper<TradePay> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("trade_id",trade.getId()));
+        query.and(i -> i.eq("trade_id", trade.getId()));
         TradePay tradePay = tradePayRepository.getOne(query);
-        if(ObjectUtils.isNotEmpty(tradePay)){
+        if (ObjectUtils.isNotEmpty(tradePay)) {
             tradePay.setPayState(TradePayStateEnum.待确认.getCode());
         }
         //存线下付款表
-        saveTradeOffline(dto,trade,tradePay);
+        saveTradeOffline(dto, trade, tradePay);
 
     }
 
@@ -2073,7 +2094,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Override
     public Integer myMerchantCard(BaseDTO dto) {
         QueryWrapper<MarketMerchantCardUsers> query = MybatisPlusUtil.query();
-        query.and(i->i.eq("user_id",dto.getJwtUserId()));
+        query.and(i -> i.eq("user_id", dto.getJwtUserId()));
         int count = iMarketMerchantCardUsersRepository.count(query);
         return count;
     }
@@ -2083,13 +2104,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         tradeMapper.modifyOrderAddress(dto);
     }
 
-	@Override
+    @Override
     public Integer getExchangeQuantity(String id) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("id", id);
-        wrapper.eq("trade_state",TradeStateEnum.已完成.getCode());
+        wrapper.eq("trade_state", TradeStateEnum.已完成.getCode());
         wrapper.eq("flag", false);
-        wrapper.eq("goods_source_type",2);
+        wrapper.eq("goods_source_type", 2);
         return tradeMapper.selectCount(wrapper);
     }
 
@@ -2111,7 +2132,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 setPayRemark(dto.getTransferRemarks()).
                 setVerifyState(TradePayOfficeEnum.待确认.getCode());
         tradePayOfflineRepository.save(tradePayOffline);
-        for (String img : dto.getTransImage()){
+        for (String img : dto.getTransImage()) {
             TradePayOfflineImg tradePayOfflineImg = new TradePayOfflineImg();
             tradePayOfflineImg.setOfflineId(tradePayOffline.getTradeId()).setOfflineImg(img);
             iTradePayOfflineImgRepository.save(tradePayOfflineImg);
@@ -2122,14 +2143,15 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 填充skuId/购买数量
+     *
      * @param tradeId
      * @param goodsItemList
      */
     private void fillChangeStockItem(String tradeId, List<CommonStockDTO.InnerChangeStockItem> goodsItemList) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id",tradeId);
+        tradeGoodsQueryWrapper.eq("trade_id", tradeId);
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
-        for(TradeGoods tradeGoods : tradeGoodsList){
+        for (TradeGoods tradeGoods : tradeGoodsList) {
             CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
             innerChangeStockItem.setSkuId(tradeGoods.getSkuId());
             innerChangeStockItem.setQuantity(tradeGoods.getQuantity());
@@ -2140,62 +2162,65 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 组装TradeVO、tradeGoodsVO数据
+     *
      * @param tradeVO
      */
     private void fillTradeVO(BbcTradeListVO.tradeVO tradeVO) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
+        tradeGoodsQueryWrapper.eq("trade_id", tradeVO.getId());
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<BbcTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
         Integer quantity = 0;
         BbcGoodsInfoVO.DetailVO goodsDetail = new BbcGoodsInfoVO.DetailVO();
-        for(TradeGoods tradeGoods : tradeGoodsList){
+        for (TradeGoods tradeGoods : tradeGoodsList) {
             BbcTradeListVO.TradeGoodsVO tradeGoodsVO = new BbcTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             String goodsId = tradeGoods.getGoodsId();
             goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
             tradeGoodsVO.setExchangeType(goodsDetail.getExchangeType());
-            if(tradeGoods.getQuantity()!=null)
-            	quantity = quantity+tradeGoods.getQuantity();
-            
+            if (tradeGoods.getQuantity() != null)
+                quantity = quantity + tradeGoods.getQuantity();
+
             tradeGoodsVO.setTradeState(tradeVO.getTradeState());
             tradeGoodsVO.setRightsStateDetail(0);
             tradeGoodsVO.setRightsState(0);
-            
+
             //判断当前订单有没有售后
-            QueryWrapper<TradeRightsGoods> tradeGoodsWrapper = new QueryWrapper<>();
-	        tradeGoodsWrapper.eq("trade_goods_id",tradeGoods.getId());
-	        TradeRightsGoods tradeRightsGoods = tradeRightsGoodsRepository.getOne(tradeGoodsWrapper);
-            if(tradeRightsGoods!=null){//有售后
-            	String rightsId = tradeRightsGoods.getRightsId();
-            	TradeRights tradeRights = tradeRightsRepository.getById(rightsId);
-            	if(tradeRights!=null){
-            		Integer state = tradeRights.getState();
-            		Integer rightsType = tradeRights.getRightsType();
-            		tradeGoodsVO.setRightsStateDetail(state);
-            		tradeGoodsVO.setRightsType(rightsType);
-            		
-            		//50,60,70,80,90,
-            		if(state.equals(TradeRightsEndStateEnum.平台同意.getCode())||
-            				state.equals(TradeRightsEndStateEnum.平台驳回.getCode())||
-            				state.equals(TradeRightsEndStateEnum.换货完成.getCode())||
-            				state.equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode())||
-            				state.equals(TradeRightsEndStateEnum.用户取消.getCode())){
-            			tradeGoodsVO.setRightsState(TradeRightsStateTradeEnum.完成售后.getCode());
-            		}else{
-            			tradeGoodsVO.setRightsState(TradeRightsStateTradeEnum.售后中.getCode());
-            		}
-            	}
+            // QueryWrapper<TradeRightsGoods> tradeGoodsWrapper = new QueryWrapper<>();
+            QueryWrapper<TradeRightsGoods> tradeGoodsWrapper = MybatisPlusUtil.query();
+            tradeGoodsWrapper.eq("trade_goods_id", tradeGoods.getId());
+            tradeGoodsWrapper.eq("is_revocation", false);
+            TradeRightsGoods tradeRightsGoods = tradeRightsGoodsRepository.getOne(tradeGoodsWrapper);
+            if (tradeRightsGoods != null) {//有售后
+                String rightsId = tradeRightsGoods.getRightsId();
+                TradeRights tradeRights = tradeRightsRepository.getById(rightsId);
+                if (tradeRights != null) {
+                    Integer state = tradeRights.getState();
+                    Integer rightsType = tradeRights.getRightsType();
+                    tradeGoodsVO.setRightsStateDetail(state);
+                    tradeGoodsVO.setRightsType(rightsType);
+
+                    //50,60,70,80,90,
+                    if (state.equals(TradeRightsEndStateEnum.平台同意.getCode()) ||
+                            state.equals(TradeRightsEndStateEnum.平台驳回.getCode()) ||
+                            state.equals(TradeRightsEndStateEnum.换货完成.getCode()) ||
+                            state.equals(TradeRightsEndStateEnum.商家确认收货并退款.getCode()) ||
+                            state.equals(TradeRightsEndStateEnum.用户取消.getCode())) {
+                        tradeGoodsVO.setRightsState(TradeRightsStateTradeEnum.完成售后.getCode());
+                    } else {
+                        tradeGoodsVO.setRightsState(TradeRightsStateTradeEnum.售后中.getCode());
+                    }
+                }
             }
-	        tradeGoodsVOS.add(tradeGoodsVO);
-            
+            tradeGoodsVOS.add(tradeGoodsVO);
+
 //            tradeGoodsVOS.
         }
         tradeVO.setQuantity(quantity);
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
     }
 
-    public EntOffLinePaymentResponse doPreOrder(BossClient client,Trade trade) throws Exception {
+    public EntOffLinePaymentResponse doPreOrder(BossClient client, Trade trade) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String orderTime = sdf.format(new Date());
         String merchantId = MerchantBaseEnum.merchant_hly_Id.getValue();
@@ -2206,20 +2231,20 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         request.setService("EntOffLinePayment");
         log.info("notifyURL:" + notifyUrl);
         request.setOfflineNotifyUrl(notifyUrl);//交易结果通过后台通讯通知到这个url
-        if(ObjectUtils.isNotEmpty(IpUtil.getHttpServletRequest())){
+        if (ObjectUtils.isNotEmpty(IpUtil.getHttpServletRequest())) {
             request.setClientIP(IpUtil.getRemoteHost(IpUtil.getHttpServletRequest()));
-        }else{
+        } else {
             request.setClientIP("127.0.0.1");
         }
         request.setRequestId(UuidUtil.getUuid());
         request.setMerchantId(merchantId);
         request.setMerchantName("商户展示名称");
         request.setOrderId(trade.getTradeCode());
-        log.info("trade.getTradeCode():"+trade.getTradeCode());
+        log.info("trade.getTradeCode():" + trade.getTradeCode());
         request.setOrderTime(orderTime);
         //TODO 测试1分钱
         //request.setTotalAmount("1");
-        request.setTotalAmount(""+trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());
+        request.setTotalAmount("" + trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());
         request.setCurrency("CNY");
         request.setBackParam("保留数据1");
         request.setSplitType("1");
@@ -2231,12 +2256,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setDetailOrderId(trade.getChildTradeId());//子订单号 商户的子订单号，保证全局唯一，不能与订单号重复
         String childMerchantId = iCommonShopRpc.lakalaNoByShopId(trade.getShopId());
-        if (com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotBlank(childMerchantId)){
+        if (com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotBlank(childMerchantId)) {
             orderDetail.setRcvMerchantId(childMerchantId);//收款方商户编号-子商户
         }
         orderDetail.setOrderSeqNo("001");//订单序号 订单顺序号,只能上送数字
         //orderDetail.setOrderAmt("1");
-        orderDetail.setOrderAmt(""+trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());//子订单金额，以分为单位，等于子订单支付金额与子订单手续费金额和,如果是按比例分账，此信息域上送分账比例，如40.75%上送为4075，我方收到后做相应缩小
+        orderDetail.setOrderAmt("" + trade.getTradeAmount().multiply(new BigDecimal("100")).intValue());//子订单金额，以分为单位，等于子订单支付金额与子订单手续费金额和,如果是按比例分账，此信息域上送分账比例，如40.75%上送为4075，我方收到后做相应缩小
         orderDetail.setShareFee("0");//分账手续费，如果上送，将按照此手续费计算，商户平台不需要指定手续费时，默认为0
         orderDetail.setRcvMerchantIdName("收款方商户名称");//收款方商户名称-子商户
         orderDetail.setShowUrl("http://www.test.com/test/callback.jsp");//商品展示的url
@@ -2254,10 +2279,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     /**
      * 调用支付接口
+     *
      * @param client
      * @param entOffLinePaymentResponse
      */
-    private QRCodePaymentCommitResponse doPay(String openid,BossClient client, EntOffLinePaymentResponse entOffLinePaymentResponse) throws Exception {
+    private QRCodePaymentCommitResponse doPay(String openid, BossClient client, EntOffLinePaymentResponse entOffLinePaymentResponse) throws Exception {
         log.info("doPay start");
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
@@ -2269,9 +2295,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         request.setVersion("1.0");
         request.setSignType("RSA");
         request.setService("QRCodePaymentCommit");
-        if(ObjectUtils.isNotEmpty(IpUtil.getHttpServletRequest())){
+        if (ObjectUtils.isNotEmpty(IpUtil.getHttpServletRequest())) {
             request.setClientIP(IpUtil.getRemoteHost(IpUtil.getHttpServletRequest()));
-        }else{
+        } else {
             request.setClientIP("127.0.0.1");
         }
         request.setRequestId(requestId);
@@ -2339,90 +2365,90 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return null;
     }
 
-	@Override
-	public ResponseData<Void> checkAndPointDoPay(CheckAndPointDoPayETO dto) {
-		JSONObject responseJson = new JSONObject();
-		
-		/**
-		 * 判断用户积分帐户的钱够不够了
-		 */
-		BbcUserVO.DetailVO detailVO = iBbcUserRpc.getUserInfoNoLogin(dto);
-		if(detailVO==null||StringUtils.isEmpty(detailVO.getId())){
-			throw new BusinessException("无有效的用户信息");
-		}
-		/**
-		 * 看看我积分的钱够不够
-		 */
-		Integer telecomsIntegral = detailVO.getTelecomsIntegral();
-		
-		List<String>  tradeIds = dto.getTradeIds();
-		if(CollectionUtil.isNotEmpty(tradeIds)){
-			//跟据id查询要支付的订单
-			
-			/**
-			 * 算下我一共要付的积分是多少
-			 */
-			String idsStr = CollUtil.isNotEmpty(tradeIds) ? CollUtil.join(tradeIds, "','") : "-1";
-			Integer totalTelecomsIntegral = tradeMapper.sumTradePointAmount(idsStr);
-			if(totalTelecomsIntegral>telecomsIntegral){
-				throw new BusinessException("您的积分值不够！");
-			}
-			
-			
-			
-			/**
-			 * 减积分
-			 */
-			for(String tradeId:tradeIds){
-				Trade trade = tradeRepository.getById(tradeId);
-				JSONObject ret = this.paySuccessTrade(trade);
-				if(ret.getInteger("code")==1){
-					return ResponseData.fail(ret.toString());
-				}
-			}
-			BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(),totalTelecomsIntegral);
-			bbcUserCtccPointRpc.subCtccPoint(subCtccPointDTO);
-			
-		}else{
-			
-			responseJson.put("code", 1);
-			responseJson.put("result", "没有找到对应订单");
-			return ResponseData.fail(responseJson.toString());
-		}
-		responseJson.put("result", "支付成功！");
-		return ResponseData.success(responseJson.toString());
-	}
-	
-	
-	private void sendCtcc(List<String> tradeIds){
-		
-		if(tradeIds.size()==1){
-			QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
-	        tradeGoodsWrapper.eq("trade_id",tradeIds.get(0));
-	        List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
-	        
-	        if(tradeGoodsList.size()==1){
-	        	String goodsId = ((TradeGoods)tradeGoodsList.get(0)).getGoodsId();
-	        	
-	        	//获取商户是否走B2I;
-	        	BbcGoodsInfoVO.GoodsCtccApiVO goodsCtccApiVO = bbcGoodsInfoRpc.getCtccApiByGoodId(goodsId);
-	        	if(goodsCtccApiVO!=null&&goodsCtccApiVO.getCtccApi().equals(GoodsCtccApiEnum.B2I.getCode())){
-	        		//走B2I
+    @Override
+    public ResponseData<Void> checkAndPointDoPay(CheckAndPointDoPayETO dto) {
+        JSONObject responseJson = new JSONObject();
+
+        /**
+         * 判断用户积分帐户的钱够不够了
+         */
+        BbcUserVO.DetailVO detailVO = iBbcUserRpc.getUserInfoNoLogin(dto);
+        if (detailVO == null || StringUtils.isEmpty(detailVO.getId())) {
+            throw new BusinessException("无有效的用户信息");
+        }
+        /**
+         * 看看我积分的钱够不够
+         */
+        Integer telecomsIntegral = detailVO.getTelecomsIntegral();
+
+        List<String> tradeIds = dto.getTradeIds();
+        if (CollectionUtil.isNotEmpty(tradeIds)) {
+            //跟据id查询要支付的订单
+
+            /**
+             * 算下我一共要付的积分是多少
+             */
+            String idsStr = CollUtil.isNotEmpty(tradeIds) ? CollUtil.join(tradeIds, "','") : "-1";
+            Integer totalTelecomsIntegral = tradeMapper.sumTradePointAmount(idsStr);
+            if (totalTelecomsIntegral > telecomsIntegral) {
+                throw new BusinessException("您的积分值不够！");
+            }
+
+
+            /**
+             * 减积分
+             */
+            for (String tradeId : tradeIds) {
+                Trade trade = tradeRepository.getById(tradeId);
+                JSONObject ret = this.paySuccessTrade(trade);
+                if (ret.getInteger("code") == 1) {
+                    return ResponseData.fail(ret.toString());
+                }
+            }
+            BbcUserCtccPointDTO.SubCtccPointDTO subCtccPointDTO = new BbcUserCtccPointDTO.SubCtccPointDTO(detailVO.getId(), totalTelecomsIntegral);
+            bbcUserCtccPointRpc.subCtccPoint(subCtccPointDTO);
+
+        } else {
+
+            responseJson.put("code", 1);
+            responseJson.put("result", "没有找到对应订单");
+            return ResponseData.fail(responseJson.toString());
+        }
+        responseJson.put("result", "支付成功！");
+        return ResponseData.success(responseJson.toString());
+    }
+
+
+    private void sendCtcc(List<String> tradeIds) {
+
+        if (tradeIds.size() == 1) {
+            QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+            tradeGoodsWrapper.eq("trade_id", tradeIds.get(0));
+            List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+
+            if (tradeGoodsList.size() == 1) {
+                String goodsId = ((TradeGoods) tradeGoodsList.get(0)).getGoodsId();
+
+                //获取商户是否走B2I;
+                BbcGoodsInfoVO.GoodsCtccApiVO goodsCtccApiVO = bbcGoodsInfoRpc.getCtccApiByGoodId(goodsId);
+                if (goodsCtccApiVO != null && goodsCtccApiVO.getCtccApi().equals(GoodsCtccApiEnum.B2I.getCode())) {
+                    //走B2I
 //	        		SimpleBusinessAccept
-	        	}
-	        }
-		}
-			
-	}
-	/**
+                }
+            }
+        }
+
+    }
+
+    /**
      * 根据交易订单编号修改状态
-     * @param tradeCode
+     *
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     private JSONObject paySuccessTrade(Trade trade) {
         JSONObject responseJson = new JSONObject();
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             log.error("trade is null");
             responseJson.put("code", 1);
             responseJson.put("result", "没有找到对应订单");
@@ -2430,24 +2456,24 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
 
         QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
-        tradePayWrapper.eq("trade_id",trade.getId());
+        tradePayWrapper.eq("trade_id", trade.getId());
         TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
-        if(ObjectUtils.isEmpty(tradePay)){
+        if (ObjectUtils.isEmpty(tradePay)) {
             log.error("tradePay is null");
             responseJson.put("code", 1);
-            responseJson.put("result","没有找到对应支付订单");
+            responseJson.put("result", "没有找到对应支付订单");
             return responseJson;
         }
 
-        if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
-                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())){
-        	responseJson.put("code", 1);
-            responseJson.put("result","您的订单已支付！");
+        if (trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())) {
+            responseJson.put("code", 1);
+            responseJson.put("result", "您的订单已支付！");
             return responseJson;
         }
         //修改订单状态//修改支付状态
-        if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
-                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())){
+        if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())) {
 
             trade.setTradeState(TradeStateEnum.待发货.getCode());
             trade.setPayTime(LocalDateTime.now());
@@ -2468,16 +2494,18 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //            }
 //            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
             responseJson.put("code", 0);
-            responseJson.put("result","支付成功！");
+            responseJson.put("result", "支付成功！");
 
             return responseJson;
         }
         responseJson.put("code", 1);
-        responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+        responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
         return responseJson;
     }
+
     /**
      * 根据交易订单编号修改状态
+     *
      * @param tradeCode
      * @return
      */
@@ -2486,55 +2514,55 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     public String paySuccess(String tradeCode) {
         JSONObject responseJson = new JSONObject();
         QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
-        tradeWrapper.eq("trade_code",tradeCode);
+        tradeWrapper.eq("trade_code", tradeCode);
         Trade trade = tradeRepository.getOne(tradeWrapper);
-        if(ObjectUtils.isEmpty(trade)){
+        if (ObjectUtils.isEmpty(trade)) {
             log.error("trade is null");
             responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
             return responseJson.toString();
         }
 
         QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
-        tradePayWrapper.eq("trade_id",trade.getId());
+        tradePayWrapper.eq("trade_id", trade.getId());
         TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
-        if(ObjectUtils.isEmpty(tradePay)){
+        if (ObjectUtils.isEmpty(tradePay)) {
             log.error("tradePay is null");
-            responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+            responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
             return responseJson.toString();
         }
 
-        if(trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
-                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())){
-            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
+        if (trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())) {
+            responseJson.put("result", TradePayResultStateEnum.SUCCESS.getRemark());
             return responseJson.toString();
         }
         //修改订单状态//修改支付状态
-        if(trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
-                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())){
+        if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
+                tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())) {
 
             trade.setTradeState(TradeStateEnum.待发货.getCode());
             trade.setPayTime(LocalDateTime.now());
             tradeRepository.saveOrUpdate(trade);
             tradePay.setPayState(TradePayStateEnum.已支付.getCode());
             tradePayRepository.saveOrUpdate(tradePay);
-            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
-                if (StringUtils.isNotEmpty(trade.getRecvPhone())&&ObjectUtils.isNotEmpty(trade.getRecvPersonName())&&StringUtils.isNotEmpty(trade.getTradeCode())) {
+            if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
+                if (StringUtils.isNotEmpty(trade.getRecvPhone()) && ObjectUtils.isNotEmpty(trade.getRecvPersonName()) && StringUtils.isNotEmpty(trade.getTradeCode())) {
                     BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(new BbcShopQTO.InnerShopQTO(trade.getShopId()));
                     if (ObjectUtils.isNotEmpty(innerDetailVO)) {
-                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(),innerDetailVO.getShopName());
-                        log.info("支付成功发送自提码：{}",trade.getTakeGoodsCode());
-                    }else {
+                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(), innerDetailVO.getShopName());
+                        log.info("支付成功发送自提码：{}", trade.getTakeGoodsCode());
+                    } else {
                         ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName());
-                        log.info("支付成功使用旧的自提码模版发送自提码：{}",trade.getTakeGoodsCode());
+                        log.info("支付成功使用旧的自提码模版发送自提码：{}", trade.getTakeGoodsCode());
                     }
                 }
             }
             commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
-            responseJson.put("result",TradePayResultStateEnum.SUCCESS.getRemark());
+            responseJson.put("result", TradePayResultStateEnum.SUCCESS.getRemark());
 
             return responseJson.toString();
         }
-        responseJson.put("result",TradePayResultStateEnum.FAILED.getRemark());
+        responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
         return responseJson.toString();
     }
 }

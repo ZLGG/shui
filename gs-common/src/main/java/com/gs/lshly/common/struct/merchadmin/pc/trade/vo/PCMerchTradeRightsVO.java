@@ -192,11 +192,17 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("应退金额")
         private BigDecimal shouldRefundAmount;
 
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+
         @ApiModelProperty("实付积分")
         private BigDecimal tradePointAmount;
 
         @ApiModelProperty("应退积分")
         private BigDecimal shouldRefundPoint;
+
+        @ApiModelProperty("实退积分")
+        private BigDecimal refundPoint;
 
         @ApiModelProperty("运费")
         private BigDecimal deliveryAmount;
