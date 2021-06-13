@@ -207,6 +207,10 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("运费")
         private BigDecimal deliveryAmount;
 
+        @ApiModelProperty("申请时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime applyTime;
+
         @ApiModelProperty("售后凭证图片")
         private List<String> rightsImge;
 
@@ -280,6 +284,8 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         private String goodsNo;
         @ApiModelProperty("商品sku图片")
         private String skuImg;
+        @ApiModelProperty("商品规格值")
+        private String skuSpecValue;
     }
 
     @Data
