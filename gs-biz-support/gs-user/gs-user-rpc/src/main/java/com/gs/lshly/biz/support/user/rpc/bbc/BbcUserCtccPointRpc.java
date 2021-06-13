@@ -1,9 +1,12 @@
 package com.gs.lshly.biz.support.user.rpc.bbc;
 
+import java.math.BigDecimal;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserCtccPointService;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO.AddCtccPointDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO.SubCtccPointDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO.DetailVO;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
@@ -32,6 +35,14 @@ public class BbcUserCtccPointRpc implements IBbcUserCtccPointRpc {
 		bbcUserCtccPointService.subCtccPoint(dto);
 		
 	}
+
+	@Override
+	public void addCtccPoint(String userId,BigDecimal point) {
+		bbcUserCtccPointService.addCtccPoint(userId,point);
+		
+	}
+	
+	
 
     
 }

@@ -121,9 +121,9 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     @DubboReference
     private ITradeGoodsRpc iTradeGoodsRpc;
-
+    
     @DubboReference
-    private ICtccPtActivityGoodsRpc iCtccPtActivityGoodsRpc;
+    private ICtccPtActivityGoodsRpc ctccPtActivityGoodsRpc;
 
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto) {
@@ -140,7 +140,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 boost.in("gs.id", goodsIdList);
             }
             if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信国际.getCode())) {
-                List<String> ctccGoodsList = iCtccPtActivityGoodsRpc.getList();
+                List<String> ctccGoodsList = ctccPtActivityGoodsRpc.getList();
                 boost.in("gs.id", ctccGoodsList);
             }
 /*            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.扶贫专区.getCode())) {
@@ -725,6 +725,11 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 goodsInfo.setPublishTime(LocalDateTime.now());
             }
             repository.update(goodsInfo, wrapper);
+        }
+        
+        if (state.intValue() == GoodsStateEnum.未上架.getCode().intValue()) {
+            //电信国际里面下架
+            ctccPtActivityGoodsRpc.underStateByGoodsId(dto.getIdList());
         }
     }
 
