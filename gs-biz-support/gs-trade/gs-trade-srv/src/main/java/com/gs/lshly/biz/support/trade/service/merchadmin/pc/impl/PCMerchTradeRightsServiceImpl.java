@@ -486,7 +486,6 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 saveTradeRightsGoods(dto, tradeRights);
                 tradeRightsLog.setState(dto.getState());
                 tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint());
-                iTradeRightsLogRepository.save(tradeRightsLog);
                 //todo yingjun 仅退款 退款
             }
         } else if (dto.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
