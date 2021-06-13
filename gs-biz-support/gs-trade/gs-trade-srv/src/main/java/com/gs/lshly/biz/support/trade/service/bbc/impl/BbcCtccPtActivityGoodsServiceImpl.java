@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gs.lshly.biz.support.trade.entity.CtccActivityGoods;
-import com.gs.lshly.biz.support.trade.entity.CtccPtActivity;
 import com.gs.lshly.biz.support.trade.repository.ICtccActivityGoodsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcCtccPtActivityGoodsService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
