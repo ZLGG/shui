@@ -41,4 +41,20 @@ public interface MarketPtSeckillMapper extends BaseMapper<MarketPtSeckill> {
 			"where spu.goods_id='${goodsId}' " +
 			"and seckill.seckill_start_time <= sysdate() and seckill.seckill_end_time >= sysdate() limit 1")
 	MarketPtSeckill getSeckillByGoodsId(@Param("goodsId") String goodsId);
+	
+	
+
+	@Select("SELECT\n" +
+            "\tgoods.seckill_sale_price seckill_price,\n" +
+            "\tgoods.seckill_point_price seckill_point_price,\n" +
+            "\tgoods.seckill_in_member_point_price seckill_in_member_point_price,\n" +
+            "\tgoods.goods_id goods_id\n" +
+            "FROM\n" +
+            "\tgs_market_pt_seckill_goods_spu goods\n" +
+            "\tLEFT JOIN gs_goods_info g on g.id = goods.goods_id \n" +
+            "WHERE\n" +
+            "\t goods.choose=10 and goods.flag = 0 and g.goods_state = 20 \n" +
+            "\t AND ${ew.sqlSegment}")
+    IPage<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoodsNew(IPage<BbcMarketSeckillVO.SeckillGoodsVO> pager,@Param(Constants.WRAPPER) QueryWrapper<BbcMarketSeckillQTO.QTO> qw);
+    
 }

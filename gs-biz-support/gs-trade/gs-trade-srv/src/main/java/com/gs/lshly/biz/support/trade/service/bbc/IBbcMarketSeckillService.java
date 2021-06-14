@@ -22,7 +22,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHo
  */
 public interface IBbcMarketSeckillService {
 
-//
+
 //	/**
 //     * 
 //     * @param qto
@@ -65,4 +65,13 @@ public interface IBbcMarketSeckillService {
      */
     BbcMarketSeckillVO.SeckillIngVO seckillIng() ;
     
+    
+    SeckillHome seckillHomeNew(BbcMarketSeckillDTO.DTO dto);
+    
+    /**
+     * 分页查询秒杀活动分页数据
+     * @param qto
+     * @return
+     */
+    PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoodsNew(BbcMarketSeckillQTO.QTO qto);
 }

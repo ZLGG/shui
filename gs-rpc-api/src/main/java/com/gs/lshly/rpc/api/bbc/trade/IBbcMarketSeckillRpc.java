@@ -27,6 +27,13 @@ public interface IBbcMarketSeckillRpc {
     BbcMarketActivityVO.SeckillHome seckillHome(BbcMarketSeckillDTO.DTO dto);
     
     /**
+     * 秒杀首页
+     * @param qto
+     * @return
+     */
+    BbcMarketActivityVO.SeckillHome seckillHomeNew(BbcMarketSeckillDTO.DTO dto);
+    
+    /**
      * 分页查询秒杀商品列表
      * @param qto
      * @return
@@ -52,5 +59,13 @@ public interface IBbcMarketSeckillRpc {
      * @return
      */
     BbcMarketSeckillVO.SeckillIngVO seckillIng();
+    
+    /**
+     * 分页查询秒杀商品列表
+     * @param qto
+     * @return
+     */
+    PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoodsNew(BbcMarketSeckillQTO.QTO qto);
+    
     
 }
