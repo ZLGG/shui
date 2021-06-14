@@ -157,22 +157,24 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
     }
 
     @Override
-    public List<String> selectThreeCategory(String keyWord) {
+    public List<String> selectThreeCategory(List<String> categoryIdList) {
         QueryWrapper<GoodsCategory> query = MybatisPlusUtil.query();
-        query.eq("parent_id", keyWord);
+        query.in("parent_id", categoryIdList);
+        query.eq("gs_category_level",GoodsCategoryLevelEnum.TWO.getCode());
         List<GoodsCategory> list = categoryRepository.list(query);
         if (CollUtil.isEmpty(list)) {
             return null;
         }
-        List<String> parentId = CollUtil.getFieldValues(list, "parentId", String.class);
+        List<String> parentId = CollUtil.getFieldValues(list, "id", String.class);
         QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
         wrapper.in("parent_id", parentId);
+        wrapper.eq("gs_category_level",GoodsCategoryLevelEnum.THREE.getCode());
         List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
         if (CollUtil.isEmpty(categoryList)) {
             return null;
         }
-        List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "parentId", String.class);
-        return categoryIdList;
+        List<String> threeCategoryIdList = CollUtil.getFieldValues(categoryList, "id", String.class);
+        return threeCategoryIdList;
     }
 
 

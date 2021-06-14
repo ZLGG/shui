@@ -201,10 +201,13 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
             if (isContainChinese(qto.getKeyWord()) || isENChar(qto.getKeyWord())) {
                 query.like("goods_name", qto.getKeyWord());
             } else {
-                List<String> threeCategoryList = ipcMerchAdminGoodsCategoryRpc.selectThreeCategory(qto.getKeyWord());
-                if (CollUtil.isNotEmpty(threeCategoryList)) {
-                    query.and(i -> i.like("goods_id", qto.getKeyWord()).or(s -> s.in("category_id", threeCategoryList)));
-                }
+                query.like("goods_id", qto.getKeyWord());
+            }
+        }
+        if (CollUtil.isNotEmpty(qto.getCategoryIdList())) {
+            List<String> threeCategoryList = ipcMerchAdminGoodsCategoryRpc.selectThreeCategory(qto.getCategoryIdList());
+            if (CollUtil.isNotEmpty(threeCategoryList)) {
+                query.in("category_id", threeCategoryList);
             }
         }
         iMarketPtSeckillGoodsSpuRepository.page(pager, query);

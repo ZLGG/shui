@@ -763,7 +763,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
         tradeRightsLog.setState(TradeRightsEndStateEnum.平台同意.getCode());
-        if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
+        if (StrUtil.isNotBlank(tradeRights.getPlatformCheckReason())) {
             tradeRightsLog.setContent("平台处理说明:" + tradeRights.getPlatformCheckReason());
         }
         iTradeRightsLogRepository.save(tradeRightsLog);
@@ -784,7 +784,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
         tradeRightsLog.setState(TradeRightsEndStateEnum.平台驳回.getCode());
-        if (StrUtil.isNotEmpty(tradeRights.getPlatformCheckReason())) {
+        if (StrUtil.isNotBlank(tradeRights.getPlatformCheckReason())) {
             tradeRightsLog.setContent("平台处理说明:" + tradeRights.getPlatformCheckReason());
         }
         iTradeRightsLogRepository.save(tradeRightsLog);

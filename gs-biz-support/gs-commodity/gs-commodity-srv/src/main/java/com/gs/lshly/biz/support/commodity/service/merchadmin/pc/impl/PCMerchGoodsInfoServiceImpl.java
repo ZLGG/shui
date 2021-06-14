@@ -220,9 +220,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getGoodsState()) && qto.getGoodsState().intValue() != -1) {
             //10:待上架 20:已上架 30:审核中 40:已审核 50:草稿箱
             wrapperBoost.eq("gs.goods_state", qto.getGoodsState());
-            if(qto.getGoodsState().intValue() == 10 || qto.getGoodsState().intValue() == 20){
+            if (qto.getGoodsState().intValue() == 10 || qto.getGoodsState().intValue() == 20) {
                 spuListVOIPage = goodsInfoMapper.getMerchantGoodsInfo(page, wrapperBoost);
-            }else if(qto.getGoodsState().intValue() == 30 ||qto.getGoodsState().intValue() == 40 ||qto.getGoodsState().intValue() == 50 ){
+            } else if (qto.getGoodsState().intValue() == 30 || qto.getGoodsState().intValue() == 40 || qto.getGoodsState().intValue() == 50) {
                 //info_temp表
                 spuListVOIPage = goodsInfoTempMapper.getMerchantGoodsInfoTemp(page, wrapperBoost);
             }
@@ -232,7 +232,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
         for (PCMerchGoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
             //判断是否已经设置运费模板
-            if(ObjectUtil.isNotEmpty(getHasTemplate(spuListVO.getId()))){
+            if (ObjectUtil.isNotEmpty(getHasTemplate(spuListVO.getId()))) {
                 spuListVO.setTemplateName(getHasTemplate(spuListVO.getId()));
             }
             //填充商品库存数量
@@ -1104,7 +1104,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = new PCMerchGoodsInfoVO.GoodsIdVO();
         goodsIdVO.setGoodsId(goodsInfo.getId());
         //添加商品与服务关联数据
-        if(ObjectUtil.isNotEmpty(editDetailVO.getGoodsServeList())){
+        if (ObjectUtil.isNotEmpty(editDetailVO.getGoodsServeList())) {
             GoodsServeCor goodsServeCor = new GoodsServeCor();
             goodsServeCor.setGoodsId(goodsInfo.getId());
             StringBuilder sb = new StringBuilder();
@@ -1972,29 +1972,33 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         QueryWrapper<GoodsInfo> query = MybatisPlusUtil.query();
         query.eq("shop_id", qto.getJwtShopId());
         if (CollUtil.isNotEmpty(qto.getSpuIdList())) {
-            query.ne("id", qto.getJwtShopId());
+            query.notIn("id", qto.getSpuIdList());
         }
         if (StrUtil.isNotEmpty(qto.getKeyWord())) {
             if (isContainChinese(qto.getKeyWord()) || isENChar(qto.getKeyWord())) {
                 query.like("goods_name", qto.getKeyWord());
             } else {
-                QueryWrapper<GoodsCategory> categoryQueryWrapper = MybatisPlusUtil.query();
-                query.eq("parent_id", qto.getKeyWord());
-                List<GoodsCategory> list = categoryRepository.list(categoryQueryWrapper);
-                if (CollUtil.isNotEmpty(list)) {
-                    List<String> parentId = CollUtil.getFieldValues(list, "parentId", String.class);
-                    QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
-                    wrapper.in("parent_id", parentId);
-                    List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
-                    if (CollUtil.isNotEmpty(categoryList)) {
-                        List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "parentId", String.class);
-                        if (CollUtil.isNotEmpty(categoryIdList)) {
-                            query.and(i -> i.like("goods_id", qto.getKeyWord()).or(s -> s.in("category_id", categoryIdList)));
-                        }
-                    }
+                query.like("goods_id", qto.getKeyWord());
+            }
+        }
+        if (CollUtil.isNotEmpty(qto.getCategoryIdList())) {
+            QueryWrapper<GoodsCategory> categoryQueryWrapper = MybatisPlusUtil.query();
+            categoryQueryWrapper.in("parent_id", qto.getCategoryIdList());
+            categoryQueryWrapper.eq("gs_category_level",GoodsCategoryLevelEnum.TWO.getCode());
+            List<GoodsCategory> list = categoryRepository.list(categoryQueryWrapper);
+            if (CollUtil.isNotEmpty(list)) {
+                List<String> parentId = CollUtil.getFieldValues(list, "id", String.class);
+                QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
+                wrapper.in("parent_id", parentId);
+                wrapper.eq("gs_category_level",GoodsCategoryLevelEnum.THREE.getCode());
+                List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
+                if (CollUtil.isNotEmpty(categoryList)) {
+                    List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "id", String.class);
+                    query.in("category_id", categoryIdList);
                 }
             }
         }
+
         if (ObjectUtil.isNotEmpty(qto.getGoodsType())) {
             if (qto.getGoodsType().equals(MarketPtSeckillSpuTypeEnum.普通商品.getCode())) {
                 query.eq("is_point_good", false);
@@ -2080,7 +2084,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return spuStockNum;
     }
 
-    private List<PCMerchGoodsInfoVO.SkuStockNum> getStockNum(String goodsId, String shopId){
+    private List<PCMerchGoodsInfoVO.SkuStockNum> getStockNum(String goodsId, String shopId) {
         QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
         boost.eq("good_id", goodsId);
         List<SkuGoodInfo> skuGoodInfos = skuGoodInfoRepository.list(boost);
