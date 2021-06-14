@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.bean.BeanUtil;
@@ -1964,13 +1966,35 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         QueryWrapper<GoodsInfo> query = MybatisPlusUtil.query();
         query.eq("shop_id", qto.getJwtShopId());
         if (CollUtil.isNotEmpty(qto.getSpuIdList())) {
-
+            query.ne("id", qto.getJwtShopId());
         }
         if (StrUtil.isNotEmpty(qto.getKeyWord())) {
-
+            if (isContainChinese(qto.getKeyWord()) || isENChar(qto.getKeyWord())) {
+                query.like("goods_name", qto.getKeyWord());
+            } else {
+                QueryWrapper<GoodsCategory> categoryQueryWrapper = MybatisPlusUtil.query();
+                query.eq("parent_id", qto.getKeyWord());
+                List<GoodsCategory> list = categoryRepository.list(categoryQueryWrapper);
+                if (CollUtil.isNotEmpty(list)) {
+                    List<String> parentId = CollUtil.getFieldValues(list, "parentId", String.class);
+                    QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
+                    wrapper.in("parent_id", parentId);
+                    List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
+                    if (CollUtil.isNotEmpty(categoryList)) {
+                        List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "parentId", String.class);
+                        if (CollUtil.isNotEmpty(categoryIdList)) {
+                            query.and(i -> i.like("goods_id", qto.getKeyWord()).or(s -> s.in("category_id", categoryIdList)));
+                        }
+                    }
+                }
+            }
         }
         if (ObjectUtil.isNotEmpty(qto.getGoodsType())) {
-
+            if (qto.getGoodsType().equals(MarketPtSeckillSpuTypeEnum.普通商品.getCode())) {
+                query.eq("is_point_good", false);
+            } else {
+                query.eq("is_point_good", true);
+            }
         }
         repository.page(pager, query);
         if (CollUtil.isEmpty(pager.getRecords())) {
@@ -2527,5 +2551,33 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         shopNavigation.setShopNavigation(navigationId);
         shopNavigation.setTerminal(terminal);
         shopNavigationRepository.save(shopNavigation);
+    }
+
+    /**
+     * 判断有没有中文
+     */
+    private static Pattern C = Pattern.compile("[\u4e00-\u9fa5]");
+
+    public static boolean isContainChinese(String str) {
+
+        Matcher m = C.matcher(str);
+        if (m.find()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断有没有英文
+     */
+    private static Pattern E = Pattern.compile("[a-zA-z]");
+
+    public boolean isENChar(String string) {
+        boolean flag = false;
+
+        if (E.matcher(string).find()) {
+            flag = true;
+        }
+        return flag;
     }
 }
