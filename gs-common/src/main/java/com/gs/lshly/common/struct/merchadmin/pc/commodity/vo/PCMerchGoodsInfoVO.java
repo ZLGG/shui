@@ -308,9 +308,6 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
     @Data
     @ApiModel("PCMerchGoodsInfoVO.SpuListVO")
     public static class SpuListVO extends ListVO {
-        @ApiModelProperty(value = "库存数量")
-        private Integer stockNum;
-
         @ApiModelProperty(value = "是否设置了模板")
         private Boolean hasTemplate;
 
@@ -326,6 +323,12 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "结果反馈")
         private Integer refuseRemark;
+
+        @ApiModelProperty(value = "运费模版名")
+        private String templateName;
+
+        @ApiModelProperty(value = "库存数量")
+        private List<PCMerchGoodsInfoVO.SkuStockNum>  stockNumList;
     }
 
     @Data
@@ -697,6 +700,18 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("商品ID")
         private String goodsId;
+
+    }
+
+    @Data
+    @ApiModel("PCMerchGoodsInfoVO.SkuStockNum")
+    @Accessors(chain = true)
+    public static class SkuStockNum implements Serializable {
+        @ApiModelProperty("规格")
+        private String specsValue;
+
+        @ApiModelProperty("库存数量")
+        private Integer stockNum;
 
     }
 }
