@@ -271,5 +271,10 @@ public class GoodsInfoTemp implements Serializable {
      */
     private Integer ctccMold;
 
+    /**
+     * 1:新增 2:更新
+     */
+    private Integer applyType;
+
 
 }

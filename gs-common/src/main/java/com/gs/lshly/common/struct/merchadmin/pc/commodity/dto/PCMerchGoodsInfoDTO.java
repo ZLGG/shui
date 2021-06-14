@@ -56,7 +56,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         @ApiModelProperty("商品简介")
         private String goodsTitle;
 
-        @ApiModelProperty("商品状态")
+        @ApiModelProperty("商品状态 30:待审核 50:草稿箱")
         private Integer goodsState;
 
         @ApiModelProperty("商品编号")
