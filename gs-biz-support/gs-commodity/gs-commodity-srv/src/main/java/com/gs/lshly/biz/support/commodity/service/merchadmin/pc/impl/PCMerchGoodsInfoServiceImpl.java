@@ -2088,10 +2088,12 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchGoodsInfoVO.SkuStockNum skuStockNum;
         for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
             CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStock(new BaseDTO(), shopId, skuGoodInfo.getId()).getData();
-            skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
-            skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
-            skuStockNum.setStockNum(stockVO.getQuantity());
-            skuStockNums.add(skuStockNum);
+            if(ObjectUtil.isNotEmpty(stockVO)){
+                skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
+                skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
+                skuStockNum.setStockNum(stockVO.getQuantity());
+                skuStockNums.add(skuStockNum);
+            }
         }
         return skuStockNums;
     }
