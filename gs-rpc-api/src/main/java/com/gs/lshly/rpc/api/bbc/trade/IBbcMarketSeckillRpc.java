@@ -47,4 +47,10 @@ public interface IBbcMarketSeckillRpc {
      */
     List<BbcMarketSeckillVO.HomePageSeckill> homePageSeckill(BaseDTO dto);
     
+    /**
+     * 
+     * @return
+     */
+    BbcMarketSeckillVO.SeckillIngVO seckillIng();
+    
 }

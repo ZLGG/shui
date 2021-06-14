@@ -139,26 +139,20 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 		listVO.setList(categoryDetailVOList);
 		retList.add(listVO);
 		
-		BbcMarketActivityVO.SeckillHome seckill = bbcMarketSeckillRpc.seckillHome(new BbcMarketSeckillDTO.DTO());
+		//BbcMarketActivityVO.SeckillHome seckill = bbcMarketSeckillRpc.seckillHome(new BbcMarketSeckillDTO.DTO());
+		BbcMarketSeckillVO.SeckillIngVO seckill = bbcMarketSeckillRpc.seckillIng();
+		
 		listVO = new ListVO();
 		listVO.setId(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setCode(PointHomeTypeEnum.秒杀.getCode());
 		listVO.setIdx(PointHomeTypeEnum.秒杀.getIdx());
 		listVO.setName(PointHomeTypeEnum.秒杀.getRemark());
+		
 		if(seckill!=null){
 			if(seckill.getSeckillEndTime()!=null){
-			listVO.setRemark(seckill.getSeckillEndTime().toString().replace("T", " "));
+				listVO.setRemark(seckill.getSeckillEndTime().toString().replace("T", " "));
 			}
-			PageData<BbcMarketSeckillVO.SeckillGoodsVO> page = seckill.getList();
-			if(page!=null){
-				List<BbcMarketSeckillVO.SeckillGoodsVO> list = page.getContent();
-				
-				if(CollectionUtil.isNotEmpty(list)&&list.size()>3){
-					listVO.setList(list.subList(0, 4));
-				}else{
-					listVO.setList(list);
-				}
-			}
+			listVO.setList(seckill.getList().subList(0, 4));
 			
 		}
 		retList.add(listVO);
