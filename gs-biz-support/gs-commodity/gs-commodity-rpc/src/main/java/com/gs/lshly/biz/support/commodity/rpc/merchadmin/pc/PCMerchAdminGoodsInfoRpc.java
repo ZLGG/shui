@@ -54,12 +54,12 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     }
 
     @Override
-    public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-        PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoService.addGoodsInfo(eto);
-
+    public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto){
+        PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoTempService.addGoodsInfo(eto);
         //如果该商品是扶贫商品
 
         settingFuPin(eto, goodsIdVO.getGoodsId());
+        //settingFuPin(eto,goodsIdVO.getGoodsId());
     }
 
     @Override

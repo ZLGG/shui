@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.rbac.SysFuncVO;
 import org.apache.commons.lang3.StringUtils;
@@ -389,14 +390,14 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void bindBrand(GoodsBrandDTO.IdListDTO brandIdListDTO, GoodsCategoryDTO.IdDTO dto) {
-        //先判断参数是否为空
+/*        //先判断参数是否为空
         if (dto == null) {
             throw new BusinessException("参数不能为空！");
         }
         //判断品牌id是否为空
         if (ObjectUtils.isEmpty(brandIdListDTO) || ObjectUtils.isEmpty(brandIdListDTO.getIdList())) {
             throw new BusinessException("关联失败,请选择要关联的品牌");
-        }
+        }*/
 
         //判断品牌是否已经关联了商品
         if (countBindGoods(brandIdListDTO.getIdList(), dto.getId()) > 0) {
@@ -437,16 +438,18 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 
         //建立绑定关系
         List<CategoryBrand> list = new ArrayList<>();
-        for (String categoryId : categoryIds) {
-            for (String brandId : brandIdListDTO.getIdList()) {
-                CategoryBrand categoryBrand = new CategoryBrand();
-                BeanCopyUtils.copyProperties(brandIdListDTO, categoryBrand);
-                categoryBrand.setBrandId(brandId);
-                categoryBrand.setCategoryId(categoryId);
-                list.add(categoryBrand);
+        if (CollUtil.isNotEmpty(brandIdListDTO.getIdList())){
+            for (String categoryId : categoryIds) {
+                for (String brandId : brandIdListDTO.getIdList()) {
+                    CategoryBrand categoryBrand = new CategoryBrand();
+                    BeanCopyUtils.copyProperties(brandIdListDTO, categoryBrand);
+                    categoryBrand.setBrandId(brandId);
+                    categoryBrand.setCategoryId(categoryId);
+                    list.add(categoryBrand);
+                }
             }
+            categoryBrandRepository.saveBatch(list);
         }
-        categoryBrandRepository.saveBatch(list);
     }
 
     @Override
@@ -781,21 +784,23 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             return totalCount;
         }
         List<String> brandIds = com.gs.lshly.common.utils.ListUtil.getIdList(CategoryBrand.class, categoryBrands, "brandId");
-        List<String> reduceIds = brandIds.stream().filter(item -> !brandIdList.contains(item)).collect(toList());
-        if (ObjectUtils.isEmpty(reduceIds)) {
+        if (CollUtil.isNotEmpty(brandIdList)){
+            List<String> reduceIds = brandIds.stream().filter(item -> !brandIdList.contains(item)).collect(toList());
+            if (ObjectUtils.isEmpty(reduceIds)) {
+                return totalCount;
+            }
+            QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
+            wrapper.in("brand_id", reduceIds);
+            wrapper.eq("category_id", categoryId);
+            int count = goodsInfoRepository.count(wrapper);
+
+            QueryWrapper<GoodsMaterialLibrary> wrapper1 = MybatisPlusUtil.query();
+            wrapper1.in("brand_id", reduceIds);
+            wrapper1.eq("category_id", categoryId);
+            int count2 = goodsMaterialLibraryRepository.count(wrapper1);
+            totalCount = count + count2;
             return totalCount;
         }
-        QueryWrapper<GoodsInfo> wrapper = MybatisPlusUtil.query();
-        wrapper.in("brand_id", reduceIds);
-        wrapper.eq("category_id", categoryId);
-        int count = goodsInfoRepository.count(wrapper);
-
-        QueryWrapper<GoodsMaterialLibrary> wrapper1 = MybatisPlusUtil.query();
-        wrapper1.in("brand_id", reduceIds);
-        wrapper1.eq("category_id", categoryId);
-        int count2 = goodsMaterialLibraryRepository.count(wrapper1);
-
-        totalCount = count + count2;
         return totalCount;
     }
 }

@@ -191,7 +191,9 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
         //spu信息
         IPage<MarketPtSeckillGoodsSpu> pager = MybatisPlusUtil.pager(qto);
         QueryWrapper<MarketPtSeckillGoodsSpu> query = MybatisPlusUtil.query();
+        query.eq("time_quantum_id", qto.getId());
         query.eq("shop_id", qto.getJwtShopId());
+        query.orderByDesc("cdate");
         if (ObjectUtil.isNotEmpty(qto.getGoodsType())) {
             query.eq("goods_type", qto.getGoodsType());
         }

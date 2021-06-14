@@ -317,6 +317,15 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "修改时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime udate;
+
+        @ApiModelProperty(value = "申请类型 1:新增商品 2:更新商品")
+        private Integer applyType;
+
+        @ApiModelProperty(value = "审核结果 1:通过 2:不通过")
+        private Integer aduitResult;
+
+        @ApiModelProperty(value = "结果反馈")
+        private Integer refuseRemark;
     }
 
     @Data
