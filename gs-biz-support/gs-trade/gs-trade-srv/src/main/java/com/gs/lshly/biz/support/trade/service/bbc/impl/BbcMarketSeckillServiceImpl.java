@@ -82,6 +82,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     @Autowired
     private IMarketPtSeckillGoodsSpuRepository marketPtSeckillGoodsSpuRepository;
     
+    
     @Value("${activity.pc.cut}")
     private String pcCut;
     @Value("${activity.pc.gift}")
@@ -492,6 +493,9 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								sckillGoodsVO.setOldPrice(simpleGooods.getOldPrice());
 								
 								sckillGoodsVO.setGoodsName(simpleGooods.getGoodsName());
+								
+								
+								//跟据商品ID+秒杀ID查询对应的秒杀数量
 								sckillGoodsVO.setSaleRate(random());
 								
 								list.add(sckillGoodsVO);

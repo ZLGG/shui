@@ -111,10 +111,13 @@ public class BbcCtccPtActivityGoodsServiceImpl implements IBbcCtccPtActivityGood
         	
         	CtccInternationalCategoryVO ctccInternationalCategoryVO = null;
         	
-        	List<BbcCtccCategoryGoodsVO.GoodsListVO> goodsList = new ArrayList<BbcCtccCategoryGoodsVO.GoodsListVO>();
+        	
         	
         	
         	for(CtccCategory ctccCategory:ctccCategoryList){
+        		
+        		List<BbcCtccCategoryGoodsVO.GoodsListVO> goodsList = new ArrayList<BbcCtccCategoryGoodsVO.GoodsListVO>();
+        		
             	QueryWrapper<CtccActivityGoods> wrapperGoods = MybatisPlusUtil.query();
 
         		ctccInternationalCategoryVO = new CtccInternationalCategoryVO();
