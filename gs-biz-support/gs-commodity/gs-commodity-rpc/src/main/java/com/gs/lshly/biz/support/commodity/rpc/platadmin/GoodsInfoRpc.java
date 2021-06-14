@@ -2,6 +2,9 @@ package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
 import java.util.List;
 
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoTempService;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
@@ -21,6 +24,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.qto.GoodsFupinQTO;
 import com.gs.lshly.common.struct.platadmin.commodityfupin.vo.GoodsFupinVO;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Starry
@@ -30,6 +34,8 @@ import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 public class GoodsInfoRpc implements IGoodsInfoRpc {
     @Autowired
     private IGoodsInfoService goodsInfoService;
+    @Autowired
+    private IGoodsInfoTempService goodsInfoTempService;
     @Autowired
     private IGoodsFupinService fupinService;
     @Autowired
@@ -44,15 +50,23 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
 
     @Override
     public GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto) {
-        GoodsInfoVO.DetailVO detailVO = goodsInfoService.getGoodsDetail(dto);
 
+        //
+        GoodsInfoVO.DetailVO detailVO;
+        if(goodsInfoTempService.isUpdateGoodInfo(dto.getId())){
+            GoodsInfoDTO.IdDTO  idDTO = new GoodsInfoDTO.IdDTO(dto.getId());
+            idDTO.setId(dto.getId());
+            detailVO = goodsInfoTempService.getGoodsDetail(idDTO);
+        }else {
+            detailVO = goodsInfoService.getGoodsDetail(dto);
+        }
         //商品扶贫信息
-        GoodsFupinQTO.QTO qto = new GoodsFupinQTO.QTO();
+        /*GoodsFupinQTO.QTO qto = new GoodsFupinQTO.QTO();
         qto.setGoodsId(dto.getId());
         GoodsFupinVO.DetailVO fupin = fupinService.detailGoodsFupin(qto);
         if (ObjectUtils.isNotEmpty(fupin)) {
             detailVO.setFupinInfo(fupin);
-        }
+        }*/
         return detailVO;
     }
 
@@ -73,12 +87,18 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto) {
         //区分新增与更新
         if(ipcMerchGoodsInfoTempService.isUpdateGoodInfo(dto.getId())){
             ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
+            dto.setType(2);
+            goodsInfoService.checkGoods(dto);
+        }else{
+            ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
+            dto.setType(1);
+            goodsInfoService.checkGoods(dto);
         }
-        goodsInfoService.checkGoods(dto);
     }
 
     @Override

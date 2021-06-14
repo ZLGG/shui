@@ -47,6 +47,8 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
     IPage<GoodsInfoVO.SpuListVO> getGoodsInfo(IPage<GoodsInfoVO.SpuListVO> page,@Param(Constants.WRAPPER) QueryWrapper<GoodsInfoVO.SpuListVO> qw);
 
 
+
+
     /**
      * 查询商家商品信息
      * @param page

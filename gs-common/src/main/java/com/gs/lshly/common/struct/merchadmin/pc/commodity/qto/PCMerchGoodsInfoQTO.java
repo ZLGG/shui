@@ -24,7 +24,7 @@ public abstract class PCMerchGoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
-        @ApiModelProperty("商品状态")
+        @ApiModelProperty("商品状态 10:待上架 20:已上架 30:审核中 40:已审核 50:草稿箱")
         private Integer goodsState;
 
         @ApiModelProperty("商品编号")
@@ -68,6 +68,12 @@ public abstract class PCMerchGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("商品价格2")
         private BigDecimal salePrice2;
+
+        @ApiModelProperty("申请类型 1:新增商品 2:更新商品")
+        private Integer applyType;
+
+        @ApiModelProperty("审核结果 1:通过 2:不通过")
+        private Integer aduitType;
     }
 
 
