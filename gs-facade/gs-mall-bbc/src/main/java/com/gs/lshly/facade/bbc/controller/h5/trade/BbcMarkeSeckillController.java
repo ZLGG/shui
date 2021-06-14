@@ -30,15 +30,17 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/bbc/h5")
 @Api(tags = "秒杀活动-v1.1.0")
+@SuppressWarnings("unchecked")
 public class BbcMarkeSeckillController {
 
     @DubboReference
     private IBbcMarketSeckillRpc bbcMarketSeckillRpc;
 
-    @ApiOperation("秒杀活动首页-v1.1.0")
+    
+	@ApiOperation("秒杀活动首页-v1.1.0")
     @GetMapping("/seckill")
     public ResponseData<PageData<BbcMarketSeckillVO.SeckillHome>> cutList(BbcMarketSeckillDTO.DTO dto) {
-        return ResponseData.data(bbcMarketSeckillRpc.seckillHome(dto));
+        return ResponseData.data(bbcMarketSeckillRpc.seckillHomeNew(dto));
     }
     
     @ApiOperation("秒杀活动商品分页加载-v1.1.0")

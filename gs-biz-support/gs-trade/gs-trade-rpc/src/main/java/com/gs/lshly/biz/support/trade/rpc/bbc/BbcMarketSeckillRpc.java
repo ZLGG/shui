@@ -10,11 +10,13 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillGoodsVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillIngVO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
 
@@ -53,8 +55,17 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 
 	@Override
 	public SeckillIngVO seckillIng() {
-		// TODO Auto-generated method stub
 		return bbcMarketSeckillService.seckillIng();
+	}
+
+	@Override
+	public SeckillHome seckillHomeNew(DTO dto) {
+		return bbcMarketSeckillService.seckillHomeNew(dto);
+	}
+
+	@Override
+	public PageData<SeckillGoodsVO> pageSeckillGoodsNew(QTO qto) {
+		return bbcMarketSeckillService.pageSeckillGoodsNew(qto);
 	}
 
 }

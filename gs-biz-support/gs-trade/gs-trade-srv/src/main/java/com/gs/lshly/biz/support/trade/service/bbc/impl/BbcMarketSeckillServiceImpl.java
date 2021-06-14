@@ -28,6 +28,7 @@ import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.enums.GoodsPointTypeEnum;
+import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillStatusEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillTimeQuantumEnum;
 import com.gs.lshly.common.response.PageData;
@@ -38,10 +39,12 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailV
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillGoodsVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
@@ -474,7 +477,8 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								String goodsId = spu.getGoodsId();
 								
 								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
-								
+								if(!simpleGooods.getGoodsState().equals(GoodsStateEnum.已上架.getCode()))
+									continue;
 								sckillGoodsVO.setSeckillId(seckillId);
 								if(simpleGooods.getIsPointGood()){//是不是积分
 									sckillGoodsVO.setSalePrice(simpleGooods.getPointPrice());
@@ -489,7 +493,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								}
 								
 								sckillGoodsVO.setGoodsId(simpleGooods.getId());
-								sckillGoodsVO.setGoodsImage(simpleGooods.getGoodsImage());
+								sckillGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(simpleGooods.getGoodsImage())) ? "{}" : getImage(simpleGooods.getGoodsImage()));
 								sckillGoodsVO.setOldPrice(simpleGooods.getOldPrice());
 								
 								sckillGoodsVO.setGoodsName(simpleGooods.getGoodsName());
@@ -554,5 +558,120 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 				System.out.println(from+"<><>");
 			}
 	 }
+
+	@Override
+	public SeckillHome seckillHomeNew(DTO dto) {
+		BbcMarketSeckillVO.SeckillIngVO seckillIngVO = new BbcMarketSeckillVO.SeckillIngVO();
+		List<BbcMarketSeckillVO.SeckillGoodsVO> list = new ArrayList<BbcMarketSeckillVO.SeckillGoodsVO>();
+		String now = DateUtils.fomatDate(new Date(), DateUtils.dateFormatStr);
+		List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> nowList = marketPtSeckillTimeQuantumMapper.list(now+" 00:00:00", now+" 23:59:59");
+		List<SeckillTimeQuantum> timeQuantum = new ArrayList<SeckillTimeQuantum>();	//秒杀时间段
+		SeckillHome seckillHome = new SeckillHome();
+        SeckillTimeQuantum seckillTimeQuantum = null;
+        String id = dto.getId();
+		if (CollectionUtil.isNotEmpty(nowList)) {	//今天有秒杀活动
+			//当前秒杀活动
+			Integer hh = nowSeckill(nowList);
+			for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: nowList) {
+				seckillTimeQuantum = new SeckillTimeQuantum();
+        		
+				seckillTimeQuantum.setId(marketPtSeckillTimeQuantumVO.getId());
+				seckillTimeQuantum.setTimeQuantum(marketPtSeckillTimeQuantumVO.getHh()+":00");
+				//判断当前时间有哪个秒杀活动正在进行中
+				
+				if(marketPtSeckillTimeQuantumVO.getHh()<hh){
+					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.已开抢.getCode());
+	            	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.已开抢.getRemark());
+				}else if(marketPtSeckillTimeQuantumVO.getHh().equals(hh)){
+					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
+	            	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.抢购中.getRemark());
+	            	
+	            	//查询对应的图片
+	            	String seckillId = marketPtSeckillTimeQuantumVO.getSeckillId();
+	            	MarketPtSeckill marketPtSeckill = marketPtSeckillMapper.selectById(seckillId);
+	            	if(marketPtSeckill!=null){
+	            		seckillHome.setName(marketPtSeckill.getName());
+	            		
+	            		seckillHome.setImageUrl(marketPtSeckill.getImageUrl());
+	            		seckillHome.setJumpUrl(marketPtSeckill.getJumpUrl());
+	            		seckillHome.setName(marketPtSeckill.getName());
+	            		seckillHome.setSeckillEndTime(marketPtSeckill.getSeckillEndTime());
+	            		 //跟据秒杀id查询
+	                    if(StringUtils.isEmpty(dto.getId())){
+	                    	id = marketPtSeckillTimeQuantumVO.getId();
+	                    }
+	            	}
+	            	
+				}else if(marketPtSeckillTimeQuantumVO.getHh()>hh){
+					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.即将开抢.getCode());
+	            	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.即将开抢.getRemark());
+				}
+				
+				timeQuantum.add(seckillTimeQuantum);
+			}
+		}
+		seckillHome.setTimeQuantum(timeQuantum);
+        
+        BbcMarketSeckillQTO.QTO qto = new BbcMarketSeckillQTO.QTO();
+        //跟据秒杀id查询
+        BeanCopyUtils.copyProperties(dto, qto);
+        qto.setPageNum(1);
+        qto.setPageSize(20);
+        qto.setId(id);
+        PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods = this.pageSeckillGoodsNew(qto);
+        seckillHome.setList(pageSeckillGoods);
+		return seckillHome;
+	}
+
+	@Override
+	public PageData<SeckillGoodsVO> pageSeckillGoodsNew(QTO qto) {
+		String id = qto.getId();
+		
+		QueryWrapper<BbcMarketSeckillQTO.QTO> query = MybatisPlusUtil.query();	//查询条件
+        query.eq("goods.time_quantum_id",id);
+        IPage<BbcMarketSeckillVO.SeckillGoodsVO> pager = MybatisPlusUtil.pager(qto);//返回结果定义
+        IPage<BbcMarketSeckillVO.SeckillGoodsVO> page = marketPtSeckillMapper.pageSeckillGoodsNew(pager, query);
+        if(page!=null){
+        	List<BbcMarketSeckillVO.SeckillGoodsVO> retList = page.getRecords();
+        	if(CollectionUtil.isNotEmpty(retList)){
+        		BbcGoodsInfoVO.DetailVO goodsDetail = null;
+        		for(BbcMarketSeckillVO.SeckillGoodsVO seckillGoodsVO:retList){
+        			String goodsId = seckillGoodsVO.getGoodsId();
+        			goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+        			seckillGoodsVO.setGoodsName(goodsDetail.getGoodsName());
+        			seckillGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsDetail.getGoodsImage())) ? "" : getImage(goodsDetail.getGoodsImage()));
+        			if(goodsDetail.getIsInMemberGift()){
+        				seckillGoodsVO.setSeckillId(id);
+        				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
+        				seckillGoodsVO.setOldPrice(goodsDetail.getInMemberPointPrice());
+        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillInMemberPointPrice());
+        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillInMemberPointPrice());
+        			}else if(goodsDetail.getIsPointGood()){
+						seckillGoodsVO.setSeckillId(id);
+        				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
+        				seckillGoodsVO.setOldPrice(goodsDetail.getPointPrice());
+        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillPointPrice());
+        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillPointPrice());
+        			}else{
+						seckillGoodsVO.setSeckillId(id);
+        				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
+        				seckillGoodsVO.setOldPrice(goodsDetail.getSalePrice());
+        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSalePrice());
+        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSalePrice());
+        			}
+        				
+        			//TODO yingjun
+        			BbcMarketSeckillVO.CouponVO couponVO = new BbcMarketSeckillVO.CouponVO();
+        			couponVO.setType(10);
+        			couponVO.setName("满100减50");
+        			List<BbcMarketSeckillVO.CouponVO> coupons = new ArrayList<BbcMarketSeckillVO.CouponVO>();
+        			coupons.add(couponVO);
+        			seckillGoodsVO.setCoupons(coupons);
+        			seckillGoodsVO.setSaleRate(new BigDecimal("0.9"));
+        		}
+        	}
+        }
+        return MybatisPlusUtil.toPageData(qto,BbcMarketSeckillVO.SeckillGoodsVO.class,pager);
+	}
 
 }
