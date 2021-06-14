@@ -10,8 +10,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -581,11 +583,13 @@ public class StringManageUtil {
 //		System.out.println(addressResolution("湖北省黄梅县大河会镇杨凼村四组"));
 //		System.out.println(addressResolution("杭州市西湖区兰庭公寓3幢1单元703室"));
 		
-		System.out.println(hideMail("yingjun@126.com"));
-		BigDecimal price = new BigDecimal("0");
-		DecimalFormat df2 =new DecimalFormat("#.00"); 
-	    String str = df2.format(price);  
-	    System.out.println(new BigDecimal(str));  //13.15  
+//		System.out.println(hideMail("yingjun@126.com"));
+//		BigDecimal price = new BigDecimal("0");
+//		DecimalFormat df2 =new DecimalFormat("#.00"); 
+//	    String str = df2.format(price);  
+//	    System.out.println(new BigDecimal(str));  //13.15  
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		
 	}
 	
 	public static BigDecimal formatBigDecimal2(BigDecimal price){
@@ -774,4 +778,35 @@ public class StringManageUtil {
             }
             return null;
         }
+        
+	public static int getAge(String birthDays) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date birthDay = sdf.parse(birthDays);
+			Calendar cal = Calendar.getInstance();
+			if (cal.before(birthDay)) { // 出生日期晚于当前时间，无法计算
+				throw new IllegalArgumentException("The birthDay is before Now.It's unbelievable!");
+			}
+			int yearNow = cal.get(Calendar.YEAR); // 当前年份
+			int monthNow = cal.get(Calendar.MONTH); // 当前月份
+			int dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH); // 当前日期
+			cal.setTime(birthDay);
+			int yearBirth = cal.get(Calendar.YEAR);
+			int monthBirth = cal.get(Calendar.MONTH);
+			int dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+			int age = yearNow - yearBirth; // 计算整岁数
+			if (monthNow <= monthBirth) {
+				if (monthNow == monthBirth) {
+					if (dayOfMonthNow < dayOfMonthBirth)
+						age--;// 当前日期在生日之前，年龄减一
+				} else {
+					age--;// 当前月份在生日之前，年龄减一
+				}
+			}
+			return age;
+		} catch (Exception e) {
+			return 0;
+		}
+
+	}
 }

@@ -3,6 +3,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gs.lshly.common.utils.StringManageUtil;
 
@@ -33,18 +35,18 @@ public abstract class UserVO implements Serializable {
         private String realName;
         @ApiModelProperty(value="地址",position = 4)
         private String address;
-        @ApiModelProperty(value = "性别[10=男  20=女]",position = 5)
-        private Integer sex;
+        @ApiModelProperty(value = "性别",position = 5)
+        private String sex;
         @ApiModelProperty(value = "年龄",position = 6)
         private Integer age;
         @ApiModelProperty(value = "生日",position = 7)
-        private Integer birthday;
+        private String birthday;
         @ApiModelProperty(value = "积分",position = 8)
         private Integer telecomsIntegral;
         @ApiModelProperty(value = "星级",position = 9)
         private Integer telecomsLevel;
         @ApiModelProperty(value = "IN会员",position = 10)
-        private Integer isInUser;
+        private String isInUser;
         @ApiModelProperty(value = "会员标签",position = 11 )
         private String tags;
         @ApiModelProperty(value = "注册IP",position = 12)
@@ -52,6 +54,9 @@ public abstract class UserVO implements Serializable {
         @ApiModelProperty(value = "注册时间",position = 13)
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;
+        @ApiModelProperty(value = "最后登录时间",position = 14)
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime loginDate;
         
     }
 	
@@ -120,6 +125,9 @@ public abstract class UserVO implements Serializable {
 
         @ApiModelProperty("市名称")
         private String cityText;
+        
+        @ApiModelProperty("年纪")
+        private Integer age;
 
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime loginDate;
@@ -207,7 +215,14 @@ public abstract class UserVO implements Serializable {
 		public String getRealName() {
 			return StringManageUtil.hideUserName(realName);
 		}
-        
+
+		public Integer getAge() {
+			if (StringUtils.isNotEmpty(birthday)) {
+				age = StringManageUtil.getAge(birthday);
+			}
+			return age;
+		}
+		 
         
     }
 

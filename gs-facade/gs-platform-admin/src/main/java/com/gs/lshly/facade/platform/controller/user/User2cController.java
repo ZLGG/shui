@@ -35,6 +35,7 @@ import java.util.List;
 * @author xxfc
 * @since 2020-10-05
 */
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/platform/2c/user")
 @Api(tags = "会员管理2C",description = " ")
@@ -104,7 +105,7 @@ public class User2cController {
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
 
-    @ApiOperation("编辑会员密码")
+	@ApiOperation("编辑会员密码")
     @PutMapping(value = "/editorPassworld/{id}")
     @Func(code="edit", name="改")
     public ResponseData<Void> editorPassworld(@PathVariable String id, @Valid @RequestBody UserDTO.PassworldETO eto) {
