@@ -79,6 +79,8 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @Autowired
     private IGoodsInfoRepository repository;
     @Autowired
+    private IGoodsInfoTempRepository goodsInfoTempRepository;
+    @Autowired
     private GoodsInfoMapper goodsInfoMapper;
     @Autowired
     private IGoodsCategoryService categoryService;
@@ -473,16 +475,17 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 skuGoodInfoRepository.update(skuGoodInfo, updateWrapper);
             }
         }
-        GoodsInfo goodsInfo = new GoodsInfo();
-        goodsInfo.setGoodsState(dto.getState());
-
-        QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
-        goodsInfoQueryWrapper.eq("id", dto.getId());
-        repository.update(goodsInfo, goodsInfoQueryWrapper);
+        if(dto.getType().intValue() == 1){
+            GoodsInfo goodsInfo = new GoodsInfo();
+            goodsInfo.setGoodsState(GoodsStateEnum.已上架.getCode().intValue());
+            QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
+            goodsInfoQueryWrapper.eq("id", dto.getId());
+            repository.update(goodsInfo, goodsInfoQueryWrapper);
+        }
 
         //审核后添加审核记录
+        //GoodsInfoTemp goodsInfoTemp = goodsInfoTempRepository.getById(dto.getId());
         addAuditRecord(dto);
-
     }
 
     @Override

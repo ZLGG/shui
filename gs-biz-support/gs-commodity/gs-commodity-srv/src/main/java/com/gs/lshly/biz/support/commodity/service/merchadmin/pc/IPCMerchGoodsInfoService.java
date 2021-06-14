@@ -262,10 +262,16 @@ public interface IPCMerchGoodsInfoService {
     void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto);
 
     /**
-     * 审核通过将temp商品数据更新到商品相关表中
+     * 更新审核通过将temp商品数据更新到商品相关表中
      * @param goodId
      */
     void changeTempToGoodsInfo(String goodId);
+
+    /**
+     * 新增审核通过将temp商品数据更新到商品相关表中
+     * @param goodId
+     */
+    void addTempToGoodsInfo(String goodId);
 
     PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
 

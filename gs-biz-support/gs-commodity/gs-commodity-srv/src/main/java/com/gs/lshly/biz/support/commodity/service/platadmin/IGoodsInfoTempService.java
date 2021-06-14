@@ -1,19 +1,11 @@
-package com.gs.lshly.biz.support.commodity.service.merchadmin.pc;
+package com.gs.lshly.biz.support.commodity.service.platadmin;
 
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 
-/**
- * 商品临时表 service
- */
-public interface IPCMerchGoodsInfoTempService {
-
-    /**
-     * 修改商品信息
-     * @param eto
-     */
-    void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto);
-
+public interface IGoodsInfoTempService {
     /**
      * 审核-获取商品详情
      * @param dto
@@ -29,11 +21,9 @@ public interface IPCMerchGoodsInfoTempService {
     Boolean isUpdateGoodInfo(String goodId);
 
     /**
-     * 新增商品
-     * @param eto
+     * 获取审核商品详情
+     * @param dto
      * @return
      */
-    PCMerchGoodsInfoVO.GoodsIdVO addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto);
-
-    int countGoodsNo(PCMerchGoodsInfoDTO.GoodNoDTO dto);
+    GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto);
 }

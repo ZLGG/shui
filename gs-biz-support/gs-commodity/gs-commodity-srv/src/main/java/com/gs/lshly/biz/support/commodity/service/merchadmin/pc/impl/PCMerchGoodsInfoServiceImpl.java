@@ -15,6 +15,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -133,6 +134,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Autowired
     private GoodsInfoMapper goodsInfoMapper;
     @Autowired
+    private GoodsInfoTempMapper goodsInfoTempMapper;
+    @Autowired
     private IPCMerchSkuGoodInfoService skuGoodInfoService;
     @Autowired
     private IGoodsTempalteRepository goodsTempalteRepository;
@@ -196,32 +199,29 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         QueryWrapper<PCMerchGoodsInfoVO.SpuListVO> wrapperBoost = MybatisPlusUtil.query();
         wrapperBoost.eq("gs.shop_id", qto.getJwtShopId());
         wrapperBoost.eq("gs.merchant_id", qto.getJwtMerchantId());
-        if (StringUtils.isNotEmpty(qto.getTemplateId())) {
-            wrapperBoost.eq("gt.template_id", qto.getTemplateId());
-        }
-        if (ObjectUtils.isNotEmpty(qto.getUsePlatform()) && !qto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城和C商城.getCode())) {
-            wrapperBoost.in("gs.use_platform", GoodsUsePlatformEnums.B商城和C商城.getCode(), qto.getUsePlatform());
-        }
-        if (ObjectUtils.isNotEmpty(qto.getSalePrice1())) {
-            wrapperBoost.ge("gs.sale_price", qto.getSalePrice1());
-        }
-        if (ObjectUtils.isNotEmpty(qto.getSalePrice2())) {
-            wrapperBoost.le("gs.sale_price", qto.getSalePrice2());
-        }
-        if (StringUtils.isNotEmpty(qto.getGoodsNo())) {
-            wrapperBoost.likeRight("gs.goods_no", qto.getGoodsNo());
-        }
         if (StringUtils.isNotEmpty(qto.getGoodsName())) {
             wrapperBoost.likeRight("gs.goods_name", qto.getGoodsName());
         }
-        if (ObjectUtils.isNotEmpty(qto.getGoodsState()) && qto.getGoodsState().intValue() != -1) {
-            wrapperBoost.eq("gs.goods_state", qto.getGoodsState());
+        if (ObjectUtils.isNotEmpty(qto.getAduitType())) {
+            wrapperBoost.eq("ar.state", qto.getAduitType());
         }
-        if (StringUtils.isNotBlank(qto.getShopNavigation())) {
-            wrapperBoost.eq("gsn.shop_navigation", getShopNavigation(qto.getShopNavigation()).getNavigationTowId());
+        if (ObjectUtils.isNotEmpty(qto.getApplyType())) {
+            wrapperBoost.eq("gs.appley_type", qto.getApplyType());
         }
+        wrapperBoost.orderByDesc("gs.cdate");
         IPage<PCMerchGoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
-        IPage<PCMerchGoodsInfoVO.SpuListVO> spuListVOIPage = goodsInfoMapper.getMerchantGoodsInfo(page, wrapperBoost);
+
+        IPage<PCMerchGoodsInfoVO.SpuListVO> spuListVOIPage = null;
+        if (ObjectUtils.isNotEmpty(qto.getGoodsState()) && qto.getGoodsState().intValue() != -1) {
+            //10:待上架 20:已上架 30:审核中 40:已审核 50:草稿箱
+            wrapperBoost.eq("gs.goods_state", qto.getGoodsState());
+            if(qto.getGoodsState().intValue() == 10 || qto.getGoodsState().intValue() == 20){
+                spuListVOIPage = goodsInfoMapper.getMerchantGoodsInfo(page, wrapperBoost);
+            }else if(qto.getGoodsState().intValue() == 30 ||qto.getGoodsState().intValue() == 40 ||qto.getGoodsState().intValue() == 50 ){
+                //info_temp表
+                spuListVOIPage = goodsInfoTempMapper.getMerchantGoodsInfoTemp(page, wrapperBoost);
+            }
+        }
         if (ObjectUtils.isEmpty(spuListVOIPage)) {
             return new PageData<>();
         }
@@ -945,6 +945,169 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             String serveIds = sb.toString();
             one.setServeId(serveIds.substring(0, sb.length() - 1));
             goodsServeCorRepository.updateById(one);
+        }
+        // 建立商品以及sku与库存的关联
+        PCMerchGoodsInfoDTO.AddGoodsETO eto = new PCMerchGoodsInfoDTO.AddGoodsETO();
+        eto.setShopId(editDetailVO.getShopId());
+        eto.setMerchantId(editDetailVO.getMerchantId());
+        initGoodsStock(eto, items);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addTempToGoodsInfo(String goodId) {
+        //查询商品信息
+        PCMerchGoodsInfoVO.EditDetailVO editDetailVO = merchGoodsInfoTempService.getEditDetailEto(new PCMerchGoodsInfoDTO.IdDTO(goodId));
+        GoodsInfo goodsInfo = new GoodsInfo();
+        BeanUtils.copyProperties(editDetailVO, goodsInfo);
+        goodsInfo.setId(editDetailVO.getId());
+        goodsInfo.setGoodsState(GoodsStateEnum.已上架.getCode());
+
+        boolean flag = repository.save(goodsInfo);
+
+        if (!flag) {
+            throw new BusinessException("新增商品失败");
+        }
+
+        //声明拓展id容器
+        StringBuffer attributeBuffer = new StringBuffer();
+        StringBuffer paramsBuffer = new StringBuffer();
+        StringBuffer specBuffer = new StringBuffer();
+
+        //如果商品属性不为空则向拓展属性表中添加数据
+        if (ObjectUtils.isNotEmpty(editDetailVO.getAttributeList())) {
+            PCMerchGoodsAttributeInfoDTO.ETO attributeInfo;
+            for (PCMerchGoodsAttributeInfoVO.ListVO attributeInfoListVO : editDetailVO.getAttributeList()) {
+
+                attributeInfo = new PCMerchGoodsAttributeInfoDTO.ETO();
+                BeanCopyUtils.copyProperties(attributeInfoListVO, attributeInfo);
+                attributeInfo.setGoodId(goodId);
+                attributeInfo.setId("");
+                String attributeId = attributeInfoService.addGoodsAttributeInfo(attributeInfo);
+
+                //获取属性拓展id组
+                attributeBuffer.append(attributeId + ",");
+            }
+        }
+
+        //如果商品参数不为空则向拓展参数表中添加数据
+        if (ObjectUtils.isNotEmpty(editDetailVO.getParamsList())) {
+            PCMerchGoodsExtendParamsDTO.ETO paramsInfo;
+            for (PCMerchGoodsExtendParamsVO.ListVO paramsInfoListVO : editDetailVO.getParamsList()) {
+                paramsInfo = new PCMerchGoodsExtendParamsDTO.ETO();
+                BeanCopyUtils.copyProperties(paramsInfoListVO, paramsInfo);
+                paramsInfo.setGoodId(goodsInfo.getId());
+                paramsInfo.setId("");
+                String paramsId = extendParamsService.addGoodsExtendParams(paramsInfo);
+                //获取参数拓展id组
+                paramsBuffer.append(paramsId + ",");
+            }
+        }
+
+        //商品关联拓展id
+        JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodId);
+
+        //建立商品以及sku与库存的关联
+        List<CommonStockDTO.InnerChangeStockItem> items = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(editDetailVO.getSpecList())) {
+            PCMerchGoodsSpecInfoDTO.ETO specInfo;
+            for (PCMerchGoodsSpecInfoVO.ListVO specInfoListVO : editDetailVO.getSpecList()) {
+                specInfo = new PCMerchGoodsSpecInfoDTO.ETO();
+                BeanCopyUtils.copyProperties(specInfoListVO, specInfo);
+                specInfo.setGoodId(goodsInfo.getId());
+                specInfo.setId("");
+                String specId = goodsSpecInfoService.addGoodsSpecInfo(specInfo);
+
+                //获取规格拓展id组
+                specBuffer.append(specId + ",");
+            }
+            List<SkuGoodInfo> skuGoodInfos = new ArrayList<>();
+            SkuGoodInfo skuGoodInfo;
+            for (PCMerchSkuGoodInfoVO.DetailVO skuInfo : editDetailVO.getSkuVoList()) {
+                skuGoodInfo = new SkuGoodInfo();
+                BeanUtils.copyProperties(skuInfo, skuGoodInfo);
+                skuGoodInfo.setGoodId(goodsInfo.getId());
+                skuGoodInfo.setSkuGoodsNo(StringUtils.isBlank(skuInfo.getSkuGoodsNo()) ? GoodsNoUtil.getGoodsNo() : skuInfo.getSkuGoodsNo());
+                skuGoodInfo.setState(goodsInfo.getGoodsState());
+                skuGoodInfo.setShopId(editDetailVO.getShopId());
+                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
+                skuGoodInfo.setId("");
+                skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
+                skuGoodInfo.setPosSpuId(StringUtils.isBlank(editDetailVO.getPosSpuId()) ? "" : editDetailVO.getPosSpuId());
+                skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
+                skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
+                if (skuInfo.getPointPrice() != null) {
+                    skuGoodInfo.setPointPrice(skuInfo.getPointPrice());
+                }
+                if (skuInfo.getInMemberPointPrice() != null) {
+                    skuGoodInfo.setInMemberPointPrice(skuInfo.getInMemberPointPrice());
+                }
+                skuGoodInfo.setRemarks(editDetailVO.getRemarks());
+                skuGoodInfos.add(skuGoodInfo);
+
+                //添加sku商品信息
+                skuGoodInfoRepository.save(skuGoodInfo);
+                CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
+                stockItem.setGoodsId(goodsInfo.getId());
+                stockItem.setSkuId(skuGoodInfo.getId());
+                stockItem.setQuantity(skuInfo.getSkuStock() != null ? skuInfo.getSkuStock() : 0);
+                items.add(stockItem);
+            }
+
+            //商品关联拓展id
+            JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
+
+            //sku商品关联spec拓展id组
+            JoinSkuSpecIds(specBuffer, goodsInfo.getId());
+
+        } else {
+            //商品关联拓展id
+            JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
+
+            SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
+            skuGoodInfo.setGoodId(goodId);
+            skuGoodInfo.setPosSpuId(editDetailVO.getPosSpuId());
+            skuGoodInfo.setId("");
+            skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
+            skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
+            skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+            skuGoodInfoRepository.save(skuGoodInfo);
+
+            CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
+            stockItem.setGoodsId(goodsInfo.getId());
+            stockItem.setSkuId(skuGoodInfo.getId());
+            stockItem.setQuantity(editDetailVO.getSpuStock() != null ? editDetailVO.getSpuStock() : 0);
+            items.add(stockItem);
+        }
+
+        //建立商品与运费模板的关联关系
+        GoodsTempalte template = new GoodsTempalte();
+        template.setGoodsId(goodsInfo.getId());
+        template.setTemplateId(editDetailVO.getTemplateId());
+        template.setStockSubtractType(editDetailVO.getStockSubtractType());
+        goodsTempalteRepository.save(template);
+
+        //建立商品与店铺自定义类目的关联关系
+        if (StringUtils.isNotBlank(editDetailVO.getShopNavigationId())) {
+            createGoodsShopNaigationBind(editDetailVO.getMerchantId(), editDetailVO.getShopId(), goodsInfo.getId(), editDetailVO.getShopNavigationId(), TerminalEnum.BBB.getCode());
+        }
+
+        PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = new PCMerchGoodsInfoVO.GoodsIdVO();
+        goodsIdVO.setGoodsId(goodsInfo.getId());
+        //添加商品与服务关联数据
+        if(ObjectUtil.isNotEmpty(editDetailVO.getGoodsServeList())){
+            GoodsServeCor goodsServeCor = new GoodsServeCor();
+            goodsServeCor.setGoodsId(goodsInfo.getId());
+            StringBuilder sb = new StringBuilder();
+            for (PCMerchGoodsServeVO.ListVO listVO : editDetailVO.getGoodsServeList()) {
+                sb.append(listVO.getId() + ",");
+            }
+            String serveIds = sb.toString();
+            if (StringUtils.isNotEmpty(serveIds)) {
+                goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
+            }
+            goodsServeCorRepository.save(goodsServeCor);
         }
         // 建立商品以及sku与库存的关联
         PCMerchGoodsInfoDTO.AddGoodsETO eto = new PCMerchGoodsInfoDTO.AddGoodsETO();

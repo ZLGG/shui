@@ -43,6 +43,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
             */
         private Integer state;
 
+        /**
+         * 1:新增商品 2更新商品
+         */
+        private Integer type;
+
             /**
             * 审核拒绝原因
             */
