@@ -238,4 +238,6 @@ public interface IPCMerchAdminGoodsInfoRpc {
     String selectGoodsNo(String tradeGoodsId);
 
     PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
+
+    PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId);
 }

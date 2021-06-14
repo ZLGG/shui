@@ -1,4 +1,5 @@
 package com.gs.lshly.biz.support.commodity.rpc.merchadmin.pc;
+
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsFupinService;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
@@ -29,10 +30,9 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 /**
-*
-* @author Starry
-* @since 2020-10-08
-*/
+ * @author Starry
+ * @since 2020-10-08
+ */
 @DubboService
 public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
@@ -44,7 +44,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     private IPCMerchGoodsInfoTempService goodsInfoTempService;
 
     @Override
-    public PageData<PCMerchGoodsInfoVO.SpuListVO> pageData(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto){
+    public PageData<PCMerchGoodsInfoVO.SpuListVO> pageData(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto) {
         return goodsInfoService.pageGoodsData(qto);
     }
 
@@ -54,16 +54,16 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     }
 
     @Override
-    public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto){
-       PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoService.addGoodsInfo(eto);
+    public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
+        PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoService.addGoodsInfo(eto);
 
         //如果该商品是扶贫商品
 
-        settingFuPin(eto,goodsIdVO.getGoodsId());
+        settingFuPin(eto, goodsIdVO.getGoodsId());
     }
 
     @Override
-    public void deleteGoodsInfo(PCMerchGoodsInfoDTO.IdDTO dto){
+    public void deleteGoodsInfo(PCMerchGoodsInfoDTO.IdDTO dto) {
         goodsInfoService.deleteGoodsInfo(dto);
 
         //删除商品与扶贫之间的关联
@@ -73,13 +73,13 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
 
     @Override
-    public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto){
+    public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
 
         //用户编辑商品，需要先审核，若只是修改库存则直接修改
         //包含非库存字段修改
-        if(ObjectUtils.isNotEmpty(eto) && ObjectUtils.isNotEmpty(eto.getIsIncludeOthers()) && eto.getIsIncludeOthers()){
+        if (ObjectUtils.isNotEmpty(eto) && ObjectUtils.isNotEmpty(eto.getIsIncludeOthers()) && eto.getIsIncludeOthers()) {
             goodsInfoService.updateGoodsStock(eto);
-        }else{
+        } else {
             goodsInfoTempService.editGoodsInfo(eto);
         }
 
@@ -91,7 +91,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     }
 
     @Override
-    public PCMerchGoodsInfoVO.DetailVO detailGoodsInfo(PCMerchGoodsInfoDTO.EditIdsDTO dto){
+    public PCMerchGoodsInfoVO.DetailVO detailGoodsInfo(PCMerchGoodsInfoDTO.EditIdsDTO dto) {
         return goodsInfoService.detailGoodsInfo(dto);
     }
 
@@ -99,26 +99,26 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     public void groundingGoods(PCMerchGoodsInfoDTO.IdListDTO dto) {
         //如果这些商品为扶贫商品，平台方必须审核
         List<String> fupinGoodsIdList = goodsFupinService.listFuPinGoodsId(new BaseQTO());
-        if (ObjectUtils.isNotEmpty(fupinGoodsIdList)){
+        if (ObjectUtils.isNotEmpty(fupinGoodsIdList)) {
             List<String> initGoodsIdList = dto.getIdList();
-            List<String> list=dto.getIdList().stream().filter(t->fupinGoodsIdList.contains(t))
+            List<String> list = dto.getIdList().stream().filter(t -> fupinGoodsIdList.contains(t))
                     .collect(Collectors.toList());
-            if (ObjectUtils.isNotEmpty(list)){
+            if (ObjectUtils.isNotEmpty(list)) {
                 dto.setFuPinGoodsIdList(list);
                 dto.setIdList(list);
                 goodsInfoService.groundingGoods(dto);
                 //其他商品按正常流程上架
-                List<String> intersection =initGoodsIdList.stream().filter(t-> !list.contains(t))
+                List<String> intersection = initGoodsIdList.stream().filter(t -> !list.contains(t))
                         .collect(Collectors.toList());
-                if (ObjectUtils.isNotEmpty(intersection)){
+                if (ObjectUtils.isNotEmpty(intersection)) {
                     dto.setIdList(intersection);
                     dto.setFuPinGoodsIdList(new ArrayList<>());
                     goodsInfoService.groundingGoods(dto);
                 }
-            }else {
+            } else {
                 goodsInfoService.groundingGoods(dto);
             }
-        }else {
+        } else {
             goodsInfoService.groundingGoods(dto);
         }
     }
@@ -140,7 +140,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
     @Override
     public ExportDataDTO downExcelMode() throws Exception {
-        return ExcelUtil.treatmentBean(goodsInfoService.downExcelModel(),PCMerchGoodsInfoVO.ImportGoodsDataVO.class);
+        return ExcelUtil.treatmentBean(goodsInfoService.downExcelModel(), PCMerchGoodsInfoVO.ImportGoodsDataVO.class);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         PCMerchGoodsFupinQTO.QTO qto = new PCMerchGoodsFupinQTO.QTO();
         qto.setGoodsId(dto.getId());
         PCMerchGoodsFupinVO.DetailVO detailVO = goodsFupinService.getDetailVO(qto);
-        if (ObjectUtils.isNotEmpty(detailVO)){
+        if (ObjectUtils.isNotEmpty(detailVO)) {
             editDetailVO.setFuPinDetailVO(detailVO);
         }
         return editDetailVO;
@@ -188,7 +188,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
     @Override
     public void addGoodsBatch(List<PCMerchGoodsInfoDTO.ExcelGoodsDataETO> list, BaseDTO dto) {
-       goodsInfoService.addGoodsBatch(list,dto);
+        goodsInfoService.addGoodsBatch(list, dto);
     }
 
     @Override
@@ -262,17 +262,22 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         return goodsInfoService.selectAllWithOutSeckill(qto);
     }
 
+    @Override
+    public PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId) {
+        return goodsInfoService.selectBrandAndCategory(goodsId);
+    }
 
-    private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto,String goodsId){
-        if (ObjectUtils.isNotEmpty(eto.getFuPinEto())){
+
+    private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto, String goodsId) {
+        if (ObjectUtils.isNotEmpty(eto.getFuPinEto())) {
             PCMerchGoodsFupinDTO.ETO fuPinEto = new PCMerchGoodsFupinDTO.ETO();
-            BeanCopyUtils.copyProperties(eto.getFuPinEto(),fuPinEto);
+            BeanCopyUtils.copyProperties(eto.getFuPinEto(), fuPinEto);
             fuPinEto.setEtoList(eto.getFuPinEto().getEtoList());
             fuPinEto.setGoodsId(goodsId);
             fuPinEto.setShopId(eto.getJwtShopId());
             fuPinEto.setMerchantId(eto.getJwtMerchantId());
             goodsFupinService.saveGoodsFupin(fuPinEto);
-        }else {
+        } else {
             PCMerchGoodsFupinDTO.IdDTO dto = new PCMerchGoodsFupinDTO.IdDTO(goodsId);
             goodsFupinService.deleteGoodsFupin(dto);
         }

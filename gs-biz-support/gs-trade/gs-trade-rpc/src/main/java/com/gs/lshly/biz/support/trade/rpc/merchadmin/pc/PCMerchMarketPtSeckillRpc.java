@@ -9,6 +9,8 @@ import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchMarketPtSeckillRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * @author yingjun
  * @date 2021年5月8日 下午5:15:46
@@ -45,17 +47,12 @@ public class PCMerchMarketPtSeckillRpc implements IPCMerchMarketPtSeckillRpc {
     }
 
     @Override
-    public void addSkuGoods(PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
-        ipcMerchMarketPtSeckillService.addSkuGoods(dto);
-    }
-
-    @Override
-    public void addSkuGoodsDetail(PCMerchMarketPtSeckillDTO.AddSeckillGoodsETO dto) {
+    public void addSkuGoodsDetail(PCMerchMarketPtSeckillDTO.EndGoods dto) {
         ipcMerchMarketPtSeckillService.addSkuGoodsDetail(dto);
     }
 
     @Override
-    public void delSpu(PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
+    public void delSpu(PCMerchMarketPtSeckillDTO.SpuIdList dto) {
         ipcMerchMarketPtSeckillService.delSpu(dto);
     }
 }

@@ -50,4 +50,9 @@ public class PCMerchAdminGoodsCategoryRpc implements IPCMerchAdminGoodsCategoryR
     public PCMerchGoodsCategoryVO.innerCategoryVO innerGetListVoByName(String categoryName,String parentId) {
         return categoryService.innerGetListVo(categoryName,parentId);
     }
+
+    @Override
+    public List<String> selectThreeCategory(String keyWord) {
+        return categoryService.selectThreeCategory(keyWord);
+    }
 }

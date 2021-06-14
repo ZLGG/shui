@@ -1,7 +1,5 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
-import java.net.CookieHandler;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtSeckillService;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtActivityDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtSeckillDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.MarketPtSeckillQTO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtActivityVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
-import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
 
@@ -76,6 +69,12 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     @DubboReference
     private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
 
+    /**
+     * 秒杀活动列表
+     *
+     * @param qto
+     * @return
+     */
     @Override
     public PageData<MarketPtSeckillVO.ActivityListVO> pageData(MarketPtSeckillQTO.QTO qto) {
 /*        QueryWrapper<MarketPtSeckill> wrapper = MybatisPlusUtil.query();
@@ -120,12 +119,33 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         return MybatisPlusUtil.toPageData(listVOS, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
 
+    /**
+     * 添加秒杀活动
+     *
+     * @param eto
+     */
     @Override
     @Transactional
     public void addMarketPtSeckill(MarketPtSeckillDTO.ETO eto) {
         if (!ObjectUtil.isAllNotEmpty(eto, eto.getSignStartTime(), eto.getSignEndTime(), eto.getSeckillStartTime(), eto.getSeckillEndTime(), eto.getName())) {
             throw new BusinessException("参数不能未空!");
         }
+
+        //判断场次时间是否重叠
+        for (int i = 0; i < eto.getSessionTime().size() - 1; i++) {
+            String seEndTime = eto.getSessionTime().get(i).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String seStartTime = eto.getSessionTime().get(i).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            for (int j = i + 1; j < eto.getSessionTime().size(); j++) {
+                String startTime = eto.getSessionTime().get(j).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                String endTime = eto.getSessionTime().get(j).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                if (!DateUtil.compareDate(seStartTime, endTime)) {
+                    if (DateUtil.compareDate(seEndTime, startTime)) {
+                        throw new BusinessException("时间有重叠!");
+                    }
+                }
+            }
+        }
+
         if (StrUtil.isEmpty(eto.getId())) {
             MarketPtSeckill marketPtSeckill = new MarketPtSeckill();
             BeanUtils.copyProperties(eto, marketPtSeckill);
@@ -158,6 +178,12 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         }
     }
 
+    /**
+     * 秒杀活动详情
+     *
+     * @param qto
+     * @return
+     */
     @Override
     public MarketPtSeckillVO.ActivityVO detailMarketPtSeckill(MarketPtSeckillQTO.IdQTO qto) {
         if (StrUtil.isEmpty(qto.getId())) {
@@ -186,6 +212,12 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         return activityVO;
     }
 
+    /**
+     * 秒杀spu列表
+     *
+     * @param qto
+     * @return
+     */
     @Override
     public PageData<MarketPtSeckillVO.KillGoodsVO> seckillGoods(MarketPtSeckillQTO.GoodsQTO qto) {
         if (!ObjectUtil.isAllNotEmpty(qto, qto.getSeckillId(), qto.getTimeQuanTumId())) {
@@ -232,7 +264,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             if (ObjectUtil.isEmpty(spu)) {
                 throw new BusinessException("未查询到报名的spu商品信息!");
             }
-            spu.setChoose(MarketPtSeckillSpuChoseEnum.已选择.getCode());
+            spu.setChoose(MarketPtSeckillSpuChooseEnum.已选择.getCode());
             iMarketPtSeckillGoodsSpuRepository.updateById(spu);
             QueryWrapper<MarketPtSeckillGoodsSku> query = MybatisPlusUtil.query();
             query.eq("goods_spu_item_id", seckillSpuSkuGoodsDTO.getKillSpuId());
@@ -252,6 +284,12 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         }
     }
 
+    /**
+     * 秒杀sku列表
+     *
+     * @param qto
+     * @return
+     */
     @Override
     public List<MarketPtSeckillVO.KillSkuGoods> seckillSkuGoods(MarketPtSeckillQTO.SkuGoodsQTO qto) {
         if (ObjectUtil.isEmpty(qto.getKillSpuId())) {
@@ -265,6 +303,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             MarketPtSeckillVO.SkuGoodsInfo skuGoodsInfo = iSkuGoodsInfoRpc.selectOne(marketPtSeckillGoodsSku.getSkuId());
             MarketPtSeckillVO.KillSkuGoods killSkuGoods = new MarketPtSeckillVO.KillSkuGoods();
             BeanUtil.copyProperties(marketPtSeckillGoodsSku, killSkuGoods);
+            killSkuGoods.setSeckillInventory(marketPtSeckillGoodsSku.getSeckillQuantity() - marketPtSeckillGoodsSku.getSaleQuantity());
             killSkuGoods.setKillSkuId(marketPtSeckillGoodsSku.getId());
             if (ObjectUtil.isNotEmpty(skuGoodsInfo)) {
                 killSkuGoods.setSpecsValue(skuGoodsInfo.getSpecsValue());
@@ -275,6 +314,12 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         return killSkuGoodsList;
     }
 
+    /**
+     * 获取秒杀时间段
+     *
+     * @param dto
+     * @return
+     */
     @Override
     public PageData<MarketPtSeckillVO.QuantumSessionVO> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto) {
         if (StrUtil.isEmpty(dto.getId())) {

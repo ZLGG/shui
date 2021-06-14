@@ -132,5 +132,10 @@ public class TradeRightsGoods extends Model {
      */
     private BigDecimal refundPoint;
 
+    /**
+     * 是否撤销
+     */
+    private Boolean isRevocation;
+
 
 }

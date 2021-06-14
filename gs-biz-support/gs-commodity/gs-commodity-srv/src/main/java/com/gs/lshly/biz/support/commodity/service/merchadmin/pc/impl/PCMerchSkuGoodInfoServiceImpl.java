@@ -131,11 +131,11 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
 
     @Override
     public List<PCMerchMarketPtSeckillVO.AllSkuVO> selectByGoodsId(String goodsId) {
-        if (StrUtil.isNotEmpty(goodsId)) {
-            throw new BusinessException("goodsId为空");
+        if (StrUtil.isEmpty(goodsId)) {
+            throw new BusinessException("goodId为空");
         }
         QueryWrapper<SkuGoodInfo> query = MybatisPlusUtil.query();
-        query.eq("goods_id", goodsId);
+        query.eq("good_id", goodsId);
         List<SkuGoodInfo> skuGoodInfoList = repository.list(query);
         if (CollUtil.isEmpty(skuGoodInfoList)) {
             return null;

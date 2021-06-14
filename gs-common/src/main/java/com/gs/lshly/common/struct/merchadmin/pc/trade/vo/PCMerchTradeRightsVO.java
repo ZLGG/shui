@@ -183,7 +183,7 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("备注信息")
         private String rightsRemark;
 
-        @ApiModelProperty("订单id")
+        @ApiModelProperty("订单流水号")
         private String tradeId;
 
         @ApiModelProperty("实付金额")
@@ -192,14 +192,27 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("应退金额")
         private BigDecimal shouldRefundAmount;
 
+        @ApiModelProperty("实退金额")
+        private BigDecimal refundAmount;
+
         @ApiModelProperty("实付积分")
         private BigDecimal tradePointAmount;
 
         @ApiModelProperty("应退积分")
         private BigDecimal shouldRefundPoint;
 
+        @ApiModelProperty("实退积分")
+        private BigDecimal refundPoint;
+
         @ApiModelProperty("运费")
         private BigDecimal deliveryAmount;
+
+        @ApiModelProperty("订单编号")
+        private String orderCode;
+
+        @ApiModelProperty("申请时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime applyTime;
 
         @ApiModelProperty("售后凭证图片")
         private List<String> rightsImge;
@@ -240,7 +253,7 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         private Integer rightsReasonType;
 
         @ApiModelProperty("处理进度(10:待处理,20:商家同意,30:商户驳回,40:买家二次申诉,50:平台同意,60:平台驳回," +
-                "70:换货完成,80:商家确认收货并退款,90:用户取消)")
+                "70:换货完成,80:商家确认收货并退款,90:用户取消,100,用户修改申请))")
         private Integer state;
 /*        @ApiModelProperty("申请时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -274,6 +287,8 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         private String goodsNo;
         @ApiModelProperty("商品sku图片")
         private String skuImg;
+        @ApiModelProperty("商品规格值")
+        private String skuSpecValue;
     }
 
     @Data
