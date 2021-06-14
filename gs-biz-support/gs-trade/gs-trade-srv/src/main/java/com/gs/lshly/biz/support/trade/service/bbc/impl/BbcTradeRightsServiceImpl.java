@@ -194,7 +194,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 TradeRightsLog tradeRightsLog = new TradeRightsLog();
                 tradeRightsLog.setRightsId(tradeRights.getId());
                 tradeRightsLog.setState(TradeRightsEndStateEnum.待处理.getCode());
-                tradeRightsLog.setContent("买家发起了退款申请，金额：" + tradeRights.getShouldRefundAmount() + "元，" + tradeRights.getShouldRefundPoint() + "积分。");
+                tradeRightsLog.setContent("买家发起了退款申请，金额：" + tradeRights.getShouldRefundAmount().setScale(2) + "元，" + tradeRights.getShouldRefundPoint() + "积分。");
                 tradeRightsLogRepository.save(tradeRightsLog);
             }
         } else {
