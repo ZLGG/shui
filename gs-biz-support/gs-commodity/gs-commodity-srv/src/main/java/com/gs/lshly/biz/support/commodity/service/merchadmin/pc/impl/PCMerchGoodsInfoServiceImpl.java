@@ -18,6 +18,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -138,6 +139,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Autowired
     private GoodsInfoTempMapper goodsInfoTempMapper;
     @Autowired
+    private GoodsTempalteMapper goodsTempalteMapper;
+    @Autowired
     private IPCMerchSkuGoodInfoService skuGoodInfoService;
     @Autowired
     private IGoodsTempalteRepository goodsTempalteRepository;
@@ -229,9 +232,12 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
         for (PCMerchGoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
             //判断是否已经设置运费模板
-            spuListVO.setHasTemplate(getHasTemplate(spuListVO.getId()));
+            if(ObjectUtil.isNotEmpty(getHasTemplate(spuListVO.getId()))){
+                spuListVO.setTemplateName(getHasTemplate(spuListVO.getId()));
+            }
             //填充商品库存数量
-            spuListVO.setStockNum(getSpuStockNum(spuListVO.getId(), qto.getJwtShopId()));
+            spuListVO.setStockNumList(getStockNum(spuListVO.getId(), qto.getJwtShopId()));
+
             spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
         }
         return MybatisPlusUtil.toPageData(qto, PCMerchGoodsInfoVO.SpuListVO.class, spuListVOIPage);
@@ -271,9 +277,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             PCMerchGoodsInfoVO.StockAlarmGoodsVO stockAlarmGoodsVO = new PCMerchGoodsInfoVO.StockAlarmGoodsVO();
             BeanUtils.copyProperties(goodsInfo, stockAlarmGoodsVO);
             //判断是否已经设置运费模板
-            stockAlarmGoodsVO.setHasTemplate(getHasTemplate(goodsInfo.getId()));
+            //stockAlarmGoodsVO.setHasTemplate(getHasTemplate(goodsInfo.getId()));
             //填充商品库存数量
-            stockAlarmGoodsVO.setStockNum(getSpuStockNum(goodsInfo.getId(), qto.getJwtShopId()));
+            //stockAlarmGoodsVO(getSpuStockNum(goodsInfo.getId(), qto.getJwtShopId()));
 
             stockAlarmGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
             list.add(stockAlarmGoodsVO);
@@ -2074,6 +2080,22 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return spuStockNum;
     }
 
+    private List<PCMerchGoodsInfoVO.SkuStockNum> getStockNum(String goodsId, String shopId){
+        QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
+        boost.eq("good_id", goodsId);
+        List<SkuGoodInfo> skuGoodInfos = skuGoodInfoRepository.list(boost);
+        List<PCMerchGoodsInfoVO.SkuStockNum> skuStockNums = new ArrayList<>();
+        PCMerchGoodsInfoVO.SkuStockNum skuStockNum;
+        for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
+            CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStock(new BaseDTO(), shopId, skuGoodInfo.getId()).getData();
+            skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
+            skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
+            skuStockNum.setStockNum(stockVO.getQuantity());
+            skuStockNums.add(skuStockNum);
+        }
+        return skuStockNums;
+    }
+
     private String getImage(String images) {
         if (images != null && !images.equals("{}")) {
             JSONArray arr = JSONArray.parseArray(images);
@@ -2239,14 +2261,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return shopNavigation;
     }
 
-    private boolean getHasTemplate(String goodsId) {
-        QueryWrapper<GoodsTempalte> boost = MybatisPlusUtil.query();
-        boost.eq("goods_id", goodsId);
-        int count = goodsTempalteRepository.count(boost);
-        if (count > 0) {
-            return true;
-        }
-        return false;
+    private String getHasTemplate(String goodsId) {
+        return goodsTempalteRepository.baseMapper().getTemplateName(goodsId);
     }
 
     private void deleteSurplusAttribute
