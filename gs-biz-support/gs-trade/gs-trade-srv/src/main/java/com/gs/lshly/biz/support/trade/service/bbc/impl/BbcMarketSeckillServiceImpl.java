@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,16 +14,18 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.openservices.shade.org.apache.commons.lang3.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSpu;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillGoodsSpuMapper;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillMapper;
+import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillTimeQuantumMapper;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSpuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.enums.GoodsPointTypeEnum;
 import com.gs.lshly.common.enums.MarketPtSeckillStatusEnum;
@@ -33,11 +36,13 @@ import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
@@ -56,6 +61,12 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     
     @Autowired
     private MarketPtSeckillGoodsSpuMapper marketPtSeckillGoodsSpuMapper;
+    
+    @Autowired
+    private IMarketPtSeckillTimeQuantumRepository marketPtSeckillTimeQuantumRepository;
+    
+    @Autowired
+    private MarketPtSeckillTimeQuantumMapper marketPtSeckillTimeQuantumMapper;
     
 
     @DubboReference
@@ -200,29 +211,6 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		return from;
 	}
 	 
-	 public static void main(String args[]){
-		 System.out.println(random());
-		 
-//		 List<Integer> list = new ArrayList<Integer>();
-//		 list.add(10);
-//		 list.add(12);
-//		 list.add(18);
-//		 list.add(20);
-//		 list.add(22);
-//		 
-//		 Integer minute = 10;
-//			Integer from = 0;
-//			for(Integer i:list){
-//				boolean flag = Math.max(from, minute) == Math.min(minute, i);
-//				if(flag){
-//					System.out.println(from);
-//					break;
-//				}
-//				from = i;
-//				System.out.println(from+"<><>");
-//			}
-	 }
-
 	@Override
 	public PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoods(BbcMarketSeckillQTO.QTO qto) {
 		String id = qto.getId();
@@ -444,4 +432,89 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		BigDecimal db = new BigDecimal(Math.random() * (maxF - minF) + minF);
 		return db.divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
 	}
+
+	@Override
+	public SeckillPointHome seckillPointHome(DTO dto) {
+		//查询今天所有开售数据
+		String id = dto.getId();
+		
+		String now = DateUtils.fomatDate(new Date(), DateUtils.dateFormatStr);
+		List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> nowList = marketPtSeckillTimeQuantumMapper.list(now+" 00:00:00", now+" 23:59:59");
+		if (CollectionUtil.isNotEmpty(nowList)) {	//今天有秒杀活动
+			//当前秒杀活动
+			Integer hh = nowSeckill(nowList);
+			if(hh!=null&&hh>0){
+				for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: nowList) {
+					//判断当前时间有哪个秒杀活动正在进行中
+					if(marketPtSeckillTimeQuantumVO.getHh().equals(hh)){
+						String seckillId = marketPtSeckillTimeQuantumVO.getSeckillId();
+						String timeQuantumId = marketPtSeckillTimeQuantumVO.getId();
+						
+						//查询哪些商品参于了秒杀
+						QueryWrapper<MarketPtSeckillGoodsSpu> wrapper = new QueryWrapper<>();
+						wrapper.eq("seckill_id", seckillId);
+						wrapper.eq("time_quantum_id", timeQuantumId);
+						wrapper.eq("choose", 10);
+						wrapper.last("limit 0,4");
+						List<MarketPtSeckillGoodsSpu> spuList = marketPtSeckillGoodsSpuRepository.list(wrapper);
+						if(CollectionUtils.isNotEmpty(spuList)){
+							BbcGoodsInfoVO.SimpleListVO simpleGooods=null;
+							for(MarketPtSeckillGoodsSpu spu:spuList){
+								String goodsId = spu.getGoodsId();
+								
+								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
+								
+							}
+						}
+					}
+					
+				}
+			}
+			
+			
+		}
+        
+		return null;
+	}
+	
+	public static Integer nowSeckill(List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> list) {
+		Integer minute = Integer.valueOf(DateUtils.fomatDate(new Date(),"HH"));
+		Integer from = 0;
+		if(CollectionUtils.isNotEmpty(list)){
+			for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: list) {
+				if(minute.equals(marketPtSeckillTimeQuantumVO.getHh())){
+					return from;
+				}
+				boolean flag = Math.max(from, minute) == Math.min(minute, marketPtSeckillTimeQuantumVO.getHh());
+				if(flag){
+					return from;
+				}
+				from = marketPtSeckillTimeQuantumVO.getHh();
+			}
+		}
+		return from;
+	}
+	
+	 public static void main(String args[]){
+		 System.out.println(random());
+		 
+		 List<Integer> list = new ArrayList<Integer>();
+		 list.add(10);
+		 list.add(12);
+		 list.add(18);
+		 list.add(20);
+		 list.add(22);
+		 
+		 Integer minute = 11;
+			Integer from = 0;
+			for(Integer i:list){
+				boolean flag = Math.max(from, minute) == Math.min(minute, i);
+				if(flag){
+					System.out.println(from);
+					break;
+				}
+				from = i;
+				System.out.println(from+"<><>");
+			}
+	 }
 }

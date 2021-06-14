@@ -2,7 +2,9 @@ package com.gs.lshly.biz.support.trade.service.bbc;
 
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO.DTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalHomeVO;
 
 /**
  * @Author yangxi
@@ -11,6 +13,9 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 public interface IBbcCtccPtActivityGoodsService {
     
 	List<BbcGoodsInfoVO.DetailVO> listCtccPtActivityGoods(Integer limit);
+	
+	
+	CtccInternationalHomeVO ctccInternationalHomeVO(DTO dto);
     
     
 }

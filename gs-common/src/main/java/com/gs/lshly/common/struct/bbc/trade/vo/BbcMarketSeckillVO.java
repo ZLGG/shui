@@ -5,9 +5,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -309,4 +315,88 @@ public abstract class BbcMarketSeckillVO implements Serializable {
         @ApiModelProperty("备注信息")
         private String remark = "100天历史最低价";
 	}
+	
+	@Data
+	@ApiModel("BbcMarketActivityVO.MarketPtSeckillTimeQuantumVO")
+	@Accessors(chain = true)
+	public static class MarketPtSeckillTimeQuantumVO implements Serializable {
+		
+		/**
+	     * 小时
+	     */
+	    private Integer hh;
+		
+		/**
+	     * id
+	     */
+	    private String id;
+
+
+	    /**
+	     * 秒杀活动id
+	     */
+	    private String seckillId;
+
+	    /**
+	     * 时间段名称
+	     */
+	    private String timeQuantumName;
+
+	    /**
+	     * 开始时间
+	     */
+	    private LocalDateTime startTime;
+
+	    /**
+	     * 结束时间
+	     */
+	    private LocalDateTime endTime;
+
+	    /**
+	     * 创建时间
+	     */
+	    @TableField(fill = FieldFill.INSERT)
+	    private LocalDateTime cdate;
+
+	    /**
+	     * 更新时间
+	     */
+	    @TableField(fill = FieldFill.INSERT_UPDATE)
+	    private LocalDateTime udate;
+
+	    /**
+	     * 逻辑删除标记
+	     */
+	    @TableField(fill = FieldFill.INSERT)
+	    @TableLogic
+	    private Boolean flag;
+	}
+	
+	@Data
+	@ApiModel("BbcMarketActivityVO.SeckillPointHomeVO")
+	@Accessors(chain = true)
+	public static class SeckillPointHomeVO implements Serializable {
+
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("封面图")
+		private String imageUrl;
+
+		@ApiModelProperty("封面图跳转")
+		private String jumpUrl;
+
+		@ApiModelProperty("秒杀时间段")
+		private List<SeckillTimeQuantum> timeQuantum;
+		
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillEndTime;
+		
+		@ApiModelProperty("初始化数据")
+		private List<BbcMarketSeckillVO.SeckillGoodsVO> list;
+		
+	}
+	
 }

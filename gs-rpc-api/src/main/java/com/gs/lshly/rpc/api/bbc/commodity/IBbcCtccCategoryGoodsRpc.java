@@ -14,13 +14,6 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
  */
 public interface IBbcCtccCategoryGoodsRpc {
 
-	/**
-     * 电信国际首页
-     * @param qto
-     * @return
-     */
-    BbcCtccCategoryGoodsVO.CtccInternationalHomeVO ctccInternationalHomeVO(BbcCtccCategoryGoodsDTO.DTO dto);
-    
     /**
      * 获取电信国际列表
      * @return

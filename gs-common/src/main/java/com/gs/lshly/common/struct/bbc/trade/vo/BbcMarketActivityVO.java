@@ -645,4 +645,32 @@ public abstract class BbcMarketActivityVO implements Serializable {
 		@ApiModelProperty("时间段")
 		private String timeQuantum;
 	}
+	
+	
+	@Data
+	@ApiModel("BbcMarketActivityVO.SeckillPointHome")
+	@Accessors(chain = true)
+	public static class SeckillPointHome implements Serializable {
+
+		@ApiModelProperty("名称")
+		private String name;
+
+		@ApiModelProperty("封面图")
+		private String imageUrl;
+
+		@ApiModelProperty("封面图跳转")
+		private String jumpUrl;
+
+		@ApiModelProperty("秒杀时间段")
+		private List<SeckillTimeQuantum> timeQuantum;
+		
+		@ApiModelProperty("结束秒杀时间")
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		private LocalDateTime seckillEndTime;
+		
+		@ApiModelProperty("初始化数据")
+		private List<BbcMarketSeckillVO.SeckillGoodsVO> list;
+		
+	}
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.entity.CtccCategory;
 import com.gs.lshly.biz.support.commodity.entity.CtccCategoryGoods;
 import com.gs.lshly.biz.support.commodity.mapper.CtccCategoryMapper;
@@ -31,10 +30,10 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
-import com.gs.lshly.common.utils.StringManageUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteAdvertRpc;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcCtccPtActivityGoodsRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 
 import cn.hutool.core.collection.CollectionUtil;
@@ -49,18 +48,13 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
 	
 	@Autowired
 	private ICtccCategoryGoodsRepository goodsRepository;
-
+	
     @DubboReference
     private IBbcSiteAdvertRpc siteAdvertRpc;
     
     @Autowired
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
     
-    @Autowired
-    private CtccCategoryMapper ctccCategoryMapper;
-    
-    @Autowired
-    private IBbcGoodsLabelService bbcGoodsLabelService;
     
     @DubboReference
     private IBbcUserRpc userRpc;
@@ -93,6 +87,8 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         	
         	CtccInternationalCategoryVO ctccInternationalCategoryVO = null;
         	
+        	List<BbcCtccCategoryGoodsVO.GoodsListVO> goodsList = new ArrayList<BbcCtccCategoryGoodsVO.GoodsListVO>();
+        	
         	
         	for(CtccCategory ctccCategory:ctccCategoryList){
             	QueryWrapper<CtccCategoryGoods> wrapperGoods = MybatisPlusUtil.query();
@@ -102,20 +98,30 @@ public class BbcCtccCategoryGoodsServiceImpl implements IBbcCtccCategoryGoodsSer
         		
         		//
         		wrapperGoods.eq("category_id", ctccCategory.getId());
-        		List<BbcCtccCategoryGoodsVO.GoodsListVO> ctccCategoryGoods = ctccCategoryMapper.listGoodsByCategoryId(ctccCategory.getId());
+        		wrapperGoods.eq("goods_state", 20);
+        		wrapperGoods.eq("flag", 0);
+        		wrapperGoods.orderByAsc("idx");
+        		List<CtccCategoryGoods> ctccCategoryGoods = goodsRepository.list(wrapperGoods);
         		
         		if(CollectionUtil.isNotEmpty(ctccCategoryGoods)){
-	        		for(BbcCtccCategoryGoodsVO.GoodsListVO goodsListVO:ctccCategoryGoods){
-						
-	        			goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsListVO.getGoodsId()));
-	        			goodsListVO.setGoodsImage(ObjectUtils.isEmpty(StringManageUtil.getImage(goodsListVO.getGoodsImage())) ? "" : StringManageUtil.getImage(goodsListVO.getGoodsImage()));
-	        			goodsListVO.setGoodsId(goodsListVO.getId());
+        			BbcCtccCategoryGoodsVO.GoodsListVO goodsListVO = new BbcCtccCategoryGoodsVO.GoodsListVO();
+	        		for(CtccCategoryGoods goods:ctccCategoryGoods){
+	        			goodsListVO = new BbcCtccCategoryGoodsVO.GoodsListVO();
+	        			
+	        			String goodsId = goods.getGoodsId();
+	        			BbcGoodsInfoVO.SimpleListVO simpleListVO = bbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
+	        			BeanCopyUtils.copyProperties(simpleListVO, goodsListVO);
+//	        			goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsListVO.getGoodsId()));
+//	        			goodsListVO.setGoodsImage(ObjectUtils.isEmpty(StringManageUtil.getImage(goodsListVO.getGoodsImage())) ? "" : StringManageUtil.getImage(goodsListVO.getGoodsImage()));
+//	        			goodsListVO.setGoodsId(goodsListVO.getId());
 	        			goodsListVO.setIsInUser(userDetail.getIsInUser());
 	        			goodsListVO.setMemberType(userDetail.getMemberType());
+	        			
+	        			goodsList.add(goodsListVO);
 	        		}
         		}
         		
-        		ctccInternationalCategoryVO.setGoodsList(ctccCategoryGoods);
+        		ctccInternationalCategoryVO.setGoodsList(goodsList);
         		categorys.add(ctccInternationalCategoryVO);
         	}
         	ctccInternationalHomeVO.setCategorys(categorys);

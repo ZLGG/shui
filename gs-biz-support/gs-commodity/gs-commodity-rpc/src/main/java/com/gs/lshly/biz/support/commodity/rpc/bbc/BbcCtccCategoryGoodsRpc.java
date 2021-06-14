@@ -23,10 +23,10 @@ public class BbcCtccCategoryGoodsRpc implements IBbcCtccCategoryGoodsRpc {
 	@Autowired
     private IBbcCtccCategoryGoodsService bbcCtccCategoryGoodsService;
 
-	@Override
-	public CtccInternationalHomeVO ctccInternationalHomeVO(DTO dto) {
-		return bbcCtccCategoryGoodsService.ctccInternationalHome(dto);
-	}
+//	@Override
+//	public CtccInternationalHomeVO ctccInternationalHomeVO(DTO dto) {
+//		return bbcCtccCategoryGoodsService.ctccInternationalHome(dto);
+//	}
 
 	@Override
 	public List<DetailVO> listGoodsInfo() {

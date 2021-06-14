@@ -9,6 +9,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
 
 /**
  * 秒杀首页
@@ -20,6 +21,13 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 public interface IBbcMarketSeckillService {
 
 
+	/**
+     * 
+     * @param qto
+     * @return
+     */
+	SeckillPointHome seckillPointHome(BbcMarketSeckillDTO.DTO dto);
+    
     /**
      * 
      * @param qto

@@ -6,6 +6,8 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcCtccPtActivityGoodsService;
+import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO.DTO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcCtccPtActivityGoodsRpc;
 
@@ -24,5 +26,11 @@ public class BbcCtccPtActivityGoodsRpc implements IBbcCtccPtActivityGoodsRpc {
 	@Override
 	public List<BbcGoodsInfoVO.DetailVO> listCtccPtActivityGoods(Integer limit) {
 		return bbcCtccPtActivityGoodsService.listCtccPtActivityGoods(limit);
+	}
+
+	@Override
+	public CtccInternationalHomeVO ctccInternationalHomeVO(DTO dto) {
+		// TODO Auto-generated method stub
+		return bbcCtccPtActivityGoodsService.ctccInternationalHomeVO(dto);
 	}
 }
