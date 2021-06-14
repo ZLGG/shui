@@ -289,6 +289,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageMerchantGoods(BbcGoodsInfoQTO.MerchantGoodsQTO qto) {
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
+        
+        BbcUserVO.DetailVO detailVO = userRpc.getUserInfoNoLogin(qto);
+        
         if (StringUtils.isNotEmpty(qto.getGoodsName())) {
             boost.like("gs.goods_name", qto.getGoodsName());
         }
@@ -303,25 +306,28 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         if (StringUtils.isNotEmpty(qto.getShopNavigationId())) {
             boost.eq("gsn.shop_navigation", qto.getShopNavigationId());
         }
+        /**
         if (qto.getOrderByProperties() != null && qto.getOrderByProperties().intValue() == OrderByConditionEnum.价格.getCode().intValue() && qto.getOrderByType().intValue() == OrderByTypeEnum.升序.getCode().intValue()) {
             boost.orderByAsc("gs.sale_price");
         }
         if (qto.getOrderByProperties() != null && qto.getOrderByProperties().intValue() == OrderByConditionEnum.价格.getCode().intValue() && qto.getOrderByType().intValue() == OrderByTypeEnum.降序.getCode().intValue()) {
             boost.orderByDesc("gs.sale_price");
         }
-
+         **/
 
         //如果是积分查询
-        else if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.兑换积分.getCode()))) {
-            boost.eq("is_point_good", true);
-            if (ObjectUtils.isNotEmpty(qto.getOrderByType())) {
-                if (qto.getOrderByType().equals(10)) {
-                    boost.orderByAsc("is_point_good", "id");
-                } else {
-                    boost.orderByDesc("is_point_good", "id");
-                }
-            } else {
-                boost.orderByAsc("is_point_good", "id");
+        else if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.升序.getCode())) {
+        	if(detailVO.getIsInUser().equals(1)){
+        		boost.orderByAsc("in_member_point_price");
+        	}else{
+        		boost.orderByAsc("point_price");
+        	}
+        }
+        if (null != qto.getOrderByProperties() && qto.getOrderByProperties().equals(OrderByConditionEnum.价格.getCode()) && qto.getOrderByType().equals(OrderByTypeEnum.降序.getCode())) {
+        	if(detailVO.getIsInUser().equals(1)){
+            	boost.orderByDesc("in_member_point_price");
+            }else{
+            	boost.orderByDesc("point_price");
             }
         }//按照发布时间排序
         else if (ObjectUtils.isNotEmpty(qto.getOrderByProperties()) && qto.getOrderByProperties().equals(OrderByConditionEnum.上架时间.getCode())) {
