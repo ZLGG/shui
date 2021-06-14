@@ -30,7 +30,7 @@ public class InUserCoupon extends Model {
     /**
      * 运营配置优惠券id
      */
-    private Long couponId;
+    private String couponId;
 
     /**
      * in会员userId
