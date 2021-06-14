@@ -152,7 +152,11 @@ public class BbcPointHomeServiceImpl implements IBbcPointHomeService {
 			if(seckill.getSeckillEndTime()!=null){
 				listVO.setRemark(seckill.getSeckillEndTime().toString().replace("T", " "));
 			}
-			listVO.setList(seckill.getList().subList(0, 4));
+			if(seckill.getList()!=null&&seckill.getList().size()>4){
+				listVO.setList(seckill.getList().subList(0, 4));
+			}else{
+				listVO.setList(seckill.getList());
+			}
 			
 		}
 		retList.add(listVO);

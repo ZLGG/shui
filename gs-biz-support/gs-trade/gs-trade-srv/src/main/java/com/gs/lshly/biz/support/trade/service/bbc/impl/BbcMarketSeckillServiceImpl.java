@@ -461,7 +461,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 						wrapper.eq("seckill_id", seckillId);
 						wrapper.eq("time_quantum_id", timeQuantumId);
 						wrapper.eq("choose", 10);
-						wrapper.last("limit 0,4");
+//						wrapper.last("limit 0,4");
 						List<MarketPtSeckillGoodsSpu> spuList = marketPtSeckillGoodsSpuRepository.list(wrapper);
 						if(CollectionUtils.isNotEmpty(spuList)){
 							BbcGoodsInfoVO.SimpleListVO simpleGooods=null;
@@ -491,7 +491,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								sckillGoodsVO.setGoodsImage(simpleGooods.getGoodsImage());
 								sckillGoodsVO.setOldPrice(simpleGooods.getOldPrice());
 								
-//								sckillGoodsVO.set
+								sckillGoodsVO.setGoodsName(simpleGooods.getGoodsName());
 								sckillGoodsVO.setSaleRate(random());
 								
 								list.add(sckillGoodsVO);
