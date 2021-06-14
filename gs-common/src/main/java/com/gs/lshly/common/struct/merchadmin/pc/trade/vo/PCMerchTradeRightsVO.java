@@ -183,7 +183,7 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         @ApiModelProperty("备注信息")
         private String rightsRemark;
 
-        @ApiModelProperty("订单id")
+        @ApiModelProperty("订单流水号")
         private String tradeId;
 
         @ApiModelProperty("实付金额")
@@ -206,6 +206,9 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
 
         @ApiModelProperty("运费")
         private BigDecimal deliveryAmount;
+
+        @ApiModelProperty("订单编号")
+        private String orderCode;
 
         @ApiModelProperty("申请时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -250,7 +253,7 @@ public abstract class PCMerchTradeRightsVO implements Serializable {
         private Integer rightsReasonType;
 
         @ApiModelProperty("处理进度(10:待处理,20:商家同意,30:商户驳回,40:买家二次申诉,50:平台同意,60:平台驳回," +
-                "70:换货完成,80:商家确认收货并退款,90:用户取消)")
+                "70:换货完成,80:商家确认收货并退款,90:用户取消,100,用户修改申请))")
         private Integer state;
 /*        @ApiModelProperty("申请时间")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

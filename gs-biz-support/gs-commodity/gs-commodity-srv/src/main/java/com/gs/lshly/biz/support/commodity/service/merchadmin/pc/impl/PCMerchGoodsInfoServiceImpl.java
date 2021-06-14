@@ -1828,6 +1828,17 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return spuVO;
     }
 
+    @Override
+    public PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId) {
+        if (StrUtil.isEmpty(goodsId)) {
+            return null;
+        }
+        GoodsInfo byId = repository.getById(goodsId);
+        PCMerchMarketPtSeckillVO.BrandAndCategry brandAndCategry = new PCMerchMarketPtSeckillVO.BrandAndCategry();
+        BeanUtil.copyProperties(byId, brandAndCategry);
+        return brandAndCategry;
+    }
+
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
         List<String> stringList = Arrays.asList(attributeInfos.split(",")).stream().distinct().collect(toList());
         List<PCMerchGoodsAttributeInfoDTO.ETO> etoList = stringList.parallelStream()

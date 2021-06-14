@@ -4,48 +4,28 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.*;
 import com.gs.lshly.biz.support.trade.repository.*;
-import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketPtSeckillMerchantService;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchMarketPtSeckillService;
-import com.gs.lshly.common.enums.MarketPtSeckillActivityEnum;
-import com.gs.lshly.common.enums.MarketPtSeckillApplyTypeEnum;
-import com.gs.lshly.common.enums.SeckillSignEnum;
+import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsCategoryVO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMarketPtSeckillDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMarketPtSeckillGoodsSpuDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMarketPtSeckillMerchantDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillMerchantQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillMerchantVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtSeckillDTO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminSkuGoodInfoRpc;
-import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
-import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
 import com.lakala.boss.api.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +58,10 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
     private IPCMerchAdminSkuGoodInfoRpc ipcMerchAdminSkuGoodInfoRpc;
 
     @DubboReference
-    IPCMerchAdminGoodsInfoRpc ipcMerchAdminGoodsInfoRpc;
+    private IPCMerchAdminGoodsInfoRpc ipcMerchAdminGoodsInfoRpc;
+
+    @DubboReference
+    private IPCMerchAdminGoodsCategoryRpc ipcMerchAdminGoodsCategoryRpc;
 
     /**
      * 秒杀活动列表
@@ -182,12 +165,16 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
         return MybatisPlusUtil.toPageData(sessionVOList, qto.getPageNum(), qto.getPageSize(), pager.getTotal());
     }
 
-
+    /**
+     * 可报名的商品spu
+     *
+     * @param qto
+     * @return
+     */
     @Override
     public PCMerchMarketPtSeckillVO.SpuVO allSpu(PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
         return ipcMerchAdminGoodsInfoRpc.selectAllWithOutSeckill(qto);
     }
-
 
     /**
      * 报名的商品信息
@@ -198,8 +185,8 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
     @Override
     public PageData<PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO> seckillSpuGoods(PCMerchMarketPtSeckillQTO.SpuQTO qto) {
         List<PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO> spuGoodsInfoVOList = new ArrayList<>();
-        if (!StrUtil.isAllNotEmpty(qto.getId(), qto.getSeckillId())) {
-            throw new BusinessException("商品不能为空!");
+        if (StrUtil.isEmpty(qto.getId())) {
+            throw new BusinessException("参数不能为空!");
         }
         //spu信息
         IPage<MarketPtSeckillGoodsSpu> pager = MybatisPlusUtil.pager(qto);
@@ -212,7 +199,10 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
             if (isContainChinese(qto.getKeyWord()) || isENChar(qto.getKeyWord())) {
                 query.like("goods_name", qto.getKeyWord());
             } else {
-                query.and(i -> i.like("goods_id", qto.getKeyWord()).or(s -> s.like("category_id", qto.getKeyWord())));
+                List<String> threeCategoryList = ipcMerchAdminGoodsCategoryRpc.selectThreeCategory(qto.getKeyWord());
+                if (CollUtil.isNotEmpty(threeCategoryList)) {
+                    query.and(i -> i.like("goods_id", qto.getKeyWord()).or(s -> s.in("category_id", threeCategoryList)));
+                }
             }
         }
         iMarketPtSeckillGoodsSpuRepository.page(pager, query);
@@ -238,6 +228,8 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
                     for (MarketPtSeckillGoodsSku sku : marketPtSeckillGoodsSkuList) {
                         if (sku.getSkuId().equals(skuGoodsInfoVO.getSkuId())) {
                             BeanUtil.copyProperties(sku, skuGoodsInfoVO);
+                            skuGoodsInfoVO.setSeckillSkuId(sku.getId());
+                            skuGoodsInfoVO.setSeckillInventory(sku.getSeckillQuantity() - sku.getSaleQuantity());
                         }
                     }
                 }
@@ -250,28 +242,68 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
     }
 
     @Override
-    public PageData<PCMerchMarketPtSeckillVO.SkuGoodsInfoVO> seckillSkuGoods(PCMerchMarketPtSeckillQTO.SkuQTO qto) {
-        return null;
-    }
-
-    @Override
     public void addSpuGoods(PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
-
+        if (!ObjectUtil.isAllNotEmpty(dto.getSeckillId(), dto.getTimeQuantumId(), dto.getSpuList())) {
+            throw new BusinessException("参数不能为空!");
+        }
+        if (CollUtil.isNotEmpty(dto.getSpuList())) {
+            for (PCMerchMarketPtSeckillDTO.AddSpuList addSpuList : dto.getSpuList()) {
+                MarketPtSeckillGoodsSpu marketPtSeckillGoodsSpu = new MarketPtSeckillGoodsSpu();
+                marketPtSeckillGoodsSpu.setChoose(MarketPtSeckillSpuChooseEnum.未选择.getCode());
+                marketPtSeckillGoodsSpu.setSeckillId(dto.getSeckillId());
+                marketPtSeckillGoodsSpu.setTimeQuantumId(dto.getTimeQuantumId());
+                marketPtSeckillGoodsSpu.setShopId(dto.getJwtShopId());
+                marketPtSeckillGoodsSpu.setMerchantId(dto.getJwtMerchantId());
+                marketPtSeckillGoodsSpu.setGoodsId(addSpuList.getGoodsId());
+                marketPtSeckillGoodsSpu.setGoodsName(addSpuList.getGoodsName());
+                marketPtSeckillGoodsSpu.setGoodsType(addSpuList.getGoodsType());
+                PCMerchMarketPtSeckillVO.BrandAndCategry brandAndCategry = ipcMerchAdminGoodsInfoRpc.selectBrandAndCategory(addSpuList.getGoodsId());
+                BeanUtil.copyProperties(brandAndCategry, marketPtSeckillGoodsSpu);
+                iMarketPtSeckillGoodsSpuRepository.save(marketPtSeckillGoodsSpu);
+            }
+        }
     }
 
     @Override
-    public void addSkuGoods(PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
-
+    public void addSkuGoodsDetail(PCMerchMarketPtSeckillDTO.EndGoods dto) {
+        if (CollUtil.isEmpty(dto.getAddSeckillGoodsETOList())) {
+            throw new BusinessException("参数不能为空!");
+        }
+        for (PCMerchMarketPtSeckillDTO.AddSeckillGoodsETO addSeckillGoodsETO : dto.getAddSeckillGoodsETOList()) {
+            if (!ObjectUtil.isAllNotEmpty(addSeckillGoodsETO.getGoodsSpuItemId(), addSeckillGoodsETO.getSeckillSkuGoodsETOList())) {
+                throw new BusinessException("参数不能为空!");
+            }
+            MarketPtSeckillGoodsSpu spu = iMarketPtSeckillGoodsSpuRepository.getById(addSeckillGoodsETO.getGoodsSpuItemId());
+            if (ObjectUtil.isEmpty(spu)) {
+                throw new BusinessException("未查询到已报名的spu商品信息!");
+            }
+            //将已报名的信息全部删除
+            QueryWrapper<MarketPtSeckillGoodsSku> query = MybatisPlusUtil.query();
+            query.eq("goods_spu_item_id", addSeckillGoodsETO.getGoodsSpuItemId());
+            iMarketPtSeckillGoodsSkuRepository.remove(query);
+            //重新保存新的信息
+            for (PCMerchMarketPtSeckillDTO.SeckillSkuGoodsETO seckillSkuGoodsETO : addSeckillGoodsETO.getSeckillSkuGoodsETOList()) {
+                MarketPtSeckillGoodsSku marketPtSeckillGoodsSku = new MarketPtSeckillGoodsSku();
+                BeanUtil.copyProperties(seckillSkuGoodsETO, marketPtSeckillGoodsSku);
+                marketPtSeckillGoodsSku.setGoodsSpuItemId(addSeckillGoodsETO.getGoodsSpuItemId());
+                marketPtSeckillGoodsSku.setShopId(dto.getJwtShopId());
+                marketPtSeckillGoodsSku.setMerchantId(dto.getJwtMerchantId());
+                marketPtSeckillGoodsSku.setState(MarketPtSeckillSkuStateEnum.待审核.getCode());
+                marketPtSeckillGoodsSku.setSaleQuantity(0);
+                iMarketPtSeckillGoodsSkuRepository.save(marketPtSeckillGoodsSku);
+            }
+        }
     }
 
     @Override
-    public void addSkuGoodsDetail(PCMerchMarketPtSeckillDTO.AddSeckillGoodsETO dto) {
-
-    }
-
-    @Override
-    public void delSpu(PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
-
+    public void delSpu(PCMerchMarketPtSeckillDTO.SpuIdList dto) {
+        if (CollUtil.isEmpty(dto.getSpuIdList())) {
+            throw new BusinessException("参数不能为空!");
+        }
+        QueryWrapper<MarketPtSeckillGoodsSku> query = MybatisPlusUtil.query();
+        query.in("goods_spu_item_id", dto.getSpuIdList());
+        iMarketPtSeckillGoodsSkuRepository.remove(query);
+        iMarketPtSeckillGoodsSpuRepository.removeByIds(dto.getSpuIdList());
     }
 
     /**

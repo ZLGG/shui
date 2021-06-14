@@ -178,4 +178,14 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         private Integer restrictQuantity;
     }
 
+    @Data
+    @ApiModel("PCMerchMarketPtSeckillVO.BrandAndCategry")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class BrandAndCategry implements Serializable{
+        @ApiModelProperty("品牌id")
+        private String brandId;
+        @ApiModelProperty("类目id")
+        private String categoryId;
+    }
 }

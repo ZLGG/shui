@@ -48,5 +48,11 @@ public interface IPCMerchAdminGoodsCategoryRpc {
 
     PCMerchGoodsCategoryVO.innerCategoryVO innerGetListVoByName(String categoryName,String parentId);
 
+    /**
+     * 根据一级分类查找三级分类
+     * @param keyWord
+     * @return
+     */
+    List<String> selectThreeCategory(String keyWord);
 }
 

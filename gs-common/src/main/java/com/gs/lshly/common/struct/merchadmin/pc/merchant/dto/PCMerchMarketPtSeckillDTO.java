@@ -34,19 +34,45 @@ public abstract class PCMerchMarketPtSeckillDTO implements Serializable {
     @ApiModel("PCMerchMarketPtSeckillDTO.SpuIdETO")
     @Accessors(chain = true)
     public static class SpuIdETO extends BaseDTO {
+        @ApiModelProperty("秒杀活动id")
+        private String seckillId;
+        @ApiModelProperty("秒杀场次id")
+        private String timeQuantumId;
+        @ApiModelProperty("报名的商品spu信息")
+        private List<PCMerchMarketPtSeckillDTO.AddSpuList> spuList;
+    }
 
-        @ApiModelProperty("报名的商品id")
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    @ApiModel("PCMerchMarketPtSeckillDTO.AddSpuList")
+    @Accessors(chain = true)
+    public static class AddSpuList extends BaseDTO {
+        @ApiModelProperty("商品spuId")
+        private String goodsId;
+        @ApiModelProperty("商品类型")
+        private Integer goodsType;
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+    }
+
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    @ApiModel("PCMerchMarketPtSeckillDTO.SpuIdList")
+    @Accessors(chain = true)
+    public static class SpuIdList extends BaseDTO {
+
+        @ApiModelProperty("报名的sku商品的skuid")
         private List<String> spuIdList;
     }
 
     @Data
     @EqualsAndHashCode(callSuper = false)
-    @ApiModel("PCMerchMarketPtSeckillDTO.SkuIdETO")
+    @ApiModel("PCMerchMarketPtSeckillDTO.EndGoods")
     @Accessors(chain = true)
-    public static class SkuIdETO extends BaseDTO {
-
-        @ApiModelProperty("报名的sku商品的skuid")
-        private List<String> skuIdList;
+    public static class EndGoods extends BaseDTO {
+        @ApiModelProperty("要报名的sku商品信息")
+        private List<PCMerchMarketPtSeckillDTO.AddSeckillGoodsETO> addSeckillGoodsETOList;
     }
 
     @Data
@@ -54,9 +80,8 @@ public abstract class PCMerchMarketPtSeckillDTO implements Serializable {
     @ApiModel("PCMerchMarketPtSeckillDTO.AddSeckillGoodsETO")
     @Accessors(chain = true)
     public static class AddSeckillGoodsETO extends BaseDTO {
-
-        @ApiModelProperty("报名的商品spu表id")
-        private List<String> spuIdList;
+        @ApiModelProperty("已报名的spuId")
+        private String goodsSpuItemId;
 
         @ApiModelProperty("要报名的sku商品信息")
         private List<PCMerchMarketPtSeckillDTO.SeckillSkuGoodsETO> seckillSkuGoodsETOList;
@@ -67,8 +92,8 @@ public abstract class PCMerchMarketPtSeckillDTO implements Serializable {
     @ApiModel("PCMerchMarketPtSeckillDTO.SeckillSkuGoodsETO")
     @Accessors(chain = true)
     public static class SeckillSkuGoodsETO extends BaseDTO {
-        @ApiModelProperty("商品报名skuId")
-        private String id;
+        @ApiModelProperty("商品id")
+        private String goodsId;
 
         @ApiModelProperty("商品skuId")
         private String skuId;
@@ -78,9 +103,6 @@ public abstract class PCMerchMarketPtSeckillDTO implements Serializable {
 
         @ApiModelProperty("秒杀数量")
         private Integer seckillQuantity;
-
-        @ApiModelProperty("剩余库存")
-        private Integer seckillInventory;
 
         @ApiModelProperty("限购数量")
         private Integer restrictQuantity;

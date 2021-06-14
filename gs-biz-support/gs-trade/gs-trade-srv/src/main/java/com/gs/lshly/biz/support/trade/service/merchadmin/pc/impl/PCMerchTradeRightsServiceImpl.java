@@ -94,7 +94,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     private IPCMerchAdminGoodsInfoRpc iGoodsInfoRpc;
     @DubboReference
     private IPCMerchAdminSkuGoodsInfoRpc ipcMerchAdminSkuGoodsInfoRpc;
-    
+
     @DubboReference
     private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
 
@@ -276,6 +276,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             throw new BusinessException("未查询到售后数据!");
         }
         PCMerchTradeRightsVO.DetailVO detailVO = new PCMerchTradeRightsVO.DetailVO();
+        detailVO.setApplyTime(tradeRights.getApplyTime());
         BeanUtil.copyProperties(tradeRights, detailVO);
         Trade trade = iTradeRepository.getById(tradeRights.getTradeId());
         if (ObjectUtil.isEmpty(trade)) {
@@ -498,8 +499,8 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 tradeRightsLog.setState(dto.getState());
                 tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint());
                 //todo yingjun 仅退款 退款
-                bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(),dto.getRefundPoint());
-                
+                bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(), dto.getRefundPoint());
+
             }
         } else if (dto.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
             tradeRights.setState(dto.getState());
@@ -518,7 +519,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             iTradeRepository.updateById(trade);
             //todo 回库存
             //todo yingjun 仅退款 退款
-            bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(),dto.getRefundPoint());
+            bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(), dto.getRefundPoint());
         }
         iTradeRightsLogRepository.save(tradeRightsLog);
 

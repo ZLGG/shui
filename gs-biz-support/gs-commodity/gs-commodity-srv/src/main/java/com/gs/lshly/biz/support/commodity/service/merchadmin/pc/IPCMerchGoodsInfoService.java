@@ -268,4 +268,6 @@ public interface IPCMerchGoodsInfoService {
     void changeTempToGoodsInfo(String goodId);
 
     PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
+
+    PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId);
 }

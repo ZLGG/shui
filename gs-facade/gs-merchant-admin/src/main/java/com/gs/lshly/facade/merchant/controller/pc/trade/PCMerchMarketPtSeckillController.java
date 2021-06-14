@@ -4,16 +4,8 @@ import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMarketPtSeckillDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.dto.PCMerchMarketPtSeckillMerchantDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillMerchantQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillMerchantVO;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
-import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtSeckillDTO;
-import com.gs.lshly.common.struct.platadmin.trade.qto.MarketPtSeckillQTO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
-import com.gs.lshly.middleware.auth.rbac.Func;
-import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchMarketPtSeckillMerchantRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchMarketPtSeckillRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,7 +57,7 @@ public class PCMerchMarketPtSeckillController {
 
     @ApiOperation("删除已报名spu商品-v1.1.0")
     @PostMapping("/delSpu")
-    public ResponseData<Void> delSpu(@RequestBody PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
+    public ResponseData<Void> delSpu(@RequestBody PCMerchMarketPtSeckillDTO.SpuIdList dto) {
         ipcMerchMarketPtSeckillRpc.delSpu(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
@@ -76,16 +68,9 @@ public class PCMerchMarketPtSeckillController {
         return ResponseData.data(ipcMerchMarketPtSeckillRpc.seckillSpuGoods(qto));
     }
 
-
-
-
-
-
-
-
     @ApiOperation("保存已报名sku商品具体信息-v1.1.0")
-    @PostMapping("/addSku")
-    public ResponseData<Void> addSkuGoodsDetail(@RequestBody PCMerchMarketPtSeckillDTO.AddSeckillGoodsETO dto) {
+    @PostMapping("/addSeckillGoods")
+    public ResponseData<Void> addSkuGoodsDetail(@RequestBody PCMerchMarketPtSeckillDTO.EndGoods dto) {
         ipcMerchMarketPtSeckillRpc.addSkuGoodsDetail(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }

@@ -1,12 +1,12 @@
 package com.gs.lshly.common.enums;
 
 
-public enum MarketPtSeckillSpuChoseEnum implements EnumMessage {
+public enum MarketPtSeckillSpuChooseEnum implements EnumMessage {
 
     已选择(10, "已选择"),
     未选择(20, "未选择");
 
-    MarketPtSeckillSpuChoseEnum(Integer code, String remark) {
+    MarketPtSeckillSpuChooseEnum(Integer code, String remark) {
         this.code = code;
         this.remark = remark;
     }

@@ -55,9 +55,6 @@ public abstract class PCMerchMarketPtSeckillQTO implements Serializable {
         @ApiModelProperty("时间端id")
         private String id;
 
-        @ApiModelProperty("活动id")
-        private String seckillId;
-
         @ApiModelProperty("商品类型")
         private Integer goodsType;
 
