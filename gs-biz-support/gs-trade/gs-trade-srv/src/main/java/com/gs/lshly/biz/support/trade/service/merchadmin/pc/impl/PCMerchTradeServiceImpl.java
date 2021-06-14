@@ -286,7 +286,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 		}
 		if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
 			if (ObjectUtils.isNotEmpty(dto.getOrderAmount())) {// 改价格
-				BigDecimal total = trade.getTradePointAmount();
+				BigDecimal total = trade.getTradeAmount();
 				// 修改交易总金额
 				BigDecimal differencePrice = (trade.getTradeAmount() != null ? trade.getTradeAmount() : BigDecimal.ZERO)
 						.subtract(dto.getOrderAmount());
@@ -303,42 +303,53 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 				List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
 				if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
 					for (TradeGoods tradeGoods : tradeGoodsList) {
-						
-						
-						// 计算百分比
-						BigDecimal rate = tradeGoods.getTradePointAmount().divide(total);
-						
-						tradeGoods.setTradeAmount(dto.getOrderAmount().multiply(rate));
+						//除数不能为0
+						if(total.compareTo(BigDecimal.ZERO)==0){
+						    tradeGoods.setTradeAmount(BigDecimal.ZERO);
+						    tradeGoods.setDiscountAmount(BigDecimal.ZERO);
+                        } else {
+                            // 计算百分比
+                            BigDecimal rate = tradeGoods.getTradeAmount().divide(total);
 
-						tradeGoods.setDiscountAmount(tradeGoods.getDiscountAmount() != null
-								? tradeGoods.getDiscountAmount().add(differencePrice.multiply(rate))
-								: BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+                            tradeGoods.setTradeAmount(dto.getOrderAmount().multiply(rate));
+
+                            tradeGoods.setDiscountAmount(tradeGoods.getDiscountAmount() != null
+                                    ? tradeGoods.getDiscountAmount().add(differencePrice.multiply(rate))
+                                    : BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+                        }
+
 						tradeGoodsRepository.saveOrUpdate(tradeGoods);
 					}
 				}
 
 			}
 			if (ObjectUtils.isNotEmpty(dto.getOrderPointAmount())) {
-				BigDecimal total = trade.getTradePointAmount();
-				BigDecimal differencePrice = trade.getTradePointAmount().subtract(dto.getOrderPointAmount());
+				BigDecimal totalPoint = trade.getTradePointAmount();
+				BigDecimal differencePoint = (trade.getTradePointAmount() != null ? trade.getTradePointAmount(): BigDecimal.ZERO)
+                        .subtract(dto.getOrderPointAmount());
 
 				trade.setTradePointAmount(dto.getOrderPointAmount());
 				trade.setDiscountPointAmount(trade.getDiscountPointAmount() != null
-						? trade.getDiscountPointAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
+						? trade.getDiscountPointAmount().add(differencePoint) : BigDecimal.ZERO.add(differencePoint));
 
 				QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
 				tradeGoodsWrapper.eq("trade_id", dto.getId());
 				List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
 				if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
 					for (TradeGoods tradeGoods : tradeGoodsList) {
+					    //除数不能为0
+					    if(totalPoint.compareTo(BigDecimal.ZERO)==0){
+					        tradeGoods.setTradePointAmount(BigDecimal.ZERO);
+					        tradeGoods.setDiscountPointAmount(BigDecimal.ZERO);
+                        } else {
+                            // 计算百分比
+                            BigDecimal rate = tradeGoods.getTradePointAmount().divide(totalPoint);
+                            tradeGoods.setTradePointAmount(dto.getOrderPointAmount().multiply(rate));
 
-						// 计算百分比
-						BigDecimal rate = tradeGoods.getTradePointAmount().divide(total);
-						tradeGoods.setTradePointAmount(dto.getOrderPointAmount().multiply(rate));
-
-						tradeGoods.setDiscountPointAmount(tradeGoods.getDiscountPointAmount() != null
-								? tradeGoods.getDiscountPointAmount().add(differencePrice.multiply(rate))
-								: BigDecimal.ZERO.add(differencePrice.multiply(rate)));
+                            tradeGoods.setDiscountPointAmount(tradeGoods.getDiscountPointAmount() != null
+                                    ? tradeGoods.getDiscountPointAmount().add(differencePoint.multiply(rate))
+                                    : BigDecimal.ZERO.add(differencePoint.multiply(rate)));
+                        }
 
 						tradeGoodsRepository.saveOrUpdate(tradeGoods);
 					}
