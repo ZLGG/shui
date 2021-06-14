@@ -82,6 +82,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     @Autowired
     private IMarketPtSeckillGoodsSpuRepository marketPtSeckillGoodsSpuRepository;
     
+    
     @Value("${activity.pc.cut}")
     private String pcCut;
     @Value("${activity.pc.gift}")
@@ -436,9 +437,9 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 	 * 
 	 */
 	@Override
-	public BbcMarketSeckillVO.SeckillIngVO seckillIng(DTO dto) {
+	public BbcMarketSeckillVO.SeckillIngVO seckillIng() {
 		//查询今天所有开售数据
-		String id = dto.getId();
+//		String id = dto.getId();
 		BbcMarketSeckillVO.SeckillIngVO seckillIngVO = new BbcMarketSeckillVO.SeckillIngVO();
 		List<BbcMarketSeckillVO.SeckillGoodsVO> list = new ArrayList<BbcMarketSeckillVO.SeckillGoodsVO>();
 		String now = DateUtils.fomatDate(new Date(), DateUtils.dateFormatStr);
@@ -461,21 +462,47 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 						wrapper.eq("seckill_id", seckillId);
 						wrapper.eq("time_quantum_id", timeQuantumId);
 						wrapper.eq("choose", 10);
-						wrapper.last("limit 0,4");
+//						wrapper.last("limit 0,4");
 						List<MarketPtSeckillGoodsSpu> spuList = marketPtSeckillGoodsSpuRepository.list(wrapper);
 						if(CollectionUtils.isNotEmpty(spuList)){
 							BbcGoodsInfoVO.SimpleListVO simpleGooods=null;
 							
-							BbcMarketSeckillVO.SeckillGoodsVO SeckillGoodsVO = null;
+							BbcMarketSeckillVO.SeckillGoodsVO sckillGoodsVO = null;
 							for(MarketPtSeckillGoodsSpu spu:spuList){
+								
+								sckillGoodsVO = new BbcMarketSeckillVO.SeckillGoodsVO();
 								String goodsId = spu.getGoodsId();
 								
 								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
 								
+								sckillGoodsVO.setSeckillId(seckillId);
+								if(simpleGooods.getIsPointGood()){//是不是积分
+									sckillGoodsVO.setSalePrice(simpleGooods.getPointPrice());
+									sckillGoodsVO.setSeckillPointPrice(spu.getSeckillPointPrice());
+									sckillGoodsVO.setSeckillInMemberPointPrice(spu.getSeckillInMemberPointPrice());
+									
+									sckillGoodsVO.setGoodsType(20);
+								}else{
+									sckillGoodsVO.setGoodsType(10);
+									sckillGoodsVO.setSalePrice(simpleGooods.getSalePrice());
+									sckillGoodsVO.setSeckillPrice(spu.getSeckillSalePrice());
+								}
+								
+								sckillGoodsVO.setGoodsId(simpleGooods.getId());
+								sckillGoodsVO.setGoodsImage(simpleGooods.getGoodsImage());
+								sckillGoodsVO.setOldPrice(simpleGooods.getOldPrice());
+								
+								sckillGoodsVO.setGoodsName(simpleGooods.getGoodsName());
 								
 								
+								//跟据商品ID+秒杀ID查询对应的秒杀数量
+								sckillGoodsVO.setSaleRate(random());
+								
+								list.add(sckillGoodsVO);
 							}
 						}
+						
+						
 					}
 					
 				}
@@ -483,8 +510,8 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 			
 			
 		}
-        
-		return null;
+		seckillIngVO.setList(list);
+		return seckillIngVO;
 	}
 	
 	public static Integer nowSeckill(List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> list) {

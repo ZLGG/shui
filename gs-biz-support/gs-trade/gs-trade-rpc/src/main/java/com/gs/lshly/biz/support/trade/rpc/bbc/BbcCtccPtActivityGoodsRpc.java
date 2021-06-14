@@ -30,7 +30,6 @@ public class BbcCtccPtActivityGoodsRpc implements IBbcCtccPtActivityGoodsRpc {
 
 	@Override
 	public CtccInternationalHomeVO ctccInternationalHomeVO(DTO dto) {
-		// TODO Auto-generated method stub
 		return bbcCtccPtActivityGoodsService.ctccInternationalHomeVO(dto);
 	}
 }

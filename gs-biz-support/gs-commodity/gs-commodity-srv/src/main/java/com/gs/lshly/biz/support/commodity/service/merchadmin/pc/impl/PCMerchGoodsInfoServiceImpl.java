@@ -18,6 +18,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -138,6 +139,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Autowired
     private GoodsInfoTempMapper goodsInfoTempMapper;
     @Autowired
+    private GoodsTempalteMapper goodsTempalteMapper;
+    @Autowired
     private IPCMerchSkuGoodInfoService skuGoodInfoService;
     @Autowired
     private IGoodsTempalteRepository goodsTempalteRepository;
@@ -217,9 +220,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getGoodsState()) && qto.getGoodsState().intValue() != -1) {
             //10:待上架 20:已上架 30:审核中 40:已审核 50:草稿箱
             wrapperBoost.eq("gs.goods_state", qto.getGoodsState());
-            if(qto.getGoodsState().intValue() == 10 || qto.getGoodsState().intValue() == 20){
+            if (qto.getGoodsState().intValue() == 10 || qto.getGoodsState().intValue() == 20) {
                 spuListVOIPage = goodsInfoMapper.getMerchantGoodsInfo(page, wrapperBoost);
-            }else if(qto.getGoodsState().intValue() == 30 ||qto.getGoodsState().intValue() == 40 ||qto.getGoodsState().intValue() == 50 ){
+            } else if (qto.getGoodsState().intValue() == 30 || qto.getGoodsState().intValue() == 40 || qto.getGoodsState().intValue() == 50) {
                 //info_temp表
                 spuListVOIPage = goodsInfoTempMapper.getMerchantGoodsInfoTemp(page, wrapperBoost);
             }
@@ -229,9 +232,12 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
         for (PCMerchGoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
             //判断是否已经设置运费模板
-            spuListVO.setHasTemplate(getHasTemplate(spuListVO.getId()));
+            if (ObjectUtil.isNotEmpty(getHasTemplate(spuListVO.getId()))) {
+                spuListVO.setTemplateName(getHasTemplate(spuListVO.getId()));
+            }
             //填充商品库存数量
-            spuListVO.setStockNum(getSpuStockNum(spuListVO.getId(), qto.getJwtShopId()));
+            spuListVO.setStockNumList(getStockNum(spuListVO.getId(), qto.getJwtShopId()));
+
             spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
         }
         return MybatisPlusUtil.toPageData(qto, PCMerchGoodsInfoVO.SpuListVO.class, spuListVOIPage);
@@ -271,9 +277,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             PCMerchGoodsInfoVO.StockAlarmGoodsVO stockAlarmGoodsVO = new PCMerchGoodsInfoVO.StockAlarmGoodsVO();
             BeanUtils.copyProperties(goodsInfo, stockAlarmGoodsVO);
             //判断是否已经设置运费模板
-            stockAlarmGoodsVO.setHasTemplate(getHasTemplate(goodsInfo.getId()));
+            //stockAlarmGoodsVO.setHasTemplate(getHasTemplate(goodsInfo.getId()));
             //填充商品库存数量
-            stockAlarmGoodsVO.setStockNum(getSpuStockNum(goodsInfo.getId(), qto.getJwtShopId()));
+            //stockAlarmGoodsVO(getSpuStockNum(goodsInfo.getId(), qto.getJwtShopId()));
 
             stockAlarmGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
             list.add(stockAlarmGoodsVO);
@@ -1098,7 +1104,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = new PCMerchGoodsInfoVO.GoodsIdVO();
         goodsIdVO.setGoodsId(goodsInfo.getId());
         //添加商品与服务关联数据
-        if(ObjectUtil.isNotEmpty(editDetailVO.getGoodsServeList())){
+        if (ObjectUtil.isNotEmpty(editDetailVO.getGoodsServeList())) {
             GoodsServeCor goodsServeCor = new GoodsServeCor();
             goodsServeCor.setGoodsId(goodsInfo.getId());
             StringBuilder sb = new StringBuilder();
@@ -1966,29 +1972,33 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         QueryWrapper<GoodsInfo> query = MybatisPlusUtil.query();
         query.eq("shop_id", qto.getJwtShopId());
         if (CollUtil.isNotEmpty(qto.getSpuIdList())) {
-            query.ne("id", qto.getJwtShopId());
+            query.notIn("id", qto.getSpuIdList());
         }
         if (StrUtil.isNotEmpty(qto.getKeyWord())) {
             if (isContainChinese(qto.getKeyWord()) || isENChar(qto.getKeyWord())) {
                 query.like("goods_name", qto.getKeyWord());
             } else {
-                QueryWrapper<GoodsCategory> categoryQueryWrapper = MybatisPlusUtil.query();
-                query.eq("parent_id", qto.getKeyWord());
-                List<GoodsCategory> list = categoryRepository.list(categoryQueryWrapper);
-                if (CollUtil.isNotEmpty(list)) {
-                    List<String> parentId = CollUtil.getFieldValues(list, "parentId", String.class);
-                    QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
-                    wrapper.in("parent_id", parentId);
-                    List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
-                    if (CollUtil.isNotEmpty(categoryList)) {
-                        List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "parentId", String.class);
-                        if (CollUtil.isNotEmpty(categoryIdList)) {
-                            query.and(i -> i.like("goods_id", qto.getKeyWord()).or(s -> s.in("category_id", categoryIdList)));
-                        }
-                    }
+                query.like("goods_id", qto.getKeyWord());
+            }
+        }
+        if (CollUtil.isNotEmpty(qto.getCategoryIdList())) {
+            QueryWrapper<GoodsCategory> categoryQueryWrapper = MybatisPlusUtil.query();
+            categoryQueryWrapper.in("parent_id", qto.getCategoryIdList());
+            categoryQueryWrapper.eq("gs_category_level",GoodsCategoryLevelEnum.TWO.getCode());
+            List<GoodsCategory> list = categoryRepository.list(categoryQueryWrapper);
+            if (CollUtil.isNotEmpty(list)) {
+                List<String> parentId = CollUtil.getFieldValues(list, "id", String.class);
+                QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
+                wrapper.in("parent_id", parentId);
+                wrapper.eq("gs_category_level",GoodsCategoryLevelEnum.THREE.getCode());
+                List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
+                if (CollUtil.isNotEmpty(categoryList)) {
+                    List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "id", String.class);
+                    query.in("category_id", categoryIdList);
                 }
             }
         }
+
         if (ObjectUtil.isNotEmpty(qto.getGoodsType())) {
             if (qto.getGoodsType().equals(MarketPtSeckillSpuTypeEnum.普通商品.getCode())) {
                 query.eq("is_point_good", false);
@@ -2072,6 +2082,24 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             spuStockNum += getSkuStockNum(shopId, skuGoodInfo.getId());
         }
         return spuStockNum;
+    }
+
+    private List<PCMerchGoodsInfoVO.SkuStockNum> getStockNum(String goodsId, String shopId) {
+        QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
+        boost.eq("good_id", goodsId);
+        List<SkuGoodInfo> skuGoodInfos = skuGoodInfoRepository.list(boost);
+        List<PCMerchGoodsInfoVO.SkuStockNum> skuStockNums = new ArrayList<>();
+        PCMerchGoodsInfoVO.SkuStockNum skuStockNum;
+        for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
+            CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStock(new BaseDTO(), shopId, skuGoodInfo.getId()).getData();
+            if(ObjectUtil.isNotEmpty(stockVO)){
+                skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
+                skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
+                skuStockNum.setStockNum(stockVO.getQuantity());
+                skuStockNums.add(skuStockNum);
+            }
+        }
+        return skuStockNums;
     }
 
     private String getImage(String images) {
@@ -2239,14 +2267,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return shopNavigation;
     }
 
-    private boolean getHasTemplate(String goodsId) {
-        QueryWrapper<GoodsTempalte> boost = MybatisPlusUtil.query();
-        boost.eq("goods_id", goodsId);
-        int count = goodsTempalteRepository.count(boost);
-        if (count > 0) {
-            return true;
-        }
-        return false;
+    private String getHasTemplate(String goodsId) {
+        return goodsTempalteRepository.baseMapper().getTemplateName(goodsId);
     }
 
     private void deleteSurplusAttribute

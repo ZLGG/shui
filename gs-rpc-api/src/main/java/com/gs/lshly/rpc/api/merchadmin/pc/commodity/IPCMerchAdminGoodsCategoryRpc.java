@@ -50,9 +50,9 @@ public interface IPCMerchAdminGoodsCategoryRpc {
 
     /**
      * 根据一级分类查找三级分类
-     * @param keyWord
+     * @param categoryIdList
      * @return
      */
-    List<String> selectThreeCategory(String keyWord);
+    List<String> selectThreeCategory(List<String> categoryIdList);
 }
 

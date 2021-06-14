@@ -251,6 +251,27 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
                 }
             }
         }
+        
+        
+        //把没有子类的可以先删了
+		for (int i = 0; i < listVOS.size(); i++) {
+			GoodsCategoryVO.CategoryTreeVO categoryTreeVO = listVOS.get(i);
+			// 判断有没有子类
+			List<GoodsCategoryVO.CategoryTreeVO> list2 = categoryTreeVO.getList();
+			if (list2 == null || list2.size() == 0) {
+				listVOS.remove(i);
+				continue;
+			} else {
+				for (int j = 0; j < list2.size(); j++) {
+					GoodsCategoryVO.CategoryTreeVO categoryTreeVO2 = list2.get(j);
+					List<GoodsCategoryVO.CategoryTreeVO> list3 = categoryTreeVO2.getList();
+					if (list3 == null || list3.size() == 0) {
+						listVOS.remove(i);
+						break;
+					}
+				}
+			}
+		}
         return listVOS;
     }
 

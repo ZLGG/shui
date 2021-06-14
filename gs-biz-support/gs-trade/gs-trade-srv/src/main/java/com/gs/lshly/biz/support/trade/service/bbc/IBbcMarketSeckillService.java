@@ -63,6 +63,6 @@ public interface IBbcMarketSeckillService {
      * @param dto
      * @return
      */
-    BbcMarketSeckillVO.SeckillIngVO seckillIng(DTO dto) ;
+    BbcMarketSeckillVO.SeckillIngVO seckillIng() ;
     
 }

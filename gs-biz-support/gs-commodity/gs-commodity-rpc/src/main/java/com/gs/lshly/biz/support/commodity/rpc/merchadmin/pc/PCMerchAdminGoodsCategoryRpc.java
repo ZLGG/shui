@@ -52,7 +52,7 @@ public class PCMerchAdminGoodsCategoryRpc implements IPCMerchAdminGoodsCategoryR
     }
 
     @Override
-    public List<String> selectThreeCategory(String keyWord) {
-        return categoryService.selectThreeCategory(keyWord);
+    public List<String> selectThreeCategory(List<String> categoryIdList) {
+        return categoryService.selectThreeCategory(categoryIdList);
     }
 }

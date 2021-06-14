@@ -30,4 +30,10 @@ public interface GoodsTempalteMapper extends BaseMapper<GoodsTempalte> {
 
     @Select("select CONCAT(city,county,reals) from gs_stock_address where id=#{id}")
     String queryStockAddress(@Param("id") String id);
+
+    @Select("select template_name from gs_goods_tempalte t " +
+           "left join gs_stock_template st on t.template_id = st.id " +
+            "where t.flag=0 and t.goods_id = #{goodsId}"
+    )
+    String getTemplateName(@Param("goodsId") String goodsId);
 }
