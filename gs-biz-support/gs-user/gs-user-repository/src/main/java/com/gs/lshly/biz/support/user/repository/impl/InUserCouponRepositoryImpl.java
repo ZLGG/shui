@@ -26,7 +26,7 @@ public class InUserCouponRepositoryImpl extends ServiceImpl<UserCouponDTOMapper,
     }
 
     @Override
-    public Boolean getMyCouponByGoodsId(String goodsId, Long couponId) {
+    public Boolean getMyCouponByGoodsId(String goodsId, String couponId) {
         Integer isExist = userCouponMapper.getMyCouponByGoodsId(goodsId,couponId);
         if (isExist == 0) {
             return false;

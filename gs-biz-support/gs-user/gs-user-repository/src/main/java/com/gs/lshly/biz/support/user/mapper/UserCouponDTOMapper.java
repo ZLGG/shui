@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserCouponDTOMapper extends BaseMapper<InUserCoupon> {
     @Select("select count(1) from gs_coupon_goods_relation where coupon_id = #{couponId} and level_id = #{levelId}")
-    Integer getMyCouponByGoodsId(@Param("levelId") String levelId, @Param("couponId") Long couponId);
+    Integer getMyCouponByGoodsId(@Param("levelId") String levelId, @Param("couponId") String couponId);
 
     @Select("select count(1) from gs_goods_info where is_in_member_gift = 1 and id = #{goodsId}")
     Integer isInGoods(@Param("goodsId") String goodsId);

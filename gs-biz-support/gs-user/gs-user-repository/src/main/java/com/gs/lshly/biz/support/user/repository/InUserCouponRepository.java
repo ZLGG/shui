@@ -16,7 +16,7 @@ public interface InUserCouponRepository extends IService<InUserCoupon> {
      * @param couponId
      * @return
      */
-    Boolean getMyCouponByGoodsId(String goodsId, Long couponId);
+    Boolean getMyCouponByGoodsId(String goodsId, String couponId);
 
     /**
      * 查询是否属于in会员礼品
