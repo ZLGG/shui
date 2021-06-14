@@ -42,7 +42,6 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
@@ -433,11 +432,15 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		return db.divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
 	}
 
+	/**
+	 * 
+	 */
 	@Override
-	public SeckillPointHome seckillPointHome(DTO dto) {
+	public BbcMarketSeckillVO.SeckillIngVO seckillIng(DTO dto) {
 		//查询今天所有开售数据
 		String id = dto.getId();
-		
+		BbcMarketSeckillVO.SeckillIngVO seckillIngVO = new BbcMarketSeckillVO.SeckillIngVO();
+		List<BbcMarketSeckillVO.SeckillGoodsVO> list = new ArrayList<BbcMarketSeckillVO.SeckillGoodsVO>();
 		String now = DateUtils.fomatDate(new Date(), DateUtils.dateFormatStr);
 		List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> nowList = marketPtSeckillTimeQuantumMapper.list(now+" 00:00:00", now+" 23:59:59");
 		if (CollectionUtil.isNotEmpty(nowList)) {	//今天有秒杀活动
@@ -447,6 +450,9 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 				for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: nowList) {
 					//判断当前时间有哪个秒杀活动正在进行中
 					if(marketPtSeckillTimeQuantumVO.getHh().equals(hh)){
+						
+						seckillIngVO.setSeckillEndTime(marketPtSeckillTimeQuantumVO.getEndTime());
+						
 						String seckillId = marketPtSeckillTimeQuantumVO.getSeckillId();
 						String timeQuantumId = marketPtSeckillTimeQuantumVO.getId();
 						
@@ -459,10 +465,14 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 						List<MarketPtSeckillGoodsSpu> spuList = marketPtSeckillGoodsSpuRepository.list(wrapper);
 						if(CollectionUtils.isNotEmpty(spuList)){
 							BbcGoodsInfoVO.SimpleListVO simpleGooods=null;
+							
+							BbcMarketSeckillVO.SeckillGoodsVO SeckillGoodsVO = null;
 							for(MarketPtSeckillGoodsSpu spu:spuList){
 								String goodsId = spu.getGoodsId();
 								
 								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
+								
+								
 								
 							}
 						}
@@ -517,4 +527,5 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 				System.out.println(from+"<><>");
 			}
 	 }
+
 }

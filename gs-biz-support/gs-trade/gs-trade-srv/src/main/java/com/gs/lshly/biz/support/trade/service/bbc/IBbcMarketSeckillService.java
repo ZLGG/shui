@@ -6,7 +6,9 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
@@ -20,13 +22,13 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHo
  */
 public interface IBbcMarketSeckillService {
 
-
-	/**
-     * 
-     * @param qto
-     * @return
-     */
-	SeckillPointHome seckillPointHome(BbcMarketSeckillDTO.DTO dto);
+//
+//	/**
+//     * 
+//     * @param qto
+//     * @return
+//     */
+//	SeckillPointHome seckillPointHome(BbcMarketSeckillDTO.DTO dto);
     
     /**
      * 
@@ -55,5 +57,12 @@ public interface IBbcMarketSeckillService {
      * @return
      */
     List<BbcMarketSeckillVO.HomePageSeckill> homePageSeckill(BaseDTO dto);
+    
+    /**
+     * 
+     * @param dto
+     * @return
+     */
+    BbcMarketSeckillVO.SeckillIngVO seckillIng(DTO dto) ;
     
 }

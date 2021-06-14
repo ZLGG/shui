@@ -161,6 +161,7 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
                 user = new User();
                 UserDTO.ETO userDTO = new UserDTO.ETO();
                 userDTO.setState(UserStateEnum.启用.getCode()).setPhone(AESPhone).setType(UserTypeEnum._2C用户.getCode()).setId(String.valueOf(IdWorker.getId())).setFlag(false);
+                userDTO.setMemberType(2);
                 repository.saveUserInfo(userDTO);
                 BeanCopyUtils.copyProperties(userDTO, user);
             }

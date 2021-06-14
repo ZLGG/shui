@@ -83,6 +83,9 @@ public abstract class UserDTO implements Serializable {
 
         @ApiModelProperty("删除标记")
         private Boolean flag;
+        
+        @ApiModelProperty("用户类型")
+        private Integer memberType;
     }
 
     @Data

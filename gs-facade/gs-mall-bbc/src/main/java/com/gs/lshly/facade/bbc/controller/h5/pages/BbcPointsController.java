@@ -12,6 +12,7 @@ import com.gs.lshly.common.enums.SubjectEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
+import com.gs.lshly.common.struct.bbc.commodity.qto.BbcGoodsInfoQTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcPointHomeQTO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteBannerQTO;
@@ -120,9 +121,12 @@ public class BbcPointsController {
     @ApiOperation("猜你喜欢-v1.1.0")
     @GetMapping("/enjoyList")
     public ResponseData<PageData<GoodsInfoVO.DetailVO>> listEnjoy(BbcSiteTopicQTO.EnjoyQTO qto) {
-        qto.setSubject(SubjectEnum.积分商城.getCode());
-        qto.setTerminal(TerminalEnum.BBC.getCode());
-    	return ResponseData.data(bbcSiteTopicRpc.pageEnjoy(qto));
+//        qto.setSubject(SubjectEnum.积分商城.getCode());
+//        qto.setTerminal(TerminalEnum.BBC.getCode());
+        BbcGoodsInfoQTO.GoodsSearchListQTO qto1 = new BbcGoodsInfoQTO.GoodsSearchListQTO();
+        return ResponseData.data(bbcGoodsInfoRpc.pageGoodsData(qto1));
+        
+//    	return ResponseData.data(bbcSiteTopicRpc.pageEnjoy(qto));
     }
     
     @ApiOperation("专区产品列表-v1.1.0")

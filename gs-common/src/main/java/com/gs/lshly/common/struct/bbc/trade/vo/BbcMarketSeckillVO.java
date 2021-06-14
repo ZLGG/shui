@@ -372,23 +372,18 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 	    private Boolean flag;
 	}
 	
+	/**
+	 * 查询正在进行的秒杀活动
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年6月14日 下午3:39:35
+	 */
 	@Data
-	@ApiModel("BbcMarketActivityVO.SeckillPointHomeVO")
+	@ApiModel("BbcMarketActivityVO.SeckillIngVO")
 	@Accessors(chain = true)
-	public static class SeckillPointHomeVO implements Serializable {
+	public static class SeckillIngVO implements Serializable {
 
-		@ApiModelProperty("名称")
-		private String name;
-
-		@ApiModelProperty("封面图")
-		private String imageUrl;
-
-		@ApiModelProperty("封面图跳转")
-		private String jumpUrl;
-
-		@ApiModelProperty("秒杀时间段")
-		private List<SeckillTimeQuantum> timeQuantum;
-		
 		@ApiModelProperty("结束秒杀时间")
 		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
