@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.repository.*;
+import com.gs.lshly.common.enums.*;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +21,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.trade.entity.Trade;
-import com.gs.lshly.biz.support.trade.entity.TradeCancel;
-import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
-import com.gs.lshly.biz.support.trade.entity.TradeGoods;
-import com.gs.lshly.biz.support.trade.entity.TradePay;
-import com.gs.lshly.biz.support.trade.entity.TradeRights;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
-import com.gs.lshly.biz.support.trade.repository.ITradeCancelRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
-import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
-import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
-import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
-import com.gs.lshly.common.enums.TradePayTypeEnum;
-import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
@@ -78,6 +65,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     private ITradePayRepository tradePayRepository;
     @Autowired
     private ITradeRightsRepository iTradeRightsRepository;
+    @Autowired
+    private ITradeRightsGoodsRepository iTradeRightsGoodsRepository;
     @Autowired
     private ITradeCancelRepository iTradeCancelRepository;
     @DubboReference
@@ -218,6 +207,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             throw new BusinessException("无订单数据");
         }
         BeanUtils.copyProperties(trade, tradeVO);
+        tradeVO.setTradeStateText(EnumUtil.getText(trade.getTradeState(),TradeStateEnum.class));
         //查询售后信息
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
         query.and(i->i.eq("trade_id",tradeVO.getId()));
@@ -226,6 +216,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         if (ObjectUtils.isNotEmpty(one)){
             PCMerchTradeListVO.tradeVO.Right right = new PCMerchTradeListVO.tradeVO.Right();
             right.setRightsState(one.getState()).setRemark(one.getRightsRemark());
+            //有售后，则使用售后状态
+            tradeVO.setTradeStateText(EnumUtil.getText(one.getState(), TradeRightsEndStateEnum.class));
             tradeVO.setRightsInfo(right);
         }
         //填充商家信息
@@ -412,6 +404,22 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         for(TradeGoods tradeGoods : tradeGoodsList){
             PCMerchTradeListVO.TradeGoodsVO tradeGoodsVO = new PCMerchTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
+            QueryWrapper<TradeRightsGoods> rightGoodsQuery = MybatisPlusUtil.query();
+            rightGoodsQuery.eq("trade_id", tradeVO.getId());
+            rightGoodsQuery.eq("trade_goods_id", tradeGoods.getId());
+            rightGoodsQuery.eq("is_revocation", 0);
+            TradeRightsGoods tradeRightsGoods = iTradeRightsGoodsRepository.getOne(rightGoodsQuery);
+            QueryWrapper<TradeRights> rightQuery = MybatisPlusUtil.query();
+            rightQuery.and(i->i.eq("id", tradeRightsGoods.getRightsId()));
+            TradeRights tradeRights = iTradeRightsRepository.getOne(rightQuery);
+            if(ObjectUtils.isNotEmpty(tradeRights)){
+                tradeGoodsVO.setRightsState(tradeRights.getState());
+                tradeGoodsVO.setRightsStateText(EnumUtil.getText(tradeRights.getState(), TradeRightsEndStateEnum.class));
+                tradeGoodsVO.setRightsType(tradeRights.getRightsType());
+                tradeGoodsVO.setRightsTypeText(EnumUtil.getText(tradeRights.getRightsType(), TradeRightsTypeEnum.class));
+            }
+            tradeGoodsVO.setTradeState(tradeVO.getTradeState());
+            tradeGoodsVO.setTradeStateText(tradeVO.getTradeStateText());
             tradeGoodsVO.setShopName(tradeVO.getShopName());
             tradeGoodsVOS.add(tradeGoodsVO);
         }

@@ -54,6 +54,10 @@ public abstract class PCMerchTradeListVO implements Serializable {
         private Integer tradeState;
 
 
+        @ApiModelProperty("交易状态内容")
+        private String tradeStateText;
+
+
         @ApiModelProperty(value = "商品总金额",position = 9)
         private BigDecimal goodsAmount;
 
@@ -188,7 +192,7 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
 
         @ApiModelProperty(value = "交易状态",position = 5)
-        private String  tradeState;
+        private String tradeState;
 
 
         @ApiModelProperty(value = "商品总金额",position = 6)
@@ -354,6 +358,24 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
+
+        @ApiModelProperty("售后状态")
+        private Integer rightsState;
+
+        @ApiModelProperty("售后状态内容")
+        private String rightsStateText;
+
+        @ApiModelProperty("售后类型")
+        private Integer rightsType;
+
+        @ApiModelProperty("售后类型内容")
+        private String rightsTypeText;
+
+        @ApiModelProperty("订单状态（主状态）")
+        private Integer tradeState;
+
+        @ApiModelProperty("订单状态内容（主状态）")
+        private String tradeStateText;
 
 
     }
