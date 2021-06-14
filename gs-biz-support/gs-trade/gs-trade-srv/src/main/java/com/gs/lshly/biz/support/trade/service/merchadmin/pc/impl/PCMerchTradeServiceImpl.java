@@ -409,14 +409,17 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             rightGoodsQuery.eq("trade_goods_id", tradeGoods.getId());
             rightGoodsQuery.eq("is_revocation", 0);
             TradeRightsGoods tradeRightsGoods = iTradeRightsGoodsRepository.getOne(rightGoodsQuery);
-            QueryWrapper<TradeRights> rightQuery = MybatisPlusUtil.query();
-            rightQuery.and(i->i.eq("id", tradeRightsGoods.getRightsId()));
-            TradeRights tradeRights = iTradeRightsRepository.getOne(rightQuery);
-            if(ObjectUtils.isNotEmpty(tradeRights)){
-                tradeGoodsVO.setRightsState(tradeRights.getState());
-                tradeGoodsVO.setRightsStateText(EnumUtil.getText(tradeRights.getState(), TradeRightsEndStateEnum.class));
-                tradeGoodsVO.setRightsType(tradeRights.getRightsType());
-                tradeGoodsVO.setRightsTypeText(EnumUtil.getText(tradeRights.getRightsType(), TradeRightsTypeEnum.class));
+            if(ObjectUtils.isNotEmpty(tradeRightsGoods)){
+                QueryWrapper<TradeRights> rightQuery = MybatisPlusUtil.query();
+                rightQuery.and(i->i.eq("id", tradeRightsGoods.getRightsId()));
+                rightQuery.last("limit 0,1");
+                TradeRights tradeRights = iTradeRightsRepository.getOne(rightQuery);
+                if(ObjectUtils.isNotEmpty(tradeRights)){
+                    tradeGoodsVO.setRightsState(tradeRights.getState());
+                    tradeGoodsVO.setRightsStateText(EnumUtil.getText(tradeRights.getState(), TradeRightsEndStateEnum.class));
+                    tradeGoodsVO.setRightsType(tradeRights.getRightsType());
+                    tradeGoodsVO.setRightsTypeText(EnumUtil.getText(tradeRights.getRightsType(), TradeRightsTypeEnum.class));
+                }
             }
             tradeGoodsVO.setTradeState(tradeVO.getTradeState());
             tradeGoodsVO.setTradeStateText(tradeVO.getTradeStateText());
