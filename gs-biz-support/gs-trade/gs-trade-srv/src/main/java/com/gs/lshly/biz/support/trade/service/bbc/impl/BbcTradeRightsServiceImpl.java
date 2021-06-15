@@ -25,9 +25,11 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeRightsBuildDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeRightsDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeRightsQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
+import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsSkuRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
@@ -74,6 +76,9 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
 
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
+
+    @DubboReference
+    private IBbcGoodsSkuRpc iBbcGoodsSkuRpc;
 
     public BbcTradeRightsServiceImpl(ITradeRightsRepository repository, ITradeRepository tradeRepository,
                                      ITradeGoodsRepository tradeGoodsRepository, ITradeRightsGoodsRepository tradeRightsGoodsRepository, ITradeRightsImgRepository tradeRightsImgRepository) {
@@ -247,28 +252,45 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
             repository.save(tradeRights);
             tradeRightsIdList.add(tradeRights.getId());
             for (BbcTradeRightsBuildDTO.ETO.ProductData productData : dto.getProductData()) {
-                QueryWrapper<TradeGoods> wrapper = MybatisPlusUtil.query();
-                wrapper.eq("trade_id", trade.getId());
-                wrapper.eq("sku_id", productData.getSkuId());
-                TradeGoods tradeGoods = tradeGoodsRepository.getOne(wrapper);
-                //保存售后商品信息
-                TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
-                BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
-                tradeRightsGoods.setId(null);
-                tradeRightsGoods.setOrderCode(trade.getTradeCode());
-                if (ObjectUtil.isNotEmpty(tradeGoods)) {
-                    if (productData.getQuantity() > tradeGoods.getQuantity()) {
-                        throw new BusinessException("申请售后商品数量不能大于订单商品数量");
-                    }
-                }
-                tradeRightsGoods.setQuantity(productData.getQuantity());
-                tradeRightsGoods.setGoodsType(productData.getGoodsType());
                 if (productData.getGoodsType().equals(TradeRightsGoodsTypeEnum.原商品.getCode())) {
+                    QueryWrapper<TradeGoods> wrapper = MybatisPlusUtil.query();
+                    wrapper.eq("trade_id", trade.getId());
+                    wrapper.eq("sku_id", productData.getSkuId());
+                    TradeGoods tradeGoods = tradeGoodsRepository.getOne(wrapper);
+                    //保存售后商品信息
+                    TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
+                    BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
+                    tradeRightsGoods.setId(null);
+                    tradeRightsGoods.setOrderCode(trade.getTradeCode());
+                    if (ObjectUtil.isNotEmpty(tradeGoods)) {
+                        if (productData.getQuantity() > tradeGoods.getQuantity()) {
+                            throw new BusinessException("申请售后商品数量不能大于订单商品数量");
+                        }
+                    }
+                    tradeRightsGoods.setQuantity(productData.getQuantity());
+                    tradeRightsGoods.setGoodsType(productData.getGoodsType());
+
                     tradeRightsGoods.setTradeGoodsId(tradeGoods.getId());
+                    tradeRightsGoods.setRightsId(tradeRights.getId());
+                    tradeRightsGoods.setIsRevocation(false);
+                    tradeRightsGoodsRepository.save(tradeRightsGoods);
+                } else {
+                    BbcUserShoppingCarVO.InnerSkuInfoVO skuInfo = iBbcGoodsSkuRpc.getSkuInfo(productData.getSkuId());
+                    TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
+                    tradeRightsGoods.setGoodsType(productData.getGoodsType());
+                    tradeRightsGoods.setQuantity(productData.getGoodsType());
+                    tradeRightsGoods.setGoodsId(skuInfo.getGoodsId());
+                    tradeRightsGoods.setGoodsName(skuInfo.getGoodsName());
+                    tradeRightsGoods.setShopId(dto.getJwtShopId());
+                    tradeRightsGoods.setMerchantId(dto.getJwtMerchantId());
+                    tradeRightsGoods.setUserId(dto.getJwtUserId());
+                    if (StrUtil.isNotEmpty(skuInfo.getSpecValue())) {
+                        tradeRightsGoods.setSkuSpecValue(skuInfo.getSpecValue());
+                    }
+                    tradeRightsGoods.setIsRevocation(false);
+                    tradeRightsGoods.setRightsId(tradeRights.getId());
+                    tradeRightsGoodsRepository.save(tradeRightsGoods);
                 }
-                tradeRightsGoods.setRightsId(tradeRights.getId());
-                tradeRightsGoods.setIsRevocation(false);
-                tradeRightsGoodsRepository.save(tradeRightsGoods);
             }
             //保存售后图片信息
             List<BbcTradeRightsBuildDTO.ETO.RightsImgData> rightsImgDataList = dto.getRightsImgData();

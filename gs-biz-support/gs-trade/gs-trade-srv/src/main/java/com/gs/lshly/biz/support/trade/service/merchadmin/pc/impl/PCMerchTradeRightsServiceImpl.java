@@ -318,7 +318,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             goodsVOList.add(goodsVO);
         }
         detailVO.setGoodsVOList(goodsVOList);
-
+        //填充日志信息
         List<PCMerchTradeRightsVO.LogVO> logVOS = new ArrayList<>();
         QueryWrapper<TradeRightsLog> wrapper = MybatisPlusUtil.query();
         wrapper.eq("rights_id", tradeRights.getId());
