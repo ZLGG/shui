@@ -57,9 +57,6 @@ public class BbcCtccPtActivityGoodsServiceImpl implements IBbcCtccPtActivityGood
     @Autowired
     private ICtccCategoryRepository repository;
 	
-	@Autowired
-	private ICtccCategoryGoodsRepository goodsRepository;
-    
     @DubboReference
     private IBbcSiteAdvertRpc siteAdvertRpc;
     
