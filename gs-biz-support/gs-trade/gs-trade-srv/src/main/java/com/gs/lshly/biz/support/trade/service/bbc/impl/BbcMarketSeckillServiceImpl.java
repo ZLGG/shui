@@ -480,7 +480,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
 								if(!simpleGooods.getGoodsState().equals(GoodsStateEnum.已上架.getCode()))
 									continue;
-								sckillGoodsVO.setSeckillId(seckillId);
+								sckillGoodsVO.setSeckillId(timeQuantumId);
 								if(simpleGooods.getIsPointGood()){//是不是积分
 									sckillGoodsVO.setSalePrice(simpleGooods.getPointPrice());
 									sckillGoodsVO.setSeckillPointPrice(spu.getSeckillPointPrice());
