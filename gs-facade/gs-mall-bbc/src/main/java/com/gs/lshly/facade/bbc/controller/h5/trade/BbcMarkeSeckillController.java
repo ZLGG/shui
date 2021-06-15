@@ -46,14 +46,14 @@ public class BbcMarkeSeckillController {
     @ApiOperation("秒杀活动商品分页加载-v1.1.0")
     @GetMapping("/seckill/pageGoods")
     public ResponseData<BbcMarketSeckillVO.SeckillGoodsVO> pageGoods(BbcMarketSeckillQTO.QTO qto) {
-        return ResponseData.data(bbcMarketSeckillRpc.pageSeckillGoods(qto));
+        return ResponseData.data(bbcMarketSeckillRpc.pageSeckillGoodsNew(qto));
     }
 
     
     @ApiOperation("秒杀商品详情页-v1.1.0")
     @GetMapping(value = "/seckill/getGoodsInfoDetail")
     public ResponseData<BbcGoodsInfoVO.DetailVO> get(BbcMarketSeckillQTO.DetailQTO qto) {
-        return ResponseData.data(bbcMarketSeckillRpc.detailGoodsInfo(qto));
+        return ResponseData.data(bbcMarketSeckillRpc.detailGoodsInfoNew(qto));
     }
 
 }

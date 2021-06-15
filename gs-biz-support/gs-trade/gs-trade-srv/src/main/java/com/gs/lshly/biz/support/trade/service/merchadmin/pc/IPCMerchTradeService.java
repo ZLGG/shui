@@ -1,14 +1,13 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc;
 
+import java.util.List;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
-import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
-
-import java.util.List;
 
 public interface IPCMerchTradeService {
 

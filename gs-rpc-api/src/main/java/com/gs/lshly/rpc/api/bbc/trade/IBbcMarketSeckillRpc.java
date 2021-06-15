@@ -48,6 +48,13 @@ public interface IBbcMarketSeckillRpc {
     BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto);
     
     /**
+     * 商品详情
+     * @param qto
+     * @return
+     */
+    BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfoNew(BbcMarketSeckillQTO.DetailQTO qto);
+    
+    /**
      * 商品首页秒杀列表
      * @param dto
      * @return

@@ -343,7 +343,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 					        tradeGoods.setDiscountPointAmount(BigDecimal.ZERO);
                         } else {
                             // 计算百分比
-                            BigDecimal rate = tradeGoods.getTradePointAmount().divide(totalPoint);
+                            BigDecimal rate = tradeGoods.getGoodsPointAmount().divide(trade.getGoodsPointAmount());
                             tradeGoods.setTradePointAmount(dto.getOrderPointAmount().multiply(rate));
 
                             tradeGoods.setDiscountPointAmount(tradeGoods.getDiscountPointAmount() != null

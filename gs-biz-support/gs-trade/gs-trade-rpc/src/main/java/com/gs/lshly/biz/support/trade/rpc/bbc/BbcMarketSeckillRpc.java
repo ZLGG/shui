@@ -12,6 +12,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailV
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.DetailQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
@@ -66,6 +67,11 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 	@Override
 	public PageData<SeckillGoodsVO> pageSeckillGoodsNew(QTO qto) {
 		return bbcMarketSeckillService.pageSeckillGoodsNew(qto);
+	}
+
+	@Override
+	public SeckillDetailVO detailGoodsInfoNew(DetailQTO qto) {
+		return bbcMarketSeckillService.detailGoodsInfoNew(qto);
 	}
 
 }

@@ -51,6 +51,9 @@ public interface IBbcMarketSeckillService {
      */
     BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfo(BbcMarketSeckillQTO.DetailQTO qto);
     
+    BbcGoodsInfoVO.SeckillDetailVO detailGoodsInfoNew(BbcMarketSeckillQTO.DetailQTO qto);
+    
+    
     /**
      * 首页秒杀
      * @param dto

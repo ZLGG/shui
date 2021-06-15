@@ -39,6 +39,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailV
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
+import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.DetailQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
@@ -672,6 +673,52 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         	}
         }
         return MybatisPlusUtil.toPageData(qto,BbcMarketSeckillVO.SeckillGoodsVO.class,pager);
+	}
+
+	@Override
+	public SeckillDetailVO detailGoodsInfoNew(DetailQTO qto) {
+		BbcGoodsInfoVO.DetailVO detailVO = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(qto.getGoodsId()));
+		BbcGoodsInfoVO.SeckillDetailVO seckillDetailVO = new BbcGoodsInfoVO.SeckillDetailVO();
+		
+		BeanCopyUtils.copyProperties(detailVO, seckillDetailVO);
+		
+		//查询对应的秒杀状态
+		//跟据产品id查询对应的
+		QueryWrapper<MarketPtSeckillGoodsSpu> marketPtSeckillGoodsSpuQueryWrapper = MybatisPlusUtil.query();	//查询条件
+		marketPtSeckillGoodsSpuQueryWrapper.eq("goods_id",qto.getGoodsId());
+        marketPtSeckillGoodsSpuQueryWrapper.eq("time_quantum_id",qto.getActivityId());
+		MarketPtSeckillGoodsSpu marketPtSeckillGoodsSpu = marketPtSeckillGoodsSpuMapper.selectOne(marketPtSeckillGoodsSpuQueryWrapper);
+		seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
+		if(seckillDetailVO.getIsInMemberGift()){
+			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
+			seckillDetailVO.setOldPrice(seckillDetailVO.getInMemberPointPrice());
+			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillInMemberPointPrice());
+		}else if(seckillDetailVO.getIsPointGood()){
+			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
+			seckillDetailVO.setOldPrice(seckillDetailVO.getPointPrice());
+			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
+		}else{
+			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
+			seckillDetailVO.setOldPrice(seckillDetailVO.getSalePrice());
+			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillSalePrice());
+		}
+		String seckillId = marketPtSeckillGoodsSpu.getSeckillId();
+		MarketPtSeckill marketPtSeckill = marketPtSeckillMapper.selectById(seckillId);
+		
+		LocalDateTime seckillStartTime = marketPtSeckill.getSeckillStartTime();
+		LocalDateTime seckillEndTime = marketPtSeckill.getSeckillEndTime();
+		LocalDateTime now = LocalDateTime.now();
+		Integer status = 0;
+		if(now.compareTo(seckillStartTime)<0){
+			status = MarketPtSeckillStatusEnum.即将开抢.getCode();
+		}else if(now.compareTo(seckillEndTime)>0){
+			status = MarketPtSeckillStatusEnum.已结束.getCode();
+		}else if(now.compareTo(seckillStartTime)>=0&&now.compareTo(seckillEndTime)<=0){
+			status = MarketPtSeckillStatusEnum.抢购中.getCode();
+		}
+		seckillDetailVO.setStatus(status);
+		seckillDetailVO.setSeckillEndTime(marketPtSeckill.getSeckillEndTime());
+		return seckillDetailVO;
 	}
 
 }
