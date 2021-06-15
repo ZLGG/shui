@@ -709,11 +709,27 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                         skuVO.setIsBuy(0);
                         skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
                     }
+                    if(skuGoodInfo.getIsPointGood()){
+	                    if(skuGoodInfo.getPointPrice()!=null){
+	                    	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+	                    }
+	                    if(skuGoodInfo.getInMemberPointPrice()!=null){
+	                    	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+	                    }
+                    }
                     break;
                 }
             }
         } else {
             skuVO.setSkuId(skuGoodInfos.get(0).getId());
+            if(skuGoodInfos.get(0).getIsPointGood()){
+                if(skuGoodInfos.get(0).getPointPrice()!=null){
+                	skuVO.setPointPrice(skuGoodInfos.get(0).getPointPrice().doubleValue());
+                }
+                if(skuGoodInfos.get(0).getInMemberPointPrice()!=null){
+                	skuVO.setInMemberPointPrice(skuGoodInfos.get(0).getInMemberPointPrice().doubleValue());
+                }
+            }
         }
         return skuVO;
     }
@@ -1129,8 +1145,26 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     skuVO.setIsBuy(0);
                     skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
                 }
+                
+                if(skuGoodInfo.getIsPointGood()){
+                    if(skuGoodInfo.getPointPrice()!=null){
+                    	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+                    }
+                    if(skuGoodInfo.getInMemberPointPrice()!=null){
+                    	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+                    }
+                }
             }else{
             	BeanCopyUtils.copyProperties(skuGoodInfo, skuVO);
+            	
+            	if(skuGoodInfo.getIsPointGood()){
+                    if(skuGoodInfo.getPointPrice()!=null){
+                    	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+                    }
+                    if(skuGoodInfo.getInMemberPointPrice()!=null){
+                    	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+                    }
+                }
             }
             skuVOS.add(skuVO);
         }

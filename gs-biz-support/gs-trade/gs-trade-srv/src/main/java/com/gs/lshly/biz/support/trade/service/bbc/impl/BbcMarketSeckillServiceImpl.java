@@ -451,10 +451,10 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		if (CollectionUtil.isNotEmpty(nowList)) {	//今天有秒杀活动
 			//当前秒杀活动
 			Integer hh = nowSeckill(nowList);
-			if(hh!=null&&hh>0){
+			if(hh!=null){
 				for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: nowList) {
 					//判断当前时间有哪个秒杀活动正在进行中
-					if(marketPtSeckillTimeQuantumVO.getHh().equals(hh)){
+					if(Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh()).equals(hh)){
 						
 						seckillIngVO.setSeckillEndTime(marketPtSeckillTimeQuantumVO.getEndTime());
 						
@@ -524,21 +524,21 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		Integer from = 0;
 		if(CollectionUtils.isNotEmpty(list)){
 			for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: list) {
-				if(minute.equals(marketPtSeckillTimeQuantumVO.getHh())){
+				if(minute.equals(Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh()))){
 					return from;
 				}
-				boolean flag = Math.max(from, minute) == Math.min(minute, marketPtSeckillTimeQuantumVO.getHh());
+				boolean flag = Math.max(from, minute) == Math.min(minute, Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh()));
 				if(flag){
 					return from;
 				}
-				from = marketPtSeckillTimeQuantumVO.getHh();
+				from = Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh());
 			}
 		}
 		return from;
 	}
 	
 	 public static void main(String args[]){
-		 System.out.println(random());
+		 System.out.println(Integer.valueOf(DateUtils.fomatDate(new Date(),"HH")));
 		 
 		 List<Integer> list = new ArrayList<Integer>();
 		 list.add(10);
@@ -580,10 +580,10 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 				seckillTimeQuantum.setTimeQuantum(marketPtSeckillTimeQuantumVO.getHh()+":00");
 				//判断当前时间有哪个秒杀活动正在进行中
 				
-				if(marketPtSeckillTimeQuantumVO.getHh()<hh){
+				if(Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh())<hh){
 					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.已开抢.getCode());
 	            	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.已开抢.getRemark());
-				}else if(marketPtSeckillTimeQuantumVO.getHh().equals(hh)){
+				}else if(Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh()).equals(hh)){
 					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.抢购中.getCode());
 	            	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.抢购中.getRemark());
 	            	
@@ -603,7 +603,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 	                    }
 	            	}
 	            	
-				}else if(marketPtSeckillTimeQuantumVO.getHh()>hh){
+				}else if(Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh())>hh){
 					seckillTimeQuantum.setStatus(MarketPtSeckillStatusEnum.即将开抢.getCode());
 	            	seckillTimeQuantum.setStatusDesc(MarketPtSeckillStatusEnum.即将开抢.getRemark());
 				}
