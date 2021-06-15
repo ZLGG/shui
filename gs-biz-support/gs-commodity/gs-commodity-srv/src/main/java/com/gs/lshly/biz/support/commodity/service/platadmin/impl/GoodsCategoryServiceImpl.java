@@ -253,22 +253,22 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
                 }
             }
         }
-        
+
         List<GoodsCategoryVO.CategoryTreeVO> retList = new ArrayList<GoodsCategoryVO.CategoryTreeVO>();
         //把没有子类的可以先删了
-        for(GoodsCategoryVO.CategoryTreeVO categoryTreeVO:listVOS){
-			// 判断有没有子类
-			List<GoodsCategoryVO.CategoryTreeVO> list2 = categoryTreeVO.getList();
-			if (list2 != null && list2.size() > 0) {
-				for(GoodsCategoryVO.CategoryTreeVO categoryTreeVO2:list2){
-					List<GoodsCategoryVO.CategoryTreeVO> list3 = categoryTreeVO2.getList();
-					if (list3 != null && list3.size() > 0) {
-						retList.add(categoryTreeVO);
-						break;
-					}
-				}
-			}
-		}
+        for (GoodsCategoryVO.CategoryTreeVO categoryTreeVO : listVOS) {
+            // 判断有没有子类
+            List<GoodsCategoryVO.CategoryTreeVO> list2 = categoryTreeVO.getList();
+            if (list2 != null && list2.size() > 0) {
+                for (GoodsCategoryVO.CategoryTreeVO categoryTreeVO2 : list2) {
+                    List<GoodsCategoryVO.CategoryTreeVO> list3 = categoryTreeVO2.getList();
+                    if (list3 != null && list3.size() > 0) {
+                        retList.add(categoryTreeVO);
+                        break;
+                    }
+                }
+            }
+        }
         return retList;
     }
 
@@ -456,7 +456,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 
         //建立绑定关系
         List<CategoryBrand> list = new ArrayList<>();
-        if (CollUtil.isNotEmpty(brandIdListDTO.getIdList())){
+        if (CollUtil.isNotEmpty(brandIdListDTO.getIdList())) {
             for (String categoryId : categoryIds) {
                 for (String brandId : brandIdListDTO.getIdList()) {
                     CategoryBrand categoryBrand = new CategoryBrand();
@@ -515,6 +515,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
         //查询一级分类
         QueryWrapper<GoodsCategory> categoryQueryWrapper = new QueryWrapper<>();
         categoryQueryWrapper.eq("gs_category_level", GoodsCategoryLevelEnum.ONE.getCode());
+        categoryQueryWrapper.orderByAsc("idx");
         List<GoodsCategory> level1List = categoryRepository.list(categoryQueryWrapper);
 
         if (ObjectUtils.isNotEmpty(level1List)) {
@@ -525,12 +526,14 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 
                 QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("parent_id", level1.getId());
+                queryWrapper.orderByAsc("idx");
                 List<GoodsCategory> level2List = categoryRepository.list(queryWrapper);
                 if (ObjectUtils.isNotEmpty(level2List)) {
                     for (GoodsCategory level2 : level2List) {
 
                         QueryWrapper<GoodsCategory> wrapper = new QueryWrapper<>();
                         wrapper.eq("parent_id", level2.getId());
+                        wrapper.orderByAsc("idx");
                         List<GoodsCategory> level3List = categoryRepository.list(wrapper);
 
                         if (ObjectUtils.isNotEmpty(level3List)) {
@@ -802,7 +805,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             return totalCount;
         }
         List<String> brandIds = com.gs.lshly.common.utils.ListUtil.getIdList(CategoryBrand.class, categoryBrands, "brandId");
-        if (CollUtil.isNotEmpty(brandIdList)){
+        if (CollUtil.isNotEmpty(brandIdList)) {
             List<String> reduceIds = brandIds.stream().filter(item -> !brandIdList.contains(item)).collect(toList());
             if (ObjectUtils.isEmpty(reduceIds)) {
                 return totalCount;

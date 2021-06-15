@@ -256,8 +256,10 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                 BeanUtil.copyProperties(tradeGoods, tradeRightsGoods);
                 tradeRightsGoods.setId(null);
                 tradeRightsGoods.setOrderCode(trade.getTradeCode());
-                if (productData.getQuantity() > tradeGoods.getQuantity()) {
-                    throw new BusinessException("申请售后商品数量不能大于订单商品数量");
+                if (ObjectUtil.isNotEmpty(tradeGoods)) {
+                    if (productData.getQuantity() > tradeGoods.getQuantity()) {
+                        throw new BusinessException("申请售后商品数量不能大于订单商品数量");
+                    }
                 }
                 tradeRightsGoods.setQuantity(productData.getQuantity());
                 tradeRightsGoods.setGoodsType(productData.getGoodsType());
