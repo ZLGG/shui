@@ -744,7 +744,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (dto.getState().intValue() == GoodsStateEnum.已上架.getCode().intValue()) {
             state = GoodAuditRecordEnum.审核通过.getCode();
         }
-        if (dto.getState().intValue() == GoodsStateEnum.审核失败.getCode().intValue()) {
+        if (dto.getState().intValue() == GoodsStateEnum.已审核.getCode().intValue()) {
             state = GoodAuditRecordEnum.审核拒绝.getCode();
         }
         eto.setState(state);
@@ -913,7 +913,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (ObjectUtils.isEmpty(dto.getState())) {
             throw new BusinessException("审核状态不能为空！");
         }
-        if (dto.getState().equals(GoodsStateEnum.审核失败.getCode()) && StringUtils.isBlank(dto.getRefuseRemark())) {
+        if (dto.getState().equals(GoodsStateEnum.已审核.getCode()) && StringUtils.isBlank(dto.getRefuseRemark())) {
             throw new BusinessException("请填写拒绝原因！");
         }
         UpdateWrapper<SkuGoodInfo> updateWrapper = new UpdateWrapper<>();
@@ -938,7 +938,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             if (dto.getState().equals(GoodsStateEnum.已上架.getCode())) {
                 state = GoodAuditRecordEnum.审核通过.getCode();
             }
-            if (dto.getState().equals(GoodsStateEnum.审核失败.getCode())) {
+            if (dto.getState().equals(GoodsStateEnum.已审核.getCode())) {
                 state = GoodAuditRecordEnum.审核拒绝.getCode();
             }
             auditRecord.setState(state);
