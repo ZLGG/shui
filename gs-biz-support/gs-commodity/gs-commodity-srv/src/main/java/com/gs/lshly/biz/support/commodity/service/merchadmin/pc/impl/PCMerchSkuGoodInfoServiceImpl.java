@@ -6,6 +6,8 @@ import java.util.List;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -122,7 +124,7 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
             SkuGoodInfo byId = repository.getById(skuId);
             if (ObjectUtil.isNotEmpty(byId)) {
                 if (StrUtil.isNotEmpty(byId.getImage())) {
-                    return byId.getImage();
+                    return getImage(byId.getImage());
                 }
             }
         }
@@ -159,4 +161,16 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
         return 0;
     }
 
+    private String getImage(String images) {
+        if (images != null && !images.equals("{}")) {
+            JSONArray arr = JSONArray.parseArray(images);
+            if (ObjectUtils.isEmpty(arr)) {
+                return null;
+            }
+            JSONObject obj = arr.getJSONObject(0);
+            String imgUrl = obj.getString("imgSrc");
+            return imgUrl;
+        }
+        return null;
+    }
 }
