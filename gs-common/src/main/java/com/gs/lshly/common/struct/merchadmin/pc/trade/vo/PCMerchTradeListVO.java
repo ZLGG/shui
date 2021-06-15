@@ -73,6 +73,8 @@ public abstract class PCMerchTradeListVO implements Serializable {
         @ApiModelProperty(value = "付款总额",position = 12)
         private BigDecimal tradeAmount;
 
+        @ApiModelProperty(value = "付款总积分",position = 12)
+        private BigDecimal tradePointAmount;
 
         @ApiModelProperty(value = "下单时间",position = 13)
         @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")

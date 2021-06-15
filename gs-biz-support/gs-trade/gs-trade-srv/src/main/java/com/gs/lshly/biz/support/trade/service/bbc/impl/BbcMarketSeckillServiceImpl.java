@@ -252,12 +252,12 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         			}
         				
         			//TODO yingjun
-        			BbcMarketSeckillVO.CouponVO couponVO = new BbcMarketSeckillVO.CouponVO();
-        			couponVO.setType(10);
-        			couponVO.setName("满100减50");
-        			List<BbcMarketSeckillVO.CouponVO> coupons = new ArrayList<BbcMarketSeckillVO.CouponVO>();
-        			coupons.add(couponVO);
-        			seckillGoodsVO.setCoupons(coupons);
+//        			BbcMarketSeckillVO.CouponVO couponVO = new BbcMarketSeckillVO.CouponVO();
+//        			couponVO.setType(10);
+//        			couponVO.setName("满100减50");
+//        			List<BbcMarketSeckillVO.CouponVO> coupons = new ArrayList<BbcMarketSeckillVO.CouponVO>();
+//        			coupons.add(couponVO);
+//        			seckillGoodsVO.setCoupons(coupons);
         			seckillGoodsVO.setSaleRate(new BigDecimal("0.9"));
         		}
         	}
@@ -289,7 +289,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		//跟据产品id查询对应的
 		QueryWrapper<MarketPtSeckillGoodsSpu> marketPtSeckillGoodsSpuQueryWrapper = MybatisPlusUtil.query();	//查询条件
 		marketPtSeckillGoodsSpuQueryWrapper.eq("goods_id",qto.getGoodsId());
-        marketPtSeckillGoodsSpuQueryWrapper.eq("seckill_id",qto.getActivityId());
+        marketPtSeckillGoodsSpuQueryWrapper.eq("time_quantum_id",qto.getActivityId());
 		MarketPtSeckillGoodsSpu marketPtSeckillGoodsSpu = marketPtSeckillGoodsSpuMapper.selectOne(marketPtSeckillGoodsSpuQueryWrapper);
 		seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
 		if(seckillDetailVO.getIsInMemberGift()){

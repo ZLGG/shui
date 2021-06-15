@@ -1,10 +1,24 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
-import cn.hutool.core.collection.CollectionUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.gs.lshly.biz.support.trade.entity.*;
+import com.gs.lshly.biz.support.trade.entity.CtccActivityGoods;
+import com.gs.lshly.biz.support.trade.entity.CtccCategory;
+import com.gs.lshly.biz.support.trade.entity.CtccCategoryGoods;
+import com.gs.lshly.biz.support.trade.entity.CtccPtActivity;
+import com.gs.lshly.biz.support.trade.entity.CtccPtActivityImages;
 import com.gs.lshly.biz.support.trade.mapper.CtccCategoryMapper;
 import com.gs.lshly.biz.support.trade.mapper.CtccPtActivityImagesMapper;
 import com.gs.lshly.biz.support.trade.mapper.CtccPtActivityMapper;
@@ -15,7 +29,6 @@ import com.gs.lshly.biz.support.trade.repository.ICtccPtActivityRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.ICtccPtActivityService;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.SubjectEnum;
-import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
@@ -26,17 +39,8 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
-import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * @Author yangxi
