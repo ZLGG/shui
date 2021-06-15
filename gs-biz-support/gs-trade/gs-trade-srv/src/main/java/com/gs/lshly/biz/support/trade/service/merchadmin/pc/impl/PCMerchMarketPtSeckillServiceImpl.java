@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -247,6 +248,7 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addSpuGoods(PCMerchMarketPtSeckillDTO.SpuIdETO dto) {
         if (!ObjectUtil.isAllNotEmpty(dto.getSeckillId(), dto.getTimeQuantumId(), dto.getSpuList())) {
             throw new BusinessException("参数不能为空!");
@@ -270,6 +272,7 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addSkuGoodsDetail(PCMerchMarketPtSeckillDTO.EndGoods dto) {
         if (CollUtil.isEmpty(dto.getAddSeckillGoodsETOList())) {
             throw new BusinessException("参数不能为空!");
@@ -278,16 +281,19 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
             if (!ObjectUtil.isAllNotEmpty(addSeckillGoodsETO.getGoodsSpuItemId(), addSeckillGoodsETO.getSeckillSkuGoodsETOList())) {
                 throw new BusinessException("参数不能为空!");
             }
-            MarketPtSeckillGoodsSpu spu = iMarketPtSeckillGoodsSpuRepository.getById(addSeckillGoodsETO.getGoodsSpuItemId());
+/*            MarketPtSeckillGoodsSpu spu = iMarketPtSeckillGoodsSpuRepository.getById(addSeckillGoodsETO.getGoodsSpuItemId());
             if (ObjectUtil.isEmpty(spu)) {
                 throw new BusinessException("未查询到已报名的spu商品信息!");
-            }
+            }*/
             //将已报名的信息全部删除
             QueryWrapper<MarketPtSeckillGoodsSku> query = MybatisPlusUtil.query();
             query.eq("goods_spu_item_id", addSeckillGoodsETO.getGoodsSpuItemId());
             iMarketPtSeckillGoodsSkuRepository.remove(query);
             //重新保存新的信息
             for (PCMerchMarketPtSeckillDTO.SeckillSkuGoodsETO seckillSkuGoodsETO : addSeckillGoodsETO.getSeckillSkuGoodsETOList()) {
+                if (seckillSkuGoodsETO.getSeckillQuantity() < seckillSkuGoodsETO.getRestrictQuantity()) {
+                    throw new BusinessException("限购数量不能大于秒杀数量!");
+                }
                 MarketPtSeckillGoodsSku marketPtSeckillGoodsSku = new MarketPtSeckillGoodsSku();
                 BeanUtil.copyProperties(seckillSkuGoodsETO, marketPtSeckillGoodsSku);
                 marketPtSeckillGoodsSku.setGoodsSpuItemId(addSeckillGoodsETO.getGoodsSpuItemId());
@@ -301,6 +307,7 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delSpu(PCMerchMarketPtSeckillDTO.SpuIdList dto) {
         if (CollUtil.isEmpty(dto.getSpuIdList())) {
             throw new BusinessException("参数不能为空!");

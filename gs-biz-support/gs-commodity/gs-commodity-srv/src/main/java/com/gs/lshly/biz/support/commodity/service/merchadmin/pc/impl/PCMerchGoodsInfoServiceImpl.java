@@ -1968,6 +1968,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Override
     public PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto) {
         PCMerchMarketPtSeckillVO.SpuVO spuVO = new PCMerchMarketPtSeckillVO.SpuVO();
+        List<PCMerchMarketPtSeckillVO.AllSpuVO> allSpuVOList = new ArrayList<>();
         IPage<GoodsInfo> pager = MybatisPlusUtil.pager(qto);
         QueryWrapper<GoodsInfo> query = MybatisPlusUtil.query();
         query.eq("shop_id", qto.getJwtShopId());
@@ -1984,13 +1985,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (CollUtil.isNotEmpty(qto.getCategoryIdList())) {
             QueryWrapper<GoodsCategory> categoryQueryWrapper = MybatisPlusUtil.query();
             categoryQueryWrapper.in("parent_id", qto.getCategoryIdList());
-            categoryQueryWrapper.eq("gs_category_level",GoodsCategoryLevelEnum.TWO.getCode());
+            categoryQueryWrapper.eq("gs_category_level", GoodsCategoryLevelEnum.TWO.getCode());
             List<GoodsCategory> list = categoryRepository.list(categoryQueryWrapper);
             if (CollUtil.isNotEmpty(list)) {
                 List<String> parentId = CollUtil.getFieldValues(list, "id", String.class);
                 QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
                 wrapper.in("parent_id", parentId);
-                wrapper.eq("gs_category_level",GoodsCategoryLevelEnum.THREE.getCode());
+                wrapper.eq("gs_category_level", GoodsCategoryLevelEnum.THREE.getCode());
                 List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
                 if (CollUtil.isNotEmpty(categoryList)) {
                     List<String> categoryIdList = CollUtil.getFieldValues(categoryList, "id", String.class);
@@ -2008,9 +2009,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
         repository.page(pager, query);
         if (CollUtil.isEmpty(pager.getRecords())) {
+            spuVO.setAllSpuVOList(MybatisPlusUtil.toPageData(allSpuVOList, qto.getPageNum(), qto.getPageSize(), pager.getTotal()));
             return spuVO;
         }
-        List<PCMerchMarketPtSeckillVO.AllSpuVO> allSpuVOList = new ArrayList<>();
         for (GoodsInfo record : pager.getRecords()) {
             PCMerchMarketPtSeckillVO.AllSpuVO allSpuVO = new PCMerchMarketPtSeckillVO.AllSpuVO();
             allSpuVO.setId(record.getId());
@@ -2034,6 +2035,21 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchMarketPtSeckillVO.BrandAndCategry brandAndCategry = new PCMerchMarketPtSeckillVO.BrandAndCategry();
         BeanUtil.copyProperties(byId, brandAndCategry);
         return brandAndCategry;
+    }
+
+    @Override
+    public String selectGoodsImage(String goodsId) {
+        if (StrUtil.isEmpty(goodsId)) {
+            return null;
+        }
+        GoodsInfo goodsInfo = repository.getById(goodsId);
+        if (ObjectUtil.isEmpty(goodsInfo)) {
+            return null;
+        }
+        if (StrUtil.isEmpty(goodsInfo.getGoodsImage())) {
+            return null;
+        }
+        return goodsInfo.getGoodsImage();
     }
 
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
@@ -2092,7 +2108,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchGoodsInfoVO.SkuStockNum skuStockNum;
         for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
             CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStock(new BaseDTO(), shopId, skuGoodInfo.getId()).getData();
-            if(ObjectUtil.isNotEmpty(stockVO)){
+            if (ObjectUtil.isNotEmpty(stockVO)) {
                 skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
                 skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
                 skuStockNum.setStockNum(stockVO.getQuantity());

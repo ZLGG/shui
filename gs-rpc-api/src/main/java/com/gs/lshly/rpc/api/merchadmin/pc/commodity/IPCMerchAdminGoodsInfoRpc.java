@@ -240,4 +240,6 @@ public interface IPCMerchAdminGoodsInfoRpc {
     PCMerchMarketPtSeckillVO.SpuVO selectAllWithOutSeckill(PCMerchMarketPtSeckillQTO.AllSpuQTO qto);
 
     PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId);
+
+    String selectGoodsImage(String goodsId);
 }

@@ -267,6 +267,11 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         return goodsInfoService.selectBrandAndCategory(goodsId);
     }
 
+    @Override
+    public String selectGoodsImage(String goodsId) {
+        return goodsInfoService.selectGoodsImage(goodsId);
+    }
+
 
     private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto, String goodsId) {
         if (ObjectUtils.isNotEmpty(eto.getFuPinEto())) {
