@@ -49,4 +49,6 @@ public interface IPCMerchGoodsCategoryService {
     PCMerchGoodsCategoryVO.innerCategoryVO innerByIdListVo(String categoryId);
 
     List<String> selectThreeCategory(List<String> categoryIdList);
+
+    String selectOneName(String categoryId);
 }

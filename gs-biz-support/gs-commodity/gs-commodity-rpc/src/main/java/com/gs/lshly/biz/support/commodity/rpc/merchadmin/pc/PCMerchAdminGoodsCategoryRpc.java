@@ -55,4 +55,9 @@ public class PCMerchAdminGoodsCategoryRpc implements IPCMerchAdminGoodsCategoryR
     public List<String> selectThreeCategory(List<String> categoryIdList) {
         return categoryService.selectThreeCategory(categoryIdList);
     }
+
+    @Override
+    public String selectOneName(String categoryId) {
+        return categoryService.selectOneName(categoryId);
+    }
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -160,7 +162,7 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
     public List<String> selectThreeCategory(List<String> categoryIdList) {
         QueryWrapper<GoodsCategory> query = MybatisPlusUtil.query();
         query.in("parent_id", categoryIdList);
-        query.eq("gs_category_level",GoodsCategoryLevelEnum.TWO.getCode());
+        query.eq("gs_category_level", GoodsCategoryLevelEnum.TWO.getCode());
         List<GoodsCategory> list = categoryRepository.list(query);
         if (CollUtil.isEmpty(list)) {
             return null;
@@ -168,13 +170,32 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
         List<String> parentId = CollUtil.getFieldValues(list, "id", String.class);
         QueryWrapper<GoodsCategory> wrapper = MybatisPlusUtil.query();
         wrapper.in("parent_id", parentId);
-        wrapper.eq("gs_category_level",GoodsCategoryLevelEnum.THREE.getCode());
+        wrapper.eq("gs_category_level", GoodsCategoryLevelEnum.THREE.getCode());
         List<GoodsCategory> categoryList = categoryRepository.list(wrapper);
         if (CollUtil.isEmpty(categoryList)) {
             return null;
         }
         List<String> threeCategoryIdList = CollUtil.getFieldValues(categoryList, "id", String.class);
         return threeCategoryIdList;
+    }
+
+    @Override
+    public String selectOneName(String categoryId) {
+        if (StrUtil.isEmpty(categoryId)) {
+            return null;
+        }
+        GoodsCategory twoCategory = categoryRepository.getById(categoryId);
+        if (ObjectUtil.isEmpty(twoCategory)) {
+            return null;
+        }
+        GoodsCategory oneCategory = categoryRepository.getById(twoCategory.getParentId());
+        if (ObjectUtil.isEmpty(oneCategory)) {
+            return null;
+        }
+        if (StrUtil.isEmpty(oneCategory.getGsCategoryName())) {
+            return null;
+        }
+        return oneCategory.getGsCategoryName();
     }
 
 

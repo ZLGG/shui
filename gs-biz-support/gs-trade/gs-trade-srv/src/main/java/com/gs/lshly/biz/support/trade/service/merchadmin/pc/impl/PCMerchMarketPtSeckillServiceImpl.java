@@ -218,6 +218,10 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
         for (MarketPtSeckillGoodsSpu record : pager.getRecords()) {
             PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO seckillGoodsInfoVO = new PCMerchMarketPtSeckillVO.SeckillGoodsInfoVO();
             BeanUtil.copyProperties(record, seckillGoodsInfoVO);
+            String categoryName = ipcMerchAdminGoodsCategoryRpc.selectOneName(record.getCategoryId());
+            if (StrUtil.isNotEmpty(categoryName)) {
+                seckillGoodsInfoVO.setCategoryName(categoryName);
+            }
             seckillGoodsInfoVO.setSpuId(record.getId());
             //查询当前所有的sku
             List<PCMerchMarketPtSeckillVO.AllSkuVO> allSkuVOList = ipcMerchAdminSkuGoodInfoRpc.selectByGoodsId(record.getGoodsId());

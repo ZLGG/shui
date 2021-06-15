@@ -54,5 +54,7 @@ public interface IPCMerchAdminGoodsCategoryRpc {
      * @return
      */
     List<String> selectThreeCategory(List<String> categoryIdList);
+
+    String selectOneName(String categoryId);
 }
 
