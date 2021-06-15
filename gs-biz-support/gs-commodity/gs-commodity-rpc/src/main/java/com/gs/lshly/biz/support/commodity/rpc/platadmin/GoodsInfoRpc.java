@@ -99,16 +99,19 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
             if (ObjectUtils.isNotEmpty(goodsInfo)) {
                 ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
                 goodsInfoService.checkGoods(dto,2,true);
+                ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(),40);
             } else {
                 //新增商品信息
                 ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
                 goodsInfoService.checkGoods(dto,1,true);
+                ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(),40);
             }
 
         }
         //审核不通过
         if (ObjectUtils.isNotEmpty(dto) && dto.getState().intValue() == 40) {
             goodsInfoService.checkGoods(dto,0,false);
+            ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(),40);
         }
 
 

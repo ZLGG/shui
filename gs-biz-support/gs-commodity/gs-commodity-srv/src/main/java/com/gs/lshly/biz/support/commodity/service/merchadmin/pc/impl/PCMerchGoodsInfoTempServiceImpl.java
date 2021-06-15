@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -590,6 +591,16 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             deleteGoodsInfo(idDTO);
         }
         return true;
+    }
+
+    @Override
+    public void updateGoodsInfoStateTemp(String goodId, Integer state) {
+        GoodsInfoTemp goodsInfoTemp = new GoodsInfoTemp();
+        goodsInfoTemp.setGoodsState(state);
+
+        UpdateWrapper<GoodsInfoTemp> goodsBoost = MybatisPlusUtil.update();
+        goodsBoost.eq("id", goodId);
+        repository.update(goodsInfoTemp, goodsBoost);
     }
 
     @Transactional(rollbackFor = Exception.class)
