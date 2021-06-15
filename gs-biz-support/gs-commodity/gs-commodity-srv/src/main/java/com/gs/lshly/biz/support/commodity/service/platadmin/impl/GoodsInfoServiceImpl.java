@@ -226,10 +226,14 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         IPage<GoodsInfoVO.SpuListVO> spuListVOIPage = null;
         //表全部
         if (ObjectUtils.isNotEmpty(qto.getGoodState())) {
-            boost.eq("gs.goods_state", qto.getGoodState());
+
             if (qto.getGoodState().intValue() == 30) {
+                boost.eq("gs.goods_state", qto.getGoodState());
                 spuListVOIPage = goodsInfoTempMapper.getGoodsInfo(page, boost);
-            } else {
+            } else if(qto.getGoodState().intValue() == -1){
+                spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
+            }else {
+                boost.eq("gs.goods_state", qto.getGoodState());
                 spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
             }
         } else {

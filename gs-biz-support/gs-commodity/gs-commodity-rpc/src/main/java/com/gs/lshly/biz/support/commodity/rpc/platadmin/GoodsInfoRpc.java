@@ -126,12 +126,16 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     @Override
     public void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
         //todo 后面优化
-        for (String goodsId : dto.getIdList()) {
-            if (ipcMerchGoodsInfoTempService.isUpdateGoodInfo(goodsId)) {
-                ipcMerchGoodsInfoService.changeTempToGoodsInfo(goodsId);
+        if(ObjectUtils.isNotEmpty(dto)&&ObjectUtils.isNotEmpty(dto.getIdList())){
+            GoodsInfoDTO.CheckGoodsDTO checkGoodsDTO;
+            for (String goodId : dto.getIdList()) {
+                checkGoodsDTO = new GoodsInfoDTO.CheckGoodsDTO();
+                checkGoodsDTO.setId(goodId);
+                checkGoodsDTO.setRefuseRemark(dto.getRefuseRemark());
+                checkGoodsDTO.setState(dto.getState());
+                checkGoods(checkGoodsDTO);
             }
         }
-        goodsInfoService.checkGoodsBatches(dto);
     }
 
     @Override
