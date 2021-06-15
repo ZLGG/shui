@@ -12,6 +12,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.commodity.entity.*;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
 import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
@@ -83,6 +84,8 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @Autowired
     private GoodsInfoMapper goodsInfoMapper;
     @Autowired
+    private GoodsInfoTempMapper goodsInfoTempMapper;
+    @Autowired
     private IGoodsCategoryService categoryService;
     @Autowired
     private IGoodsBrandService brandService;
@@ -123,7 +126,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     @DubboReference
     private ITradeGoodsRpc iTradeGoodsRpc;
-    
+
     @DubboReference
     private ICtccPtActivityGoodsRpc ctccPtActivityGoodsRpc;
 
@@ -136,7 +139,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             }
             if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信专区.getCode())) {
                 QueryWrapper<CtccCategoryGoods> query = MybatisPlusUtil.query();
-                query.eq("category_id","ctcc");
+                query.eq("category_id", "ctcc");
                 List<CtccCategoryGoods> categoryGoodsList = ctccCategoryGoodsRepository.list(query);
                 List<String> goodsIdList = CollUtil.getFieldValues(categoryGoodsList, "goodsId", String.class);
                 boost.in("gs.id", goodsIdList);
@@ -145,12 +148,6 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 List<String> ctccGoodsList = ctccPtActivityGoodsRpc.getList();
                 boost.in("gs.id", ctccGoodsList);
             }
-/*            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.扶贫专区.getCode())) {
-
-            }*/
-        }
-        if (ObjectUtils.isNotEmpty(qto.getGoodState()) && qto.getGoodState().intValue() != -1) {
-            boost.eq("gs.goods_state", qto.getGoodState());
         }
         if (ObjectUtils.isNotEmpty(qto.getCostPrice()) && qto.getCostPrice().intValue() != 0) {
             boost.ge("gs.cost_price", qto.getCostPrice());
@@ -197,9 +194,6 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (ObjectUtil.isNotEmpty(qto.getPointPrice2())) {
             boost.le("gs.point_price", qto.getPointPrice2());
         }
-/*        if (ObjectUtil.isNotEmpty(qto.getIsInMemberGift())){
-            boost.eq("gs.is_in_member_gift",qto.getIsInMemberGift());
-        }*/
         if (StringUtils.isNotBlank(qto.getShopName())) {
             List<CommonShopVO.SimpleVO> simpleVOS = commonShopRpc.searchDetailShop(qto.getShopName());
             if (ObjectUtils.isNotEmpty(simpleVOS)) {
@@ -208,17 +202,12 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 if (ObjectUtils.isNotEmpty(shopIdList)) {
                     //return new PageData<>();
                     boost.in("gs.shop_id", shopIdList);
-                }else{
-                	boost.in("gs.shop_id", "AAAAA");
+                } else {
+                    boost.in("gs.shop_id", "AAAAA");
                 }
-            }else{
-            	 boost.in("gs.shop_id",  "AAAAA");
+            } else {
+                boost.in("gs.shop_id", "AAAAA");
             }
-/*            List<String> shopIdList = ListUtil.getIdList(CommonShopVO.SimpleVO.class, simpleVOS);
-            if (ObjectUtils.isEmpty(shopIdList)) {
-                return new PageData<>();
-            }
-            boost.in("gs.shop_id", shopIdList);*/
         }
         //自营商品
         if (ObjectUtils.isNotEmpty(qto.getShopType())) {
@@ -232,14 +221,21 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                 }
                 //boost.in("gs.shop_id", shopIdList);
             }
-/*            List<String> shopIdList = ListUtil.getIdList(ShopVO.InnerSimpleVO.class, idNameVOS);
-            if (ObjectUtils.isEmpty(shopIdList)) {
-                return new PageData<>();
-            }
-            boost.in("gs.shop_id", shopIdList);*/
         }
         IPage<GoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
-        IPage<GoodsInfoVO.SpuListVO> spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
+        IPage<GoodsInfoVO.SpuListVO> spuListVOIPage = null;
+        //表全部
+        if (ObjectUtils.isNotEmpty(qto.getGoodState())) {
+            boost.eq("gs.goods_state", qto.getGoodState());
+            if (qto.getGoodState().intValue() == 30) {
+                spuListVOIPage = goodsInfoTempMapper.getGoodsInfo(page, boost);
+            } else {
+                spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
+            }
+        } else {
+            spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
+        }
+
         if (ObjectUtils.isNotEmpty(spuListVOIPage)) {
             for (GoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
                 //填充商品标签
@@ -264,31 +260,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
                     spuListVO.setQuantity(quantity);
                 }
             }
-            //return new PageData<>();
         }
-       /* for (GoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
-            //填充商品标签
-            if (ObjectUtils.isNotEmpty(getLabelInfo(spuListVO))) {
-                spuListVO.setLabels(getLabelInfo(spuListVO));
-            }
-            //填充商品图片
-            spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "{}" : getImage(spuListVO.getGoodsImage()));
-
-            CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(spuListVO.getShopId());
-            if (ObjectUtils.isEmpty(simpleVO)) {
-                throw new BusinessException("店铺数据异常");
-            }
-            //填充店铺信息
-            spuListVO.setShopName(StringUtils.isEmpty(simpleVO.getShopName()) ? "" : simpleVO.getShopName());
-
-            //填充店铺类型
-            spuListVO.setShopType(simpleVO.getShopType());
-            String goodsId = spuListVO.getId();
-            Integer quantity = commonStockRpc.getGoodsQuantity(goodsId);
-            if (ObjectUtil.isNotEmpty(quantity)) {
-                spuListVO.setQuantity(quantity);
-            }
-        }*/
         return MybatisPlusUtil.toPageData(qto, GoodsInfoVO.SpuListVO.class, spuListVOIPage);
     }
 
@@ -453,39 +425,39 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto) {
+    public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto, Integer type, boolean isAgree) {
 
         if (dto == null) {
             throw new BusinessException("参数不能为空！");
         }
-        //如果该商品是多规格商品则先修改sku商品然后再修改spu商品
-        QueryWrapper<SkuGoodInfo> wrapper = new QueryWrapper<>();
-        wrapper.eq("good_id", dto.getId());
+        //新增商品
+        if (type == 1 && isAgree) {
+            //如果该商品是多规格商品则先修改sku商品然后再修改spu商品
+            QueryWrapper<SkuGoodInfo> wrapper = new QueryWrapper<>();
+            wrapper.eq("good_id", dto.getId());
+            List<SkuGoodInfo> infoList = skuGoodInfoRepository.list(wrapper);
+            if (infoList != null && infoList.size() > 0) {
+                for (SkuGoodInfo info : infoList) {
 
-        List<SkuGoodInfo> infoList = skuGoodInfoRepository.list(wrapper);
-        if (infoList != null && infoList.size() > 0) {
-            for (SkuGoodInfo info : infoList) {
+                    UpdateWrapper<SkuGoodInfo> updateWrapper = new UpdateWrapper<>();
+                    updateWrapper.eq("id", info.getId());
 
-                UpdateWrapper<SkuGoodInfo> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.eq("id", info.getId());
+                    SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
+                    skuGoodInfo.setState(dto.getState());
+                    skuGoodInfoRepository.update(skuGoodInfo, updateWrapper);
 
-                SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
-                skuGoodInfo.setState(dto.getState());
-
-                skuGoodInfoRepository.update(skuGoodInfo, updateWrapper);
+                }
             }
-        }
-        if(dto.getType().intValue() == 1){
+
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setGoodsState(GoodsStateEnum.已上架.getCode().intValue());
             QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
             goodsInfoQueryWrapper.eq("id", dto.getId());
             repository.update(goodsInfo, goodsInfoQueryWrapper);
         }
-
         //审核后添加审核记录
         //GoodsInfoTemp goodsInfoTemp = goodsInfoTempRepository.getById(dto.getId());
-        addAuditRecord(dto);
+        addAuditRecord(dto, type,isAgree);
     }
 
     @Override
@@ -729,27 +701,27 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             }
             repository.update(goodsInfo, wrapper);
         }
-        
+
         if (state.intValue() == GoodsStateEnum.未上架.getCode().intValue()) {
             //电信国际里面下架
             ctccPtActivityGoodsRpc.underStateByGoodsId(dto.getIdList());
         }
     }
 
-    private void addAuditRecord(GoodsInfoDTO.CheckGoodsDTO dto) {
+    private void addAuditRecord(GoodsInfoDTO.CheckGoodsDTO dto, Integer type,boolean isAgree) {
         GoodsAuditRecordDTO.ETO eto = new GoodsAuditRecordDTO.ETO();
         BeanUtils.copyProperties(dto, eto);
         //获取审核状态
         Integer state = null;
-        if (dto.getState().intValue() == GoodsStateEnum.已上架.getCode().intValue()) {
+        if (isAgree) {
             state = GoodAuditRecordEnum.审核通过.getCode();
-        }
-        if (dto.getState().intValue() == GoodsStateEnum.已审核.getCode().intValue()) {
+        }else {
             state = GoodAuditRecordEnum.审核拒绝.getCode();
         }
         eto.setState(state);
         eto.setGoodsId(dto.getId());
         eto.setId("");
+        eto.setType(type);
         auditRecordService.addGoodsAuditRecord(eto);
     }
 

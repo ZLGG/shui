@@ -32,10 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chenyang
@@ -103,7 +100,8 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         BeanUtils.copyProperties(eto, goodsInfoTemp);
         goodsInfoTemp.setId(goodId);
         goodsInfoTemp.setGoodsState(GoodsStateEnum.待审核.getCode());
-
+        //表更新商品
+        goodsInfoTemp.setApplyType(2);
         UpdateWrapper<GoodsInfoTemp> goodsBoost = MybatisPlusUtil.update();
         goodsBoost.eq("id", oldGoodsInfoTemp.getId());
         boolean flag = repository.update(goodsInfoTemp, goodsBoost);
@@ -487,8 +485,9 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
                 skuGoodInfo.setIsPointGood(eto.getIsPointGood());
                 skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
-                skuGoodInfo.setMerchantId(eto.getMerchantId());
-                skuGoodInfo.setShopId(eto.getJwtShopId());
+                skuGoodInfo.setCdate(new Date());
+                skuGoodInfo.setUdate(new Date());
+                skuGoodInfo.setFlag(false);
                 if (skuInfo.getCostPrice() != null) {
                     skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
                 }

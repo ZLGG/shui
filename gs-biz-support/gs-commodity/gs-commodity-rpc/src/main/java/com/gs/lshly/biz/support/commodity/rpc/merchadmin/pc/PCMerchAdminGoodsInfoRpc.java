@@ -53,12 +53,8 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     }
 
     @Override
-    public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto){
-        PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoTempService.addGoodsInfo(eto);
-        //如果该商品是扶贫商品
-
-        //settingFuPin(eto, goodsIdVO.getGoodsId());
-        //settingFuPin(eto,goodsIdVO.getGoodsId());
+    public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
+        goodsInfoTempService.addGoodsInfo(eto);
     }
 
     @Override
@@ -71,23 +67,15 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         goodsInfoService.deleteGoodsInfo(dto);
 
         //删除商品与扶贫之间的关联
-        PCMerchGoodsFupinDTO.IdDTO idDTO = new PCMerchGoodsFupinDTO.IdDTO(dto.getId());
-        goodsFupinService.deleteGoodsFupin(idDTO);
+        /*PCMerchGoodsFupinDTO.IdDTO idDTO = new PCMerchGoodsFupinDTO.IdDTO(dto.getId());
+        goodsFupinService.deleteGoodsFupin(idDTO);*/
     }
 
 
     @Override
     public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-
-        if(goodsInfoTempService.isUpdateGoodInfo(eto.getId())){
-            goodsInfoTempService.editGoodsInfo(eto);
-        }
-        goodsInfoTempService.addGoodsInfo(eto);
-        goodsInfoService.editGoodsInfo(eto);
-
-        //如果该商品是扶贫商品
-        //settingFuPin(eto,eto.getId());
-
+        //直接更新temp表
+        goodsInfoTempService.editGoodsInfo(eto);
     }
 
     @Override

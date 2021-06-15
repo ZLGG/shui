@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,9 @@ public class GoodsAttributeInfoTempServiceImpl implements IGoodsAttributeInfoTem
     public String addGoodsAttributeInfo(PCMerchGoodsAttributeInfoDTO.ETO dto) {
         GoodsAttributeInfoTemp goodsAttributeInfo = new GoodsAttributeInfoTemp();
         BeanUtils.copyProperties(dto, goodsAttributeInfo);
+        goodsAttributeInfo.setCdate(new Date());
+        goodsAttributeInfo.setUdate(new Date());
+        goodsAttributeInfo.setFlag(false);
         repository.save(goodsAttributeInfo);
         return goodsAttributeInfo.getId();
     }

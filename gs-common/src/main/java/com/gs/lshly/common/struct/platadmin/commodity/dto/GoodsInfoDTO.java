@@ -139,9 +139,6 @@ public abstract class GoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "审核拒绝原因")
         private String refuseRemark;
-
-        @ApiModelProperty(value = "1:新增商品 2:更新商品")
-        private Integer type;
     }
 
     @Data

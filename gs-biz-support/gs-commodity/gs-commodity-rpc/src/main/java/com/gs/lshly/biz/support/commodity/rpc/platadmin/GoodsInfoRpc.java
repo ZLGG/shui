@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
 import java.util.List;
 
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoTempService;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
@@ -53,11 +54,11 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
 
         //
         GoodsInfoVO.DetailVO detailVO;
-        if(goodsInfoTempService.isUpdateGoodInfo(dto.getId())){
-            GoodsInfoDTO.IdDTO  idDTO = new GoodsInfoDTO.IdDTO(dto.getId());
+        if (goodsInfoTempService.isUpdateGoodInfo(dto.getId())) {
+            GoodsInfoDTO.IdDTO idDTO = new GoodsInfoDTO.IdDTO(dto.getId());
             idDTO.setId(dto.getId());
             detailVO = goodsInfoTempService.getGoodsDetail(idDTO);
-        }else {
+        } else {
             detailVO = goodsInfoService.getGoodsDetail(dto);
         }
         //商品扶贫信息
@@ -89,8 +90,29 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto) {
-        //区分新增与更新
-        if(ipcMerchGoodsInfoTempService.isUpdateGoodInfo(dto.getId())){
+
+        GoodsInfo goodsInfo = ipcMerchGoodsInfoService.getGoodsInfo(dto.getId());
+
+        //审核通过
+        if (ObjectUtils.isNotEmpty(dto) && dto.getState().intValue() == 20) {
+            //更新商品信息
+            if (ObjectUtils.isNotEmpty(goodsInfo)) {
+                ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
+                goodsInfoService.checkGoods(dto,2,true);
+            } else {
+                //新增商品信息
+                ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
+                goodsInfoService.checkGoods(dto,1,true);
+            }
+
+        }
+        //审核不通过
+        if (ObjectUtils.isNotEmpty(dto) && dto.getState().intValue() == 40) {
+            goodsInfoService.checkGoods(dto,0,false);
+        }
+
+
+        /*if(ipcMerchGoodsInfoTempService.isUpdateGoodInfo(dto.getId())){
             ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
             dto.setType(2);
             goodsInfoService.checkGoods(dto);
@@ -98,14 +120,14 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
             ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
             dto.setType(1);
             goodsInfoService.checkGoods(dto);
-        }
+        }*/
     }
 
     @Override
     public void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
         //todo 后面优化
         for (String goodsId : dto.getIdList()) {
-            if(ipcMerchGoodsInfoTempService.isUpdateGoodInfo(goodsId)){
+            if (ipcMerchGoodsInfoTempService.isUpdateGoodInfo(goodsId)) {
                 ipcMerchGoodsInfoService.changeTempToGoodsInfo(goodsId);
             }
         }

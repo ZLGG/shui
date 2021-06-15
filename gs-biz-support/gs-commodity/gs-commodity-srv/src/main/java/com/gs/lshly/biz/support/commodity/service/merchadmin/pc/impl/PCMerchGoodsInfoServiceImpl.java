@@ -17,6 +17,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
+import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
@@ -38,15 +39,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
-import com.gs.lshly.biz.support.commodity.entity.GoodsExtendParams;
-import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsServeCor;
-import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
-import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
-import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
-import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
@@ -959,6 +951,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         eto.setShopId(editDetailVO.getShopId());
         eto.setMerchantId(editDetailVO.getMerchantId());
         initGoodsStock(eto, items);
+    }
+
+    @Override
+    public void saveTempToGoodsInfo(String goodId) {
+
     }
 
     @Override
@@ -2099,6 +2096,12 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             goodsStateCountVO.setWaitForOnNum(0);
         }
         return goodsStateCountVO;
+    }
+
+    @Override
+    public GoodsInfo getGoodsInfo(String goodId) {
+        GoodsInfo goodsInfo = repository.getById(goodId);
+        return goodsInfo;
     }
 
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {

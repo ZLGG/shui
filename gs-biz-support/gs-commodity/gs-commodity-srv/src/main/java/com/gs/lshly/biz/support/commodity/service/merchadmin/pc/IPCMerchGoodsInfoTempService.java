@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc;
 
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfoTemp;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 

@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc;
 import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfoTemp;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
@@ -262,10 +263,16 @@ public interface IPCMerchGoodsInfoService {
     void updateGoodsStock(PCMerchGoodsInfoDTO.UpdateStockDTO dto);
 
     /**
-     * 更新审核通过将temp商品数据更新到商品相关表中
+     * 更新审核通过将temp商品数据更新到商品相关表中(新增商品)
      * @param goodId
      */
     void changeTempToGoodsInfo(String goodId);
+
+    /**
+     * 更新审核通过将temp商品数据更新到商品相关表中(更新商品)
+     * @param goodId
+     */
+    void saveTempToGoodsInfo(String goodId);
 
     /**
      * 新增审核通过将temp商品数据更新到商品相关表中
@@ -282,4 +289,6 @@ public interface IPCMerchGoodsInfoService {
     Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
 
     PCMerchGoodsInfoVO.GoodsStateCountVO getCountByGoodsState(PCMerchGoodsInfoDTO.MerchantDTO merchantDTO);
+
+    GoodsInfo getGoodsInfo(String goodId);
 }

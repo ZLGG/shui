@@ -73,8 +73,8 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
         private BigDecimal costPrice;
 
 
-        @ApiModelProperty("商品阶梯价")
-        private String stepPrice;
+        /*@ApiModelProperty("商品阶梯价")
+        private String stepPrice;*/
 
         @ApiModelProperty("商品重量")
         private BigDecimal goodsWeight;

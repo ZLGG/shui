@@ -58,7 +58,7 @@ public interface IGoodsInfoService {
      *
      * @param dto
      */
-    void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto);
+    void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto,Integer type,boolean isAgree);
 
     /**
      * 获取商品名称
