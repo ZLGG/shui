@@ -114,6 +114,8 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("sku库存")
         private Integer skuStock;
 
+        
+
         @ApiModelProperty("办理备注")
         private String remarks;
 
@@ -123,8 +125,6 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("是否是in会员礼品")
         private Boolean isInMemberGift;
 
-        @ApiModelProperty("in会员积分价格")
-        private BigDecimal inMemberPointPrice;
 
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;
@@ -138,21 +138,24 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("不能够买原因")
         private String buyRemark;
         
-        @ApiModelProperty("购买现金价格")
-        private BigDecimal salePrice;
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
         
-        @ApiModelProperty("购买原现金价格")
-        private BigDecimal oldPrice;
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
         
-        @ApiModelProperty("购买原现金价格")
-        private BigDecimal oldPointPrice;
+        @ApiModelProperty("销售价格")
+        private Double salePrice;
+        
+        @ApiModelProperty("原价格")
+        private Double oldPrice;
         
         @ApiModelProperty("积分价格")
-        private BigDecimal pointPrice;
+        private Double oldPointPrice;
     }
     
     @Data
-    @ApiModel("BbcGoodsInfoVO.SkuByGoodsVO")
+    @ApiModel("BbcGoodsInfoVO.SkuVO")
     public static  class  SkuByGoodsVO implements  Serializable{
         
     	@ApiModelProperty(value = "skuId")
@@ -174,7 +177,7 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         private Integer skuStock;
 
         @ApiModelProperty("积分价格")
-        private BigDecimal pointPrice;
+        private Double pointPrice;
 
         @ApiModelProperty("办理备注")
         private String remarks;
@@ -186,7 +189,7 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         private Boolean isInMemberGift;
 
         @ApiModelProperty("in会员积分价格")
-        private BigDecimal inMemberPointPrice;
+        private Double inMemberPointPrice;
 
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;

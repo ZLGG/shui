@@ -709,12 +709,62 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                         skuVO.setIsBuy(0);
                         skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
                     }
+                    if(skuGoodInfo.getInMemberPointPrice()!=null){
+                		skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+                	}else{
+                		skuVO.setInMemberPointPrice(0d);
+                	}
+                	if(skuGoodInfo.getPointPrice()!=null){
+                		skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+                	}else{
+                		skuVO.setPointPrice(0d);
+                	}
+                	if(skuGoodInfo.getOldPointPrice()!=null){
+                		skuVO.setOldPointPrice(skuGoodInfo.getOldPointPrice().doubleValue());
+                	}else{
+                		skuVO.setOldPointPrice(0d);
+                	}
+                    if(skuGoodInfo.getSalePrice()!=null){
+                    	skuVO.setSalePrice(skuGoodInfo.getSalePrice().doubleValue());
+                    }else{
+                    	skuVO.setSalePrice(0d);
+                    }
+                    if(skuGoodInfo.getOldPrice()!=null){
+                    	skuVO.setOldPrice(skuGoodInfo.getOldPrice().doubleValue());
+                    }else{
+                    	skuVO.setOldPrice(0d);
+                    }
                     break;
                 }
             }
         } else {
         	SkuGoodInfo skuGoodInfo = skuGoodInfos.get(0);
         	BeanUtils.copyProperties(skuGoodInfo, skuVO);
+        	if(skuGoodInfo.getInMemberPointPrice()!=null){
+        		skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+        	}else{
+        		skuVO.setInMemberPointPrice(0d);
+        	}
+        	if(skuGoodInfo.getPointPrice()!=null){
+        		skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+        	}else{
+        		skuVO.setPointPrice(0d);
+        	}
+        	if(skuGoodInfo.getOldPointPrice()!=null){
+        		skuVO.setOldPointPrice(skuGoodInfo.getOldPointPrice().doubleValue());
+        	}else{
+        		skuVO.setOldPointPrice(0d);
+        	}
+            if(skuGoodInfo.getSalePrice()!=null){
+            	skuVO.setSalePrice(skuGoodInfo.getSalePrice().doubleValue());
+            }else{
+            	skuVO.setSalePrice(0d);
+            }
+            if(skuGoodInfo.getOldPrice()!=null){
+            	skuVO.setOldPrice(skuGoodInfo.getOldPrice().doubleValue());
+            }else{
+            	skuVO.setOldPrice(0d);
+            }
 //            skuVO.setSkuId(skuGoodInfos.get(0).getId());
             
         }
@@ -1132,8 +1182,59 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     skuVO.setIsBuy(0);
                     skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
                 }
+                
+                if(skuGoodInfo.getInMemberPointPrice()!=null){
+            		skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+            	}else{
+            		skuVO.setInMemberPointPrice(0d);
+            	}
+            	if(skuGoodInfo.getPointPrice()!=null){
+            		skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+            	}else{
+            		skuVO.setPointPrice(0d);
+            	}
+            	if(skuGoodInfo.getOldPointPrice()!=null){
+            		skuVO.setOldPointPrice(skuGoodInfo.getOldPointPrice().doubleValue());
+            	}else{
+            		skuVO.setOldPointPrice(0d);
+            	}
+                if(skuGoodInfo.getSalePrice()!=null){
+                	skuVO.setSalePrice(skuGoodInfo.getSalePrice().doubleValue());
+                }else{
+                	skuVO.setSalePrice(0d);
+                }
+                if(skuGoodInfo.getOldPrice()!=null){
+                	skuVO.setOldPrice(skuGoodInfo.getOldPrice().doubleValue());
+                }else{
+                	skuVO.setOldPrice(0d);
+                }
             }else{
             	BeanCopyUtils.copyProperties(skuGoodInfo, skuVO);
+            	if(skuGoodInfo.getInMemberPointPrice()!=null){
+            		skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+            	}else{
+            		skuVO.setInMemberPointPrice(0d);
+            	}
+            	if(skuGoodInfo.getPointPrice()!=null){
+            		skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+            	}else{
+            		skuVO.setPointPrice(0d);
+            	}
+            	if(skuGoodInfo.getOldPointPrice()!=null){
+            		skuVO.setOldPointPrice(skuGoodInfo.getOldPointPrice().doubleValue());
+            	}else{
+            		skuVO.setOldPointPrice(0d);
+            	}
+                if(skuGoodInfo.getSalePrice()!=null){
+                	skuVO.setSalePrice(skuGoodInfo.getSalePrice().doubleValue());
+                }else{
+                	skuVO.setSalePrice(0d);
+                }
+                if(skuGoodInfo.getOldPrice()!=null){
+                	skuVO.setOldPrice(skuGoodInfo.getOldPrice().doubleValue());
+                }else{
+                	skuVO.setOldPrice(0d);
+                }
             }
             skuVOS.add(skuVO);
         }
