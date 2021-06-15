@@ -278,7 +278,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                     BbcUserShoppingCarVO.InnerSkuInfoVO skuInfo = iBbcGoodsSkuRpc.getSkuInfo(productData.getSkuId());
                     TradeRightsGoods tradeRightsGoods = new TradeRightsGoods();
                     tradeRightsGoods.setGoodsType(productData.getGoodsType());
-                    tradeRightsGoods.setQuantity(productData.getGoodsType());
+                    tradeRightsGoods.setQuantity(productData.getQuantity());
                     tradeRightsGoods.setGoodsId(skuInfo.getGoodsId());
                     tradeRightsGoods.setGoodsName(skuInfo.getGoodsName());
                     tradeRightsGoods.setShopId(dto.getJwtShopId());
