@@ -284,6 +284,7 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
                     tradeRightsGoods.setShopId(dto.getJwtShopId());
                     tradeRightsGoods.setMerchantId(dto.getJwtMerchantId());
                     tradeRightsGoods.setUserId(dto.getJwtUserId());
+                    tradeRightsGoods.setSkuId(productData.getSkuId());
                     if (StrUtil.isNotEmpty(skuInfo.getSpecValue())) {
                         tradeRightsGoods.setSkuSpecValue(skuInfo.getSpecValue());
                     }
