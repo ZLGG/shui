@@ -1933,33 +1933,22 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
-    public void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-        if (ObjectUtils.isNotEmpty(eto)) {
+    public void updateGoodsStock(PCMerchGoodsInfoDTO.UpdateStockDTO dto) {
+        if (ObjectUtils.isNotEmpty(dto)) {
 
-            GoodsInfo goodsInfo = new GoodsInfo();
-            BeanUtils.copyProperties(eto, goodsInfo);
-            //多规格
             List<CommonStockDTO.InnerChangeStockItem> items = new ArrayList<>();
-            if (ObjectUtils.isNotEmpty(eto.getSpecList())) {
-                for (PCMerchSkuGoodInfoDTO.AddETO skuInfo : eto.getEtoList()) {
+            if (ObjectUtils.isNotEmpty(dto.getStockList())) {
+                for (PCMerchGoodsInfoDTO.StockDTO stockDTO : dto.getStockList()) {
                     CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
-                    stockItem.setGoodsId(goodsInfo.getId());
-                    stockItem.setSkuId(skuInfo.getId());
-                    stockItem.setQuantity(skuInfo.getSkuStock() != null ? skuInfo.getSkuStock() : 0);
+                    stockItem.setGoodsId(stockDTO.getGoodId());
+                    stockItem.setSkuId(stockDTO.getSkuId());
+                    stockItem.setQuantity(stockDTO.getStockNum() != null ? stockDTO.getStockNum() : 0);
                     items.add(stockItem);
                 }
             }
-            //单规格
-            else {
-                QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
-                boost.eq("good_id", goodsInfo.getId());
-                SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getOne(boost);
-                CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
-                stockItem.setGoodsId(goodsInfo.getId());
-                stockItem.setSkuId(skuGoodInfo.getId());
-                stockItem.setQuantity(eto.getSpuStock() != null ? eto.getSpuStock() : 0);
-                items.add(stockItem);
-            }
+            PCMerchGoodsInfoDTO.AddGoodsETO eto = new PCMerchGoodsInfoDTO.AddGoodsETO();
+            eto.setMerchantId(dto.getJwtMerchantId());
+            eto.setShopId(dto.getJwtShopId());
             initGoodsStock(eto, items);
         }
     }
@@ -2027,24 +2016,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return spuVO;
     }
 
-    public String selectOneName(String categoryId) {
-        if (StrUtil.isEmpty(categoryId)) {
-            return null;
-        }
-        GoodsCategory twoCategory = categoryRepository.getById(categoryId);
-        if (ObjectUtil.isEmpty(twoCategory)) {
-            return null;
-        }
-        GoodsCategory oneCategory = categoryRepository.getById(twoCategory.getParentId());
-        if (ObjectUtil.isEmpty(oneCategory)) {
-            return null;
-        }
-        if (StrUtil.isEmpty(oneCategory.getGsCategoryName())) {
-            return null;
-        }
-        return oneCategory.getGsCategoryName();
-    }
-
     @Override
     public PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId) {
         if (StrUtil.isEmpty(goodsId)) {
@@ -2081,8 +2052,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchGoodsInfoVO.GoodsStateCountVO goodsStateCountVO = new PCMerchGoodsInfoVO.GoodsStateCountVO();
         //审核中
         QueryWrapper<PCMerchGoodsInfoVO.SpuListVO> qw = MybatisPlusUtil.query();
-        qw.eq("shop_id", merchantDTO.getShopId());
-        qw.eq("merchant_id", merchantDTO.getMerchantId());
+        qw.eq("shop_id", merchantDTO.getJwtShopId());
+        qw.eq("merchant_id", merchantDTO.getJwtMerchantId());
         List<PCMerchGoodsInfoVO.SpuListVO> result = goodsInfoTempMapper.getCountByGoodsState(qw);
 
         if (ObjectUtil.isNotEmpty(result)) {
@@ -2100,9 +2071,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                     waitEditNum++;
                 }
             }
-            goodsStateCountVO.setHasAduitNum(0);
-            goodsStateCountVO.setWaitEditNum(0);
-            goodsStateCountVO.setWaitForAduitNum(0);
+            goodsStateCountVO.setHasAduitNum(hasAduitNum);
+            goodsStateCountVO.setWaitEditNum(waitEditNum);
+            goodsStateCountVO.setWaitForAduitNum(waitForAduitNum);
         } else {
             goodsStateCountVO.setHasAduitNum(0);
             goodsStateCountVO.setWaitEditNum(0);
@@ -2111,9 +2082,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
         List<PCMerchGoodsInfoVO.SpuListVO> goodInfoList = goodsInfoMapper.getCountByGoodsState(qw);
         if (ObjectUtil.isNotEmpty(goodInfoList)) {
+            Integer hasOnNum = 0;
+            Integer waitForOnNum = 0;
             for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
-                Integer hasOnNum = 0;
-                Integer waitForOnNum = 0;
                 if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.未上架.getCode()) {
                     waitForOnNum++;
                 }
@@ -2121,6 +2092,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                     hasOnNum++;
                 }
             }
+            goodsStateCountVO.setHasOnNum(hasOnNum);
+            goodsStateCountVO.setWaitForOnNum(waitForOnNum);
         } else {
             goodsStateCountVO.setHasOnNum(0);
             goodsStateCountVO.setWaitForOnNum(0);
@@ -2693,5 +2666,23 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             flag = true;
         }
         return flag;
+    }
+
+    public String selectOneName(String categoryId) {
+        if (StrUtil.isEmpty(categoryId)) {
+            return null;
+        }
+        GoodsCategory byId = categoryRepository.getById(categoryId);
+        if (ObjectUtil.isEmpty(byId)) {
+            return null;
+        }
+        GoodsCategory one = categoryRepository.getById(byId.getParentId());
+        if (ObjectUtil.isEmpty(one)) {
+            return null;
+        }
+        if (StrUtil.isEmpty(one.getGsCategoryName())) {
+            return null;
+        }
+        return one.getGsCategoryName();
     }
 }

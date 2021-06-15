@@ -184,18 +184,18 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
         if (StrUtil.isEmpty(categoryId)) {
             return null;
         }
-        GoodsCategory twoCategory = categoryRepository.getById(categoryId);
-        if (ObjectUtil.isEmpty(twoCategory)) {
+        GoodsCategory byId = categoryRepository.getById(categoryId);
+        if (ObjectUtil.isEmpty(byId)) {
             return null;
         }
-        GoodsCategory oneCategory = categoryRepository.getById(twoCategory.getParentId());
-        if (ObjectUtil.isEmpty(oneCategory)) {
+        GoodsCategory one = categoryRepository.getById(byId.getParentId());
+        if (ObjectUtil.isEmpty(one)) {
             return null;
         }
-        if (StrUtil.isEmpty(oneCategory.getGsCategoryName())) {
+        if (StrUtil.isEmpty(one.getGsCategoryName())) {
             return null;
         }
-        return oneCategory.getGsCategoryName();
+        return one.getGsCategoryName();
     }
 
 

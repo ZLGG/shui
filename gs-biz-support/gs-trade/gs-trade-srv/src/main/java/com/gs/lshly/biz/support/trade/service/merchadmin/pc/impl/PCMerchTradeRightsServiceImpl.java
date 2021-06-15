@@ -299,9 +299,9 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             }
 
             BeanUtil.copyProperties(tradeRightsGoods, goodsVO);
-            if (StrUtil.isEmpty(tradeRightsGoods.getSkuSpecValue())) {
+/*            if (StrUtil.isEmpty(tradeRightsGoods.getSkuSpecValue())) {
                 goodsVO.setSkuSpecValue(" ");
-            }
+            }*/
             String skuImg = ipcMerchAdminSkuGoodsInfoRpc.selectSkuImg(tradeRightsGoods.getSkuId());
             if (StrUtil.isEmpty(skuImg)) {
                 String image = iGoodsInfoRpc.selectGoodsImage(tradeRightsGoods.getGoodsId());

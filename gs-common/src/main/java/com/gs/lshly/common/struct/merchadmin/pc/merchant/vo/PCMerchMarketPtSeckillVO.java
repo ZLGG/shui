@@ -102,7 +102,7 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         @ApiModelProperty("商品类型")
         private Integer goodsType;
 
-        @ApiModelProperty("商品一级类目")
+        @ApiModelProperty("商品名称")
         private String categoryName;
 
         @ApiModelProperty("spu原价")
@@ -141,11 +141,11 @@ public abstract class PCMerchMarketPtSeckillVO implements Serializable {
         @ApiModelProperty("商品名称")
         private String goodsName;
 
+        @ApiModelProperty("商品名称")
+        private String categoryName;
+
         @ApiModelProperty("商品类型")
         private Integer goodsType;
-
-        @ApiModelProperty("商品一级类目")
-        private String categoryName;
 
         @ApiModelProperty("点击编辑的sku信息")
         private List<PCMerchMarketPtSeckillVO.SkuGoodsInfoVO> spuGoodsInfoVOList;
