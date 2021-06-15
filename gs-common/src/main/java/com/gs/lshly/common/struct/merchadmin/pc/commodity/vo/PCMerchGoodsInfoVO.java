@@ -3,6 +3,7 @@ package com.gs.lshly.common.struct.merchadmin.pc.commodity.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gs.lshly.common.annotation.ExportProperty;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodityfupin.vo.PCMerchGoodsFupinVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
 import io.swagger.annotations.ApiModel;
@@ -267,7 +268,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
     @Data
     @ApiModel("PCMerchGoodsInfoVO.GoodsStateCountVO")
-    public static class GoodsStateCountVO implements Serializable{
+    public static class GoodsStateCountVO implements Serializable {
 
         @ApiModelProperty(value = "待上架商品数")
         public Integer waitForOnNum;
@@ -732,6 +733,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("库存数量")
         private Integer stockNum;
+
+        @ApiModelProperty("skuId")
+        private String skuId;
 
     }
 }

@@ -49,6 +49,12 @@ public interface IPCMerchAdminGoodsInfoRpc {
      * @param eto
      */
     void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto);
+
+    /**
+     * 修改库存
+     * @param dto
+     */
+    void updateStock(PCMerchGoodsInfoDTO.UpdateStockDTO dto);
     /**
      * 删除商品信息
      * @param dto

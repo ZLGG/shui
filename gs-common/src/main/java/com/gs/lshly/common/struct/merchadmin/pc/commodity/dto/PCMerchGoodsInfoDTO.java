@@ -192,6 +192,30 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("PCMerchGoodsInfoDTO.UpdateStockDTO")
+    @Accessors(chain = true)
+    public static class UpdateStockDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "商品库存数")
+        private List<PCMerchGoodsInfoDTO.StockDTO> stockList = new ArrayList<>();
+    }
+
+
+    @Data
+    @ApiModel("PCMerchGoodsInfoDTO.StockDTO")
+    public static class StockDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "商品skuId")
+        private String goodId;
+
+        @ApiModelProperty(value = "商品skuId")
+        private String skuId;
+
+        @ApiModelProperty(value = "库存数")
+        private Integer stockNum;
+    }
+
+    @Data
     @ApiModel("PCMerchGoodsInfoDTO.IdDTO")
     @AllArgsConstructor
     public static class IdDTO extends BaseDTO {
@@ -203,7 +227,7 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
     @Data
     @ApiModel("PCMerchGoodsInfoDTO.MerchantDTO")
     @AllArgsConstructor
-    public static class MerchantDTO implements Serializable {
+    public static class MerchantDTO extends BaseDTO{
 
         @ApiModelProperty(value = "商家id")
         private String merchantId;

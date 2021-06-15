@@ -64,6 +64,13 @@ public class PCMerchGoodsInfoController {
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
+    @ApiOperation("修改库存")
+    @PostMapping("/updateStock")
+    public ResponseData<Void> updateStock(@RequestBody PCMerchGoodsInfoDTO.UpdateStockDTO dto) {
+        goodsInfoRpc.updateStock(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+
     @ApiOperation("删除商品信息管理")
     @DeleteMapping(value = "/{id}")
     public ResponseData<Void> delete(@PathVariable String id) {
@@ -80,14 +87,14 @@ public class PCMerchGoodsInfoController {
     }
 
     @ApiOperation("审核中撤销、已审核删除、草稿箱删除")
-    @GetMapping(value = "/deleteBatchesTemp")
+    @PostMapping(value = "/deleteBatchesTemp")
     public ResponseData<Boolean> deleteBatchesTemp(@RequestBody PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
         return ResponseData.data(goodsInfoRpc.deleteBatchesTemp(idsDTO));
     }
 
     @ApiOperation("各状态商品数量")
-    @GetMapping(value = "/getCountByGoodsState")
-    public ResponseData<PCMerchGoodsInfoVO.GoodsStateCountVO> getCountByGoodsState(@RequestBody PCMerchGoodsInfoDTO.MerchantDTO merchantDTO) {
+    @PostMapping(value = "/getCountByGoodsState")
+    public ResponseData<PCMerchGoodsInfoVO.GoodsStateCountVO> getCountByGoodsState( @Valid @RequestBody PCMerchGoodsInfoDTO.MerchantDTO merchantDTO) {
         return ResponseData.data(goodsInfoRpc.getCountByGoodsState(merchantDTO));
     }
 

@@ -159,4 +159,13 @@ public class SkuGoodInfo extends Model {
     @ApiModelProperty("in会员积分价格")
     private BigDecimal inMemberPointPrice;
 
+    @ApiModelProperty("结算现金价格")
+    private BigDecimal settlementPrice;
+
+    @ApiModelProperty("结算积分价格")
+    private BigDecimal settlementPointPrice;
+
+    @ApiModelProperty("电信商品分类 10：普通商品 20：积分商品 30：IN会员商品；40：定向积分商品")
+    private Integer ctccMold;
+
 }

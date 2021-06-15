@@ -1933,33 +1933,22 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
-    public void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-        if (ObjectUtils.isNotEmpty(eto)) {
+    public void updateGoodsStock(PCMerchGoodsInfoDTO.UpdateStockDTO dto) {
+        if (ObjectUtils.isNotEmpty(dto)) {
 
-            GoodsInfo goodsInfo = new GoodsInfo();
-            BeanUtils.copyProperties(eto, goodsInfo);
-            //多规格
             List<CommonStockDTO.InnerChangeStockItem> items = new ArrayList<>();
-            if (ObjectUtils.isNotEmpty(eto.getSpecList())) {
-                for (PCMerchSkuGoodInfoDTO.AddETO skuInfo : eto.getEtoList()) {
+            if (ObjectUtils.isNotEmpty(dto.getStockList())) {
+                for (PCMerchGoodsInfoDTO.StockDTO stockDTO : dto.getStockList()) {
                     CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
-                    stockItem.setGoodsId(goodsInfo.getId());
-                    stockItem.setSkuId(skuInfo.getId());
-                    stockItem.setQuantity(skuInfo.getSkuStock() != null ? skuInfo.getSkuStock() : 0);
+                    stockItem.setGoodsId(stockDTO.getGoodId());
+                    stockItem.setSkuId(stockDTO.getSkuId());
+                    stockItem.setQuantity(stockDTO.getStockNum() != null ? stockDTO.getStockNum() : 0);
                     items.add(stockItem);
                 }
             }
-            //单规格
-            else {
-                QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
-                boost.eq("good_id", goodsInfo.getId());
-                SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getOne(boost);
-                CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
-                stockItem.setGoodsId(goodsInfo.getId());
-                stockItem.setSkuId(skuGoodInfo.getId());
-                stockItem.setQuantity(eto.getSpuStock() != null ? eto.getSpuStock() : 0);
-                items.add(stockItem);
-            }
+            PCMerchGoodsInfoDTO.AddGoodsETO eto = new PCMerchGoodsInfoDTO.AddGoodsETO();
+            eto.setMerchantId(dto.getJwtMerchantId());
+            eto.setShopId(dto.getJwtShopId());
             initGoodsStock(eto, items);
         }
     }
@@ -2062,47 +2051,49 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         PCMerchGoodsInfoVO.GoodsStateCountVO goodsStateCountVO = new PCMerchGoodsInfoVO.GoodsStateCountVO();
         //审核中
         QueryWrapper<PCMerchGoodsInfoVO.SpuListVO> qw = MybatisPlusUtil.query();
-        qw.eq("shop_id",merchantDTO.getShopId());
-        qw.eq("merchant_id",merchantDTO.getMerchantId());
+        qw.eq("shop_id", merchantDTO.getJwtShopId());
+        qw.eq("merchant_id", merchantDTO.getJwtMerchantId());
         List<PCMerchGoodsInfoVO.SpuListVO> result = goodsInfoTempMapper.getCountByGoodsState(qw);
 
-        if(ObjectUtil.isNotEmpty(result)){
+        if (ObjectUtil.isNotEmpty(result)) {
             Integer hasAduitNum = 0;
             Integer waitEditNum = 0;
             Integer waitForAduitNum = 0;
             for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
-                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.待审核.getCode()){
+                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.待审核.getCode()) {
                     waitForAduitNum++;
                 }
-                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.已审核.getCode()){
+                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.已审核.getCode()) {
                     hasAduitNum++;
                 }
-                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.草稿箱.getCode()){
+                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.草稿箱.getCode()) {
                     waitEditNum++;
                 }
             }
-            goodsStateCountVO.setHasAduitNum(0);
-            goodsStateCountVO.setWaitEditNum(0);
-            goodsStateCountVO.setWaitForAduitNum(0);
-        }else {
+            goodsStateCountVO.setHasAduitNum(hasAduitNum);
+            goodsStateCountVO.setWaitEditNum(waitEditNum);
+            goodsStateCountVO.setWaitForAduitNum(waitForAduitNum);
+        } else {
             goodsStateCountVO.setHasAduitNum(0);
             goodsStateCountVO.setWaitEditNum(0);
             goodsStateCountVO.setWaitForAduitNum(0);
         }
 
         List<PCMerchGoodsInfoVO.SpuListVO> goodInfoList = goodsInfoMapper.getCountByGoodsState(qw);
-        if(ObjectUtil.isNotEmpty(goodInfoList)){
+        if (ObjectUtil.isNotEmpty(goodInfoList)) {
+            Integer hasOnNum = 0;
+            Integer waitForOnNum = 0;
             for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
-                Integer hasOnNum = 0;
-                Integer waitForOnNum = 0;
-                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.未上架.getCode()){
+                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.未上架.getCode()) {
                     waitForOnNum++;
                 }
-                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.已上架.getCode()){
+                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.已上架.getCode()) {
                     hasOnNum++;
                 }
             }
-        }else {
+            goodsStateCountVO.setHasOnNum(hasOnNum);
+            goodsStateCountVO.setWaitForOnNum(waitForOnNum);
+        } else {
             goodsStateCountVO.setHasOnNum(0);
             goodsStateCountVO.setWaitForOnNum(0);
         }
@@ -2168,6 +2159,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             if (ObjectUtil.isNotEmpty(stockVO)) {
                 skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
                 skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
+                skuStockNum.setSkuId(skuGoodInfo.getId());
                 skuStockNum.setStockNum(stockVO.getQuantity());
                 skuStockNums.add(skuStockNum);
             }

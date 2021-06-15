@@ -259,7 +259,7 @@ public interface IPCMerchGoodsInfoService {
 
     String selectGoodsNo(String tradeGoodsId);
 
-    void updateGoodsStock(PCMerchGoodsInfoDTO.AddGoodsETO eto);
+    void updateGoodsStock(PCMerchGoodsInfoDTO.UpdateStockDTO dto);
 
     /**
      * 更新审核通过将temp商品数据更新到商品相关表中

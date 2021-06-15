@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author Starry
@@ -60,6 +59,11 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
         //settingFuPin(eto, goodsIdVO.getGoodsId());
         //settingFuPin(eto,goodsIdVO.getGoodsId());
+    }
+
+    @Override
+    public void updateStock(PCMerchGoodsInfoDTO.UpdateStockDTO dto) {
+        goodsInfoService.updateGoodsStock(dto);
     }
 
     @Override
