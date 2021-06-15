@@ -1,11 +1,11 @@
 package com.gs.lshly.rpc.api.bbc.user;
 
-import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
-import com.gs.lshly.common.struct.bbb.pc.user.vo.PCBBBInUserCouponVO;
-import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
-import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
-
 import java.util.List;
+
+import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 
 /**
  * @Author yangxi
@@ -37,4 +37,11 @@ public interface IBbcInUserCouponRpc {
      * @return
      */
     List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(BbcInUserCouponQTO.GoodsCouponQTO qto);
+    
+    /**
+     * 跟据优惠券ID查询
+     * @param couponId
+     * @return
+     */
+    List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto);
 }

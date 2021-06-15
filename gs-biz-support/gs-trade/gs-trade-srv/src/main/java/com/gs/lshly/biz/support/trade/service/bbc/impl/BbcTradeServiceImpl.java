@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.trade.entity.Coupon;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardGoods;
 import com.gs.lshly.biz.support.trade.entity.MarketMerchantCardUsers;
 import com.gs.lshly.biz.support.trade.entity.Trade;
@@ -39,6 +40,7 @@ import com.gs.lshly.biz.support.trade.entity.TradePayOfflineImg;
 import com.gs.lshly.biz.support.trade.entity.TradeRights;
 import com.gs.lshly.biz.support.trade.entity.TradeRightsGoods;
 import com.gs.lshly.biz.support.trade.enums.MarketPtCardStatusEnum;
+import com.gs.lshly.biz.support.trade.mapper.CouponMapper;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
 import com.gs.lshly.biz.support.trade.mapper.TradePayMapper;
 import com.gs.lshly.biz.support.trade.repository.IMarketMerchantCardGoodsRepository;
@@ -112,16 +114,19 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeVO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SkuQuantityVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
 import com.gs.lshly.common.utils.Base64;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.middleware.mq.aliyun.producerService.ProducerService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -130,6 +135,7 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockDeliveryRpc;
+import com.gs.lshly.rpc.api.bbc.user.IBbcInUserCouponRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserIntegralRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserRpc;
@@ -215,6 +221,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Autowired
     private ITradeRightsRepository tradeRightsRepository;
+    
+    @Autowired
+    private CouponMapper couponMapper;
+    
+    @DubboReference
+    private IBbcInUserCouponRpc bbcInUserCouponRpc;
 
     @Value("${lakala.wxpay.notifyurl}")
     private String notifyUrl;
@@ -424,18 +436,49 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 BbcTradeSettlementVO.ShopListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(carId, quantity,
                         innerServiceGoodsVO);
 
-                if (goodsInfoVO.getIsInMemberGift()) {
+                if (goodsInfoVO.getIsInMemberGift()) {//是IN会员商品
                     if (isInUser.equals(1)) {    //是IN会员用IN会员价格
-
-                        /**
-                         *模拟优惠券数据
-                         */
-                        List<ListCouponVO> couponVOS = this.listCoupon();
-                        goodsInfoVO.setDefaultCouponList(couponVOS);
-
-                        List<ListCouponVO> couponVOS1 = this.listCoupon1();
-                        goodsInfoVO.setOptionalCouponList(couponVOS1);
-
+                    	
+                    	List<ListCouponVO> optionalCouponList = new ArrayList<ListCouponVO>();
+                    	List<ListCouponVO> defaultCouponList = new ArrayList<ListCouponVO>();
+                    	
+                    	List<Coupon> couponList = couponMapper.listByGoodsId(goodsInfoVO.getGoodsId());
+                        if(CollectionUtil.isNotEmpty(couponList)){//有优惠劵
+                        	//判断用户有没有对应的这个优惠劵
+                        	for(Coupon coupon:couponList){
+                        		String couponId = coupon.getCouponId();
+                        		BbcUserCouponQTO.ListByCouponIdQTO listByCouponIdQTO = new BbcUserCouponQTO.ListByCouponIdQTO();
+                        		BeanCopyUtils.copyProperties(dto, listByCouponIdQTO);
+                        		listByCouponIdQTO.setCouponId(couponId);
+                        		List<ListVO> userCouponList = bbcInUserCouponRpc.listByCouponId(listByCouponIdQTO);
+                        		
+                        		if(userCouponList!=null&&userCouponList.size()>0){
+                        			
+                        			ListCouponVO listCouponVO = null;
+                        			for(ListVO listVO:userCouponList){
+                        				listCouponVO = new ListCouponVO();
+                        				
+                        				//BeanCopyUtils.copyProperties(coupon, listCouponVO);
+                        				listCouponVO.setCouponName(coupon.getCouponName());
+                        				listCouponVO.setCouponType(coupon.getCouponType());
+                        				listCouponVO.setDeduction(coupon.getDeductionAmount());
+                        				listCouponVO.setDeductionType(1);
+                        				listCouponVO.setId(listVO.getId());
+                        				listCouponVO.setUseThreshold(coupon.getUseThreshold());
+                        				String useTime = DateUtils.fomatLocalDate(listVO.getStartTime(),DateUtils.dateFormatStr_1)
+                        						+"~"+DateUtils.fomatLocalDate(listVO.getStartTime(),DateUtils.dateFormatStr_1);
+                        				listCouponVO.setUseTime(useTime);
+                        				if(defaultCouponList==null||defaultCouponList.size()==0){
+                        					defaultCouponList.add(listCouponVO);
+                        				}
+                        				optionalCouponList.add(listCouponVO);
+                        			}
+                        		}
+                        		
+                        	}
+                        }
+                        goodsInfoVO.setDefaultCouponList(defaultCouponList);
+                        goodsInfoVO.setOptionalCouponList(optionalCouponList);
                         BigDecimal pointPrice = goodsInfoVO.getInMemberPointPrice()
                                 .multiply(new BigDecimal(goodsInfoVO.getQuantity()));
 
@@ -451,8 +494,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                         } else {
 
                             //本期就考虑不用分积分的
-                            ListCouponVO couponVO = couponVOS.get(0);
-                            BigDecimal deduction = couponVO.getDeduction().multiply(new BigDecimal("100"));
+                        	BigDecimal money =  BigDecimal.ZERO;
+                        	if(defaultCouponList!=null&&defaultCouponList.size()>0){
+                        		ListCouponVO couponVO = defaultCouponList.get(0);
+                        		money = couponVO.getDeduction();
+                        	}
+                            BigDecimal deduction = money.multiply(new BigDecimal("100"));
+                            
                             pointPrice = pointPrice.compareTo(deduction) <= 0 ? BigDecimal.ZERO : pointPrice.subtract(deduction);
 
                             goodsInfoVO.setTradePointAmount(pointPrice);

@@ -27,6 +27,8 @@ public  class DateUtils {
     public final static String timeFormatStr = "yyyy-MM-dd HH:mm:ss";
     
     public static final String DATE_YYYY_MM_DD_PATTERN = "yyyy-MM-dd";
+    
+    public final static String dateFormatStr_1 = "yyyy/MM/dd";
 
 
     /**
@@ -75,6 +77,11 @@ public  class DateUtils {
             e.printStackTrace();
             return null;
         }
+    }
+    public static String fomatLocalDate(LocalDate date,String pattern) {
+    	
+    	return date.format(DateTimeFormatter.ofPattern(pattern));
+    	
     }
 
     /**

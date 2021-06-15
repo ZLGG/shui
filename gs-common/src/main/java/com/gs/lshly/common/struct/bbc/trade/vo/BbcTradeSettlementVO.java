@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.gs.lshly.common.enums.GoodsCouponStatusEnum;
+import com.gs.lshly.common.enums.GoodsCouponTypeEnum;
 import com.gs.lshly.common.struct.common.vo.CommonMarketVO;
 import com.gs.lshly.common.utils.StringManageUtil;
 
@@ -468,7 +469,7 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 	    private Integer couponType;
 		
 		@ApiModelProperty("优惠券类型（1-IN会员抵扣券 2-店铺券 3-平台券 4-个人券）")
-	    private Integer couponTypeText;
+	    private String couponTypeText;
  
 		@ApiModelProperty("优惠券名称")
 	    private String couponName;
@@ -492,7 +493,10 @@ public abstract class BbcTradeSettlementVO implements Serializable {
 			return couponType;
 		}
 
-		public Integer getCouponTypeText() {
+		public String getCouponTypeText() {
+			if(couponType==null){
+				couponTypeText = GoodsCouponTypeEnum.getRemarkByCode(couponType);
+			}
 			return couponTypeText;
 		}
 

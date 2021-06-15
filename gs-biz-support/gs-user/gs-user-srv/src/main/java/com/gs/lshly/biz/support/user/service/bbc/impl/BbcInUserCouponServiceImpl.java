@@ -1,42 +1,44 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.user.entity.InUserCoupon;
-import com.gs.lshly.biz.support.user.entity.User;
-import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
-import com.gs.lshly.biz.support.user.mapper.UserMapper;
-import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
-import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
-import com.gs.lshly.common.enums.InUserCouponStatusEnum;
-import com.gs.lshly.common.enums.TrueFalseEnum;
-import com.gs.lshly.common.enums.UserCouponEnum;
-import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
-import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
-import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.CouponVO;
-import com.gs.lshly.common.utils.BeanUtils;
-import com.gs.lshly.common.utils.DateUtils;
-import com.gs.lshly.common.utils.ListUtil;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.user.entity.InUserCoupon;
+import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
+import com.gs.lshly.biz.support.user.mapper.UserCouponDTOMapper;
+import com.gs.lshly.biz.support.user.mapper.UserMapper;
+import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
+import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
+import com.gs.lshly.common.enums.InUserCouponStatusEnum;
+import com.gs.lshly.common.enums.UserCouponEnum;
+import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
+import com.gs.lshly.common.utils.BeanUtils;
+import com.gs.lshly.common.utils.DateUtils;
+import com.gs.lshly.common.utils.ListUtil;
 
 /**
  * @Author yangxi
  * @create 2021/3/22 14:56
  */
 @Component
+@SuppressWarnings("unused")
 public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
     @Autowired
@@ -45,6 +47,9 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     private UserMapper userMapper;
     @Autowired
     private InUserCouponMapper inUserCouponMapper;
+    
+    @Autowired
+    private UserCouponDTOMapper userCouponDTOMapper;
 
     @Override
     public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
@@ -250,7 +255,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         return dto;
     }
 
-    private InUserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
+	private InUserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
         // 判断in会员类型 0-年 1-月
         LocalDate startTime = LocalDate.now();
         LocalDate endTime =  DateUtils.getHalfNextYearDate(startTime);
@@ -270,4 +275,10 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         dto.setUserId(qto.getUserId());
         return dto;
     }
+
+	@Override
+	public List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto) {
+		List<ListVO> list = userCouponDTOMapper.listByCouponId(qto.getCouponId(), qto.getJwtUserId());
+		return list;
+	}
 }

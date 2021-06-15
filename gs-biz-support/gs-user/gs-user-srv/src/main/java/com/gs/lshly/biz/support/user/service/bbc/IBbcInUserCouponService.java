@@ -1,7 +1,9 @@
 package com.gs.lshly.biz.support.user.service.bbc;
 
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 
 import java.util.List;
 
@@ -48,4 +50,11 @@ public interface IBbcInUserCouponService {
      * @return
      */
     List<BbcInUserCouponVO.GoodsCouponListVO> getGoodsCoupon(BbcInUserCouponQTO.GoodsCouponQTO qto);
+    
+    /**
+     * 跟据优惠券查询用户有没有对应的券
+     * @param couponId
+     * @return
+     */
+    List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto);
 }

@@ -1,17 +1,16 @@
 package com.gs.lshly.biz.support.user.rpc.bbc;
 
-import com.gs.lshly.biz.support.user.service.bbb.pc.IPCBBBInUserCouponService;
-import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
-import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
-import com.gs.lshly.common.struct.bbb.pc.user.vo.PCBBBInUserCouponVO;
-import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
-import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
-import com.gs.lshly.rpc.api.bbb.pc.user.IBBBInUserCouponRpc;
-import com.gs.lshly.rpc.api.bbc.user.IBbcInUserCouponRpc;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
+import com.gs.lshly.rpc.api.bbc.user.IBbcInUserCouponRpc;
 
 /**
  * @Author yangxi
@@ -53,4 +52,9 @@ public class BbcInUserCouponRpc implements IBbcInUserCouponRpc {
     public void getCouponByBuy(BbcInUserCouponQTO.BuyCouponQTO qto) {
         inUserCouponService.getCouponByBuy(qto);
     }
+
+	@Override
+	public List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto) {
+		return inUserCouponService.listByCouponId(qto);
+	}
 }
