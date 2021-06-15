@@ -264,6 +264,7 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 					List<GoodsCategoryVO.CategoryTreeVO> list3 = categoryTreeVO2.getList();
 					if (list3 != null && list3.size() > 0) {
 						retList.add(categoryTreeVO);
+						break;
 					}
 				}
 			}

@@ -713,7 +713,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 }
             }
         } else {
-            skuVO.setSkuId(skuGoodInfos.get(0).getId());
+        	SkuGoodInfo skuGoodInfo = skuGoodInfos.get(0);
+        	BeanUtils.copyProperties(skuGoodInfo, skuVO);
+//            skuVO.setSkuId(skuGoodInfos.get(0).getId());
+            
         }
         return skuVO;
     }
