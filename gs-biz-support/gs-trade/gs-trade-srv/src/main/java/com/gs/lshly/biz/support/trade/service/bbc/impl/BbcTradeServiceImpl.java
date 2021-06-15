@@ -58,6 +58,7 @@ import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
+import com.gs.lshly.common.enums.GoodsCouponTypeEnum;
 import com.gs.lshly.common.enums.GoodsCtccApiEnum;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.ResponseCodeEnum;
@@ -461,6 +462,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                         				//BeanCopyUtils.copyProperties(coupon, listCouponVO);
                         				listCouponVO.setCouponName(coupon.getCouponName());
                         				listCouponVO.setCouponType(coupon.getCouponType());
+                        				listCouponVO.setCouponTypeText(GoodsCouponTypeEnum.getRemarkByCode(coupon.getCouponType()));
                         				listCouponVO.setDeduction(coupon.getDeductionAmount());
                         				listCouponVO.setDeductionType(1);
                         				listCouponVO.setId(listVO.getId());
