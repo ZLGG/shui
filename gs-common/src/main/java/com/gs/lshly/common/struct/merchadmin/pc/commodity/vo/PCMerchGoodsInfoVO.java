@@ -266,6 +266,26 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
     }
 
     @Data
+    @ApiModel("PCMerchGoodsInfoVO.GoodsStateCountVO")
+    public static class GoodsStateCountVO implements Serializable{
+
+        @ApiModelProperty(value = "待上架商品数")
+        public Integer waitForOnNum;
+
+        @ApiModelProperty(value = "已上架商品数")
+        public Integer hasOnNum;
+
+        @ApiModelProperty(value = "审核中商品数")
+        public Integer waitForAduitNum;
+
+        @ApiModelProperty(value = "已审核商品数")
+        public Integer hasAduitNum;
+
+        @ApiModelProperty(value = "草稿箱商品数")
+        public Integer waitEditNum;
+    }
+
+    @Data
     @ApiModel("PCMerchGoodsInfoVO.EditDetailVO")
     public static class EditDetailVO extends ListVO {
         @ApiModelProperty(value = "sku商品列表")

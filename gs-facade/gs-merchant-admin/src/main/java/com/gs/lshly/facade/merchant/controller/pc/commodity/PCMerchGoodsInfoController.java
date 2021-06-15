@@ -79,6 +79,18 @@ public class PCMerchGoodsInfoController {
         return ResponseData.data(goodsInfoRpc.getEditDetailEto(dto));
     }
 
+    @ApiOperation("审核中撤销、已审核删除、草稿箱删除")
+    @GetMapping(value = "/deleteBatchesTemp")
+    public ResponseData<Boolean> deleteBatchesTemp(@RequestBody PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
+        return ResponseData.data(goodsInfoRpc.deleteBatchesTemp(idsDTO));
+    }
+
+    @ApiOperation("各状态商品数量")
+    @GetMapping(value = "/getCountByGoodsState")
+    public ResponseData<PCMerchGoodsInfoVO.GoodsStateCountVO> getCountByGoodsState(@RequestBody PCMerchGoodsInfoDTO.MerchantDTO merchantDTO) {
+        return ResponseData.data(goodsInfoRpc.getCountByGoodsState(merchantDTO));
+    }
+
     @ApiOperation("修改商品信息管理")
     @PutMapping(value = "/{id}")
     public ResponseData<Void> update(@PathVariable String id, @Valid @RequestBody PCMerchGoodsInfoDTO.AddGoodsETO eto) {

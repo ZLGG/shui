@@ -275,6 +275,4 @@ public class GoodsInfoTemp implements Serializable {
      * 1:新增 2:更新
      */
     private Integer applyType;
-
-
 }

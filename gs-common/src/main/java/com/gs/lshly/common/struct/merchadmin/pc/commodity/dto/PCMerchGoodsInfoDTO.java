@@ -201,6 +201,18 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("PCMerchGoodsInfoDTO.MerchantDTO")
+    @AllArgsConstructor
+    public static class MerchantDTO implements Serializable {
+
+        @ApiModelProperty(value = "商家id")
+        private String merchantId;
+
+        @ApiModelProperty(value = "店铺id")
+        private String shopId;
+    }
+
+    @Data
     @ApiModel("PCMerchGoodsInfoDTO.GoodNoDTO")
     public static class GoodNoDTO extends BaseDTO {
 
@@ -217,6 +229,13 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty(value = "扶贫商品id", hidden = true)
         private List<String> fuPinGoodsIdList;
+    }
+
+    @Data
+    @ApiModel("PCMerchGoodsInfoDTO.IdsDTO")
+    public static class IdsDTO extends BaseDTO {
+        @ApiModelProperty(value = "商品id")
+        private List<String> idList;
     }
 
     @Data

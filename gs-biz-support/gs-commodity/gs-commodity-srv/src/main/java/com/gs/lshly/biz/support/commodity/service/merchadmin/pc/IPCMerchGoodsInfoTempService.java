@@ -36,4 +36,6 @@ public interface IPCMerchGoodsInfoTempService {
     PCMerchGoodsInfoVO.GoodsIdVO addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto);
 
     int countGoodsNo(PCMerchGoodsInfoDTO.GoodNoDTO dto);
+
+    Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
 }

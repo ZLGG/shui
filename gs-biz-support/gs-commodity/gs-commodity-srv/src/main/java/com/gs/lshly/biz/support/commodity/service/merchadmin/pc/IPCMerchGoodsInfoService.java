@@ -278,4 +278,8 @@ public interface IPCMerchGoodsInfoService {
     PCMerchMarketPtSeckillVO.BrandAndCategry selectBrandAndCategory(String goodsId);
 
     String selectGoodsImage(String goodsId);
+
+    Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
+
+    PCMerchGoodsInfoVO.GoodsStateCountVO getCountByGoodsState(PCMerchGoodsInfoDTO.MerchantDTO merchantDTO);
 }

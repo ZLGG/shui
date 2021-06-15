@@ -52,16 +52,17 @@ public abstract class PCMerchSkuGoodInfoDTO implements Serializable {
         @ApiModelProperty("商品图片")
         private String image;
 
-        @ApiModelProperty("商品售价")
+        @ApiModelProperty("商品标准售价")
         private BigDecimal salePrice;
 
         @ApiModelProperty("商品原价")
         private BigDecimal oldPrice;
 
-
         @ApiModelProperty("商品成本价")
         private BigDecimal costPrice;
 
+        @ApiModelProperty("结算价格")
+        private BigDecimal settlementPrice;
 
         @ApiModelProperty("商品阶梯价")
         private String stepPrice;

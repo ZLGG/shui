@@ -66,6 +66,15 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
     )
     IPage<PCMerchGoodsInfoVO.SpuListVO> getMerchantGoodsInfo(IPage<PCMerchGoodsInfoVO.SpuListVO> page, @Param(Constants.WRAPPER) QueryWrapper<PCMerchGoodsInfoVO.SpuListVO> qw);
 
+    @Select(
+            "SELECT DISTINCT gs.id,gs.merchant_id,gs.shop_id,gs.brand_id,gs.spec_info_id,gs.attribute_info_id," +
+                    "gs.extend_params_id,gs.goods_name,gs.goods_title,gs.goods_state,gs.goods_no,gs.sale_price,gs.old_price," +
+                    "gs.cost_price,gs.goods_weight,gs.goods_valid_days,gs.goods_image,gs.is_single,gs.point_price,gs.remarks,gs.is_point_good,gs.is_in_member_gift,gs.in_member_point_price,gs.sale_type,gs.third_product_id,gs.exchange_type,\n" +
+                    "gs.is_show_old_price,gs.goods_price_unit,gs.use_platform,gs.publish_time,gs.cdate,gs.udate from  gs_goods_info gs \n" +
+                    "WHERE gs.flag =0 AND ${ew.sqlSegment} "
+    )
+    List<PCMerchGoodsInfoVO.SpuListVO> getCountByGoodsState(@Param(Constants.WRAPPER) QueryWrapper<PCMerchGoodsInfoVO.SpuListVO> qw);
+
 
     /**
      * 查询店铺自定义分类下面的商品

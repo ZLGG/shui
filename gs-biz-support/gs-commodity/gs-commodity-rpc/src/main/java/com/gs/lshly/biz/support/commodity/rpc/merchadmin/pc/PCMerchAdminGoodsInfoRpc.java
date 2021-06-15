@@ -58,7 +58,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = goodsInfoTempService.addGoodsInfo(eto);
         //如果该商品是扶贫商品
 
-        settingFuPin(eto, goodsIdVO.getGoodsId());
+        //settingFuPin(eto, goodsIdVO.getGoodsId());
         //settingFuPin(eto,goodsIdVO.getGoodsId());
     }
 
@@ -75,15 +75,11 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     @Override
     public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
 
-        //用户编辑商品，需要先审核，若只是修改库存则直接修改
-        //包含非库存字段修改
-        if (ObjectUtils.isNotEmpty(eto) && ObjectUtils.isNotEmpty(eto.getIsIncludeOthers()) && eto.getIsIncludeOthers()) {
-            goodsInfoService.updateGoodsStock(eto);
-        } else {
+        if(goodsInfoTempService.isUpdateGoodInfo(eto.getId())){
             goodsInfoTempService.editGoodsInfo(eto);
         }
-
-        //goodsInfoService.editGoodsInfo(eto);
+        goodsInfoTempService.addGoodsInfo(eto);
+        goodsInfoService.editGoodsInfo(eto);
 
         //如果该商品是扶贫商品
         //settingFuPin(eto,eto.getId());
@@ -272,6 +268,15 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         return goodsInfoService.selectGoodsImage(goodsId);
     }
 
+    @Override
+    public Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
+        return goodsInfoTempService.deleteBatchesTemp(idsDTO);
+    }
+
+    @Override
+    public PCMerchGoodsInfoVO.GoodsStateCountVO getCountByGoodsState(PCMerchGoodsInfoDTO.MerchantDTO merchantDTO) {
+        return goodsInfoService.getCountByGoodsState(merchantDTO);
+    }
 
     private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto, String goodsId) {
         if (ObjectUtils.isNotEmpty(eto.getFuPinEto())) {

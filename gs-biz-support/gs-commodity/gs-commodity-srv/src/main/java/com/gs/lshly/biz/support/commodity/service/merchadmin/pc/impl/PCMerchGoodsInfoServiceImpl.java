@@ -2052,6 +2052,63 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         return getImage(goodsInfo.getGoodsImage());
     }
 
+    @Override
+    public Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
+        return null;
+    }
+
+    @Override
+    public PCMerchGoodsInfoVO.GoodsStateCountVO getCountByGoodsState(PCMerchGoodsInfoDTO.MerchantDTO merchantDTO) {
+        PCMerchGoodsInfoVO.GoodsStateCountVO goodsStateCountVO = new PCMerchGoodsInfoVO.GoodsStateCountVO();
+        //审核中
+        QueryWrapper<PCMerchGoodsInfoVO.SpuListVO> qw = MybatisPlusUtil.query();
+        qw.eq("shop_id",merchantDTO.getShopId());
+        qw.eq("merchant_id",merchantDTO.getMerchantId());
+        List<PCMerchGoodsInfoVO.SpuListVO> result = goodsInfoTempMapper.getCountByGoodsState(qw);
+
+        if(ObjectUtil.isNotEmpty(result)){
+            Integer hasAduitNum = 0;
+            Integer waitEditNum = 0;
+            Integer waitForAduitNum = 0;
+            for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
+                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.待审核.getCode()){
+                    waitForAduitNum++;
+                }
+                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.已审核.getCode()){
+                    hasAduitNum++;
+                }
+                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.草稿箱.getCode()){
+                    waitEditNum++;
+                }
+            }
+            goodsStateCountVO.setHasAduitNum(0);
+            goodsStateCountVO.setWaitEditNum(0);
+            goodsStateCountVO.setWaitForAduitNum(0);
+        }else {
+            goodsStateCountVO.setHasAduitNum(0);
+            goodsStateCountVO.setWaitEditNum(0);
+            goodsStateCountVO.setWaitForAduitNum(0);
+        }
+
+        List<PCMerchGoodsInfoVO.SpuListVO> goodInfoList = goodsInfoMapper.getCountByGoodsState(qw);
+        if(ObjectUtil.isNotEmpty(goodInfoList)){
+            for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
+                Integer hasOnNum = 0;
+                Integer waitForOnNum = 0;
+                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.未上架.getCode()){
+                    waitForOnNum++;
+                }
+                if(spuListVO.getGoodsState().intValue() == GoodsStateEnum.已上架.getCode()){
+                    hasOnNum++;
+                }
+            }
+        }else {
+            goodsStateCountVO.setHasOnNum(0);
+            goodsStateCountVO.setWaitForOnNum(0);
+        }
+        return goodsStateCountVO;
+    }
+
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
         List<String> stringList = Arrays.asList(attributeInfos.split(",")).stream().distinct().collect(toList());
         List<PCMerchGoodsAttributeInfoDTO.ETO> etoList = stringList.parallelStream()
@@ -2387,9 +2444,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         /*if ((!eto.getUsePlatform().equals(GoodsUsePlatformEnums.B商城.getCode())) && StringUtils.isBlank(eto.getShop2cNavigationId())) {
             throw new BusinessException("请选择店铺2c自定义类目");
         }*/
-        if (StringUtils.isEmpty(eto.getShopNavigationId())) {
+        /*if (StringUtils.isEmpty(eto.getShopNavigationId())) {
             throw new BusinessException("请选择店铺商品分类");
-        }
+        }*/
         if (ObjectUtil.isEmpty(eto.getCtccMold())) {
             throw new BusinessException("请选择商品类型");
         }
