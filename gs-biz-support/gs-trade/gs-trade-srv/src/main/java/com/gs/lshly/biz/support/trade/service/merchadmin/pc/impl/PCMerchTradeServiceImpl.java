@@ -120,7 +120,9 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 wrapper.and(i -> i.eq("t.`user_id`",userDetailVO.getId()));
             }
         }
-
+        if(StringUtils.isNotBlank(qto.getKeywords())){
+        	 wrapper.and(i -> i.like("t.`trade_code`",qto.getTradeCode()));
+        }
         wrapper.orderByDesc("t.cdate");
 
         IPage<PCMerchTradeListVO.tradeVO> page = MybatisPlusUtil.pager(qto);
