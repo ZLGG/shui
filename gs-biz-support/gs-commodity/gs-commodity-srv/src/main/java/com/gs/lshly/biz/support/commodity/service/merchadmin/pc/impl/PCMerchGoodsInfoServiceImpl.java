@@ -2049,7 +2049,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (StrUtil.isEmpty(goodsInfo.getGoodsImage())) {
             return null;
         }
-        return goodsInfo.getGoodsImage();
+        return getImage(goodsInfo.getGoodsImage());
     }
 
     private List<PCMerchGoodsAttributeInfoDTO.ETO> getAttributeList(String attributeInfos) {
