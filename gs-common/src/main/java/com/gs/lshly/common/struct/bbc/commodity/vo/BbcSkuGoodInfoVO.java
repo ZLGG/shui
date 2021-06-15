@@ -114,7 +114,8 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("sku库存")
         private Integer skuStock;
 
-        
+        @ApiModelProperty("积分价格")
+        private Double pointPrice;
 
         @ApiModelProperty("办理备注")
         private String remarks;
@@ -125,6 +126,8 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         @ApiModelProperty("是否是in会员礼品")
         private Boolean isInMemberGift;
 
+        @ApiModelProperty("in会员积分价格")
+        private Double inMemberPointPrice;
 
         @ApiModelProperty("出售类型（0普通，1活动）")
         private Integer saleType;
@@ -137,21 +140,6 @@ public abstract class BbcSkuGoodInfoVO implements Serializable {
         
         @ApiModelProperty("不能够买原因")
         private String buyRemark;
-        
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
-        
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
-        
-        @ApiModelProperty("销售价格")
-        private Double salePrice;
-        
-        @ApiModelProperty("原价格")
-        private Double oldPrice;
-        
-        @ApiModelProperty("积分价格")
-        private Double oldPointPrice;
     }
     
     @Data
