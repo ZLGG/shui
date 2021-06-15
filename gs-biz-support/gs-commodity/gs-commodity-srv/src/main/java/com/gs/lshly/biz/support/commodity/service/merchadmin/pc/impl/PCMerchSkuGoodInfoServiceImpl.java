@@ -124,7 +124,7 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
             SkuGoodInfo byId = repository.getById(skuId);
             if (ObjectUtil.isNotEmpty(byId)) {
                 if (StrUtil.isNotEmpty(byId.getImage())) {
-                    return getImage(byId.getImage());
+                    return byId.getImage();
                 }
             }
         }
