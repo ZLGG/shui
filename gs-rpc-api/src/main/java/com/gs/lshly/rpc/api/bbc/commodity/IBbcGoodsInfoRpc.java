@@ -39,6 +39,14 @@ public interface IBbcGoodsInfoRpc {
      */
     BbcGoodsInfoVO.DetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
     
+    
+    /**
+     * 查询2C秒杀商城商品详情
+     * @param dto
+     * @return
+     */
+    BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
+    
     /**
      * 获取简单商品信息
      * @param dto

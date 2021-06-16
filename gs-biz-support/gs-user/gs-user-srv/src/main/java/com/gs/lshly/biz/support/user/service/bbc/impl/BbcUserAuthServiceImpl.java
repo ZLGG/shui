@@ -36,6 +36,7 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
+import com.gs.lshly.middleware.sms.IAliSMSService;
 import com.gs.lshly.middleware.sms.ISMSService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +75,9 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     
     @Autowired
 	private IBbcUserCtccPointService bbcUserCtccPointService;
+    
+    @Autowired
+    private IAliSMSService aliSMSService;
 
 
     @Override
@@ -111,14 +115,19 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     @Override
     public void getPhoneValidCode(BbcUserDTO.GetPhoneValidCodeDTO dto) {
         //通过手机查找是已经注册了会员，如果已经注册，则发送用户登陆验证码，否则发送注册验证码
-        User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
+//        User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
         String validCode = null;
         try {
-            if (user != null) {
-                validCode = smsService.sendLoginSMSCode(dto.getPhone());
-            } else {
-                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
-            }
+//            if (user != null) {
+//                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+//            } else {
+//                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
+//            }
+        	validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+        	Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+        	if(!flag){
+        		 throw new BusinessException("短信发送失败!");
+        	}
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
@@ -135,13 +144,13 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     	 * 验证码登录
     	 */
     	if(dto.getType()==null||dto.getType().equals(1)){
-    		 /**校验验证码
+    		 //校验验证码
             Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
             String validCode = code != null ? code + "" : "";
             log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
             if (!StringUtils.equals(validCode, dto.getValidCode())) {
                 throw new BusinessException("验证码不匹配");
-            }**/
+            }
             BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
             if (vo != null) {
                 UpdateWrapper wrapper = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
