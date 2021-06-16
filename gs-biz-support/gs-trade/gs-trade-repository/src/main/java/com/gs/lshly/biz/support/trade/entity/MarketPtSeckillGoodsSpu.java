@@ -2,6 +2,9 @@ package com.gs.lshly.biz.support.trade.entity;
 
 import java.math.BigDecimal;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Date;
@@ -101,16 +104,20 @@ public class MarketPtSeckillGoodsSpu extends Model {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date cdate;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date udate;
 
     /**
      * 逻辑删除标记
      */
+    @TableField(fill = FieldFill.INSERT)
+    @TableLogic
     private Boolean flag;
 
     /**
