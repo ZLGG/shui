@@ -37,6 +37,13 @@ public interface IBbcGoodsInfoService {
      * @return
      */
     BbcGoodsInfoVO.DetailVO detailGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
+    
+    /**
+     * 秒杀活动详情页
+     * @param dto
+     * @return
+     */
+    BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
 
 
     /**

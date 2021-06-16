@@ -1890,4 +1890,111 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 		return null;
 	}
 
+	
+	@Override
+    public BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.IdDTO dto) {
+
+        if (dto == null) {
+            throw new BusinessException("参数不能为空！");
+        }
+        GoodsInfo goodsInfo = repository.getById(dto.getId());
+        if (ObjectUtils.isEmpty(goodsInfo)) {
+            throw new BusinessException("数据异常");
+        }
+        BbcGoodsInfoVO.DetailVO detailVo = new BbcGoodsInfoVO.DetailVO();
+        fillUserType(detailVo, dto);
+
+        //判断当前商品参于了哪个活动
+        BbcGoodsInfoVO.ActivityVOS activityVO = bbcMarketActivityRpc.getActivityByGoodsId(goodsInfo.getId());
+
+        if (activityVO != null) {//有参于活动
+//        	GoodsActivityVO goodsactivityvo = new GoodsActivityVO();
+            List<BbcGoodsInfoVO.ActivityVOS> activityVOS = new ArrayList<BbcGoodsInfoVO.ActivityVOS>();
+            activityVOS.add(activityVO);
+            detailVo.setActivityVOS(activityVOS);
+            ;
+        }
+
+        BeanUtils.copyProperties(goodsInfo, detailVo);
+        detailVo.setGoodsId(goodsInfo.getId());
+
+        BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(goodsInfo).get(0);
+        //若是多规格填充默认规格信息
+        //获取默认规格商品信息
+        detailVo.setSkuVO(skuVO);
+
+        detailVo.setSkuId(skuVO.getSkuId());
+
+        detailVo.setSalePrice(skuVO.getSkuSalePrice());
+        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+            if (detailVo.getIsBuy().equals(0)) {
+                detailVo.setIsBuy(skuVO.getIsBuy());
+                detailVo.setBuyRemark(skuVO.getBuyRemark());
+            }
+        }
+
+        //填充spec规格列表信息
+        if (ObjectUtils.isNotEmpty(getSpecInfoVO(goodsInfo))) {
+            detailVo.setSpecListVOS(getSpecInfoVO(goodsInfo));
+        }
+
+        //获取店铺信息
+        BbcGoodsInfoVO.GoodsShopDetailVO shopDetailVO = shopDetailVO(goodsInfo.getShopId());
+
+        detailVo.setGoodsShopDetailVO(shopDetailVO);
+
+        if (goodsInfo.getIsSingle().intValue() == SingleStateEnum.单品.getCode().intValue()) {
+            detailVo.setSkuId(skuVO.getSkuId());
+            detailVo.setSingleSkuStock(getSkuStockNum(goodsInfo.getShopId(), skuVO.getSkuId()));
+        }
+
+        //填充spu月销量
+        int spuStockNum = tradeRpc.innerMonthSaleNum(goodsInfo.getId());
+        detailVo.setSpuStockNum(spuStockNum);
+
+        //获取商品销售数量
+        Integer saleQuantity = tradeRpc.getSaleQuantity(dto.getId());
+        detailVo.setSaleQuantity(saleQuantity);
+//        //获取积分兑换数量
+//        Integer exchangeQuantity = tradeRpc.getSaleQuantity(dto.getId(),GoodsSourceTypeEnum.积分商品.getCode());
+//        detailVo.setExchangeQuantity(exchangeQuantity);
+
+        /**获取用户默认收货地址
+         BbcStockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(new BaseDTO(), StockAddressTypeEnum.收货.getCode());
+         if (defaultAddresslVO != null) {
+         detailVo.setUserDefaultAddress((StringUtils.isNotEmpty(defaultAddresslVO.getProvince()) ? defaultAddresslVO.getProvince() : "") + (StringUtils.isNotEmpty(defaultAddresslVO.getCity()) ? defaultAddresslVO.getCity() : "") + (StringUtils.isNotEmpty(defaultAddresslVO.getCounty()) ? defaultAddresslVO.getCity() : ""));
+         }
+         **/
+        //店铺客服信息
+        BaseDTO baseDTO = new BaseDTO();
+        baseDTO.setJwtShopId(goodsInfo.getShopId());
+        CommonShopVO.ShopServiceVO shopServiceVO = commonShopRpc.getShopServiceVO(baseDTO);
+        if (ObjectUtils.isNotEmpty(shopServiceVO)) {
+            detailVo.setShopServiceVO(shopServiceVO);
+        }
+
+
+        //获取商品收藏状态
+        detailVo.setFavoritesState(favoritesGoodsRpc.innerFavoritesState(dto.getId(), dto.getJwtUserId()));
+
+        //查询标签
+        detailVo.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
+
+        /**
+         * 人工匹配服务承诺
+         */
+        fillPromiseVOS(detailVo);
+
+        /**
+         * 匹配商品属性
+         */
+        fillAttributeVOS(detailVo);
+
+        if (!(goodsInfo.getGoodsState()).equals(GoodsStateEnum.已上架.getCode())) {
+            detailVo.setIsBuy(0);
+            detailVo.setBuyRemark(GoodsBuyRemarkEnum.getRemark(goodsInfo.getGoodsState()));
+        }
+
+        return detailVo;
+    }
 }
