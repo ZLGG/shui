@@ -145,6 +145,12 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     }
 
     @Override
+    public PCMerchGoodsInfoVO.EditDetailVO getEditDetailTempEto(PCMerchGoodsInfoDTO.IdDTO dto) {
+        PCMerchGoodsInfoVO.EditDetailVO editDetailVO = goodsInfoTempService.getEditDetailEto(dto);
+        return editDetailVO;
+    }
+
+    @Override
     public PageData<PCMerchGoodsInfoVO.ShopFloorCommodityVO> getShopFloorCommodityVO(PCMerchGoodsInfoQTO.ShopFloorQTO qto) {
         return goodsInfoService.getShopFloorCommodityVO(qto);
     }

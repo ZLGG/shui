@@ -96,11 +96,18 @@ public interface IPCMerchAdminGoodsInfoRpc {
     ExportDataDTO downExcelMode() throws Exception;
 
     /**
-     * 获取编辑商品信息详情
+     * 获取编辑商品信息详情-上架、待上架状态
      * @param dto
      * @return
      */
     PCMerchGoodsInfoVO.EditDetailVO getEditDetailEto(PCMerchGoodsInfoDTO.IdDTO dto);
+
+    /**
+     * 获取编辑商品信息详情-审核中、已审核、草稿箱状态
+     * @param dto
+     * @return
+     */
+    PCMerchGoodsInfoVO.EditDetailVO getEditDetailTempEto(PCMerchGoodsInfoDTO.IdDTO dto);
 
     /**
      * 提供店铺楼层选择的商品列表

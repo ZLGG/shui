@@ -100,10 +100,17 @@ public class TradePayServiceImpl implements ITradePayService {
             UserVO.MiniVO mini = iUserRpc.mini(new UserDTO.IdDTO(listVO.getUserId()));
             if (ObjectUtils.isNotEmpty(mini)){
                 listVO.setUserName(mini.getUserName());
+                listVO.setPhone(mini.getPhone());
             }
             ShopVO.DetailVO detailVO = iShopRpc.shopDetails(new ShopDTO.IdDTO(listVO.getShopId()));
             if (ObjectUtils.isNotEmpty(detailVO)){
                 listVO.setShopName(detailVO.getShopName());
+            }
+            if(listVO.getPayState().equals(TradePayStateEnum.已支付.getCode())){
+                Trade trade = iTradeRepository.getById(listVO.getTradeId());
+                if(ObjectUtils.isNotEmpty(trade)){
+                    listVO.setPayTime(trade.getPayTime());
+                }
             }
             return listVO;
         }).collect(Collectors.toList());
