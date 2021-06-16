@@ -495,7 +495,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 repository.updateById(tradeRights);
                 saveTradeRightsGoods(dto, tradeRights);
                 tradeRightsLog.setState(dto.getState());
-                tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint()
+                tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + "，实退积分：" + dto.getRefundPoint()
                         + "，收件人:" + dto.getMerPersonName() + "。收件人电话：" + dto.getMerPhone()
                         + "。退货地址：" + dto.getMerFullAddres() + "。");
             } else if (dto.getRightsType().equals(TradeRightsTypeEnum.仅退款.getCode())) {
@@ -505,7 +505,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 repository.updateById(tradeRights);
                 saveTradeRightsGoods(dto, tradeRights);
                 tradeRightsLog.setState(dto.getState());
-                tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + ",实退积分：" + dto.getRefundPoint());
+                tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + "，实退积分：" + dto.getRefundPoint());
                 //todo yingjun 仅退款 退款
                 bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(), dto.getRefundPoint());
 

@@ -4,6 +4,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSecki
 import com.gs.lshly.common.struct.platadmin.commodity.dto.SkuGoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface ISkuGoodInfoService {
 
     String selectSkuImg(String skuId);
 
+    TradeRightsVO.SkuGoodsInfo selectImageAndPrice(String skuId);
 }
