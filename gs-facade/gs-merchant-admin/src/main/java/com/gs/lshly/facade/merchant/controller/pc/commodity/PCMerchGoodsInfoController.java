@@ -79,11 +79,18 @@ public class PCMerchGoodsInfoController {
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
     }
 
-    @ApiOperation("获取商品信息管理编辑详情")
+    @ApiOperation("获取商品信息管理编辑详情(上架、待上架状态)")
     @GetMapping(value = "/getEditDetail/{id}")
     public ResponseData<PCMerchGoodsInfoVO.EditDetailVO> getEditDetail(@PathVariable String id) {
         PCMerchGoodsInfoDTO.IdDTO dto = new PCMerchGoodsInfoDTO.IdDTO(id);
         return ResponseData.data(goodsInfoRpc.getEditDetailEto(dto));
+    }
+
+    @ApiOperation("获取商品信息管理编辑详情(审核中、已审核、草稿箱状态)")
+    @GetMapping(value = "/getEditDetailTemp/{id}")
+    public ResponseData<PCMerchGoodsInfoVO.EditDetailVO> getEditDetailTemp(@PathVariable String id) {
+        PCMerchGoodsInfoDTO.IdDTO dto = new PCMerchGoodsInfoDTO.IdDTO(id);
+        return ResponseData.data(goodsInfoRpc.getEditDetailTempEto(dto));
     }
 
     @ApiOperation("审核中撤销、已审核删除、草稿箱删除")

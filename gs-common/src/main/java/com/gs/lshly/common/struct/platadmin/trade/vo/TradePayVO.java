@@ -77,7 +77,12 @@ public abstract class TradePayVO implements Serializable {
         @ApiModelProperty(value = "店铺名字",position = 15)
         private String shopName;
 
+        @ApiModelProperty(value = "手机号码",position = 16)
+        private String phone;
 
+        @ApiModelProperty(value = "支付完成时间",position = 17)
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime payTime;
     }
     @Data
     @ApiModel("TradePayVO.ListVOExport")
