@@ -1,5 +1,6 @@
 package com.gs.lshly.facade.bbc.controller.h5.foundation;
 
+import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcPicturesVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
@@ -41,14 +42,19 @@ public class BbcPicturesSettingController {
 
             @ApiParam(name = "host", value = "文件上传路径", required = false)
             @RequestParam(value = "host", required = false) String host) {
-
-        if(!StringUtils.isEmpty(host)){
-            ConstantPropertiesUtil.FILE_HOST = host;
-            ConstantPropertiesUtil.LOCAL_MODULE = host;
-        }
-        PicturesVO.DetailVO detailVO = fileService.upload(file);
-        BbcPicturesVO.DetailVO bbcDetailVO = new BbcPicturesVO.DetailVO();
-        BeanUtils.copyProperties(detailVO,bbcDetailVO);
+    	BbcPicturesVO.DetailVO bbcDetailVO = new BbcPicturesVO.DetailVO();
+    	try{
+	        if(!StringUtils.isEmpty(host)){
+	            ConstantPropertiesUtil.FILE_HOST = host;
+	            ConstantPropertiesUtil.LOCAL_MODULE = host;
+	        }
+	        PicturesVO.DetailVO detailVO = fileService.upload(file);
+	        
+	        BeanUtils.copyProperties(detailVO,bbcDetailVO);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		throw new BusinessException("图片尺寸过大");
+    	}
         //返回对象
         return ResponseData.data(bbcDetailVO);
     }
