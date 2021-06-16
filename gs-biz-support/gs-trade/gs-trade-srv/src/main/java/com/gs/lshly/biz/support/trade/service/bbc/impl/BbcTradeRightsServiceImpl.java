@@ -748,6 +748,10 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("未查询到售后数据!");
         }
+        if (tradeRights.getState().equals(TradeRightsEndStateEnum.买家二次申诉.getCode())) {
+            throw new BusinessException("申诉已提交，请耐心等待审核结果。");
+        }
+
         if (!tradeRights.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
             throw new BusinessException("售后未处于商家驳回状态");
         }
