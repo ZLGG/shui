@@ -56,6 +56,9 @@ public interface IGoodsCategoryService {
      * @return
      */
     List<GoodsCategoryVO.CategoryTreeVO> listCategory();
+    
+    
+    List<GoodsCategoryVO.CategoryTreeVO> listCategoryAll();
 
     /**
      * 获取有商品的类目
