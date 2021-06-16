@@ -31,6 +31,6 @@ public interface UserMapper extends BaseMapper<User> {
     IPage<UserView> pageList(IPage<UserView> page, @Param(value = "ew") QueryWrapper<UserView> qw);
 
 
-    @Insert("INSERT INTO gs_user ( id, state, type, phone, cdate, udate, flag ) VALUES(#{user.id},#{user.state},#{user.type},#{user.phone},now(),now(),#{user.flag}) ")
+    @Insert("INSERT INTO gs_user ( id, state, type, phone, cdate, udate, flag,member_type ) VALUES(#{user.id},#{user.state},#{user.type},#{user.phone},now(),now(),#{user.flag},#{user.memberType}) ")
     void saveUserInfo(@Param("user") UserDTO.ETO user);
 }

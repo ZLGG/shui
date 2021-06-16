@@ -484,13 +484,14 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								if(simpleGooods.getIsPointGood()){//是不是积分
 									sckillGoodsVO.setSalePrice(simpleGooods.getPointPrice());
 									sckillGoodsVO.setSeckillPointPrice(spu.getSeckillPointPrice());
-									sckillGoodsVO.setSeckillInMemberPointPrice(spu.getSeckillInMemberPointPrice());
+									sckillGoodsVO.setSeckillInMemberPointPrice(spu.getSeckillPointPrice());
 									
 									sckillGoodsVO.setGoodsType(20);
 								}else{
 									sckillGoodsVO.setGoodsType(10);
 									sckillGoodsVO.setSalePrice(simpleGooods.getSalePrice());
 									sckillGoodsVO.setSeckillPrice(spu.getSeckillSalePrice());
+									sckillGoodsVO.setSeckillInMemberPointPrice(spu.getSeckillSalePrice());
 								}
 								
 								sckillGoodsVO.setGoodsId(simpleGooods.getId());

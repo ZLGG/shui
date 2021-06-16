@@ -135,13 +135,13 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     	 * 验证码登录
     	 */
     	if(dto.getType()==null||dto.getType().equals(1)){
-    		 //校验验证码
+    		 /**校验验证码
             Object code = redisUtil.get(PhoneValidCodeGroup + dto.getPhone());
             String validCode = code != null ? code + "" : "";
             log.info("获取-手机号码："+dto.getPhone()+"-验证码："+validCode);
             if (!StringUtils.equals(validCode, dto.getValidCode())) {
                 throw new BusinessException("验证码不匹配");
-            }
+            }**/
             BbcUserVO.LoginVO vo = (BbcUserVO.LoginVO) redisUtil.get(BbcH5PhoneUser + dto.getPhone());
             if (vo != null) {
                 UpdateWrapper wrapper = MybatisPlusUtil.update().set("login_date",new Date()).eq("id",vo.getId());
