@@ -21,7 +21,7 @@ public interface MarketPtSeckillTimeQuantumMapper extends BaseMapper<MarketPtSec
 	
 	
 	@Select("select date_format(start_time, '%H') as hh,t.* from gs_market_pt_seckill_time_quantum t "
-			+ " where t.start_time>='${startTime}' and t.start_time<='${endTime}' "
+			+ " where t.flag = 0 and t.start_time>='${startTime}' and t.start_time<='${endTime}' "
 			+ " order by t.start_time ASC")
 	List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> list(@Param("startTime") String startTime,@Param("endTime") String endTime);
 }
