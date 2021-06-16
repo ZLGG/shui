@@ -33,6 +33,7 @@ import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
 import com.lakala.boss.api.config.MerchantBaseEnum;
@@ -93,6 +94,8 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private IUserRpc iUserRpc;
     @DubboReference
     private ICommonShopRpc iCommonShopRpc;
+    @DubboReference
+    private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
 
     @Override
     public PageData<TradeRightsVO.RightsListVO> pageData(TradeRightsQTO.StateDTO qto) {
@@ -300,13 +303,26 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             }
             GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getGoodsId()));
             tradeRightsGoodsVO.setGoodsTitle(goodsDetail.getGoodsTitle());
-            tradeRightsGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());
-            if (ObjectUtil.isNotEmpty(goodsDetail.getSalePrice())) {
-                tradeRightsGoodsVO.setSalePrice(goodsDetail.getSalePrice());
-            }
+            //查询具体sku信息
+            TradeRightsVO.SkuGoodsInfo skuGoodsInfo = iSkuGoodsInfoRpc.selectImageAndPrice(tradeRightsGoods.getSkuId());
+            if (ObjectUtil.isNotEmpty(skuGoodsInfo)) {
+                //是积分商品 单价给积分 否则给金额
+                if (skuGoodsInfo.getIsPointGood()) {
+                    tradeRightsGoodsVO.setSalePrice(skuGoodsInfo.getPointPrice());
+                } else {
+                    tradeRightsGoodsVO.setSalePrice(skuGoodsInfo.getSalePrice());
+                }
 
-            if (ObjectUtil.isNotEmpty(goodsDetail.getPointPrice())) {
-                tradeRightsGoodsVO.setPointPrice(new BigDecimal(goodsDetail.getPointPrice()));
+                if (ObjectUtil.isNotEmpty(skuGoodsInfo.getPointPrice())) {
+                    tradeRightsGoodsVO.setPointPrice(skuGoodsInfo.getPointPrice());
+                }
+
+                //有sku图片给sku图片，没有给商品图片
+                if (StrUtil.isNotEmpty(skuGoodsInfo.getSkuImg())) {
+                    tradeRightsGoodsVO.setGoodsImage(skuGoodsInfo.getSkuImg());
+                } else {
+                    tradeRightsGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());
+                }
             }
             tradeRightsGoodsVOS.add(tradeRightsGoodsVO);
             //填充明细

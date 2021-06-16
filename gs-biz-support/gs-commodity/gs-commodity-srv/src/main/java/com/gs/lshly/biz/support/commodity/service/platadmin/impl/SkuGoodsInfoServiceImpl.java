@@ -9,6 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,5 +77,22 @@ public class SkuGoodsInfoServiceImpl implements ISkuGoodInfoService {
             return null;
         }
         return byId.getImage();
+    }
+
+    @Override
+    public TradeRightsVO.SkuGoodsInfo selectImageAndPrice(String skuId) {
+        if (StrUtil.isEmpty(skuId)) {
+            return null;
+        }
+        SkuGoodInfo byId = repository.getById(skuId);
+        if (ObjectUtil.isEmpty(byId)) {
+            return null;
+        }
+        TradeRightsVO.SkuGoodsInfo skuGoodsInfo = new TradeRightsVO.SkuGoodsInfo();
+        if (StrUtil.isNotEmpty(byId.getImage())) {
+            skuGoodsInfo.setSkuImg(byId.getImage());
+        }
+        BeanUtils.copyProperties(byId, skuGoodsInfo);
+        return skuGoodsInfo;
     }
 }

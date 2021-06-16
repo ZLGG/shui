@@ -462,4 +462,13 @@ public abstract class TradeRightsVO implements Serializable {
         private String collectName;
 
     }
+
+    @Data
+    @ApiModel("TradeRightsVO.SkuGoodsInfo")
+    public static class SkuGoodsInfo implements Serializable {
+        private String skuImg;
+        private BigDecimal salePrice;
+        private BigDecimal pointPrice;
+        private Boolean isPointGood;
+    }
 }
