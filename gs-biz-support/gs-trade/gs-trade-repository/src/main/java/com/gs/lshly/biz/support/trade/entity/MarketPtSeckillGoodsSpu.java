@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -23,7 +24,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("gs_market_pt_seckill_goods_spu")
-public class MarketPtSeckillGoodsSpu implements Serializable {
+public class MarketPtSeckillGoodsSpu extends Model {
 
     private static final long serialVersionUID = 1L;
 

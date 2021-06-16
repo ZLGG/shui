@@ -85,7 +85,7 @@ public class PCMerchMarketPtSeckillServiceImpl implements IPCMerchMarketPtSeckil
             query.and(i -> i.ge("sign_end_time", qto.getEndTime()).or(s -> s.ge("seckill_end_time", qto.getEndTime())));
         }
         if (ObjectUtil.isNotEmpty(qto.getKeyWord())) {
-            query.eq("name", qto.getKeyWord());
+            query.like("name", qto.getKeyWord());
         }
         query.orderByDesc("cdate");
         iMarketPtSeckillRepository.page(pager, query);
