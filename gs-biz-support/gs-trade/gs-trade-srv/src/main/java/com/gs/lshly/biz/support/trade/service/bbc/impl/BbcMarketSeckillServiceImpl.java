@@ -526,7 +526,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		if(CollectionUtils.isNotEmpty(list)){
 			for (BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO marketPtSeckillTimeQuantumVO: list) {
 				if(minute.equals(Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh()))){
-					return from;
+					return minute;
 				}
 				boolean flag = Math.max(from, minute) == Math.min(minute, Integer.valueOf(marketPtSeckillTimeQuantumVO.getHh()));
 				if(flag){
