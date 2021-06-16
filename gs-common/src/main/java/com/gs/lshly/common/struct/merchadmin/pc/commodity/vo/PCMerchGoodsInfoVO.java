@@ -350,6 +350,14 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty(value = "库存数量")
         private List<PCMerchGoodsInfoVO.SkuStockNum>  stockNumList;
+
+        @ApiModelProperty(value = "提交时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime commitTime;
+
+        @ApiModelProperty(value = "审核时间")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime aduitTime;
     }
 
     @Data

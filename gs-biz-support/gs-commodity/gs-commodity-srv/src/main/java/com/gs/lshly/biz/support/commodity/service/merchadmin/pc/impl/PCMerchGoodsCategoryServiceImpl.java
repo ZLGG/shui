@@ -211,7 +211,9 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
                 QueryWrapper<GoodsCategory> queryWrapperBoost = MybatisPlusUtil.query();
                 queryWrapperBoost.eq("parent_id", list.get(i).getId());
                 List<GoodsCategory> lev2Categories = categoryRepository.list(queryWrapperBoost);
-
+                if(ObjectUtils.isEmpty(lev2Categories)){
+                    continue;
+                }
                 List<PCMerchGoodsCategoryVO.CategoryTreeVO> lev2List = new ArrayList<>();
                 for (int j = 0; j < lev2Categories.size(); j++) {
                     PCMerchGoodsCategoryVO.CategoryTreeVO lev2 = new PCMerchGoodsCategoryVO.CategoryTreeVO();

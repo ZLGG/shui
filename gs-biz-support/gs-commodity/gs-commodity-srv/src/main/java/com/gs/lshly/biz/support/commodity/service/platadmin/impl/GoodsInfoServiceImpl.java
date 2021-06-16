@@ -1,13 +1,11 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -455,6 +453,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setGoodsState(GoodsStateEnum.已上架.getCode().intValue());
+            goodsInfo.setPublishTime(LocalDateTime.now());
             QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
             goodsInfoQueryWrapper.eq("id", dto.getId());
             repository.update(goodsInfo, goodsInfoQueryWrapper);
