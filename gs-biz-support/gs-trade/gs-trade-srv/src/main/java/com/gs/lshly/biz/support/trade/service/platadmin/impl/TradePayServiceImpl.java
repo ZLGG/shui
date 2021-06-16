@@ -132,6 +132,7 @@ public class TradePayServiceImpl implements ITradePayService {
 
         if (ObjectUtils.isNotEmpty(mini)){
             detailVo.setUserName(mini.getUserName());
+            detailVo.setPhone(mini.getPhone());
         }
         return detailVo;
     }

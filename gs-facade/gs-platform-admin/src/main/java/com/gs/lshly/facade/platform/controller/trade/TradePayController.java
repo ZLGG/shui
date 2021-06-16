@@ -39,8 +39,6 @@ public class  TradePayController {
     @DubboReference
     private ITradePayRpc TradePayRpc;
 
-
-
     @ApiOperation("支付单列表")
     @PostMapping("/list")
     @Func(code = "view",name = "查")
