@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,25 @@ public class PCMerchGoodsCategoryServiceImpl implements IPCMerchGoodsCategorySer
         }
         wrapperBoost.eq("gs_category_level", GoodsCategoryLevelEnum.ONE.getCode());
         List<GoodsCategory> lev1Categories = categoryRepository.list(wrapperBoost);
-        return getCategories(lev1Categories);
+        List<PCMerchGoodsCategoryVO.CategoryTreeVO> categoryTreeVOS = getCategories(lev1Categories);
+        PCMerchGoodsCategoryVO.CategoryTreeVO categoryTreeVO;
+        Iterator<PCMerchGoodsCategoryVO.CategoryTreeVO> it = categoryTreeVOS.iterator();
+        while (it.hasNext()){
+            categoryTreeVO = it.next();
+            boolean flag = false;
+            if(ObjectUtils.isNotEmpty(categoryTreeVO.getList())){
+                for (PCMerchGoodsCategoryVO.CategoryTreeVO treeVO : categoryTreeVO.getList()) {
+                    if(ObjectUtils.isEmpty(treeVO.getList())){
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            if(flag){
+                it.remove();
+            }
+        }
+        return categoryTreeVOS;
     }
 
     @Override
