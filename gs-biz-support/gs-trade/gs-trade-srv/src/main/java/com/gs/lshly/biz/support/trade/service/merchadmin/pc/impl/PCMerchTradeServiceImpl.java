@@ -49,13 +49,12 @@ import com.lakala.boss.api.common.Common;
 import cn.hutool.core.collection.CollectionUtil;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
- * @author oy
- * @since 2020-11-16
- */
+* <p>
+*  服务实现类
+* </p>
+* @author oy
+* @since 2020-11-16
+*/
 @Component
 public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
@@ -92,53 +91,52 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     @Override
     public PageData<PCMerchTradeListVO.tradeVO> tradeListPageData(PCMerchTradeQTO.TradeList qto) {
         QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
-        wrapper.and(i -> i.eq("t.`shop_id`", qto.getJwtShopId()));
-        if (ObjectUtils.isNotEmpty(qto.getCreateTime())) {
-            wrapper.and(i -> i.eq("", qto.getCreateTime()));
+        wrapper.and(i -> i.eq("t.`shop_id`",qto.getJwtShopId()));
+        if(ObjectUtils.isNotEmpty(qto.getCreateTime())){
+            wrapper.and(i -> i.eq("",qto.getCreateTime()));
         }
-        if (StringUtils.isNotBlank(qto.getTradeCode())) {
-            wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
+        if(StringUtils.isNotBlank(qto.getTradeCode())){
+            wrapper.and(i -> i.like("t.`trade_code`",qto.getTradeCode()));
         }
-        if (StringUtils.isNotBlank(qto.getRecvPersonName())) {
-            wrapper.and(i -> i.like("t.`recv_person_name`", qto.getRecvPersonName()));
+        if(StringUtils.isNotBlank(qto.getRecvPersonName())){
+            wrapper.and(i -> i.like("t.`recv_person_name`",qto.getRecvPersonName()));
         }
-        if (StringUtils.isNotBlank(qto.getRecvPhone())) {
-            wrapper.and(i -> i.like("t.`recv_phone`", qto.getRecvPhone()));
+        if(StringUtils.isNotBlank(qto.getRecvPhone())){
+            wrapper.and(i -> i.like("t.`recv_phone`",qto.getRecvPhone()));
         }
-        if (ObjectUtils.isNotEmpty(qto.getTradeState())) {
-            wrapper.and(i -> i.eq("t.`trade_state`", qto.getTradeState()));//交易状态,不传则查所有状态数据
+        if(ObjectUtils.isNotEmpty(qto.getTradeState())){
+            wrapper.and(i -> i.eq("t.`trade_state`",qto.getTradeState()));//交易状态,不传则查所有状态数据
         }
-        if (ObjectUtils.isNotEmpty(qto.getSourceType())) {
-            wrapper.and(i -> i.eq("t.`source_type`", qto.getSourceType()));//区分2b2c
+        if(ObjectUtils.isNotEmpty(qto.getSourceType())){
+            wrapper.and(i -> i.eq("t.`source_type`",qto.getSourceType()));//区分2b2c
         }
-        if (ObjectUtils.isNotEmpty(qto.getDeliveryType())) {
-            wrapper.and(i -> i.eq("t.`delivery_type`", qto.getDeliveryType()));
+        if(ObjectUtils.isNotEmpty(qto.getDeliveryType())){
+            wrapper.and(i -> i.eq("t.`delivery_type`",qto.getDeliveryType()));
         }
-        if (StringUtils.isNotBlank(qto.getUserName())) {
+        if(StringUtils.isNotBlank(qto.getUserName())){
             CommonUserVO.DetailVO userDetailVO = commonUserRpc.detailsByUserName(qto.getUserName());
-            if (ObjectUtils.isNotEmpty(userDetailVO) && StringUtils.isNotBlank(userDetailVO.getId())) {
+            if(ObjectUtils.isNotEmpty(userDetailVO) && StringUtils.isNotBlank(userDetailVO.getId())){
                 //查询用户id
-                wrapper.and(i -> i.eq("t.`user_id`", userDetailVO.getId()));
+                wrapper.and(i -> i.eq("t.`user_id`",userDetailVO.getId()));
             }
         }
-        if (StringUtils.isNotBlank(qto.getKeywords())) {
-            wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
+        if(StringUtils.isNotBlank(qto.getKeywords())){
+        	 wrapper.and(i -> i.like("t.`trade_code`",qto.getTradeCode()));
         }
         wrapper.orderByDesc("t.cdate");
 
         IPage<PCMerchTradeListVO.tradeVO> page = MybatisPlusUtil.pager(qto);
 
-        tradeRepository.selectPCMerchTradePage(page, wrapper);
+        tradeRepository.selectPCMerchTradePage(page,wrapper);
 
         List<PCMerchTradeListVO.tradeVO> voList = new ArrayList<>();
-        for (PCMerchTradeListVO.tradeVO tradeVO : page.getRecords()) {
+        for(PCMerchTradeListVO.tradeVO tradeVO : page.getRecords()){
             //查询售后信息
-            tradeVO.setPointPriceActuallyPaid(tradeVO.getTradePointAmount());
             QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
-            query.and(i -> i.eq("trade_id", tradeVO.getId()));
+            query.and(i->i.eq("trade_id",tradeVO.getId()));
             query.last("limit 0,1");
             TradeRights one = iTradeRightsRepository.getOne(query);
-            if (ObjectUtils.isNotEmpty(one)) {
+            if (ObjectUtils.isNotEmpty(one)){
                 PCMerchTradeListVO.tradeVO.Right right = new PCMerchTradeListVO.tradeVO.Right();
                 right.setRightsState(one.getState()).setRemark(one.getRightsRemark());
                 tradeVO.setRightsInfo(right);
@@ -149,12 +147,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 tradeVO.setShopName(simpleVO.getShopName());
             }
             CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
-            if (ObjectUtils.isNotEmpty(details)) {
+            if (ObjectUtils.isNotEmpty(details)){
                 tradeVO.setUserName(details.getUserName());
             }
             //根据交易ID查询交易商品集合
             fillTradeVO(tradeVO);
-            if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
+            if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
                 tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
             }
             voList.add(tradeVO);
@@ -162,7 +160,6 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
-
     private void fillTradeCancel(BbcTradeCancelDTO.CancelDTO dto, TradeCancel tradeCancel, Trade trade, String tradePayId, Integer cancelState, Integer cancelRefundState) {
         tradeCancel.setTradeId(trade.getId());
         tradeCancel.setTradeCode(trade.getTradeCode());
@@ -177,10 +174,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         tradeCancel.setRemark(dto.getRemark());
         tradeCancel.setRefundState(cancelRefundState);
     }
-
     /**
      * 取消交易,回库存
-     *
      * @param tradeId
      * @return
      */
@@ -192,38 +187,35 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     /**
      * 填充skuId/购买数量
-     *
      * @param tradeId
      * @param goodsItemList
      */
     private void fillChangeStockItem(String tradeId, List<CommonStockDTO.InnerChangeStockItem> goodsItemList) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id", tradeId);
+        tradeGoodsQueryWrapper.eq("trade_id",tradeId);
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
-        for (TradeGoods tradeGoods : tradeGoodsList) {
+        for(TradeGoods tradeGoods : tradeGoodsList){
             CommonStockDTO.InnerChangeStockItem innerChangeStockItem = new CommonStockDTO.InnerChangeStockItem();
             innerChangeStockItem.setSkuId(tradeGoods.getSkuId());
             innerChangeStockItem.setQuantity(tradeGoods.getQuantity());
             goodsItemList.add(innerChangeStockItem);
         }
     }
-
     @Override
     public PCMerchTradeListVO.tradeVO detail(PCMerchTradeDTO.IdDTO dto) {
         PCMerchTradeListVO.tradeVO tradeVO = new PCMerchTradeListVO.tradeVO();
         Trade trade = tradeRepository.getById(dto.getId());
-        if (ObjectUtils.isEmpty(trade)) {
+        if(ObjectUtils.isEmpty(trade)){
             throw new BusinessException("无订单数据");
         }
         BeanUtils.copyProperties(trade, tradeVO);
-        tradeVO.setPointPriceActuallyPaid(trade.getTradePointAmount());
-        tradeVO.setTradeStateText(EnumUtil.getText(trade.getTradeState(), TradeStateEnum.class));
+        tradeVO.setTradeStateText(EnumUtil.getText(trade.getTradeState(),TradeStateEnum.class));
         //查询售后信息
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
-        query.and(i -> i.eq("trade_id", tradeVO.getId()));
+        query.and(i->i.eq("trade_id",tradeVO.getId()));
         query.last("limit 0,1");
         TradeRights one = iTradeRightsRepository.getOne(query);
-        if (ObjectUtils.isNotEmpty(one)) {
+        if (ObjectUtils.isNotEmpty(one)){
             PCMerchTradeListVO.tradeVO.Right right = new PCMerchTradeListVO.tradeVO.Right();
             right.setRightsState(one.getState()).setRemark(one.getRightsRemark());
             //有售后，则使用售后状态
@@ -233,13 +225,13 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         //填充商家信息
         fillShop(tradeVO);
         fillTradeVO(tradeVO);
-        if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
+        if(tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())){
             tradeVO.setPayDeadline(tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT));
         }
         //查询物流信息
-        if (tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
+        if(tradeVO.getDeliveryType().equals(TradeDeliveryTypeEnum.快递配送.getCode()) &&
                 (tradeVO.getTradeState().equals(TradeStateEnum.待收货.getCode()) ||
-                        tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))) {//快递配送/已发货/已收货
+                tradeVO.getTradeState().equals(TradeStateEnum.已完成.getCode()))){//快递配送/已发货/已收货
             //填充物流信息
             fillLogisticsCompany(tradeVO);
         }
@@ -251,16 +243,16 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     @Override
     public List<PCMerchTradeListVO.innerGoodsIdAndName> innergoodsIdsCheck(PCMerchTradeDTO.GoodsIdsDTO dto) {
-        if (ObjectUtils.isEmpty(dto.getGoodsId())) {
+        if (ObjectUtils.isEmpty(dto.getGoodsId())){
             throw new BusinessException("请传入参数");
         }
         QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
-        query.and(i -> i.ne("tg.`trade_state`", TradeStateEnum.已完成.getCode()).or().ne("tg.`trade_state`", TradeStateEnum.已取消.getCode()));
-        if (ObjectUtils.isNotEmpty(dto.getGoodsId())) {
-            query.and(i -> i.in("t.`goods_id`", dto.getGoodsId()));
+        query.and(i->i.ne("tg.`trade_state`",TradeStateEnum.已完成.getCode()).or().ne("tg.`trade_state`",TradeStateEnum.已取消.getCode()));
+        if (ObjectUtils.isNotEmpty(dto.getGoodsId())){
+            query.and(i->i.in("t.`goods_id`",dto.getGoodsId()));
         }
         List<PCMerchTradeListVO.innerGoodsIdAndName> list = tradeGoodsRepository.selectTradeIng(query);
-        if (list.size() > 0) {
+        if (list.size()>0){
             return list;
         }
         return null;
@@ -268,16 +260,16 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     @Override
     public PCMerchTradeListVO.innerGoodsIdAndName innergoodsIdCheck(PCMerchTradeDTO.GoodsIdDTO dto) {
-        if (ObjectUtils.isEmpty(dto.getGoodsId())) {
+        if (ObjectUtils.isEmpty(dto.getGoodsId())){
             throw new BusinessException("请传入参数");
         }
         QueryWrapper<TradeGoods> query = MybatisPlusUtil.query();
-        query.and(i -> i.ne("tg.`trade_state`", TradeStateEnum.已完成.getCode()).or().ne("tg.`trade_state`", TradeStateEnum.已取消.getCode()));
-        if (ObjectUtils.isNotEmpty(dto.getGoodsId())) {
-            query.and(i -> i.eq("t.`goods_id`", dto.getGoodsId()));
+        query.and(i->i.ne("tg.`trade_state`",TradeStateEnum.已完成.getCode()).or().ne("tg.`trade_state`",TradeStateEnum.已取消.getCode()));
+        if (ObjectUtils.isNotEmpty(dto.getGoodsId())){
+            query.and(i->i.eq("t.`goods_id`",dto.getGoodsId()));
         }
         List<PCMerchTradeListVO.innerGoodsIdAndName> list = tradeGoodsRepository.selectTradeIng(query);
-        if (list.size() > 0) {
+        if (list.size()>0){
             return list.get(0);
         }
         return null;
@@ -285,38 +277,38 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     }
 
-    @Override
-    public void editOrderAmount(PCMerchTradeDTO.orderAmountOrFreight dto) {
-        if (StringUtils.isBlank(dto.getId())) {
-            throw new BusinessException("请传入订单ID");
-        }
-        Trade trade = tradeRepository.getById(dto.getId());
-        if (ObjectUtils.isEmpty(trade)) {
-            throw new BusinessException("没有查询到订单");
-        }
-        if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
-            if (ObjectUtils.isNotEmpty(dto.getOrderAmount())) {// 改价格
-                BigDecimal total = trade.getTradeAmount();
-                // 修改交易总金额
-                BigDecimal differencePrice = (trade.getTradeAmount() != null ? trade.getTradeAmount() : BigDecimal.ZERO)
-                        .subtract(dto.getOrderAmount());
-                // trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
-                trade.setTradeAmount(dto.getOrderAmount());
+	@Override
+	public void editOrderAmount(PCMerchTradeDTO.orderAmountOrFreight dto) {
+		if (StringUtils.isBlank(dto.getId())) {
+			throw new BusinessException("请传入订单ID");
+		}
+		Trade trade = tradeRepository.getById(dto.getId());
+		if (ObjectUtils.isEmpty(trade)) {
+			throw new BusinessException("没有查询到订单");
+		}
+		if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
+			if (ObjectUtils.isNotEmpty(dto.getOrderAmount())) {// 改价格
+				BigDecimal total = trade.getTradeAmount();
+				// 修改交易总金额
+				BigDecimal differencePrice = (trade.getTradeAmount() != null ? trade.getTradeAmount() : BigDecimal.ZERO)
+						.subtract(dto.getOrderAmount());
+				// trade.setGoodsAmount(trade.getGoodsAmount().add(differencePrice));
+				trade.setTradeAmount(dto.getOrderAmount());
 
-                // 修改优惠
-                trade.setDiscountAmount(trade.getDiscountAmount() != null
-                        ? trade.getDiscountAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
+				// 修改优惠
+				trade.setDiscountAmount(trade.getDiscountAmount() != null
+						? trade.getDiscountAmount().add(differencePrice) : BigDecimal.ZERO.add(differencePrice));
 
-                // 更新订单明细
-                QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
-                tradeGoodsWrapper.eq("trade_id", dto.getId());
-                List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
-                if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
-                    for (TradeGoods tradeGoods : tradeGoodsList) {
-                        //除数不能为0
-                        if (total.compareTo(BigDecimal.ZERO) == 0) {
-                            tradeGoods.setTradeAmount(BigDecimal.ZERO);
-                            tradeGoods.setDiscountAmount(BigDecimal.ZERO);
+				// 更新订单明细
+				QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+				tradeGoodsWrapper.eq("trade_id", dto.getId());
+				List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+				if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
+					for (TradeGoods tradeGoods : tradeGoodsList) {
+						//除数不能为0
+						if(total.compareTo(BigDecimal.ZERO)==0){
+						    tradeGoods.setTradeAmount(BigDecimal.ZERO);
+						    tradeGoods.setDiscountAmount(BigDecimal.ZERO);
                         } else {
                             // 计算百分比
                             BigDecimal rate = tradeGoods.getTradeAmount().divide(total);
@@ -328,29 +320,29 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                     : BigDecimal.ZERO.add(differencePrice.multiply(rate)));
                         }
 
-                        tradeGoodsRepository.saveOrUpdate(tradeGoods);
-                    }
-                }
+						tradeGoodsRepository.saveOrUpdate(tradeGoods);
+					}
+				}
 
-            }
-            if (ObjectUtils.isNotEmpty(dto.getOrderPointAmount())) {
-                BigDecimal totalPoint = trade.getTradePointAmount();
-                BigDecimal differencePoint = (trade.getTradePointAmount() != null ? trade.getTradePointAmount() : BigDecimal.ZERO)
+			}
+			if (ObjectUtils.isNotEmpty(dto.getOrderPointAmount())) {
+				BigDecimal totalPoint = trade.getTradePointAmount();
+				BigDecimal differencePoint = (trade.getTradePointAmount() != null ? trade.getTradePointAmount(): BigDecimal.ZERO)
                         .subtract(dto.getOrderPointAmount());
 
-                trade.setTradePointAmount(dto.getOrderPointAmount());
-                trade.setDiscountPointAmount(trade.getDiscountPointAmount() != null
-                        ? trade.getDiscountPointAmount().add(differencePoint) : BigDecimal.ZERO.add(differencePoint));
+				trade.setTradePointAmount(dto.getOrderPointAmount());
+				trade.setDiscountPointAmount(trade.getDiscountPointAmount() != null
+						? trade.getDiscountPointAmount().add(differencePoint) : BigDecimal.ZERO.add(differencePoint));
 
-                QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
-                tradeGoodsWrapper.eq("trade_id", dto.getId());
-                List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
-                if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
-                    for (TradeGoods tradeGoods : tradeGoodsList) {
-                        //除数不能为0
-                        if (totalPoint.compareTo(BigDecimal.ZERO) == 0) {
-                            tradeGoods.setTradePointAmount(BigDecimal.ZERO);
-                            tradeGoods.setDiscountPointAmount(BigDecimal.ZERO);
+				QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
+				tradeGoodsWrapper.eq("trade_id", dto.getId());
+				List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
+				if (CollectionUtil.isNotEmpty(tradeGoodsList)) {
+					for (TradeGoods tradeGoods : tradeGoodsList) {
+					    //除数不能为0
+					    if(totalPoint.compareTo(BigDecimal.ZERO)==0){
+					        tradeGoods.setTradePointAmount(BigDecimal.ZERO);
+					        tradeGoods.setDiscountPointAmount(BigDecimal.ZERO);
                         } else {
                             // 计算百分比
                             BigDecimal rate = tradeGoods.getGoodsPointAmount().divide(trade.getGoodsPointAmount());
@@ -361,39 +353,39 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                     : BigDecimal.ZERO.add(differencePoint.multiply(rate)));
                         }
 
-                        tradeGoodsRepository.saveOrUpdate(tradeGoods);
-                    }
-                }
+						tradeGoodsRepository.saveOrUpdate(tradeGoods);
+					}
+				}
 
-            }
+			}
 
-            trade.setChangePriceCause(dto.getChangePriceCause());
-            // 改订单编号
-            trade.setTradeCode(TradeUtils.getTradeCode());
-            // 改支付单支付信息
-            tradePayRepository.update(new UpdateWrapper<TradePay>()
-                    // .set("trade_code", trade.getTradeCode())
-                    .set("token", "").set("pay_code", "").set("pay_info", "")
-                    .set("total_amount", trade.getTradeAmount()).set("total_point_amount", trade.getTradePointAmount())
-                    .eq("trade_id", trade.getId()));
-            // 改定订单
-            tradeRepository.saveOrUpdate(trade);
-        } else {
-            throw new BusinessException("该订单状态已无法修改价格");
-        }
+			trade.setChangePriceCause(dto.getChangePriceCause());
+			// 改订单编号
+			trade.setTradeCode(TradeUtils.getTradeCode());
+			// 改支付单支付信息
+			tradePayRepository.update(new UpdateWrapper<TradePay>()
+					// .set("trade_code", trade.getTradeCode())
+					.set("token", "").set("pay_code", "").set("pay_info", "")
+					.set("total_amount", trade.getTradeAmount()).set("total_point_amount", trade.getTradePointAmount())
+					.eq("trade_id", trade.getId()));
+			// 改定订单
+			tradeRepository.saveOrUpdate(trade);
+		} else {
+			throw new BusinessException("该订单状态已无法修改价格");
+		}
 
-    }
+	}
 
     private void fillUserInfo(PCMerchTradeListVO.tradeVO tradeVO) {
         PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(tradeVO.getUserId());
-        if (ObjectUtils.isNotEmpty(userSimpleVO)) {
+        if(ObjectUtils.isNotEmpty(userSimpleVO)){
             tradeVO.setUserName(userSimpleVO.getUserName());
         }
     }
 
     private void fillShop(PCMerchTradeListVO.tradeVO tradeVO) {
         CommonShopVO.SimpleVO innerDetailVO = commonShopRpc.shopDetails(tradeVO.getShopId());
-        if (ObjectUtils.isNotEmpty(innerDetailVO)) {
+        if(ObjectUtils.isNotEmpty(innerDetailVO)){
             tradeVO.setShopName(innerDetailVO.getShopName());
         }
     }
@@ -402,11 +394,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
         tradeDeliveryQueryWrapper.eq("trade_id", tradeVO.getId());
         TradeDelivery tradeDelivery = tradeDeliveryRepository.getOne(tradeDeliveryQueryWrapper);
-        if (ObjectUtils.isNotEmpty(tradeDelivery)) {
+        if(ObjectUtils.isNotEmpty(tradeDelivery)){
             tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
             tradeVO.setDeliveryRemark(tradeDelivery.getDeliveryRemark());
             CommonLogisticsCompanyVO.DetailVO logisticsDetailVO = commonLogisticsCompanyRpc.getLogisticsCompany(tradeDelivery.getLogisticsId());
-            if (ObjectUtils.isNotEmpty(logisticsDetailVO)) {
+            if(ObjectUtils.isNotEmpty(logisticsDetailVO)){
                 tradeVO.setLogisticsCompanyCode(logisticsDetailVO.getCode());
                 tradeVO.setLogisticsCompanyName(logisticsDetailVO.getName());
             }
@@ -415,15 +407,14 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     /**
      * 组装TradeVO、tradeGoodsVO数据
-     *
      * @param tradeVO
      */
     private void fillTradeVO(PCMerchTradeListVO.tradeVO tradeVO) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id", tradeVO.getId());
+        tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<PCMerchTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
-        for (TradeGoods tradeGoods : tradeGoodsList) {
+        for(TradeGoods tradeGoods : tradeGoodsList){
             PCMerchTradeListVO.TradeGoodsVO tradeGoodsVO = new PCMerchTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             QueryWrapper<TradeRightsGoods> rightGoodsQuery = MybatisPlusUtil.query();
@@ -431,12 +422,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             rightGoodsQuery.eq("trade_goods_id", tradeGoods.getId());
             rightGoodsQuery.eq("is_revocation", 0);
             TradeRightsGoods tradeRightsGoods = iTradeRightsGoodsRepository.getOne(rightGoodsQuery);
-            if (ObjectUtils.isNotEmpty(tradeRightsGoods)) {
+            if(ObjectUtils.isNotEmpty(tradeRightsGoods)){
                 QueryWrapper<TradeRights> rightQuery = MybatisPlusUtil.query();
-                rightQuery.and(i -> i.eq("id", tradeRightsGoods.getRightsId()));
+                rightQuery.and(i->i.eq("id", tradeRightsGoods.getRightsId()));
                 rightQuery.last("limit 0,1");
                 TradeRights tradeRights = iTradeRightsRepository.getOne(rightQuery);
-                if (ObjectUtils.isNotEmpty(tradeRights)) {
+                if(ObjectUtils.isNotEmpty(tradeRights)){
                     tradeGoodsVO.setRightsState(tradeRights.getState());
                     tradeGoodsVO.setRightsStateText(EnumUtil.getText(tradeRights.getState(), TradeRightsEndStateEnum.class));
                     tradeGoodsVO.setRightsType(tradeRights.getRightsType());
@@ -453,10 +444,10 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     private void fillTradeVOE(PCMerchTradeListVO.tradeVOExport tradeVO) {
         QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
-        tradeGoodsQueryWrapper.eq("trade_id", tradeVO.getId());
+        tradeGoodsQueryWrapper.eq("trade_id",tradeVO.getId());
         List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
         List<PCMerchTradeListVO.TradeGoodsVO> tradeGoodsVOS = new ArrayList<>();
-        for (TradeGoods tradeGoods : tradeGoodsList) {
+        for(TradeGoods tradeGoods : tradeGoodsList){
             PCMerchTradeListVO.TradeGoodsVO tradeGoodsVO = new PCMerchTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
             tradeGoodsVO.setShopName(tradeVO.getShopName());
@@ -470,17 +461,17 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public TradeVO.PayDatelistVO payDateList(TradeDTO.PayDateList dto) {
         TradeVO.PayDatelistVO payDatelistVO = new TradeVO.PayDatelistVO();
         QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("shop_id", dto.getJwtShopId());
+        wrapper.eq("shop_id",dto.getJwtShopId());
         wrapper.groupBy("DATE_FORMAT(cdate,'%Y-%m-%d')");
         wrapper.orderByDesc("DATE_FORMAT(cdate,'%Y-%m-%d')");
         wrapper.last("limit 0,10");
         TradeVO.AvgAmountlistVO avgAmountlistVOS = new TradeVO.AvgAmountlistVO();
         BigDecimal avgAmount = BigDecimal.ZERO;
-        if (ObjectUtils.isNotEmpty(dto.getQueryTimes())) {
-            switch (dto.getQueryTimes()) {
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            switch (dto.getQueryTimes()){
                 case 10:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 payDatelistVO.setPackDatelist(tradeMapper.payDatelist(wrapper));
                                 break;
@@ -489,12 +480,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.payDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOS.setAvgAmount(avgAmount);
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
@@ -511,8 +502,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     break;
                 case 20:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 payDatelistVO.setPackDatelist(tradeMapper.anteayerPayDatelist(wrapper));
                                 break;
@@ -521,12 +512,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.anteayerPayDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOS.setAvgAmount(avgAmount);
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
@@ -543,8 +534,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     break;
                 case 30:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 payDatelistVO.setPackDatelist(tradeMapper.weekPayDatelist(wrapper));
                                 break;
@@ -553,12 +544,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.weekPayDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOS.setAvgAmount(avgAmount);
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
@@ -575,8 +566,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     break;
                 case 40:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 payDatelistVO.setPackDatelist(tradeMapper.monthPayDatelist(wrapper));
                                 break;
@@ -585,12 +576,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.monthPayDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOS.setAvgAmount(avgAmount);
                                         payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
@@ -611,10 +602,10 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             }
         }
 
-        if (ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())) {
-            wrapper.ge("cdate", dto.getStartTime())
-                    .le("cdate", dto.getEndTime());
-            switch (dto.getQueryStates()) {
+        if(ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())){
+            wrapper.ge("cdate",dto.getStartTime())
+                    .le("cdate",dto.getEndTime());
+            switch (dto.getQueryStates()){
                 case 10:
                     payDatelistVO.setPackDatelist(tradeMapper.ayDate(wrapper));
                     break;
@@ -623,12 +614,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     break;
                 case 30:
                     List<TradeVO.PackDatelistVO> list = tradeMapper.ayDate(wrapper);
-                    for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                        if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                    for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                        if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                             payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
-                        } else {
+                        }else {
                             avgAmount = packDatelistVO.getTradeAmount()
-                                    .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                    .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                             avgAmountlistVOS.setCdate(packDatelistVO.getCdate());
                             avgAmountlistVOS.setAvgAmount(avgAmount);
                             payDatelistVO.setAvgAmountlist(avgAmountlistVOS);
@@ -645,11 +636,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         }
 
         //封装数据
-        packPayDate(dto, payDatelistVO);
+        packPayDate(dto,payDatelistVO);
         return payDatelistVO;
     }
 
-    public void packPayDate(TradeDTO.PayDateList dto, TradeVO.PayDatelistVO payDatelistVO) {
+    public void packPayDate(TradeDTO.PayDateList dto ,TradeVO.PayDatelistVO payDatelistVO) {
         //新增订单金额
         BigDecimal addTradeAmount = BigDecimal.ZERO;
         //新增订单数量
@@ -657,20 +648,20 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         //平均单价
         BigDecimal avgAmount = BigDecimal.ZERO;
 
-        if (ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())) {
+        if(ObjectUtils.isNotEmpty(dto.getStartTime())&&ObjectUtils.isNotEmpty(dto.getEndTime())){
             QueryWrapper<Trade> wrapper2 = MybatisPlusUtil.query();
-            wrapper2.eq("shop_id", dto.getJwtShopId());
-            wrapper2.ge("cdate", dto.getStartTime())
-                    .le("cdate", dto.getEndTime());
+            wrapper2.eq("shop_id",dto.getJwtShopId());
+            wrapper2.ge("cdate",dto.getStartTime())
+                        .le("cdate",dto.getEndTime());
             addTradeAmount = tradeMapper.esterdayAddTradeAmount(wrapper2);
             payDatelistVO.setAddTradeAmount(addTradeAmount);
             addTradeCount = tradeMapper.esterdayAddTradeCount(wrapper2);
             payDatelistVO.setAddTradeCount(addTradeCount);
-            if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+            if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                 payDatelistVO.setAvgAmount(avgAmount);
-            } else {
-                avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                if (ObjectUtils.isNotEmpty(avgAmount)) {
+            }else {
+                avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                if(ObjectUtils.isNotEmpty(avgAmount)){
                     payDatelistVO.setAvgAmount(avgAmount);
                 }
             }
@@ -680,20 +671,20 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             payDatelistVO.setCancelTradeCount(tradeMapper.esterdayCancelTradeCount(wrapper2));
         }
 
-        if (ObjectUtils.isNotEmpty(dto.getQueryTimes())) {
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
             QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
-            wrapper.eq("shop_id", dto.getJwtShopId());
-            switch (dto.getQueryTimes()) {
+            wrapper.eq("shop_id",dto.getJwtShopId());
+            switch (dto.getQueryTimes()){
                 case 10:
                     addTradeAmount = tradeMapper.yesterdayAddTradeAmount(wrapper);
                     payDatelistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.yesterdayAddTradeCount(wrapper);
                     payDatelistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         payDatelistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             payDatelistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -707,11 +698,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     payDatelistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.anteayerAddTradeCount(wrapper);
                     payDatelistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         payDatelistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             payDatelistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -725,11 +716,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     payDatelistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.weekAddTradeCount(wrapper);
                     payDatelistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         payDatelistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             payDatelistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -743,11 +734,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     payDatelistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.monthAddTradeCount(wrapper);
                     payDatelistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         payDatelistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             payDatelistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -756,8 +747,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     payDatelistVO.setCancelTradeAmount(tradeMapper.monthCancelTradeAmount(wrapper));
                     payDatelistVO.setCancelTradeCount(tradeMapper.monthCancelTradeCount(wrapper));
                     break;
-                default:
-                    throw new BootstrapMethodError("查询时间条件错误！");
+                 default:
+                     throw new BootstrapMethodError("查询时间条件错误！");
             }
         }
     }
@@ -771,15 +762,15 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         List<TradeVO.AvgAmountlistVO> avgAmountlistVOArrayList2 = new ArrayList<>();
         TradeVO.OperationlistVO operationlistVO = new TradeVO.OperationlistVO();
         QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("shop_id", dto.getJwtShopId());
+        wrapper.eq("shop_id",dto.getJwtShopId());
         wrapper.groupBy("DATE_FORMAT(cdate,'%Y-%m-%d')");
         wrapper.orderByDesc("DATE_FORMAT(cdate,'%Y-%m-%d')");
         wrapper.last("limit 0,10");
 
-        if (ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())) {
-            wrapper.ge("cdate", dto.getStartTime())
-                    .le("cdate", dto.getEndTime());
-            switch (dto.getQueryStates()) {
+        if(ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())){
+            wrapper.ge("cdate",dto.getStartTime())
+                    .le("cdate",dto.getEndTime());
+            switch (dto.getQueryStates()){
                 case 10:
                     operationlistVO.setPackDatelist(tradeMapper.ayDatelist(wrapper));
                     break;
@@ -788,12 +779,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     break;
                 case 30:
                     List<TradeVO.PackDatelistVO> list = tradeMapper.ayDatelist(wrapper);
-                    for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                        if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                    for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                        if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                             operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
-                        } else {
+                        }else {
                             avgAmount = packDatelistVO.getTradeAmount()
-                                    .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                    .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                             avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
                             avgAmountlistVOArrayList.setAvgAmount(avgAmount);
                             avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
@@ -814,11 +805,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             }
         }
 
-        if (ObjectUtils.isNotEmpty(dto.getQueryTimes())) {
-            switch (dto.getQueryTimes()) {
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            switch (dto.getQueryTimes()){
                 case 10:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 operationlistVO.setPackDatelist(tradeMapper.payDatelist(wrapper));
                                 break;
@@ -827,12 +818,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.payDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOArrayList.setAvgAmount(avgAmount);
                                         avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
@@ -855,8 +846,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     break;
                 case 20:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 operationlistVO.setPackDatelist(tradeMapper.anteayerPayDatelist(wrapper));
                                 break;
@@ -865,12 +856,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.anteayerPayDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOArrayList.setAvgAmount(avgAmount);
                                         avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
@@ -892,8 +883,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     break;
                 case 30:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 operationlistVO.setPackDatelist(tradeMapper.weekFinishlist(wrapper));
                                 break;
@@ -902,12 +893,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.weekFinishlist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOArrayList.setAvgAmount(avgAmount);
                                         avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
@@ -929,8 +920,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     break;
                 case 40:
-                    if (ObjectUtils.isNotEmpty(dto.getQueryStates())) {
-                        switch (dto.getQueryStates()) {
+                    if(ObjectUtils.isNotEmpty(dto.getQueryStates())){
+                        switch (dto.getQueryStates()){
                             case 10:
                                 operationlistVO.setPackDatelist(tradeMapper.monthPayDatelist(wrapper));
                                 break;
@@ -939,12 +930,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                                 break;
                             case 30:
                                 List<TradeVO.PackDatelistVO> list = tradeMapper.monthPayDatelist(wrapper);
-                                for (TradeVO.PackDatelistVO packDatelistVO : list) {
-                                    if (packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                                for (TradeVO.PackDatelistVO packDatelistVO:list) {
+                                    if(packDatelistVO.getTradeAmount().compareTo(BigDecimal.ZERO)  == 0){
                                         operationlistVO.setAvgAmountlist(avgAmountlistVOArrayList);
-                                    } else {
+                                    }else {
                                         avgAmount = packDatelistVO.getTradeAmount()
-                                                .divide(new BigDecimal(packDatelistVO.getCount()), 2, RoundingMode.HALF_UP);
+                                                .divide(new BigDecimal(packDatelistVO.getCount()),2, RoundingMode.HALF_UP);
                                         avgAmountlistVOArrayList.setCdate(packDatelistVO.getCdate());
                                         avgAmountlistVOArrayList.setAvgAmount(avgAmount);
                                         avgAmountlistVOArrayList2.add(avgAmountlistVOArrayList);
@@ -971,15 +962,15 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
         }
         //封装数据
-        packOperationDate(dto, operationlistVO);
+        packOperationDate(dto,operationlistVO);
         //封装扇形图数据
-        packDiagramDate(dto, operationlistVO);
+        packDiagramDate(dto,operationlistVO);
         return operationlistVO;
     }
 
     @Override
     public List<PCMerchTradeListVO.tradeVOExport> export(PCMerchTradeQTO.IdListQTO qo) {
-        if (ObjectUtils.isEmpty(qo.getIdList())) {
+        if (ObjectUtils.isEmpty(qo.getIdList())){
             throw new BusinessException("请传入ID");
         }
         List<Trade> trades = tradeRepository.listByIds(qo.getIdList());
@@ -993,13 +984,13 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                             tradeVO.setShopName(simpleVO.getShopName());
                         }
                         PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(e.getUserId());
-                        if (ObjectUtils.isNotEmpty(userSimpleVO)) {
+                        if (ObjectUtils.isNotEmpty(userSimpleVO)){
                             tradeVO.setUserName(userSimpleVO.getUserName());
                         }
-                        tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
-                        if (e.getTradeState() == 10) {
+                        tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(),TradeStateEnum.class));
+                        if (e.getTradeState()==10){
                             tradeVO.setPayType("未支付");
-                        } else {
+                        }else {
                             tradeVO.setPayType(TradePayTypeEnum.getEnum(e.getPayType()).getRemark());
                         }
                         tradeVO.setDeliveryType(EnumUtil.getText(e.getDeliveryType(), TradeDeliveryTypeEnum.class));
@@ -1012,7 +1003,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
 
-    public void packOperationDate(TradeDTO.OperationList dto, TradeVO.OperationlistVO operationlistVO) {
+    public void packOperationDate(TradeDTO.OperationList dto ,TradeVO.OperationlistVO operationlistVO) {
         //新增订单金额
         BigDecimal addTradeAmount = BigDecimal.ZERO;
         //新增订单数量
@@ -1020,19 +1011,19 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         //平均单价
         BigDecimal avgAmount = BigDecimal.ZERO;
         QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("shop_id", dto.getJwtShopId());
-        if (ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())) {
-            wrapper.ge("cdate", dto.getStartTime())
-                    .le("cdate", dto.getEndTime());
+        wrapper.eq("shop_id",dto.getJwtShopId());
+        if(ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())){
+            wrapper.ge("cdate",dto.getStartTime())
+                    .le("cdate",dto.getEndTime());
             addTradeAmount = tradeMapper.esterdayAddTradeAmount(wrapper);
             operationlistVO.setAddTradeAmount(addTradeAmount);
             addTradeCount = tradeMapper.esterdayAddTradeCount(wrapper);
             operationlistVO.setAddTradeCount(addTradeCount);
-            if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+            if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                 operationlistVO.setAvgAmount(avgAmount);
-            } else {
-                avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                if (ObjectUtils.isNotEmpty(avgAmount)) {
+            }else {
+                avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                if(ObjectUtils.isNotEmpty(avgAmount)){
                     operationlistVO.setAvgAmount(avgAmount);
                 }
             }
@@ -1040,18 +1031,18 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             operationlistVO.setAftermarketCount(tradeMapper.esterDayAftermarketCount(wrapper));
         }
 
-        if (ObjectUtils.isNotEmpty(dto.getQueryTimes())) {
-            switch (dto.getQueryTimes()) {
+        if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
+            switch (dto.getQueryTimes()){
                 case 10:
                     addTradeAmount = tradeMapper.yesterdayAddTradeAmount(wrapper);
                     operationlistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.yesterdayAddTradeCount(wrapper);
                     operationlistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         operationlistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             operationlistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -1063,11 +1054,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     operationlistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.anteayerAddTradeCount(wrapper);
                     operationlistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         operationlistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             operationlistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -1079,11 +1070,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     operationlistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.weekAddTradeCount(wrapper);
                     operationlistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         operationlistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             operationlistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -1095,11 +1086,11 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     operationlistVO.setAddTradeAmount(addTradeAmount);
                     addTradeCount = tradeMapper.monthAddTradeCount(wrapper);
                     operationlistVO.setAddTradeCount(addTradeCount);
-                    if (addTradeAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if(addTradeAmount.compareTo(BigDecimal.ZERO)  == 0){
                         operationlistVO.setAvgAmount(avgAmount);
-                    } else {
-                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount), 2, RoundingMode.HALF_UP);
-                        if (ObjectUtils.isNotEmpty(avgAmount)) {
+                    }else {
+                        avgAmount = addTradeAmount.divide(new BigDecimal(addTradeCount),2, RoundingMode.HALF_UP);
+                        if(ObjectUtils.isNotEmpty(avgAmount)){
                             operationlistVO.setAvgAmount(avgAmount);
                         }
                     }
@@ -1113,7 +1104,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
 
-    public void packDiagramDate(TradeDTO.OperationList dto, TradeVO.OperationlistVO operationlistVO) {
+    public void packDiagramDate(TradeDTO.OperationList dto ,TradeVO.OperationlistVO operationlistVO) {
         //订单完成数据集合
         TradeVO.PayTradeVO payTradeVO = new TradeVO.PayTradeVO();
         //总订单金额集合
@@ -1122,9 +1113,9 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         TradeVO.VisitorDateVO visitorDateVO = new TradeVO.VisitorDateVO();
         QueryWrapper<Trade> wrapper = MybatisPlusUtil.query();
 
-        if (ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())) {
-            wrapper.ge("cdate", dto.getStartTime())
-                    .le("cdate", dto.getEndTime());
+        if(ObjectUtils.isNotEmpty(dto.getStartTime()) && ObjectUtils.isNotEmpty(dto.getEndTime())){
+            wrapper.ge("cdate",dto.getStartTime())
+                    .le("cdate",dto.getEndTime());
             payTradeVO.setPayTradeCount(tradeMapper.esterdayPayTradeCount(wrapper));
             payTradeVO.setPayNotTradeCount(tradeMapper.esterDayNotPayTradeCount(wrapper));
             operationlistVO.setPayTradeList(payTradeVO);
@@ -1136,58 +1127,58 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             operationlistVO.setVisitorDateList(visitorDateVO);
         }
 
-        if (ObjectUtils.isNotEmpty(dto.getQueryTimes())) {
+       if(ObjectUtils.isNotEmpty(dto.getQueryTimes())){
 //           wrapper.eq("shop_id",dto.getJwtShopId());
-            switch (dto.getQueryTimes()) {
-                case 10:
-                    payTradeVO.setPayTradeCount(tradeMapper.yesterdayPayTradeCount(wrapper));
-                    payTradeVO.setPayNotTradeCount(tradeMapper.yesterDayNotPayTradeCount(wrapper));
-                    operationlistVO.setPayTradeList(payTradeVO);
-                    payTradeAmountVO.setPayTradeAmountCount(tradeMapper.yesterdayPayTradeAmount(wrapper));
-                    payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.yesterDayNotPayTradeAmount(wrapper));
-                    operationlistVO.setPayTradeAmountList(payTradeAmountVO);
-                    visitorDateVO.setAddVisitorCount(1);
-                    visitorDateVO.setAllVisitorCount(1);
-                    operationlistVO.setVisitorDateList(visitorDateVO);
-                    break;
-                case 20:
-                    payTradeVO.setPayTradeCount(tradeMapper.anteayerPayTradeCount(wrapper));
-                    payTradeVO.setPayNotTradeCount(tradeMapper.anteayerNotPayTradeCount(wrapper));
-                    operationlistVO.setPayTradeList(payTradeVO);
-                    payTradeAmountVO.setPayTradeAmountCount(tradeMapper.anteayerPayTradeAmount(wrapper));
-                    payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.anteayerNotPayTradeAmount(wrapper));
-                    operationlistVO.setPayTradeAmountList(payTradeAmountVO);
-                    visitorDateVO.setAddVisitorCount(1);
-                    visitorDateVO.setAllVisitorCount(1);
-                    operationlistVO.setVisitorDateList(visitorDateVO);
-                    break;
-                case 30:
-                    payTradeVO.setPayTradeCount(tradeMapper.weekPayTradeCount(wrapper));
-                    payTradeVO.setPayNotTradeCount(tradeMapper.weekNotPayTradeCount(wrapper));
-                    operationlistVO.setPayTradeList(payTradeVO);
-                    payTradeAmountVO.setPayTradeAmountCount(tradeMapper.weekPayTradeAmount(wrapper));
-                    payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.weekNotPayTradeAmount(wrapper));
-                    operationlistVO.setPayTradeAmountList(payTradeAmountVO);
-                    visitorDateVO.setAddVisitorCount(1);
-                    visitorDateVO.setAllVisitorCount(1);
-                    operationlistVO.setVisitorDateList(visitorDateVO);
-                    break;
-                case 40:
-                    payTradeVO.setPayTradeCount(tradeMapper.monthPayTradeCount(wrapper));
-                    payTradeVO.setPayNotTradeCount(tradeMapper.monthNotPayTradeCount(wrapper));
-                    operationlistVO.setPayTradeList(payTradeVO);
-                    payTradeAmountVO.setPayTradeAmountCount(tradeMapper.monthPayTradeAmount(wrapper));
-                    payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.monthNotPayTradeAmount(wrapper));
-                    operationlistVO.setPayTradeAmountList(payTradeAmountVO);
-                    visitorDateVO.setAddVisitorCount(1);
-                    visitorDateVO.setAllVisitorCount(1);
-                    operationlistVO.setVisitorDateList(visitorDateVO);
-                    break;
+           switch (dto.getQueryTimes()){
+               case 10:
+                   payTradeVO.setPayTradeCount(tradeMapper.yesterdayPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.yesterDayNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.yesterdayPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.yesterDayNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+               case 20:
+                   payTradeVO.setPayTradeCount(tradeMapper.anteayerPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.anteayerNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.anteayerPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.anteayerNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+               case 30:
+                   payTradeVO.setPayTradeCount(tradeMapper.weekPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.weekNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.weekPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.weekNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
+               case 40:
+                   payTradeVO.setPayTradeCount(tradeMapper.monthPayTradeCount(wrapper));
+                   payTradeVO.setPayNotTradeCount(tradeMapper.monthNotPayTradeCount(wrapper));
+                   operationlistVO.setPayTradeList(payTradeVO);
+                   payTradeAmountVO.setPayTradeAmountCount(tradeMapper.monthPayTradeAmount(wrapper));
+                   payTradeAmountVO.setPayNotTradeAmountCount(tradeMapper.monthNotPayTradeAmount(wrapper));
+                   operationlistVO.setPayTradeAmountList(payTradeAmountVO);
+                   visitorDateVO.setAddVisitorCount(1);
+                   visitorDateVO.setAllVisitorCount(1);
+                   operationlistVO.setVisitorDateList(visitorDateVO);
+                   break;
                 default:
                     throw new BootstrapMethodError("错误时间查询方式");
-            }
+           }
 
-        }
+       }
 
     }
 

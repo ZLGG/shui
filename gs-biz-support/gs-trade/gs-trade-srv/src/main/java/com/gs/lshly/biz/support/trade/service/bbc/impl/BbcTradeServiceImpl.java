@@ -949,7 +949,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 }
                 tradePointAmount = tradePointAmount.add(productData.getPointAmount().multiply(new BigDecimal(productData.getQuantity())));
 
-                totalPointAmount = totalPointAmount.add(tradePointAmount);
+                //totalPointAmount = totalPointAmount.add(tradePointAmount);
 
                 if ("gift".equals(productData.getGoodsSkuId())) {
                     continue;
