@@ -85,30 +85,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
     @Override
     public void groundingGoods(PCMerchGoodsInfoDTO.IdListDTO dto) {
-        //如果这些商品为扶贫商品，平台方必须审核
-        List<String> fupinGoodsIdList = goodsFupinService.listFuPinGoodsId(new BaseQTO());
-        if (ObjectUtils.isNotEmpty(fupinGoodsIdList)) {
-            List<String> initGoodsIdList = dto.getIdList();
-            List<String> list = dto.getIdList().stream().filter(t -> fupinGoodsIdList.contains(t))
-                    .collect(Collectors.toList());
-            if (ObjectUtils.isNotEmpty(list)) {
-                dto.setFuPinGoodsIdList(list);
-                dto.setIdList(list);
-                goodsInfoService.groundingGoods(dto);
-                //其他商品按正常流程上架
-                List<String> intersection = initGoodsIdList.stream().filter(t -> !list.contains(t))
-                        .collect(Collectors.toList());
-                if (ObjectUtils.isNotEmpty(intersection)) {
-                    dto.setIdList(intersection);
-                    dto.setFuPinGoodsIdList(new ArrayList<>());
-                    goodsInfoService.groundingGoods(dto);
-                }
-            } else {
-                goodsInfoService.groundingGoods(dto);
-            }
-        } else {
-            goodsInfoService.groundingGoods(dto);
-        }
+        goodsInfoService.groundingGoods(dto);
     }
 
     @Override
