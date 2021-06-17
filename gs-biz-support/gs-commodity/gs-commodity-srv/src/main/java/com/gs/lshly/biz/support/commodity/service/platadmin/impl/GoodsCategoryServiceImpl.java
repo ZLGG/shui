@@ -364,7 +364,10 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 
     @Override
     public int findChildrenCategory(GoodsCategoryDTO.IdDTO dto) {
-        int count = categoryRepository.count(new LambdaQueryWrapper<GoodsCategory>().eq(GoodsCategory::getParentId, dto.getId()));
+        //int count = categoryRepository.count(new LambdaQueryWrapper<GoodsCategory>().eq(GoodsCategory::getParentId, dto.getId()));
+    	QueryWrapper<GoodsCategory> queryWrapper = MybatisPlusUtil.query();
+    	queryWrapper.eq("parent_id", dto.getId());
+        int count = categoryRepository.count(queryWrapper);
         return count;
     }
 

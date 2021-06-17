@@ -1191,15 +1191,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isEmpty(shopState) || shopState.equals(ShopStateEnum.关闭状态.getCode())) {
             throw new BusinessException("该店铺已经关闭,若要上架商品请先开通店铺！");
         }
-        if (whetherOpenGoodsUpAudit()) {
-            upOrOnGoods(dto, GoodsStateEnum.待审核.getCode());
-        } else if (!whetherOpenGoodsUpAudit()) {
-            if (ObjectUtils.isNotEmpty(dto.getFuPinGoodsIdList())) {
-                upOrOnGoods(dto, GoodsStateEnum.待审核.getCode());
-            } else {
-                upOrOnGoods(dto, GoodsStateEnum.已上架.getCode());
-            }
-        }
+        upOrOnGoods(dto, GoodsStateEnum.已上架.getCode());
     }
 
     @Override
@@ -2058,13 +2050,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             Integer waitEditNum = 0;
             Integer waitForAduitNum = 0;
             for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
-                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.待审核.getCode()) {
+                if (GoodsStateEnum.待审核.getCode().equals(spuListVO.getGoodsState().intValue())) {
                     waitForAduitNum++;
                 }
-                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.已审核.getCode()) {
+                if (GoodsStateEnum.已审核.getCode().equals(spuListVO.getGoodsState().intValue())) {
                     hasAduitNum++;
                 }
-                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.草稿箱.getCode()) {
+                if (GoodsStateEnum.草稿箱.getCode().equals(spuListVO.getGoodsState().intValue())) {
                     waitEditNum++;
                 }
             }
@@ -2081,11 +2073,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtil.isNotEmpty(goodInfoList)) {
             Integer hasOnNum = 0;
             Integer waitForOnNum = 0;
-            for (PCMerchGoodsInfoVO.SpuListVO spuListVO : result) {
-                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.未上架.getCode()) {
+            for (PCMerchGoodsInfoVO.SpuListVO spuListVO : goodInfoList) {
+                if (GoodsStateEnum.未上架.getCode().equals(spuListVO.getGoodsState())) {
                     waitForOnNum++;
                 }
-                if (spuListVO.getGoodsState().intValue() == GoodsStateEnum.已上架.getCode()) {
+                if (GoodsStateEnum.已上架.getCode().equals(spuListVO.getGoodsState())) {
                     hasOnNum++;
                 }
             }

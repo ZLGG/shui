@@ -718,6 +718,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 			status = MarketPtSeckillStatusEnum.抢购中.getCode();
 		}
 		seckillDetailVO.setStatus(status);
+		seckillDetailVO.setStatusText(MarketPtSeckillStatusEnum.getRemarkByCode(status));
 		seckillDetailVO.setSeckillEndTime(marketPtSeckill.getSeckillEndTime());
 		return seckillDetailVO;
 	}

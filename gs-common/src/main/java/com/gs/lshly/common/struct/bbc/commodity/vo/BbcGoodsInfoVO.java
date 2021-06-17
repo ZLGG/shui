@@ -114,6 +114,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("秒杀状态 10=>抢购中,20=>已开抢,30=>即将开抢,50=>已结束,")
         private Integer status;
+        
+        @ApiModelProperty("秒杀状态 10=>抢购中,20=>已开抢,30=>即将开抢,50=>已结束,")
+        private String statusText;
 
         /**
          * 普通商品(10,"普通商品"),
@@ -640,7 +643,13 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("描述")
         private String describe;
-
+        
+        @ApiModelProperty("活动状态")
+        private Integer status;
+        
+        @ApiModelProperty("活动状态内容")
+        private Integer statusText;
+        
         public Integer getType() {
             return type;
         }
@@ -698,6 +707,14 @@ public abstract class BbcGoodsInfoVO implements Serializable {
         public void setDescribe(String describe) {
             this.describe = describe;
         }
+
+		public Integer getStatus() {
+			return status;
+		}
+
+		public Integer getStatusText() {
+			return statusText;
+		}
     }
 
     @Data
