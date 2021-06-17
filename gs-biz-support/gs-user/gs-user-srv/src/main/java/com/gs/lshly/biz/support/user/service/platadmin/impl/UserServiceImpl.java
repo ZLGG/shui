@@ -51,6 +51,8 @@ import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 
 import cn.hutool.core.collection.CollectionUtil;
 
+import javax.annotation.Resource;
+
 /**
 * <p>
 *  服务实现类
@@ -104,18 +106,14 @@ public class UserServiceImpl implements IUserService {
         if(ObjectUtils.isNotEmpty(qto.getCountyText())){
             wrapper.like("us.county_text",qto.getCountyText());
         }
-        if(ObjectUtils.isNotEmpty(qto.getTimeProp()) && qto.getTimeProp().equals(TimePropEnum.是.getCode())){
-            wrapper.eq("us.cdate",qto.getCdate1());
-        }
-        if(ObjectUtils.isNotEmpty(qto.getTimeProp()) && qto.getTimeProp().equals(TimePropEnum.早于.getCode())){
-            wrapper.le("us.cdate",qto.getCdate1());
-        }
-        if(ObjectUtils.isNotEmpty(qto.getTimeProp()) && qto.getTimeProp().equals(TimePropEnum.晚于.getCode())){
+
+        if(ObjectUtils.isNotEmpty(qto.getCdate1())){
             wrapper.ge("us.cdate",qto.getCdate1());
         }
-        if(ObjectUtils.isNotEmpty(qto.getTimeProp()) && qto.getTimeProp().equals(TimePropEnum.介于.getCode())){
-            wrapper.between("us.cdate",qto.getCdate1(),qto.getCdate2());
+        if(ObjectUtils.isNotEmpty(qto.getCdate2())){
+            wrapper.le("us.cdate",qto.getCdate2());
         }
+
         if(ObjectUtils.isNotEmpty(qto.getSex())){
             wrapper.eq("us.sex",qto.getSex());
         }
@@ -127,6 +125,9 @@ public class UserServiceImpl implements IUserService {
         }
         if(ObjectUtils.isNotEmpty(qto.getCity())){
             wrapper.eq("us.city",qto.getCity());
+        }
+        if(ObjectUtils.isNotEmpty(qto.getPhone())){
+            wrapper.eq("us.phone",PwdUtil.encode(qto.getPhone()));
         }
 
         if(ObjectUtils.isNotEmpty(qto.getLabelId())){

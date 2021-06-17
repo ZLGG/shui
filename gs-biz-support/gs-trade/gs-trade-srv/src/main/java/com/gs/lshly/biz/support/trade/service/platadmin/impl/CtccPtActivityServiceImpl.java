@@ -250,10 +250,14 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
                         if (StringUtils.isNotBlank(listDTO.getGoodsName())) {
                             if (detailVO.getGoodsName().contains(listDTO.getGoodsName())) {
                                 BeanUtils.copyProperties(detailVO,ctccGoodsDetailVO);
+                                ctccGoodsDetailVO.setId(detailVO.getGoodsId());
+                                ctccGoodsDetailVO.setName(detailVO.getGoodsName());
                                 ctccGoodsDetailVOList.add(ctccGoodsDetailVO);
                             }
                         }else {
                             BeanUtils.copyProperties(detailVO,ctccGoodsDetailVO);
+                            ctccGoodsDetailVO.setId(detailVO.getGoodsId());
+                            ctccGoodsDetailVO.setName(detailVO.getGoodsName());
                             ctccGoodsDetailVOList.add(ctccGoodsDetailVO);
                         }
                     }

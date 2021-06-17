@@ -903,6 +903,12 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     @ApiModel("BbcGoodsInfoVO.CtccGoodsDetailVO")
     public static class CtccGoodsDetailVO implements Serializable {
 
+    	@ApiModelProperty("id")
+        private String id;
+
+        @ApiModelProperty("名称")
+        private String name;
+        
         @ApiModelProperty("sku商品id")
         private String skuId;
 

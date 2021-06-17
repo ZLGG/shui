@@ -58,10 +58,10 @@ public abstract class UserQTO implements Serializable {
         private String countyText;
 
         @ApiModelProperty("注册时间1")
-        private LocalDateTime cdate1;
+        private String cdate1;
 
         @ApiModelProperty("注册时间2")
-        private LocalDateTime cdate2;
+        private String cdate2;
 
         @ApiModelProperty(value = "时间介词 10=早于 20=晚于 30=是 40=介于")
         private Integer timeProp;
