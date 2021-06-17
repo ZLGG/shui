@@ -908,12 +908,17 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
 
         //修改商品与运费模板的关联关系
-        UpdateWrapper<GoodsTempalte> templateBoost = MybatisPlusUtil.update();
+        QueryWrapper<GoodsTempalte> templateBoost = MybatisPlusUtil.query();
         templateBoost.eq("goods_id", goodsInfo.getId());
+        goodsTempalteRepository.remove(templateBoost);
+
         GoodsTempalte template = new GoodsTempalte();
         template.setTemplateId(editDetailVO.getTemplateId());
         template.setStockSubtractType(editDetailVO.getStockSubtractType());
-        goodsTempalteRepository.update(template, templateBoost);
+        template.setGoodsId(goodsInfo.getId());
+        template.setFlag(false);
+        template.setCdate(LocalDateTime.now());
+        goodsTempalteRepository.save(template);
 
         //建立商品与店铺自定义类目的关联关系
         QueryWrapper<GoodsShopNavigation> wrapper = MybatisPlusUtil.query();
