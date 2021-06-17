@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.lakala.boss.api.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -222,10 +225,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Autowired
     private ITradeRightsRepository tradeRightsRepository;
-    
+
     @Autowired
     private CouponMapper couponMapper;
-    
+
     @DubboReference
     private IBbcInUserCouponRpc bbcInUserCouponRpc;
 
@@ -439,45 +442,45 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
                 if (goodsInfoVO.getIsInMemberGift()) {//是IN会员商品
                     if (isInUser.equals(1)) {    //是IN会员用IN会员价格
-                    	
-                    	List<ListCouponVO> optionalCouponList = new ArrayList<ListCouponVO>();
-                    	List<ListCouponVO> defaultCouponList = new ArrayList<ListCouponVO>();
-                    	
-                    	List<Coupon> couponList = couponMapper.listByGoodsId(goodsInfoVO.getGoodsId());
-                        if(CollectionUtil.isNotEmpty(couponList)){//有优惠劵
-                        	//判断用户有没有对应的这个优惠劵
-                        	for(Coupon coupon:couponList){
-                        		String couponId = coupon.getCouponId();
-                        		BbcUserCouponQTO.ListByCouponIdQTO listByCouponIdQTO = new BbcUserCouponQTO.ListByCouponIdQTO();
-                        		BeanCopyUtils.copyProperties(dto, listByCouponIdQTO);
-                        		listByCouponIdQTO.setCouponId(couponId);
-                        		List<ListVO> userCouponList = bbcInUserCouponRpc.listByCouponId(listByCouponIdQTO);
-                        		
-                        		if(userCouponList!=null&&userCouponList.size()>0){
-                        			
-                        			ListCouponVO listCouponVO = null;
-                        			for(ListVO listVO:userCouponList){
-                        				listCouponVO = new ListCouponVO();
-                        				
-                        				//BeanCopyUtils.copyProperties(coupon, listCouponVO);
-                        				listCouponVO.setCouponName(coupon.getCouponName());
-                        				listCouponVO.setCouponType(coupon.getCouponType());
-                        				listCouponVO.setCouponTypeText(GoodsCouponTypeEnum.getRemarkByCode(coupon.getCouponType()));
-                        				listCouponVO.setDeduction(coupon.getDeductionAmount());
-                        				listCouponVO.setDeductionType(1);
-                        				listCouponVO.setId(listVO.getId());
-                        				listCouponVO.setUseThreshold(coupon.getUseThreshold());
-                        				String useTime = DateUtils.fomatLocalDate(listVO.getStartTime(),DateUtils.dateFormatStr_1)
-                        						+"~"+DateUtils.fomatLocalDate(listVO.getStartTime(),DateUtils.dateFormatStr_1);
-                        				listCouponVO.setUseTime(useTime);
-                        				if(defaultCouponList==null||defaultCouponList.size()==0){
-                        					defaultCouponList.add(listCouponVO);
-                        				}
-                        				optionalCouponList.add(listCouponVO);
-                        			}
-                        		}
-                        		
-                        	}
+
+                        List<ListCouponVO> optionalCouponList = new ArrayList<ListCouponVO>();
+                        List<ListCouponVO> defaultCouponList = new ArrayList<ListCouponVO>();
+
+                        List<Coupon> couponList = couponMapper.listByGoodsId(goodsInfoVO.getGoodsId());
+                        if (CollectionUtil.isNotEmpty(couponList)) {//有优惠劵
+                            //判断用户有没有对应的这个优惠劵
+                            for (Coupon coupon : couponList) {
+                                String couponId = coupon.getCouponId();
+                                BbcUserCouponQTO.ListByCouponIdQTO listByCouponIdQTO = new BbcUserCouponQTO.ListByCouponIdQTO();
+                                BeanCopyUtils.copyProperties(dto, listByCouponIdQTO);
+                                listByCouponIdQTO.setCouponId(couponId);
+                                List<ListVO> userCouponList = bbcInUserCouponRpc.listByCouponId(listByCouponIdQTO);
+
+                                if (userCouponList != null && userCouponList.size() > 0) {
+
+                                    ListCouponVO listCouponVO = null;
+                                    for (ListVO listVO : userCouponList) {
+                                        listCouponVO = new ListCouponVO();
+
+                                        //BeanCopyUtils.copyProperties(coupon, listCouponVO);
+                                        listCouponVO.setCouponName(coupon.getCouponName());
+                                        listCouponVO.setCouponType(coupon.getCouponType());
+                                        listCouponVO.setCouponTypeText(GoodsCouponTypeEnum.getRemarkByCode(coupon.getCouponType()));
+                                        listCouponVO.setDeduction(coupon.getDeductionAmount());
+                                        listCouponVO.setDeductionType(1);
+                                        listCouponVO.setId(listVO.getId());
+                                        listCouponVO.setUseThreshold(coupon.getUseThreshold());
+                                        String useTime = DateUtils.fomatLocalDate(listVO.getStartTime(), DateUtils.dateFormatStr_1)
+                                                + "~" + DateUtils.fomatLocalDate(listVO.getStartTime(), DateUtils.dateFormatStr_1);
+                                        listCouponVO.setUseTime(useTime);
+                                        if (defaultCouponList == null || defaultCouponList.size() == 0) {
+                                            defaultCouponList.add(listCouponVO);
+                                        }
+                                        optionalCouponList.add(listCouponVO);
+                                    }
+                                }
+
+                            }
                         }
                         goodsInfoVO.setDefaultCouponList(defaultCouponList);
                         goodsInfoVO.setOptionalCouponList(optionalCouponList);
@@ -496,13 +499,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                         } else {
 
                             //本期就考虑不用分积分的
-                        	BigDecimal money =  BigDecimal.ZERO;
-                        	if(defaultCouponList!=null&&defaultCouponList.size()>0){
-                        		ListCouponVO couponVO = defaultCouponList.get(0);
-                        		money = couponVO.getDeduction();
-                        	}
+                            BigDecimal money = BigDecimal.ZERO;
+                            if (defaultCouponList != null && defaultCouponList.size() > 0) {
+                                ListCouponVO couponVO = defaultCouponList.get(0);
+                                money = couponVO.getDeduction();
+                            }
                             BigDecimal deduction = money.multiply(new BigDecimal("100"));
-                            
+
                             pointPrice = pointPrice.compareTo(deduction) <= 0 ? BigDecimal.ZERO : pointPrice.subtract(deduction);
 
                             goodsInfoVO.setTradePointAmount(pointPrice);
@@ -1666,12 +1669,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
         if (trade.getTradeState().intValue() != TradeStateEnum.待收货.getCode()) {
             //如果订单状态不是"待收货"则不允许确认收货
-        	if(trade.getTradeState().intValue()==TradeStateEnum.待发货.getCode()||
-        			trade.getTradeState().intValue()==TradeStateEnum.待支付.getCode()){
-        		throw new BusinessException("不允许确认收货");
-        	}else{
-        		throw new BusinessException("该商品已收货");
-        	}
+            if (trade.getTradeState().intValue() == TradeStateEnum.待发货.getCode() ||
+                    trade.getTradeState().intValue() == TradeStateEnum.待支付.getCode()) {
+                throw new BusinessException("不允许确认收货");
+            } else {
+                throw new BusinessException("该商品已收货");
+            }
         }
         trade.setTradeState(TradeStateEnum.已完成.getCode());
         trade.setRecvTime(LocalDateTime.now());
@@ -2235,6 +2238,18 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             tradeGoodsVO.setExchangeType(goodsDetail.getExchangeType());
             if (tradeGoods.getQuantity() != null)
                 quantity = quantity + tradeGoods.getQuantity();
+
+            //hanly 如果支付状态为待支付，根据时间判断，超过，关闭订单
+            if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
+                String payDeadline = tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                String now = DateUtil.getTime();
+                if (DateUtil.compareDate(now, payDeadline)) {
+                    tradeVO.setTradeState(TradeStateEnum.已取消.getCode());
+                    Trade trade = tradeMapper.selectById(tradeVO.getId());
+                    trade.setTradeState(tradeGoodsVO.getTradeState());
+                    tradeMapper.updateById(trade);
+                }
+            }
 
             tradeGoodsVO.setTradeState(tradeVO.getTradeState());
             tradeGoodsVO.setRightsStateDetail(0);
