@@ -54,12 +54,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import javax.annotation.Resource;
 
 /**
-* <p>
-*  服务实现类
-* </p>
-* @author xxfc
-* @since 2020-10-05
-*/
+ * <p>
+ * 服务实现类
+ * </p>
+ *
+ * @author xxfc
+ * @since 2020-10-05
+ */
 @Component
 public class UserServiceImpl implements IUserService {
 
@@ -83,70 +84,70 @@ public class UserServiceImpl implements IUserService {
 
     @DubboReference
     private ILegalDictRpc legalDictRpc;
-    
+
     @Autowired
     private IUserLabelDictRepository userLabelDictRepository;
 
     @Override
     public PageData<UserVO.ListVO> fullSearchList(UserQTO.FullSearchQTO qto) {
         QueryWrapper<UserView> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("us.type",qto.getType());
-        if(StringUtils.isNotBlank(qto.getNick())){
-            wrapper.like("us.nick",qto.getNick());
+        wrapper.eq("us.type", qto.getType());
+        if (StringUtils.isNotBlank(qto.getNick())) {
+            wrapper.like("us.nick", qto.getNick());
         }
-        if(StringUtils.isNotBlank(qto.getRealName())){
-            wrapper.like("us.real_name",qto.getRealName());
+        if (StringUtils.isNotBlank(qto.getRealName())) {
+            wrapper.like("us.real_name", qto.getRealName());
         }
-        if(StringUtils.isNotBlank(qto.getFromShopId())){
-            wrapper.like("us.from_shop_id",qto.getFromShopId());
+        if (StringUtils.isNotBlank(qto.getFromShopId())) {
+            wrapper.like("us.from_shop_id", qto.getFromShopId());
         }
-        if(StringUtils.isNotBlank(qto.getRealAddress())){
-            wrapper.like("us.real_address",qto.getRealAddress());
+        if (StringUtils.isNotBlank(qto.getRealAddress())) {
+            wrapper.like("us.real_address", qto.getRealAddress());
         }
-        if(ObjectUtils.isNotEmpty(qto.getCountyText())){
-            wrapper.like("us.county_text",qto.getCountyText());
-        }
-
-        if(ObjectUtils.isNotEmpty(qto.getCdate1())){
-            wrapper.ge("us.cdate",qto.getCdate1());
-        }
-        if(ObjectUtils.isNotEmpty(qto.getCdate2())){
-            wrapper.le("us.cdate",qto.getCdate2());
+        if (ObjectUtils.isNotEmpty(qto.getCountyText())) {
+            wrapper.like("us.county_text", qto.getCountyText());
         }
 
-        if(ObjectUtils.isNotEmpty(qto.getSex())){
-            wrapper.eq("us.sex",qto.getSex());
+        if (ObjectUtils.isNotEmpty(qto.getCdate1())) {
+            wrapper.ge("us.cdate", qto.getCdate1());
         }
-        if(ObjectUtils.isNotEmpty(qto.getIsInUser())){
-            wrapper.eq("us.is_in_user",qto.getIsInUser());
-        }
-        if(ObjectUtils.isNotEmpty(qto.getTelecomsLevel())){
-            wrapper.eq("us.telecoms_level",qto.getTelecomsLevel());
-        }
-        if(ObjectUtils.isNotEmpty(qto.getCity())){
-            wrapper.eq("us.city",qto.getCity());
-        }
-        if(ObjectUtils.isNotEmpty(qto.getPhone())){
-            wrapper.eq("us.phone",PwdUtil.encode(qto.getPhone()));
+        if (ObjectUtils.isNotEmpty(qto.getCdate2())) {
+            wrapper.le("us.cdate", qto.getCdate2());
         }
 
-        if(ObjectUtils.isNotEmpty(qto.getLabelId())){
-            wrapper.like("tm.label_ids",qto.getLabelId());
+        if (ObjectUtils.isNotEmpty(qto.getSex())) {
+            wrapper.eq("us.sex", qto.getSex());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getIsInUser())) {
+            wrapper.eq("us.is_in_user", qto.getIsInUser());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getTelecomsLevel())) {
+            wrapper.eq("us.telecoms_level", qto.getTelecomsLevel());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getCity())) {
+            wrapper.eq("us.city", qto.getCity());
+        }
+        if (ObjectUtils.isNotEmpty(qto.getPhone())) {
+            wrapper.eq("us.phone", PwdUtil.encode(qto.getPhone()));
+        }
+
+        if (ObjectUtils.isNotEmpty(qto.getLabelId())) {
+            wrapper.like("tm.label_ids", qto.getLabelId());
         }
 
         wrapper.orderByDesc("us.cdate");
         IPage<UserView> page = MybatisPlusUtil.pager(qto);
-        userMapper.pageList(page,wrapper);
-        List< UserVO.ListVO> resultList = new ArrayList<>();
-        for(UserView userViewItem:page.getRecords()){
+        userMapper.pageList(page, wrapper);
+        List<UserVO.ListVO> resultList = new ArrayList<>();
+        for (UserView userViewItem : page.getRecords()) {
             UserVO.ListVO listVO = new UserVO.ListVO();
-            BeanCopyUtils.copyProperties(userViewItem,listVO);
+            BeanCopyUtils.copyProperties(userViewItem, listVO);
             listVO.setUserLabelList(new ArrayList<>());
-            if(ObjectUtils.isNotNull(userViewItem.getLabelIds(),userViewItem.getColors(),userViewItem.getLabelNames())){
-                String [] ids = userViewItem.getLabelIds().split(",");
-                String [] colors = userViewItem.getColors().split(",");
-                String [] names = userViewItem.getLabelNames().split(",");
-                for(int i =0;i<ids.length;i++){
+            if (ObjectUtils.isNotNull(userViewItem.getLabelIds(), userViewItem.getColors(), userViewItem.getLabelNames())) {
+                String[] ids = userViewItem.getLabelIds().split(",");
+                String[] colors = userViewItem.getColors().split(",");
+                String[] names = userViewItem.getLabelNames().split(",");
+                for (int i = 0; i < ids.length; i++) {
                     UserLabelDictVO.UserLabelItemVO userLabelItemVO = new UserLabelDictVO.UserLabelItemVO();
                     userLabelItemVO.setLabel_id(ids[i]);
                     userLabelItemVO.setLable_name(names[i]);
@@ -162,36 +163,33 @@ public class UserServiceImpl implements IUserService {
     @Override
     public PageData<UserVO.ListVO> pageData(UserQTO.QTO qto) {
         QueryWrapper<UserView> wrapper = MybatisPlusUtil.query();
-        if(StringUtils.isNotBlank(qto.getQueryValue())){
-            if(UserQueryTypeEnum.用户名.getCode().equals(qto.getQueryType())){
-                wrapper.like("us.user_name",qto.getQueryValue());
-            }
-            else if(UserQueryTypeEnum.手机号.getCode().equals(qto.getQueryType())){
-                wrapper.like("us.phone",qto.getQueryValue());
-            }
-            else if(UserQueryTypeEnum.真实姓名.getCode().equals(qto.getQueryType())){
-                wrapper.like("us.real_name",qto.getQueryValue());
-            }
-            else if(UserQueryTypeEnum.标签.getCode().equals(qto.getQueryType())){
-                wrapper.like("tm.label_names",qto.getQueryValue());
-            }
-            else if(UserQueryTypeEnum.邮箱.getCode().equals(qto.getQueryType())){
-                wrapper.like("us.to",qto.getQueryValue());
+        if (StringUtils.isNotBlank(qto.getQueryValue())) {
+            if (UserQueryTypeEnum.用户名.getCode().equals(qto.getQueryType())) {
+                wrapper.like("us.user_name", qto.getQueryValue());
+            } else if (UserQueryTypeEnum.手机号.getCode().equals(qto.getQueryType())) {
+                wrapper.like("us.phone", qto.getQueryValue());
+            } else if (UserQueryTypeEnum.真实姓名.getCode().equals(qto.getQueryType())) {
+                wrapper.like("us.real_name", qto.getQueryValue());
+            } else if (UserQueryTypeEnum.标签.getCode().equals(qto.getQueryType())) {
+                wrapper.like("tm.label_names", qto.getQueryValue());
+            } else if (UserQueryTypeEnum.邮箱.getCode().equals(qto.getQueryType())) {
+                wrapper.like("us.to", qto.getQueryValue());
             }
         }
-        wrapper.eq("us.type",qto.getType());
+        wrapper.eq("us.type", qto.getType());
         IPage<UserView> page = MybatisPlusUtil.pager(qto);
-        userMapper.pageList(page,wrapper);
-        List< UserVO.ListVO> resultList = new ArrayList<>();
-        for(UserView userViewItem:page.getRecords()){
+        userMapper.pageList(page, wrapper);
+        List<UserVO.ListVO> resultList = new ArrayList<>();
+        for (UserView userViewItem : page.getRecords()) {
+            userViewItem.setTelecomsIntegral(userViewItem.getPointBalance());
             UserVO.ListVO listVO = new UserVO.ListVO();
-            BeanCopyUtils.copyProperties(userViewItem,listVO);
+            BeanCopyUtils.copyProperties(userViewItem, listVO);
             listVO.setUserLabelList(new ArrayList<>());
-            if(ObjectUtils.isNotNull(userViewItem.getLabelIds(),userViewItem.getColors(),userViewItem.getLabelNames())){
-                String [] ids = userViewItem.getLabelIds().split(",");
-                String [] colors = userViewItem.getColors().split(",");
-                String [] names = userViewItem.getLabelNames().split(",");
-                for(int i =0;i<ids.length;i++){
+            if (ObjectUtils.isNotNull(userViewItem.getLabelIds(), userViewItem.getColors(), userViewItem.getLabelNames())) {
+                String[] ids = userViewItem.getLabelIds().split(",");
+                String[] colors = userViewItem.getColors().split(",");
+                String[] names = userViewItem.getLabelNames().split(",");
+                for (int i = 0; i < ids.length; i++) {
                     UserLabelDictVO.UserLabelItemVO userLabelItemVO = new UserLabelDictVO.UserLabelItemVO();
                     userLabelItemVO.setLabel_id(ids[i]);
                     userLabelItemVO.setLable_name(names[i]);
@@ -206,29 +204,29 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserVO.DetailVO details(UserDTO.IdDTO dto) {
-        if(StringUtils.isBlank(dto.getId())){
+        if (StringUtils.isBlank(dto.getId())) {
             throw new BusinessException("会员ID不能为空");
         }
-        User user =  repository.getById(dto.getId());
-        if(null == user){
+        User user = repository.getById(dto.getId());
+        if (null == user) {
             throw new BusinessException("会员不存在");
         }
         UserVO.DetailVO detailVO = new UserVO.DetailVO();
-        BeanUtils.copyProperties(user,detailVO);
+        BeanUtils.copyProperties(user, detailVO);
         QueryWrapper<UserIntegral> sumQueryWrapper = MybatisPlusUtil.query();
-        sumQueryWrapper.eq("user_id",user.getId());
+        sumQueryWrapper.eq("user_id", user.getId());
         sumQueryWrapper.groupBy("user_id");
         //可用积分
         UserIntegralView integralView = userIntegralMapper.sumCount(sumQueryWrapper);
         int integral = 0;
-        if(null != integralView){
+        if (null != integralView) {
             integral = integralView.getQuantity();
         }
         detailVO.setIntegral(integral);
         //要过期积分
-        UserIntegralView integralPassView = userIntegralMapper.sumCountPass(10,sumQueryWrapper);
+        UserIntegralView integralPassView = userIntegralMapper.sumCountPass(10, sumQueryWrapper);
         int integralPass = 0;
-        if(null != integralPassView){
+        if (null != integralPassView) {
             integralPass = integralPassView.getQuantity();
         }
         detailVO.setPassIntegral(integralPass);
@@ -237,13 +235,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void setLabels(List<UserDTO.SetLabelDTO> dto) {
-        if(ObjectUtils.isEmpty(dto)){
+        if (ObjectUtils.isEmpty(dto)) {
             throw new BusinessException("数组不能为空");
         }
         List<UserLabel> userLabelBatchList = new ArrayList<>();
-        for(UserDTO.SetLabelDTO itemDTO:dto){
-            if(ObjectUtils.isEmpty(itemDTO.getLabelList())){
-                for(String labelId:itemDTO.getLabelList()){
+        for (UserDTO.SetLabelDTO itemDTO : dto) {
+            if (ObjectUtils.isEmpty(itemDTO.getLabelList())) {
+                for (String labelId : itemDTO.getLabelList()) {
                     UserLabel userLabel = new UserLabel();
                     userLabel.setUserId(itemDTO.getUserId());
                     userLabel.setLabelId(labelId);
@@ -251,7 +249,7 @@ public class UserServiceImpl implements IUserService {
                 }
             }
         }
-        if(ObjectUtils.isEmpty(userLabelBatchList)){
+        if (ObjectUtils.isEmpty(userLabelBatchList)) {
             userLabelRepository.saveBatch(userLabelBatchList);
         }
     }
@@ -259,34 +257,34 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addUser(UserDTO.AddETO eto) {
-        if (eto == null){
+        if (eto == null) {
             throw new BusinessException("参数为空异常!!!");
         }
-        if (StringUtils.isBlank(eto.getUserName())){
+        if (StringUtils.isBlank(eto.getUserName())) {
             throw new BusinessException("用户名名称不能为空！！");
         }
-        if (StringUtils.isBlank(eto.getPhone())){
+        if (StringUtils.isBlank(eto.getPhone())) {
             throw new BusinessException("手机号不能为空！！");
         }
-        if (StringUtils.isBlank(eto.getUserPwd())){
+        if (StringUtils.isBlank(eto.getUserPwd())) {
             throw new BusinessException("用户密码不能为空！！");
         }
-        if (StringUtils.isBlank(eto.getCorpPersal())){
+        if (StringUtils.isBlank(eto.getCorpPersal())) {
             throw new BusinessException("请填写企业联系人！");
         }
-        if (StringUtils.isBlank(eto.getCorpPhone())){
+        if (StringUtils.isBlank(eto.getCorpPhone())) {
             throw new BusinessException("请填写企业联系人电话！");
         }
-        if (StringUtils.isBlank(eto.getPersonName())){
+        if (StringUtils.isBlank(eto.getPersonName())) {
             throw new BusinessException("请填写法人姓名！");
         }
-        if (StringUtils.isBlank(eto.getCorpLicenseCert())){
+        if (StringUtils.isBlank(eto.getCorpLicenseCert())) {
             throw new BusinessException("请上传营业执照！！");
         }
         QueryWrapper<User> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("phone",eto.getPhone());
+        wrapper.eq("phone", eto.getPhone());
         int count = repository.count(wrapper);
-        if (count >0){
+        if (count > 0) {
             throw new BusinessException("该手机号已被注册！！");
         }
         //企业信息
@@ -298,9 +296,9 @@ public class UserServiceImpl implements IUserService {
         eto1.setBusinessType(BusinessTypeEnum.买家.getCode());
         eto1.setLegalType(LegalTypeEnum.企业.getCode());
 
-        String legalId =  legalDictRpc.addLegalDict(eto1);
+        String legalId = legalDictRpc.addLegalDict(eto1);
 
-        User user  = new User();
+        User user = new User();
         user.setPhone(eto.getPhone());
         user.setUserName(eto.getUserName());
         user.setUserPwd(PwdUtil.encode(eto.getUserPwd()));
@@ -319,7 +317,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void deleteBatchUser(UserDTO.IdListDTO dto) {
-        if (null == dto ||ObjectUtils.isEmpty(dto.getIdList())){
+        if (null == dto || ObjectUtils.isEmpty(dto.getIdList())) {
             throw new BusinessException("请选择要删除的会员！！");
         }
         repository.removeByIds(dto.getIdList());
@@ -328,11 +326,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void editorUserInfo(UserDTO.ETO eto) {
-        if (eto == null){
+        if (eto == null) {
             throw new BusinessException("参数为空，异常");
         }
         User user = repository.getById(eto.getId());
-        if(null == user){
+        if (null == user) {
             throw new BusinessException("会员不在存");
         }
         BeanCopyUtils.copyProperties(eto, user);
@@ -342,14 +340,14 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void editorPassworld(UserDTO.PassworldETO eto) {
-        if (eto == null ){
+        if (eto == null) {
             throw new BusinessException("参数为空异常！！");
         }
-        if(!eto.getUserPwd().equals(eto.getUserPwdCfm())){
+        if (!eto.getUserPwd().equals(eto.getUserPwdCfm())) {
             throw new BusinessException("确认密码输入错误");
         }
         User user = repository.getById(eto.getId());
-        if(null == user){
+        if (null == user) {
             throw new BusinessException("会员不在存");
         }
         user.setUserPwd(PwdUtil.encode(eto.getUserPwd()));
@@ -358,23 +356,23 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void editorIntegral(UserDTO.IntegralETO eto) {
-        if (eto == null){
+        if (eto == null) {
             throw new BusinessException("参数为空异常！！");
         }
-        if (ObjectUtils.isEmpty(eto.getIntegral())){
+        if (ObjectUtils.isEmpty(eto.getIntegral())) {
             throw new BusinessException("请填写积分变动！！");
         }
         User user = repository.getById(eto.getId());
-        if(null == user){
+        if (null == user) {
             throw new BusinessException("会员不在存");
         }
         UserIntegral userIntegral = new UserIntegral();
         userIntegral.setUserId(user.getId());
         userIntegral.setQuantity(eto.getIntegral());
-        if(eto.getIntegral() > 0){
+        if (eto.getIntegral() > 0) {
             userIntegral.setFromType(IntegralFromTypeEnum.平台添加.getCode());
             userIntegral.setEndDate(eto.getEndTime());
-        }else{
+        } else {
             userIntegral.setFromType(IntegralFromTypeEnum.平台扣除.getCode());
         }
         userIntegralRepository.updateById(userIntegral);
@@ -382,11 +380,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void editorLeve(UserDTO.LeveETO eto) {
-        if (eto == null){
+        if (eto == null) {
             throw new BusinessException("参数为空异常！！");
         }
         User user = repository.getById(eto.getId());
-        if(null == user){
+        if (null == user) {
             throw new BusinessException("会员不在存");
         }
         user.setLeveId(eto.getLeveId());
@@ -396,11 +394,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserVO.DetailVO detailUser(UserDTO.IdDTO dto) {
-        if(StringUtils.isBlank(dto.getId())){
+        if (StringUtils.isBlank(dto.getId())) {
             throw new BusinessException("会员ID不能为空");
         }
-        User user =  repository.getById(dto.getId());
-        if(null == user){
+        User user = repository.getById(dto.getId());
+        if (null == user) {
             throw new BusinessException("会员不存在");
         }
         UserVO.DetailVO detailVo = new UserVO.DetailVO();
@@ -410,87 +408,87 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void enableUser(UserDTO.IdListDTO dto) {
-        if (dto == null || ObjectUtils.isEmpty(dto.getIdList())){
+        if (dto == null || ObjectUtils.isEmpty(dto.getIdList())) {
             throw new BusinessException("请选择要启用的会员！！");
         }
 
         QueryWrapper<User> wrapper = MybatisPlusUtil.query();
-        wrapper.in("id",dto.getIdList());
+        wrapper.in("id", dto.getIdList());
 
         User user = new User();
         user.setState(EdAbleStateEnum.启用.getCode());
-        repository.update(user,wrapper);
+        repository.update(user, wrapper);
     }
 
     @Override
     public void disableUser(UserDTO.IdListDTO dto) {
-        if (dto == null || ObjectUtils.isEmpty(dto.getIdList())){
+        if (dto == null || ObjectUtils.isEmpty(dto.getIdList())) {
             throw new BusinessException("请选择要停用的会员！！");
         }
 
         QueryWrapper<User> wrapper = MybatisPlusUtil.query();
-        wrapper.in("id",dto.getIdList());
+        wrapper.in("id", dto.getIdList());
 
         User user = new User();
         user.setState(EdAbleStateEnum.停用.getCode());
-        repository.update(user,wrapper);
+        repository.update(user, wrapper);
     }
 
     @Override
     public List<UserVO.ExportListVO> exportData(UserDTO.ExportDTO dto) {
-        if (null == dto || ObjectUtils.isEmpty(dto.getUserIdList())){
+        if (null == dto || ObjectUtils.isEmpty(dto.getUserIdList())) {
             throw new BusinessException("请选择要导出的会员信息！！");
         }
         List<User> users = repository.listByIds(dto.getUserIdList());
-        if (ObjectUtils.isEmpty(users)){
+        if (ObjectUtils.isEmpty(users)) {
             throw new BusinessException("查询异常！！！");
         }
-        
-        List<UserVO.ExportListVO> listVOS = users.parallelStream().map(e ->{
+
+        List<UserVO.ExportListVO> listVOS = users.parallelStream().map(e -> {
             UserVO.ExportListVO listVO = new UserVO.ExportListVO();
-            BeanCopyUtils.copyProperties(e,listVO);
+            BeanCopyUtils.copyProperties(e, listVO);
             //设置标签
             QueryWrapper<UserLabel> wrapper = MybatisPlusUtil.query();
-            wrapper.in("user_id",e.getId());
+            wrapper.in("user_id", e.getId());
             List<UserLabel> list = userLabelRepository.list(wrapper);
             String tags = "";
-            if(CollectionUtil.isNotEmpty(list)){
-            	for(UserLabel userLabel:list){
-            		String userLabelId = userLabel.getLabelId();
-            		UserLabelDict userLabelDict = userLabelDictRepository.getById(userLabelId);
-            		if(userLabelDict!=null){
-            			tags +=userLabelDict.getLabelName()+",";
-            		}
-            	}
+            if (CollectionUtil.isNotEmpty(list)) {
+                for (UserLabel userLabel : list) {
+                    String userLabelId = userLabel.getLabelId();
+                    UserLabelDict userLabelDict = userLabelDictRepository.getById(userLabelId);
+                    if (userLabelDict != null) {
+                        tags += userLabelDict.getLabelName() + ",";
+                    }
+                }
             }
-            if(tags.length()>2){
-            	tags = tags.substring(0, tags.length());
+            if (tags.length() > 2) {
+                tags = tags.substring(0, tags.length());
             }
-            
+
             listVO.setTags(tags);
-            
+
             //男女[10=男  20=女]
             Integer sex = e.getSex();
-            if(sex!=null){
-	            if(sex.equals(10)){
-	            	listVO.setSex("男");
-	            }else if(sex.equals(20)){
-	            	listVO.setSex("女");
-	            }
-            }else{
-            	listVO.setSex("未知");
+            if (sex != null) {
+                if (sex.equals(10)) {
+                    listVO.setSex("男");
+                } else if (sex.equals(20)) {
+                    listVO.setSex("女");
+                }
+            } else {
+                listVO.setSex("未知");
             }
-            
+
             Integer isInUser = e.getIsInUser();
-            if(isInUser!=null&&isInUser.equals(1)){
-            	listVO.setIsInUser("是");
-            }else{
-            	listVO.setIsInUser("否");
+            if (isInUser != null && isInUser.equals(1)) {
+                listVO.setIsInUser("是");
+            } else {
+                listVO.setIsInUser("否");
             }
-            if(StringUtils.isNotEmpty(e.getBirthday())){
-            	listVO.setAge(StringManageUtil.getAge(e.getBirthday()));
+            if (StringUtils.isNotEmpty(e.getBirthday())) {
+                listVO.setAge(StringManageUtil.getAge(e.getBirthday()));
             }
-            
+
             return listVO;
         }).collect(Collectors.toList());
         return listVOS;
@@ -499,17 +497,17 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void setUserLeve(UserDTO.SetUserLeveDTO dto) {
-        if(StringUtils.isBlank(dto.getLeveId())){
+        if (StringUtils.isBlank(dto.getLeveId())) {
             throw new BusinessException("会员等级ID不能为空");
         }
-        if(StringUtils.isBlank(dto.getUserId())){
+        if (StringUtils.isBlank(dto.getUserId())) {
             throw new BusinessException("会员ID不能为空");
         }
-       User user =  repository.getById(dto.getUserId());
-        if(null == user){
+        User user = repository.getById(dto.getUserId());
+        if (null == user) {
             throw new BusinessException("会员不在存");
         }
-        if(!userLeveDictRepository.checkIdExist(dto.getLeveId())){
+        if (!userLeveDictRepository.checkIdExist(dto.getLeveId())) {
             throw new BusinessException("无效的会员等级ID");
         }
         user.setLeveId(dto.getLeveId());
@@ -519,11 +517,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserVO.MiniVO mini(UserDTO.IdDTO dto) {
         User user = repository.getById(dto.getId());
-        if(null == user){
+        if (null == user) {
             return null;
         }
         UserVO.MiniVO miniVO = new UserVO.MiniVO();
-        BeanUtils.copyProperties(user,miniVO);
+        BeanUtils.copyProperties(user, miniVO);
         return miniVO;
     }
 
@@ -537,11 +535,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserVO.ListVO innerByPhone(String phone) {
         QueryWrapper<User> wrapper = MybatisPlusUtil.query();
-        wrapper.eq("phone",phone);
+        wrapper.eq("phone", phone);
         User user = repository.getOne(wrapper);
-        if (ObjectUtils.isNotEmpty(user)){
+        if (ObjectUtils.isNotEmpty(user)) {
             UserVO.ListVO listVO = new UserVO.ListVO();
-            BeanUtils.copyProperties(user,listVO);
+            BeanUtils.copyProperties(user, listVO);
             return listVO;
         }
         return null;
@@ -550,10 +548,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserVO.ListVO innerSave2BUser(UserDTO.InnerETO eto) {
         User user = new User();
-        BeanUtils.copyProperties(eto,user);
+        BeanUtils.copyProperties(eto, user);
         repository.saveOrUpdate(user);
-        UserVO.ListVO listVO = new  UserVO.ListVO();
-        BeanUtils.copyProperties(user,listVO);
+        UserVO.ListVO listVO = new UserVO.ListVO();
+        BeanUtils.copyProperties(user, listVO);
         return listVO;
     }
 }
