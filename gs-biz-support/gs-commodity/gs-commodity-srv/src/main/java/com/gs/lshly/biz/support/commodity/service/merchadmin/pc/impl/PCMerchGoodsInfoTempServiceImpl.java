@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -404,6 +405,8 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         //goodsInfo.setGoodsState(GoodsStateEnum.待审核.getCode());
         goodsInfo.setApplyType(1);
         goodsInfo.setFlag(false);
+        goodsInfo.setCdate(new Date());
+        goodsInfo.setUdate(new Date());
         switch (eto.getCtccMold()) {
             case 20:
                 goodsInfo.setIsPointGood(true);
