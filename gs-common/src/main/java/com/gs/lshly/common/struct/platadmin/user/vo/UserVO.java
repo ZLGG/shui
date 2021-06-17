@@ -129,6 +129,12 @@ public abstract class UserVO implements Serializable {
         @ApiModelProperty("年纪")
         private Integer age;
 
+        @ApiModelProperty("地区")
+        private String region;
+
+        @ApiModelProperty("积分")
+        private Integer pointBalance;
+
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime loginDate;
 
@@ -222,8 +228,11 @@ public abstract class UserVO implements Serializable {
 			}
 			return age;
 		}
-		 
-        
+
+        public String getRegion() {
+            return region;
+        }
+
     }
 
     @Data

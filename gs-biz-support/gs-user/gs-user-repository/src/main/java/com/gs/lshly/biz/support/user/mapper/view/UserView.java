@@ -34,6 +34,10 @@ public class UserView extends User {
      */
     private String shopName;
 
+    /**
+     * 积分
+     */
+    private Integer pointBalance;
 
 
 }

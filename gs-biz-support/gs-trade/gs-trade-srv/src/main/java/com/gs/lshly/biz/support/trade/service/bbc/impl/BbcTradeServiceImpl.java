@@ -949,7 +949,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 }
                 tradePointAmount = tradePointAmount.add(productData.getPointAmount().multiply(new BigDecimal(productData.getQuantity())));
 
-                totalPointAmount = totalPointAmount.add(tradePointAmount);
+                //totalPointAmount = totalPointAmount.add(tradePointAmount);
 
                 if ("gift".equals(productData.getGoodsSkuId())) {
                     continue;
@@ -2239,7 +2239,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             if (tradeGoods.getQuantity() != null)
                 quantity = quantity + tradeGoods.getQuantity();
 
-            //hanly 如果支付状态为待支付，根据时间判断，超过，关闭订单
+            //hanly 如果支付状态为待支付，根据时间判断，超过，关闭订单 todo 没有已关闭的状态 定时
             if (tradeVO.getTradeState().equals(TradeStateEnum.待支付.getCode())) {
                 String payDeadline = tradeVO.getCreateTime().plusMinutes(Common.PAYMENT_TIME_OUT).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String now = DateUtil.getTime();
