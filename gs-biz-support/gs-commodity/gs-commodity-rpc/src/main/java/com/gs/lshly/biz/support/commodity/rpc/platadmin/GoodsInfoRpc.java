@@ -53,14 +53,9 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     public GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto) {
 
         //
-        GoodsInfoVO.DetailVO detailVO;
-        if (goodsInfoTempService.isUpdateGoodInfo(dto.getId())) {
-            GoodsInfoDTO.IdDTO idDTO = new GoodsInfoDTO.IdDTO(dto.getId());
-            idDTO.setId(dto.getId());
-            detailVO = goodsInfoTempService.getGoodsDetail(idDTO);
-        } else {
-            detailVO = goodsInfoService.getGoodsDetail(dto);
-        }
+        GoodsInfoDTO.IdDTO idDTO = new GoodsInfoDTO.IdDTO(dto.getId());
+        idDTO.setId(dto.getId());
+        GoodsInfoVO.DetailVO detailVO = goodsInfoTempService.getGoodsDetail(idDTO);
         //商品扶贫信息
         /*GoodsFupinQTO.QTO qto = new GoodsFupinQTO.QTO();
         qto.setGoodsId(dto.getId());

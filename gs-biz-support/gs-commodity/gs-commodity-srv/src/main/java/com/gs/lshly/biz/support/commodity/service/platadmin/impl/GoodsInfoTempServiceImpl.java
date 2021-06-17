@@ -284,16 +284,21 @@ public class GoodsInfoTempServiceImpl implements IGoodsInfoTempService {
         GoodsServeCorTemp goodsServeCor = goodsServeCorTempRepository.getOne(query);
         if (ObjectUtil.isNotEmpty(goodsServeCor)) {
             List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-            List<GoodsServe> goodsServeList = goodsServeTempRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-            if (CollUtil.isNotEmpty(goodsServeList)) {
-                List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
-                for (GoodsServe goodsServe : goodsServeList) {
-                    GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
-                    BeanUtil.copyProperties(goodsServe, listVO);
-                    listVOS.add(listVO);
+            if(ObjectUtils.isNotEmpty(serveIdList)){
+                List<GoodsServe> goodsServeList = goodsServeTempRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+                if (CollUtil.isNotEmpty(goodsServeList)) {
+                    List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
+                    for (GoodsServe goodsServe : goodsServeList) {
+                        GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
+                        BeanUtil.copyProperties(goodsServe, listVO);
+                        listVOS.add(listVO);
+                    }
+                    detailVO.setGoodsServeList(listVOS);
                 }
-                detailVO.setGoodsServeList(listVOS);
+            }else {
+                detailVO.setGoodsServeList(new ArrayList<>());
             }
+
         }
         return detailVO;
     }

@@ -31,4 +31,6 @@ public interface IPCMerchGoodsServeRpc {
      * @return
      */
     List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(PCMerchGoodsServeDTO.IdDTO dto);
+
+    List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTempByGoodsId(PCMerchGoodsServeDTO.IdDTO dto);
 }

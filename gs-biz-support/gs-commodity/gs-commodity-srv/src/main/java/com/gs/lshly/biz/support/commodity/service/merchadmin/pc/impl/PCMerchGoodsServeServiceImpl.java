@@ -40,6 +40,9 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
     @Autowired
     private IGoodsServeCorRepository goodsServeCorRepository;
 
+    @Autowired
+    private IGoodsServeCorRepository goodsServeCorTempRepository;
+
     @Override
     public PageData<PCMerchGoodsServeVO.ListVO> pageGoodsServeData(PCMerchGoodsServeQTO.QTO qto) {
         QueryWrapper<GoodsServe> query = MybatisPlusUtil.query();
@@ -60,12 +63,45 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         if (ObjectUtil.isEmpty(goodsServeCor)) {
             return null;
         }
+        List<PCMerchGoodsServeVO.ListVO> listVOS = new ArrayList<>();
+        if(ObjectUtil.isEmpty(goodsServeCor.getServeId())){
+            return listVOS;
+        }
         List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
         List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
         if (CollUtil.isEmpty(goodsServeList)) {
             return null;
         }
+        for (GoodsServe goodsServe : goodsServeList) {
+            PCMerchGoodsServeVO.ListVO listVO = new PCMerchGoodsServeVO.ListVO();
+            BeanUtil.copyProperties(goodsServe, listVO);
+            listVOS.add(listVO);
+        }
+        return listVOS;
+    }
+
+    @Override
+    public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTemp(PCMerchGoodsServeDTO.IdDTO dto) {
+        if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
+            throw new BusinessException("参数不能为空！");
+        }
+        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
+        query.eq("goods_id", dto.getId());
+        GoodsServeCor goodsServeCor = goodsServeCorTempRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
+            return null;
+        }
         List<PCMerchGoodsServeVO.ListVO> listVOS = new ArrayList<>();
+        if(ObjectUtil.isEmpty(goodsServeCor.getServeId())){
+            return listVOS;
+        }
+        List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
+
+        List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
+        if (CollUtil.isEmpty(goodsServeList)) {
+            return null;
+        }
+
         for (GoodsServe goodsServe : goodsServeList) {
             PCMerchGoodsServeVO.ListVO listVO = new PCMerchGoodsServeVO.ListVO();
             BeanUtil.copyProperties(goodsServe, listVO);

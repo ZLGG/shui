@@ -17,4 +17,6 @@ public interface IPCMerchGoodsServeService {
     PageData<PCMerchGoodsServeVO.ListVO> pageGoodsServeData(PCMerchGoodsServeQTO.QTO qto);
 
     List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetail(PCMerchGoodsServeDTO.IdDTO dto);
+
+    List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTemp(PCMerchGoodsServeDTO.IdDTO dto);
 }

@@ -1127,8 +1127,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             String serveIds = sb.toString();
             if (StringUtils.isNotEmpty(serveIds)) {
                 goodsServeCor.setServeId(serveIds.substring(0, sb.length() - 1));
+                goodsServeCorRepository.save(goodsServeCor);
             }
-            goodsServeCorRepository.save(goodsServeCor);
         }
         // 建立商品以及sku与库存的关联
         PCMerchGoodsInfoDTO.AddGoodsETO eto = new PCMerchGoodsInfoDTO.AddGoodsETO();
