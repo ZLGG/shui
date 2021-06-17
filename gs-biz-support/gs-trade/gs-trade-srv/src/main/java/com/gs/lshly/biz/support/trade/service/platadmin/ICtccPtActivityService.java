@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.platadmin;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO.IdDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 
 import java.util.List;
@@ -80,4 +81,13 @@ public interface ICtccPtActivityService {
      * @param dto
      */
     void sortedGoods(CtccPtActivityDTO.SortedGoodsDTO dto);
+    
+    /**
+     * 修改类目
+     * @param dto
+     */
+    void modifyCategory(CtccPtActivityDTO.ModifyCategoryDTO dto);
+    
+    
+    void deleteCategory(IdDTO dto);
 }

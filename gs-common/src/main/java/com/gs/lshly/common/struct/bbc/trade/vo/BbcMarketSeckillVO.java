@@ -394,4 +394,35 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 		
 	}
 	
+	/**
+	 * 获取SKU列表
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年6月17日 下午12:07:08
+	 */
+	@Data
+	@ApiModel("BbcMarketSeckillVO.ListSkuVO")
+	@Accessors(chain = true)
+	public static class ListSkuVO implements Serializable {
+
+		@ApiModelProperty("SKUID")
+		private String skuId;
+		
+		@ApiModelProperty("秒杀价")
+		private BigDecimal seckillSaleSkuPrice;
+		
+		@ApiModelProperty("秒杀数量")
+		private Integer seckillQuantity;
+		
+		@ApiModelProperty("秒杀数量")
+		private Integer restrictQuantity;
+		
+		@ApiModelProperty("秒杀库存")
+		private Integer seckillInventory;
+		
+		@ApiModelProperty("销售数量")
+		private Integer saleQuantity;
+		
+	}
 }

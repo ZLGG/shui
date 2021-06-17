@@ -4,6 +4,8 @@ import com.gs.lshly.biz.support.trade.service.platadmin.ICtccPtActivityService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO.IdDTO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO.ModifyCategoryDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityRpc;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -74,4 +76,16 @@ public class CtccPtActivityRpc implements ICtccPtActivityRpc {
     public void modifyActivity(CtccPtActivityDTO.ModifyDTO modifyDTO) {
         ctccPtActivityService.modifyActivity(modifyDTO);
     }
+
+	@Override
+	public void modifyCategory(ModifyCategoryDTO dto) {
+		ctccPtActivityService.modifyCategory(dto);
+		
+	}
+
+	@Override
+	public void deleteCategory(IdDTO dto) {
+		ctccPtActivityService.deleteCategory(dto);
+		
+	}
 }

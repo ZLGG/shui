@@ -221,7 +221,7 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	}
 
 	@Override
-	public DetailVO detailSeckillGoodsInfo(IdDTO dto) {
+	public DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.SeckillIdDTO dto) {
 		return bbcGoodsInfoService.detailSeckillGoodsInfo(dto);
 	}
 

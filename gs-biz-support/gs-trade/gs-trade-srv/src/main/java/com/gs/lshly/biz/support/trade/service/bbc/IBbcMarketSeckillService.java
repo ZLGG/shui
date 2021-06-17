@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListSkuVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
 
 /**
@@ -77,4 +78,11 @@ public interface IBbcMarketSeckillService {
      * @return
      */
     PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoodsNew(BbcMarketSeckillQTO.QTO qto);
+    
+    /**
+     * 
+     * @param spuId
+     * @return
+     */
+    List<ListSkuVO> listSkuBySpuId(String spuId);
 }

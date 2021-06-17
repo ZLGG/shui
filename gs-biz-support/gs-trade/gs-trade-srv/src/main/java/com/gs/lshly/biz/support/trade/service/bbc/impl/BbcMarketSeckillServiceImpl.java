@@ -19,10 +19,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
+import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSku;
 import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSpu;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillGoodsSpuMapper;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillMapper;
 import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillTimeQuantumMapper;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSkuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSpuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
@@ -45,8 +47,10 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillTimeQuantum;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListSkuVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillGoodsVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
@@ -71,7 +75,9 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     @Autowired
     private MarketPtSeckillTimeQuantumMapper marketPtSeckillTimeQuantumMapper;
     
-
+    @Autowired
+    private IMarketPtSeckillGoodsSkuRepository marketPtSeckillGoodsSkuRepository;
+    
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
     @DubboReference
@@ -678,7 +684,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 
 	@Override
 	public SeckillDetailVO detailGoodsInfoNew(DetailQTO qto) {
-		BbcGoodsInfoVO.DetailVO detailVO = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(qto.getGoodsId()));
+		BbcGoodsInfoVO.DetailVO detailVO = iBbcGoodsInfoRpc.detailSeckillGoodsInfo(new BbcGoodsInfoDTO.SeckillIdDTO(qto.getGoodsId(),qto.getActivityId()));
 		BbcGoodsInfoVO.SeckillDetailVO seckillDetailVO = new BbcGoodsInfoVO.SeckillDetailVO();
 		
 		BeanCopyUtils.copyProperties(detailVO, seckillDetailVO);
@@ -721,6 +727,16 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		seckillDetailVO.setStatusText(MarketPtSeckillStatusEnum.getRemarkByCode(status));
 		seckillDetailVO.setSeckillEndTime(marketPtSeckill.getSeckillEndTime());
 		return seckillDetailVO;
+	}
+
+	@Override
+	public List<ListSkuVO> listSkuBySpuId(String spuId) {
+		List<ListSkuVO> retList = new ArrayList<ListSkuVO>();
+		QueryWrapper<MarketPtSeckillGoodsSku> query = MybatisPlusUtil.query();	//查询条件
+        query.eq("goods_spu_item_id",spuId);
+		List<MarketPtSeckillGoodsSku> list = marketPtSeckillGoodsSkuRepository.list(query);
+		retList = BeanUtils.copyList(ListSkuVO.class, list);
+		return retList;
 	}
 
 }

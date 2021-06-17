@@ -34,6 +34,8 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcGoodsInfoDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO.IdDTO;
+import com.gs.lshly.common.struct.platadmin.trade.dto.CtccPtActivityDTO.ModifyCategoryDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.ListUtil;
@@ -64,6 +66,8 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
     private CtccPtActivityImagesMapper imagesMapper;
     @Autowired
     private CtccCategoryMapper ctccCategoryMapper;
+    @Autowired
+    private ICtccCategoryRepository ctccCategoryRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -290,4 +294,42 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
             imagesMapper.insert(ctccPtActivityImages);
         });
     }
+
+	@Override
+	public void modifyCategory(ModifyCategoryDTO dto) {
+		
+		String id = dto.getId();
+		String name = dto.getName();
+		
+		QueryWrapper<CtccCategory> wrapper = MybatisPlusUtil.query();
+		wrapper.eq("name", name);
+		wrapper.ne("id", id);
+		CtccCategory ctccCategory = ctccCategoryMapper.selectOne(wrapper);
+		if(ctccCategory!=null)
+			throw new BusinessException("类目名称不能重复");
+		
+		ctccCategory = new CtccCategory()
+				.setId(dto.getId())
+                .setOperator(dto.getJwtUserId())
+                .setIdx(dto.getIdx())
+                .setImageUrl(dto.getImageUrl())
+                .setLevel(1)
+                .setName(dto.getName())
+                .setRemark(dto.getRemark())
+                .setSubject(SubjectEnum.电信国际.getCode())
+                .setTerminal(20);
+        repository.saveOrUpdate(ctccCategory);
+		
+	}
+
+	@Override
+	public void deleteCategory(IdDTO dto) {
+		UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
+		wrapper.set("categoryId", dto.getId());
+		List list = activityGoodsRepository.list(wrapper);
+		if (CollectionUtil.isNotEmpty(list))
+			throw new BusinessException("类目下有商品无法删除");
+		
+		ctccCategoryRepository.removeById(dto.getId());
+	}
 }

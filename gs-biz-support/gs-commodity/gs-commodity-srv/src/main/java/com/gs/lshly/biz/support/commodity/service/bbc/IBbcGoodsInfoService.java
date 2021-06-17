@@ -43,7 +43,7 @@ public interface IBbcGoodsInfoService {
      * @param dto
      * @return
      */
-    BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.IdDTO dto);
+    BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.SeckillIdDTO dto);
 
 
     /**
