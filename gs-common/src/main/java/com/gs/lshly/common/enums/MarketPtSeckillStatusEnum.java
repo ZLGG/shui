@@ -1,5 +1,7 @@
 package com.gs.lshly.common.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @Author Starry
  * @Date 16:07 2020/10/16
@@ -29,5 +31,15 @@ public enum MarketPtSeckillStatusEnum implements EnumMessage{
     @Override
     public String getRemark() {
         return remark;
+    }
+    
+    public static String getRemarkByCode(Integer code) {
+
+        for (MarketPtSeckillStatusEnum marketPtSeckillStatusEnum : MarketPtSeckillStatusEnum.values()) {
+            if (code.equals(marketPtSeckillStatusEnum.getCode())) {
+                return marketPtSeckillStatusEnum.remark;
+            }
+        }
+        return StringUtils.EMPTY;
     }
 }
