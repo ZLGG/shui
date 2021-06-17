@@ -169,7 +169,7 @@ public class TradePayServiceImpl implements ITradePayService {
         List<TradePayVO.RelationDetailVO> listVO=page.getRecords().parallelStream().map(i->{
             TradePayVO.RelationDetailVO relationDetailVO = new TradePayVO.RelationDetailVO();
             BeanUtils.copyProperties(i,relationDetailVO);
-            if (relationDetailVO.getPayState().equals(TradePayStateEnum.已支付)){
+            if (relationDetailVO.getPayState().equals(TradePayStateEnum.已支付.getCode())){
                 relationDetailVO.setFinishDate(i.getUdate());
             }else {
                 relationDetailVO.setFinishDate(null);
@@ -238,6 +238,7 @@ public class TradePayServiceImpl implements ITradePayService {
 
         if (ObjectUtils.isNotEmpty(mini)){
             detailVo.setUserName(mini.getUserName());
+            detailVo.setPhone(mini.getPhone());
         }
         return detailVo;
     }
