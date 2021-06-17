@@ -20,6 +20,7 @@ import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.biz.support.commodity.entity.*;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
+import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -42,15 +43,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsExtendParamsRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsServeCorRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
-import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
-import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
@@ -121,6 +113,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     @Autowired
     private ISkuGoodInfoRepository skuGoodInfoRepository;
     @Autowired
+    private ISkuGoodInfoTempRepository skuGoodInfoTempRepository;
+    @Autowired
     private IGoodsAttributeInfoService attributeInfoService;
     @Autowired
     private IGoodsExtendParamsService extendParamsService;
@@ -136,6 +130,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     private IPCMerchSkuGoodInfoService skuGoodInfoService;
     @Autowired
     private IGoodsTempalteRepository goodsTempalteRepository;
+    @Autowired
+    private IGoodsTempalteTempRepository goodsTempalteTempRepository;
     @Autowired
     private IGoodsShopNavigationRepository navigationRepository;
     @Autowired
@@ -214,23 +210,36 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             wrapperBoost.eq("gs.goods_state", qto.getGoodsState());
             if (qto.getGoodsState().intValue() == 10 || qto.getGoodsState().intValue() == 20) {
                 spuListVOIPage = goodsInfoMapper.getMerchantGoodsInfo(page, wrapperBoost);
+                if (ObjectUtils.isEmpty(spuListVOIPage)) {
+                    return new PageData<>();
+                }
+                for (PCMerchGoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
+                    //判断是否已经设置运费模板
+                    if (ObjectUtil.isNotEmpty(getHasTemplate(spuListVO.getId()))) {
+                        spuListVO.setTemplateName(getHasTemplate(spuListVO.getId()));
+                    }
+                    //填充商品库存数量
+                    spuListVO.setStockNumList(getStockNum(spuListVO.getId(), qto.getJwtShopId()));
+
+                    spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
+                }
             } else if (qto.getGoodsState().intValue() == 30 || qto.getGoodsState().intValue() == 40 || qto.getGoodsState().intValue() == 50) {
                 //info_temp表
                 spuListVOIPage = goodsInfoTempMapper.getMerchantGoodsInfoTemp(page, wrapperBoost);
-            }
-        }
-        if (ObjectUtils.isEmpty(spuListVOIPage)) {
-            return new PageData<>();
-        }
-        for (PCMerchGoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
-            //判断是否已经设置运费模板
-            if (ObjectUtil.isNotEmpty(getHasTemplate(spuListVO.getId()))) {
-                spuListVO.setTemplateName(getHasTemplate(spuListVO.getId()));
-            }
-            //填充商品库存数量
-            spuListVO.setStockNumList(getStockNum(spuListVO.getId(), qto.getJwtShopId()));
+                if (ObjectUtils.isEmpty(spuListVOIPage)) {
+                    return new PageData<>();
+                }
+                for (PCMerchGoodsInfoVO.SpuListVO spuListVO : spuListVOIPage.getRecords()) {
+                    //判断是否已经设置运费模板
+                    if (ObjectUtil.isNotEmpty(getHasTemplateTemp(spuListVO.getId()))) {
+                        spuListVO.setTemplateName(getHasTemplateTemp(spuListVO.getId()));
+                    }
+                    //填充商品库存数量
+                    spuListVO.setStockNumList(getStockNumTemp(spuListVO.getId(), qto.getJwtShopId()));
 
-            spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
+                    spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
+                }
+            }
         }
         return MybatisPlusUtil.toPageData(qto, PCMerchGoodsInfoVO.SpuListVO.class, spuListVOIPage);
     }
@@ -1096,6 +1105,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         template.setGoodsId(goodsInfo.getId());
         template.setTemplateId(editDetailVO.getTemplateId());
         template.setStockSubtractType(editDetailVO.getStockSubtractType());
+        template.setCdate(LocalDateTime.now());
+        template.setFlag(false);
         goodsTempalteRepository.save(template);
 
         //建立商品与店铺自定义类目的关联关系
@@ -2161,6 +2172,26 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
                 skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
                 skuStockNum.setStockNum(stockVO.getQuantity());
+                skuStockNum.setSkuId(skuGoodInfo.getId());
+                skuStockNums.add(skuStockNum);
+            }
+        }
+        return skuStockNums;
+    }
+
+    private List<PCMerchGoodsInfoVO.SkuStockNum> getStockNumTemp(String goodsId, String shopId) {
+        QueryWrapper<SkuGoodInfoTemp> boost = MybatisPlusUtil.query();
+        boost.eq("good_id", goodsId);
+        List<SkuGoodInfoTemp> skuGoodInfos = skuGoodInfoTempRepository.list(boost);
+        List<PCMerchGoodsInfoVO.SkuStockNum> skuStockNums = new ArrayList<>();
+        PCMerchGoodsInfoVO.SkuStockNum skuStockNum;
+        for (SkuGoodInfoTemp skuGoodInfo : skuGoodInfos) {
+            CommonStockVO.InnerStockVO stockVO = commonStockRpc.queryStockTemp(new BaseDTO(), shopId, skuGoodInfo.getId()).getData();
+            if (ObjectUtil.isNotEmpty(stockVO)) {
+                skuStockNum = new PCMerchGoodsInfoVO.SkuStockNum();
+                skuStockNum.setSpecsValue(skuGoodInfo.getSpecsValue());
+                skuStockNum.setStockNum(stockVO.getQuantity());
+                skuStockNum.setSkuId(skuGoodInfo.getId());
                 skuStockNums.add(skuStockNum);
             }
         }
@@ -2334,6 +2365,10 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     private String getHasTemplate(String goodsId) {
         return goodsTempalteRepository.baseMapper().getTemplateName(goodsId);
+    }
+
+    private String getHasTemplateTemp(String goodsId) {
+        return goodsTempalteTempRepository.baseMapper().getTemplateName(goodsId);
     }
 
     private void deleteSurplusAttribute

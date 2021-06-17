@@ -2,6 +2,8 @@ package com.gs.lshly.biz.support.commodity.repository;
 
 import com.gs.lshly.biz.support.commodity.entity.GoodsTempalteTemp;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteTempMapper;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IGoodsTempalteTempRepository extends IService<GoodsTempalteTemp> {
 
+    GoodsTempalteTempMapper baseMapper();
 }
