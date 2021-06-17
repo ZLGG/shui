@@ -949,7 +949,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 }
                 tradePointAmount = tradePointAmount.add(productData.getPointAmount()/*.multiply(new BigDecimal(productData.getQuantity()))*/);
 
-                totalPointAmount = totalPointAmount.add(tradePointAmount);
+                //totalPointAmount = totalPointAmount.add(tradePointAmount);
 
                 if ("gift".equals(productData.getGoodsSkuId())) {
                     continue;
@@ -993,7 +993,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 //商品应该付的积分值
                 realTradePointAmount = realTradePointAmount.add((innerServiceGoodsVO.getPointPrice()).multiply(new BigDecimal(productData.getQuantity() + "")));
             }
-
+            totalPointAmount = totalPointAmount.add(tradePointAmount);
             //shopData.setShopProductAmount(shopProductAmount);
             /**计算运费
              BigDecimal deliveryAmount = BigDecimal.ZERO; //运费
