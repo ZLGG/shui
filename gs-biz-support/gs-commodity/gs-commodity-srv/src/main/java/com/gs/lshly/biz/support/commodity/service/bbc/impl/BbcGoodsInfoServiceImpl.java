@@ -87,6 +87,7 @@ import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
 import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
@@ -674,6 +675,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @Override
     public BbcSkuGoodInfoVO.SkuVO getSkuVO(BbcGoodsInfoQTO.GoodsSkuQTO qto) {
+    	
+    	//判断当前商品是否参于正在进行的活动中
+    	
+    	
         if (StringUtils.isEmpty(qto.getGoodsId())) {
             throw new BusinessException("参数不能为空！");
         }
@@ -688,6 +693,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
             //传个来的参数
             List<String> specValue2 = Arrays.asList(qto.getSpecValues().split(","));
 
+            BbcMarketSeckillDTO.SeckillSkuDTO dto = null;
             for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
                 String[] specArr = skuGoodInfo.getSpecsValue().split(",");
                 List<String> specValue = new ArrayList<>();
@@ -700,29 +706,59 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                     //获取相关规格数据
                     BeanUtils.copyProperties(skuGoodInfo, skuVO);
                     skuVO.setSkuId(skuGoodInfo.getId());
-                    skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
                     skuVO.setSpecValue(skuGoodInfo.getSpecsValue());
                     skuVO.setSkuStock(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
 
-                    //获取库存数
-                    Integer quantity = bbcStockRpc.getQuantity(skuGoodInfo.getId());
-                    if (quantity == null || quantity.equals(0)) {
-                        skuVO.setIsBuy(0);
-                        skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
-                    }
+                    if(StringUtils.isNotEmpty(qto.getActivityId())){
+	                    dto = new BbcMarketSeckillDTO.SeckillSkuDTO();
+	                    dto.setGoodsId(dto.getGoodsId());
+	                    dto.setSkuId(skuGoodInfo.getId());
+	                    dto.setTimeQuantumId(qto.getActivityId());
+	                    BbcMarketSeckillVO.ListSkuVO listSkuVO = bbcMarketSeckillRpc.getSeckillSku(dto);
+                    
+	                    if (listSkuVO.getSeckillInventory() == null || listSkuVO.getSeckillInventory().equals(0)) {
+	                    	skuVO.setIsBuy(0);
+	                    	skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
+	                    }
 
-                    if (!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())) {
-                        skuVO.setIsBuy(0);
-                        skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
-                    }
-                    if(skuGoodInfo.getIsPointGood()){
-	                    if(skuGoodInfo.getPointPrice()!=null){
-	                    	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+	                    if (!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())) {
+	                        skuVO.setIsBuy(0);
+	                        skuVO.setBuyRemark(MarketPtSeckillGoodsSkuStateEnum.getRemarkByCode(skuGoodInfo.getState()));
 	                    }
-	                    if(skuGoodInfo.getInMemberPointPrice()!=null){
-	                    	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+	                    
+	                    if(skuGoodInfo.getIsPointGood()){
+	                        if(skuGoodInfo.getPointPrice()!=null){
+	                        	skuVO.setPointPrice(listSkuVO.getSeckillSaleSkuPrice().doubleValue());
+	                        }
+	                        if(skuGoodInfo.getInMemberPointPrice()!=null){
+	                        	skuVO.setInMemberPointPrice(listSkuVO.getSeckillSaleSkuPrice().doubleValue());
+	                        }
 	                    }
+	                    
+                    }else{
+                    	
+                    	skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
+                        //获取库存数
+                        Integer quantity = bbcStockRpc.getQuantity(skuGoodInfo.getId());
+                        if (quantity == null || quantity.equals(0)) {
+                            skuVO.setIsBuy(0);
+                            skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
+                        }
+
+                        if (!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())) {
+                            skuVO.setIsBuy(0);
+                            skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
+                        }
+                        if(skuGoodInfo.getIsPointGood()){
+    	                    if(skuGoodInfo.getPointPrice()!=null){
+    	                    	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+    	                    }
+    	                    if(skuGoodInfo.getInMemberPointPrice()!=null){
+    	                    	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+    	                    }
+                        }
                     }
+                    
                     break;
                 }
             }

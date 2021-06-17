@@ -3,6 +3,7 @@ package com.gs.lshly.common.struct.bbc.trade.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -424,5 +425,91 @@ public abstract class BbcMarketSeckillVO implements Serializable {
 		@ApiModelProperty("销售数量")
 		private Integer saleQuantity;
 		
+	}
+	
+	@Data
+	@ApiModel("BbcMarketSeckillVO.SeckillSpuVO")
+	@Accessors(chain = true)
+	public static class SeckillSpuVO implements Serializable {
+		/**
+	     * id
+	     */
+	    private String id;
+	    /**
+	     * 是否被选中
+	     */
+	    private Integer choose;
+
+	    /**
+	     * 秒杀id
+	     */
+	    private String seckillId;
+
+	    /**
+	     * 活动场次Id
+	     */
+	    private String timeQuantumId;
+	    /**
+	     * 店铺ID
+	     */
+	    private String shopId;
+
+	    /**
+	     * 商家ID
+	     */
+	    private String merchantId;
+
+	    /**
+	     * 商品类型
+	     */
+	    private Integer goodsType;
+
+	    private BigDecimal seckillSalePrice;
+
+	    /**
+	     * 秒杀名称
+	     */
+	    private String name;
+
+	    /**
+	     * 标签
+	     */
+	    private String label;
+
+	    /**
+	     * 描述
+	     */
+	    private String seckillDescribe;
+
+	    /**
+	     * 商品ID
+	     */
+	    private String goodsId;
+
+	    /**
+	     * 商品名称
+	     */
+	    private String goodsName;
+
+	    /**
+	     * 品牌id
+	     */
+	    private String brandId;
+
+	    /**
+	     * 类目id
+	     */
+	    private String categoryId;
+
+
+	    /**
+	     * 积分金额
+	     */
+	    private BigDecimal seckillPointPrice;
+
+	    /**
+	     * IN会员秒杀价格
+	     */
+	    private BigDecimal seckillInMemberPointPrice;
 	}
 }

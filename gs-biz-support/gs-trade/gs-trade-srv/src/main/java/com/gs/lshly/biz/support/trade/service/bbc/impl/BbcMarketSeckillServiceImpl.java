@@ -40,6 +40,7 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.SeckillSkuDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.DetailQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
@@ -49,6 +50,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListSkuVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillGoodsVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillSpuVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.DateUtils;
@@ -742,6 +744,23 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		List<MarketPtSeckillGoodsSku> list = marketPtSeckillGoodsSkuRepository.list(query);
 		retList = BeanUtils.copyList(ListSkuVO.class, list);
 		return retList;
+	}
+
+	@Override
+	public ListSkuVO getSeckillSku(SeckillSkuDTO dto) {
+		ListSkuVO vo = new ListSkuVO();
+		QueryWrapper<MarketPtSeckillGoodsSpu> query = MybatisPlusUtil.query();	//查询条件
+        query.eq("time_quantum_id",dto.getTimeQuantumId());
+		query.eq("goods_id", dto.getGoodsId());
+        MarketPtSeckillGoodsSpu marketPtSeckillGoodsSpu = marketPtSeckillGoodsSpuRepository.getOne(query);
+        if(marketPtSeckillGoodsSpu!=null){
+        	QueryWrapper<MarketPtSeckillGoodsSku> query1 = MybatisPlusUtil.query();	//查询条件
+        	query1.eq("goods_spu_item_id",marketPtSeckillGoodsSpu.getId());
+        	query1.eq("sku_id", dto.getSkuId());
+            MarketPtSeckillGoodsSku marketPtSeckillGoodsSku = marketPtSeckillGoodsSkuRepository.getOne(query1);
+            BeanCopyUtils.copyProperties(marketPtSeckillGoodsSku, vo);
+        }
+		return vo;
 	}
 
 }

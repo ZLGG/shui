@@ -80,4 +80,11 @@ public interface IBbcMarketSeckillRpc {
      * @return
      */
     List<BbcMarketSeckillVO.ListSkuVO> listSkuBySpuId(String spuId);
+    
+    /**
+     * 查询秒杀SKU
+     * @param dto
+     * @return
+     */
+    BbcMarketSeckillVO.ListSkuVO getSeckillSku(BbcMarketSeckillDTO.SeckillSkuDTO dto);
 }

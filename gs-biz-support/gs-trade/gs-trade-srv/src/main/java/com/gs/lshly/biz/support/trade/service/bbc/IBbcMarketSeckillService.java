@@ -6,13 +6,11 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
-import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.SeckillSkuDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketActivityVO.SeckillHome;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListSkuVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillPointHome;
 
 /**
  * 秒杀首页
@@ -85,4 +83,12 @@ public interface IBbcMarketSeckillService {
      * @return
      */
     List<ListSkuVO> listSkuBySpuId(String spuId);
+    
+    /**
+     * 
+     * @param dto
+     * @return
+     */
+    ListSkuVO getSeckillSku(SeckillSkuDTO dto) ;
+    
 }
