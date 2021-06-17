@@ -11,6 +11,7 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SeckillDetailVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.DTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcMarketSeckillDTO.SeckillSkuDTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.DetailQTO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcMarketSeckillQTO.QTO;
@@ -20,6 +21,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckil
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListSkuVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillGoodsVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillIngVO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillSpuVO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
 
 /**
@@ -78,6 +80,11 @@ public class BbcMarketSeckillRpc implements IBbcMarketSeckillRpc {
 	@Override
 	public List<ListSkuVO> listSkuBySpuId(String spuId) {
 		return bbcMarketSeckillService.listSkuBySpuId(spuId) ;
+	}
+
+	@Override
+	public ListSkuVO getSeckillSku(SeckillSkuDTO dto) {
+		return bbcMarketSeckillService.getSeckillSku(dto);
 	}
 
 }

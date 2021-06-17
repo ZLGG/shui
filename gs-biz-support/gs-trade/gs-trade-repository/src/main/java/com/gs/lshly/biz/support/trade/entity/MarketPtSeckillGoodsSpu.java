@@ -1,16 +1,14 @@
 package com.gs.lshly.biz.support.trade.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.util.Date;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

@@ -162,6 +162,9 @@ public abstract class BbcGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty(value = "规格值")
         private String specValues;
+        
+        @ApiModelProperty(value = "参于的活动ID")
+        private String activityId;
 
     }
 
