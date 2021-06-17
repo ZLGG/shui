@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.repository.impl;
 
 import com.gs.lshly.biz.support.commodity.entity.GoodsTempalteTemp;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteTempMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteTempRepository;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,5 +17,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GoodsTempalteTempRepositoryImpl extends ServiceImpl<GoodsTempalteTempMapper, GoodsTempalteTemp> implements IGoodsTempalteTempRepository {
-
+    @Override
+    public GoodsTempalteTempMapper baseMapper() {
+        return super.getBaseMapper();
+    }
 }
