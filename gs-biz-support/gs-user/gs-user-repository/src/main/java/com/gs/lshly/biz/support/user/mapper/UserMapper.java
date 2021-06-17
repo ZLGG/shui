@@ -22,11 +22,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper extends BaseMapper<User> {
 
-    @Select("SELECT distinct us.*, tm.*,shop.id shop_id,shop.shop_name FROM gs_user us LEFT JOIN (" +
+    @Select("SELECT distinct us.*, tm.*,shop.id shop_id,shop.shop_name,point.point_balance FROM gs_user us LEFT JOIN (" +
             "SELECT ul.user_id,GROUP_CONCAT(dict.label_name) label_names ,GROUP_CONCAT(ul.label_id) label_ids,GROUP_CONCAT(dict.label_color) colors FROM gs_user_label ul " +
             "LEFT JOIN gs_user_label_dict dict ON ul.label_id = dict.id WHERE dict.flag= 0 " +
             "GROUP BY ul.user_id) tm ON us.id = tm.user_id " +
             "LEFT JOIN gs_shop shop ON us.from_shop_id = shop.id " +
+            "LEFT JOIN gs_user_ctcc_point point ON us.id = point.user_id " +
             "where us.flag=0 and ${ew.sqlSegment}")
     IPage<UserView> pageList(IPage<UserView> page, @Param(value = "ew") QueryWrapper<UserView> qw);
 
