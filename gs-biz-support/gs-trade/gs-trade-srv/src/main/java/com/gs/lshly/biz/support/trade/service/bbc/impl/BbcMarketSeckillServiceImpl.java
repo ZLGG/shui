@@ -684,10 +684,8 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 
 	@Override
 	public SeckillDetailVO detailGoodsInfoNew(DetailQTO qto) {
-		BbcGoodsInfoVO.DetailVO detailVO = iBbcGoodsInfoRpc.detailSeckillGoodsInfo(new BbcGoodsInfoDTO.SeckillIdDTO(qto.getGoodsId(),qto.getActivityId()));
-		BbcGoodsInfoVO.SeckillDetailVO seckillDetailVO = new BbcGoodsInfoVO.SeckillDetailVO();
 		
-		BeanCopyUtils.copyProperties(detailVO, seckillDetailVO);
+		
 		
 		//查询对应的秒杀状态
 		//跟据产品id查询对应的
@@ -695,6 +693,13 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		marketPtSeckillGoodsSpuQueryWrapper.eq("goods_id",qto.getGoodsId());
         marketPtSeckillGoodsSpuQueryWrapper.eq("time_quantum_id",qto.getActivityId());
 		MarketPtSeckillGoodsSpu marketPtSeckillGoodsSpu = marketPtSeckillGoodsSpuMapper.selectOne(marketPtSeckillGoodsSpuQueryWrapper);
+		
+		BbcGoodsInfoVO.DetailVO detailVO = iBbcGoodsInfoRpc.detailSeckillGoodsInfo(new BbcGoodsInfoDTO.SeckillIdDTO(qto.getGoodsId(),marketPtSeckillGoodsSpu.getId()));
+		BbcGoodsInfoVO.SeckillDetailVO seckillDetailVO = new BbcGoodsInfoVO.SeckillDetailVO();
+		
+		BeanCopyUtils.copyProperties(detailVO, seckillDetailVO);
+		
+		
 		seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
 		if(seckillDetailVO.getIsInMemberGift()){
 			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());

@@ -51,6 +51,7 @@ import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
 import com.gs.lshly.common.enums.InUserCouponPriceEnum;
 import com.gs.lshly.common.enums.MallCategoryEnum;
+import com.gs.lshly.common.enums.MarketPtSeckillGoodsSkuStateEnum;
 import com.gs.lshly.common.enums.OrderByConditionEnum;
 import com.gs.lshly.common.enums.OrderByTypeEnum;
 import com.gs.lshly.common.enums.QueryIntegralGoodsEnum;
@@ -1181,7 +1182,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
      * @param goodsInfo
      * @return
      */
-    private List<BbcSkuGoodInfoVO.SkuVO> getSeckillSkuList(String marketPtSeckillGoodsSpuId,Integer isSingle) {
+    private List<BbcSkuGoodInfoVO.SkuVO> getSeckillSkuList(String marketPtSeckillGoodsSpuId) {
         
         List<BbcMarketSeckillVO.ListSkuVO> skuList = bbcMarketSeckillRpc.listSkuBySpuId(marketPtSeckillGoodsSpuId);
         
@@ -1191,11 +1192,11 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         for (BbcMarketSeckillVO.ListSkuVO listSkuVO : skuList) {
             BbcSkuGoodInfoVO.SkuVO skuVO = new BbcSkuGoodInfoVO.SkuVO();
             
-            SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getById(skuVO.getSkuId());
-            
+            SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getById(listSkuVO.getSkuId());
+            BeanCopyUtils.copyProperties(skuGoodInfo, skuVO);
             Integer seckillInventory = listSkuVO.getSeckillInventory();
             
-            skuVO.setSkuId(skuVO.getSkuId());
+            skuVO.setSkuId(listSkuVO.getSkuId());
             skuVO.setSkuGoodsNo(skuGoodInfo.getSkuGoodsNo());
             skuVO.setSkuStock(seckillInventory);
             skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
@@ -1210,15 +1211,15 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
             if (!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())) {
                 skuVO.setIsBuy(0);
-                skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
+                skuVO.setBuyRemark(MarketPtSeckillGoodsSkuStateEnum.getRemarkByCode(skuGoodInfo.getState()));
             }
             
             if(skuGoodInfo.getIsPointGood()){
                 if(skuGoodInfo.getPointPrice()!=null){
-                	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+                	skuVO.setPointPrice(listSkuVO.getSeckillSaleSkuPrice().doubleValue());
                 }
                 if(skuGoodInfo.getInMemberPointPrice()!=null){
-                	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+                	skuVO.setInMemberPointPrice(listSkuVO.getSeckillSaleSkuPrice().doubleValue());
                 }
             }
             
@@ -1976,7 +1977,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         BeanUtils.copyProperties(goodsInfo, detailVo);
         detailVo.setGoodsId(goodsInfo.getId());
 
-        BbcSkuGoodInfoVO.SkuVO skuVO = null;//getSeckillSkuList(dto).get(0);
+        BbcSkuGoodInfoVO.SkuVO skuVO = getSeckillSkuList(dto.getMarketPtSeckillGoodsSpuId()).get(0);
         //若是多规格填充默认规格信息
         //获取默认规格商品信息
         detailVo.setSkuVO(skuVO);
@@ -1992,9 +1993,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
 
         //填充spec规格列表信息
-        if (ObjectUtils.isNotEmpty(getSpecInfoVO(goodsInfo))) {
-            detailVo.setSpecListVOS(getSpecInfoVO(goodsInfo));
-        }
+        detailVo.setSpecListVOS(getSpecInfoVO(goodsInfo));
 
         //获取店铺信息
         BbcGoodsInfoVO.GoodsShopDetailVO shopDetailVO = shopDetailVO(goodsInfo.getShopId());
@@ -2013,16 +2012,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         //获取商品销售数量
         Integer saleQuantity = tradeRpc.getSaleQuantity(dto.getId());
         detailVo.setSaleQuantity(saleQuantity);
-//        //获取积分兑换数量
-//        Integer exchangeQuantity = tradeRpc.getSaleQuantity(dto.getId(),GoodsSourceTypeEnum.积分商品.getCode());
-//        detailVo.setExchangeQuantity(exchangeQuantity);
 
-        /**获取用户默认收货地址
-         BbcStockAddressVO.DetailVO defaultAddresslVO = stockAddressRpc.innerGetDefault(new BaseDTO(), StockAddressTypeEnum.收货.getCode());
-         if (defaultAddresslVO != null) {
-         detailVo.setUserDefaultAddress((StringUtils.isNotEmpty(defaultAddresslVO.getProvince()) ? defaultAddresslVO.getProvince() : "") + (StringUtils.isNotEmpty(defaultAddresslVO.getCity()) ? defaultAddresslVO.getCity() : "") + (StringUtils.isNotEmpty(defaultAddresslVO.getCounty()) ? defaultAddresslVO.getCity() : ""));
-         }
-         **/
         //店铺客服信息
         BaseDTO baseDTO = new BaseDTO();
         baseDTO.setJwtShopId(goodsInfo.getShopId());
