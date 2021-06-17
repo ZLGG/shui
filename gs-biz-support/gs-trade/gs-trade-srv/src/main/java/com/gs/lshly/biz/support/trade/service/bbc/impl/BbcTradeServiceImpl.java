@@ -947,9 +947,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 } else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
                     throw new BusinessException("商品已下架");
                 }
-                tradePointAmount = tradePointAmount.add(productData.getPointAmount().multiply(new BigDecimal(productData.getQuantity())));
+                tradePointAmount = tradePointAmount.add(productData.getPointAmount()/*.multiply(new BigDecimal(productData.getQuantity()))*/);
 
-                //totalPointAmount = totalPointAmount.add(tradePointAmount);
+                totalPointAmount = totalPointAmount.add(tradePointAmount);
 
                 if ("gift".equals(productData.getGoodsSkuId())) {
                     continue;
