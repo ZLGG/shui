@@ -120,6 +120,18 @@ public abstract class BbcGoodsInfoDTO implements Serializable {
         private String id;
     }
     
+    @Data
+    @EqualsAndHashCode(callSuper=false)
+    @ApiModel("BbcGoodsInfoDTO.SeckillIdDTO")
+    @AllArgsConstructor
+    public static class SeckillIdDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "商品id")
+        private String id;
+        
+        @ApiModelProperty(value = "秒杀活动spu表ID")
+        private String marketPtSeckillGoodsSpuId;
+    }
     
     /**
      * 跟据商品分类查询商品信息，并指字商品数量

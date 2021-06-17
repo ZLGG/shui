@@ -69,6 +69,22 @@ public class CtccPtActivityController {
         iCtccPtActivityRpc.addCategory(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
+    
+    @ApiOperation("电信国际类目-修改")
+    @PostMapping("/modifyCategory")
+    @Func(code = "modify",name = "改")
+    public ResponseData modifyCategory(@RequestBody CtccPtActivityDTO.ModifyCategoryDTO dto) {
+        iCtccPtActivityRpc.modifyCategory(dto);
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
+    
+    @ApiOperation("电信国际类目-删除")
+    @PostMapping("/deleteCategory")
+    @Func(code = "delete",name = "删")
+    public ResponseData deleteCategory(@RequestBody CtccPtActivityDTO.IdDTO dto) {
+        iCtccPtActivityRpc.deleteCategory(dto);
+        return ResponseData.success(MsgConst.DELETE_SUCCESS);
+    }
 
     @ApiOperation("电信国际类目-新增类目商品")
     @PostMapping("/addCategoryGoods")

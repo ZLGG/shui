@@ -35,6 +35,7 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
+import com.gs.lshly.middleware.sms.IAliSMSService;
 import com.gs.lshly.middleware.sms.ISMSService;
 
 import cn.hutool.core.util.StrUtil;
@@ -67,7 +68,7 @@ public class SysUserServiceImpl implements ISysUserService {
     private ISysFuncRepository funcRepository;
     
     @Autowired
-    private ISMSService smsService;
+    private IAliSMSService aliSMSService;
     
     @Autowired
     private RedisUtil redisUtil;
@@ -230,7 +231,15 @@ public class SysUserServiceImpl implements ISysUserService {
         String validCode = null;
         try {
             if (user != null) {
-                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+//                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+                
+                validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+                
+                Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+            	if(!flag){
+            		 throw new BusinessException("短信发送失败!");
+            	}
+            	
             } else {
             	throw new BusinessException("跟据手机号码未获取到对应帐号");
             }

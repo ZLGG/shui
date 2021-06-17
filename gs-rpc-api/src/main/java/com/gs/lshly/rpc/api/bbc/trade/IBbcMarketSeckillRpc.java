@@ -74,5 +74,10 @@ public interface IBbcMarketSeckillRpc {
      */
     PageData<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoodsNew(BbcMarketSeckillQTO.QTO qto);
     
-    
+    /**
+     * 跟据SPUID查询sku列表
+     * @param spuId
+     * @return
+     */
+    List<BbcMarketSeckillVO.ListSkuVO> listSkuBySpuId(String spuId);
 }

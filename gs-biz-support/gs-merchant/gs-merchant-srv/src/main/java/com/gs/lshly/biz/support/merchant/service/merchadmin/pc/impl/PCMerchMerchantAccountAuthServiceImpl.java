@@ -1,5 +1,12 @@
 package com.gs.lshly.biz.support.merchant.service.merchadmin.pc.impl;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.merchant.entity.MerchantAccount;
@@ -25,14 +32,10 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
+import com.gs.lshly.middleware.sms.IAliSMSService;
 import com.gs.lshly.middleware.sms.ISMSService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * <p>
@@ -61,6 +64,9 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     @Autowired
     private ISMSService smsService;
 
+    @Autowired
+    private IAliSMSService aliSMSService;
+    
     @Autowired
     private RedisUtil redisUtil;
 
@@ -177,8 +183,24 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
 
     @Override
     public void getPhoneValidCode(CommonPhoneLoginDTO.GetPhoneValidCode dto) {
-        //查询账号手机，如果有多个一样的手机则无法用手机号登陆
-    	smsService.sendLoginSMSCode(dto.getPhone());
+        String validCode = null;
+        try {
+//                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+                
+            validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+            
+            Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+        	if(!flag){
+        		 throw new BusinessException("短信发送失败!");
+        	}
+            	
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
+        }
+        //验证码失效时间10分账
+        log.info("运营平台跟据手机号码获取验证码登录-手机号码："+dto.getPhone()+"-验证码："+validCode);
+        redisUtil.set(PhoneValidCodeGroup + dto.getPhone(), validCode, 10 * 60);
     }
 
     @Override

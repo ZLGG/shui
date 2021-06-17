@@ -141,10 +141,48 @@ public class CtccPtActivityDTO implements Serializable {
 
     }
 
+    /**
+	 * 修改排序
+	 *
+	 * 
+	 * @author yingjun
+	 * @date 2021年6月10日 下午3:44:41
+	 */
+	@Data
+    @ApiModel("CtccPtActivityDTO.IdDTO")
+    public static class IdDTO implements Serializable {
+        
+		@ApiModelProperty("类目ID")
+        private String id;
+
+    }
+	
     @Data
     @ApiModel("CtccPtActivityDTO.AddCategoryDTO")
     public static class AddCategoryDTO extends BaseDTO {
         @ApiModelProperty("类目名称")
+        @NotBlank(message = "类目名称不能为空")
+        private String name;
+
+        @ApiModelProperty("排序")
+        private Integer idx;
+
+        @ApiModelProperty("封面图")
+        private String imageUrl;
+
+        @ApiModelProperty("备注")
+        private String remark;
+    }
+    
+    @Data
+    @ApiModel("CtccPtActivityDTO.ModifyCategoryDTO")
+    public static class ModifyCategoryDTO extends BaseDTO {
+        
+    	@ApiModelProperty("类目ID")
+        @NotBlank(message = "类目ID不能为空")
+        private String id;
+
+    	@ApiModelProperty("类目名称")
         @NotBlank(message = "类目名称不能为空")
         private String name;
 

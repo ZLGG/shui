@@ -87,6 +87,7 @@ import com.gs.lshly.common.struct.bbc.foundation.vo.BbcSiteAdvertVO;
 import com.gs.lshly.common.struct.bbc.merchant.qto.BbcShopQTO;
 import com.gs.lshly.common.struct.bbc.merchant.vo.BbcShopVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeRightsVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCtccPointVO;
@@ -107,6 +108,7 @@ import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserFavoritesGoodsRpc;
@@ -201,6 +203,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @DubboReference
     private IBbcStockRpc bbcStockRpc;
+    
+    @DubboReference
+    private IBbcMarketSeckillRpc bbcMarketSeckillRpc;
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
@@ -382,7 +387,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         GoodsInfo goodsInfo = repository.getById(dto.getId());
         if (ObjectUtils.isEmpty(goodsInfo)) {
-            throw new BusinessException("数据异常");
+            throw new BusinessException("商品过期或不存在");
         }
 //        if(!goodsInfo.getGoodsState().equals(20)){
 //        	throw new BusinessException("商品未上架");
@@ -1170,6 +1175,57 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
         return skuVOS;
     }
+    
+    /**
+     * 获取秒杀的SKU列表
+     * @param goodsInfo
+     * @return
+     */
+    private List<BbcSkuGoodInfoVO.SkuVO> getSeckillSkuList(String marketPtSeckillGoodsSpuId,Integer isSingle) {
+        
+        List<BbcMarketSeckillVO.ListSkuVO> skuList = bbcMarketSeckillRpc.listSkuBySpuId(marketPtSeckillGoodsSpuId);
+        
+        
+        List<BbcSkuGoodInfoVO.SkuVO> skuVOS = new ArrayList<>();
+        
+        for (BbcMarketSeckillVO.ListSkuVO listSkuVO : skuList) {
+            BbcSkuGoodInfoVO.SkuVO skuVO = new BbcSkuGoodInfoVO.SkuVO();
+            
+            SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getById(skuVO.getSkuId());
+            
+            Integer seckillInventory = listSkuVO.getSeckillInventory();
+            
+            skuVO.setSkuId(skuVO.getSkuId());
+            skuVO.setSkuGoodsNo(skuGoodInfo.getSkuGoodsNo());
+            skuVO.setSkuStock(seckillInventory);
+            skuVO.setSkuSalePrice(skuGoodInfo.getSalePrice());
+            skuVO.setSpecValue(StringUtils.isEmpty(skuGoodInfo.getSpecsValue()) ? "" : skuGoodInfo.getSpecsValue());
+            skuVO.setImage(StringUtils.isBlank(skuGoodInfo.getImage()) ? "" : skuGoodInfo.getImage());
+
+            
+            if (seckillInventory == null || seckillInventory.equals(0)) {
+                skuVO.setIsBuy(0);
+                skuVO.setBuyRemark(GoodsBuyRemarkEnum.库存不足.getRemark());
+            }
+
+            if (!(skuGoodInfo.getState()).equals(GoodsStateEnum.已上架.getCode())) {
+                skuVO.setIsBuy(0);
+                skuVO.setBuyRemark(GoodsBuyRemarkEnum.getRemark(skuGoodInfo.getState()));
+            }
+            
+            if(skuGoodInfo.getIsPointGood()){
+                if(skuGoodInfo.getPointPrice()!=null){
+                	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
+                }
+                if(skuGoodInfo.getInMemberPointPrice()!=null){
+                	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
+                }
+            }
+            
+            skuVOS.add(skuVO);
+        }
+        return skuVOS;
+    }
 
     private List<BbcGoodsSpecInfoVO.SpecListVO> getSpecInfoVO(GoodsInfo goodsInfo) {
         QueryWrapper<SkuGoodInfo> queryWrapperBoost = MybatisPlusUtil.query();
@@ -1890,16 +1946,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 		return null;
 	}
 
-	
+	/**
+	 * 秒杀详情页
+	 */
 	@Override
-    public BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.IdDTO dto) {
+    public BbcGoodsInfoVO.DetailVO detailSeckillGoodsInfo(BbcGoodsInfoDTO.SeckillIdDTO dto) {
 
         if (dto == null) {
             throw new BusinessException("参数不能为空！");
         }
         GoodsInfo goodsInfo = repository.getById(dto.getId());
         if (ObjectUtils.isEmpty(goodsInfo)) {
-            throw new BusinessException("数据异常");
+            throw new BusinessException("商品过期或不存在");
         }
         BbcGoodsInfoVO.DetailVO detailVo = new BbcGoodsInfoVO.DetailVO();
         fillUserType(detailVo, dto);
@@ -1918,7 +1976,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         BeanUtils.copyProperties(goodsInfo, detailVo);
         detailVo.setGoodsId(goodsInfo.getId());
 
-        BbcSkuGoodInfoVO.SkuVO skuVO = getSkuList(goodsInfo).get(0);
+        BbcSkuGoodInfoVO.SkuVO skuVO = null;//getSeckillSkuList(dto).get(0);
         //若是多规格填充默认规格信息
         //获取默认规格商品信息
         detailVo.setSkuVO(skuVO);

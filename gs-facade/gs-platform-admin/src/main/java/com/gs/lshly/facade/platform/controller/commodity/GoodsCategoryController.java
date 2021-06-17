@@ -1,10 +1,28 @@
 package com.gs.lshly.facade.platform.controller.commodity;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.ExportDataDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.*;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsAttributeDictionaryDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsParamsDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsSpecDictionaryDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsCategoryQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
 import com.gs.lshly.common.utils.ExcelUtil;
@@ -12,15 +30,10 @@ import com.gs.lshly.middleware.auth.rbac.Func;
 import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsParamsRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * @Author Starry

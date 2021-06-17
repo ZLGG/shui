@@ -18,7 +18,7 @@ public interface ICtccPtActivityRpc {
      * @param addDTO
      */
     void addActivity(CtccPtActivityDTO.AddDTO addDTO);
-
+    
     /**
      * 修改活动
      * @param modifyDTO
@@ -43,6 +43,12 @@ public interface ICtccPtActivityRpc {
      * @param dto
      */
     void addCategory(CtccPtActivityDTO.AddCategoryDTO dto);
+    
+    /**
+     * 修改电信国际类目
+     * @param modifyCategoryDTO
+     */
+    void modifyCategory(CtccPtActivityDTO.ModifyCategoryDTO dto);
 
     /**
      * 添加电信国际类目下商品
@@ -81,4 +87,7 @@ public interface ICtccPtActivityRpc {
      * @param dto
      */
     void sortedGoods(CtccPtActivityDTO.SortedGoodsDTO dto);
+    
+    
+    void deleteCategory(CtccPtActivityDTO.IdDTO dto);
 }
