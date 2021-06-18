@@ -10,6 +10,8 @@ public class MsgConst {
 
     public static final String SAVE_SUCCESS = "保存成功";
 
+    public static final String SAVE_FAILURE = "保存失败";
+
     public static final String ADD_SUCCESS = "添加成功";
 
     public static final String CLOSE_SUCCESS = "关闭成功";
