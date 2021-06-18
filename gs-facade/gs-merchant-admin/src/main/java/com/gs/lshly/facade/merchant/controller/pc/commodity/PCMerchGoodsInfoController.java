@@ -93,10 +93,16 @@ public class PCMerchGoodsInfoController {
         return ResponseData.data(goodsInfoRpc.getEditDetailTempEto(dto));
     }
 
-    @ApiOperation("审核中撤销、已审核删除、草稿箱删除")
+    @ApiOperation("已审核删除、草稿箱删除")
     @PostMapping(value = "/deleteBatchesTemp")
     public ResponseData<Boolean> deleteBatchesTemp(@RequestBody PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
         return ResponseData.data(goodsInfoRpc.deleteBatchesTemp(idsDTO));
+    }
+
+    @ApiOperation("审核中撤销")
+    @PostMapping(value = "/cancelBatchesTemp")
+    public ResponseData<Boolean> cancelBatchesTemp(@RequestBody PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
+        return ResponseData.data(goodsInfoRpc.cancelBatchesTemp(idsDTO));
     }
 
     @ApiOperation("各状态商品数量")

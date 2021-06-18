@@ -259,4 +259,6 @@ public interface IPCMerchAdminGoodsInfoRpc {
     Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
 
     PCMerchGoodsInfoVO.GoodsStateCountVO getCountByGoodsState(PCMerchGoodsInfoDTO.MerchantDTO merchantDTO);
+
+    Boolean cancelBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
 }

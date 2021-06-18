@@ -606,6 +606,21 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         repository.update(goodsInfoTemp, goodsBoost);
     }
 
+    @Override
+    public Boolean cancelBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
+        if (ObjectUtils.isEmpty(idsDTO)) {
+            throw new BusinessException("参数不能为空！");
+        }
+        for (String goodsId : idsDTO.getIdList()) {
+            /*
+             * 清除掉对应的商品信息以及与商品关联的信息
+             */
+            PCMerchGoodsInfoDTO.IdDTO idDTO = new PCMerchGoodsInfoDTO.IdDTO(goodsId);
+            cancelGoodsInfo(idDTO);
+        }
+        return true;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void deleteGoodsInfo(PCMerchGoodsInfoDTO.IdDTO dto) {
 
@@ -647,6 +662,16 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         QueryWrapper<GoodsInfoTemp> goodsWrapper = MybatisPlusUtil.query();
         goodsWrapper.eq("id", id);
         repository.remove(goodsWrapper);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelGoodsInfo(PCMerchGoodsInfoDTO.IdDTO dto) {
+        UpdateWrapper<GoodsInfoTemp> updateWrapper = MybatisPlusUtil.update();
+        updateWrapper.eq("id", dto.getId());
+        GoodsInfoTemp goodsInfoTemp = new GoodsInfoTemp();
+        goodsInfoTemp.setGoodsState(GoodsStateEnum.草稿箱.getCode());
+        goodsInfoTemp.setUdate(new Date());
+        repository.update(goodsInfoTemp,updateWrapper);
     }
 
     private void checkAddGoodsData(PCMerchGoodsInfoDTO.AddGoodsETO eto) {

@@ -41,4 +41,6 @@ public interface IPCMerchGoodsInfoTempService {
     Boolean deleteBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
 
     void updateGoodsInfoStateTemp(String goodId,Integer state);
+
+    Boolean cancelBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO);
 }

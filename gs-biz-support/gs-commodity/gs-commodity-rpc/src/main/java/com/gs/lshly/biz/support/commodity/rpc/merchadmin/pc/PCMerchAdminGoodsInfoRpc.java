@@ -253,6 +253,11 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
         return goodsInfoService.getCountByGoodsState(merchantDTO);
     }
 
+    @Override
+    public Boolean cancelBatchesTemp(PCMerchGoodsInfoDTO.IdsDTO idsDTO) {
+        return goodsInfoTempService.cancelBatchesTemp(idsDTO);
+    }
+
     private void settingFuPin(PCMerchGoodsInfoDTO.AddGoodsETO eto, String goodsId) {
         if (ObjectUtils.isNotEmpty(eto.getFuPinEto())) {
             PCMerchGoodsFupinDTO.ETO fuPinEto = new PCMerchGoodsFupinDTO.ETO();
