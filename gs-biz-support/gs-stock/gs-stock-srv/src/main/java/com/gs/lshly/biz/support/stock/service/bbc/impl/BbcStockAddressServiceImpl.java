@@ -190,6 +190,7 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         queryWrapper.eq("ad.owner_type",StockAddressOwnerTypeEnum.会员.getCode());
         queryWrapper.eq("child.address_type",addressType );
         queryWrapper.eq("ad.owner_id",dto.getJwtUserId());
+        queryWrapper.orderByDesc("ad.cdate");
         List<StockAddressView> viewList = stockAddressMapper.mapperList(queryWrapper);
         if(ObjectUtils.isNotEmpty(viewList)){
             BbcStockAddressVO.DetailVO detailVO = null;
