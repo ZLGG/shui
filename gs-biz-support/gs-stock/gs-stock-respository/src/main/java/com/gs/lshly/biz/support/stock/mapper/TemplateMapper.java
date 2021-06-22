@@ -10,6 +10,8 @@ import com.gs.lshly.common.struct.common.qto.TemplateQTO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * <p>
  * 运费模板表 Mapper 接口
@@ -24,5 +26,4 @@ public interface TemplateMapper extends BaseMapper<Template> {
     @Select("select id,template_name,udate from gs_template " +
             "where flag =0 AND ${ew.sqlSegment}")
     IPage<TemplateVO.ListVO> list(IPage<TemplateVO.ListVO> page, @Param(Constants.WRAPPER) QueryWrapper<TemplateQTO.QTO> qw);
-
 }

@@ -45,4 +45,16 @@ public abstract class TemplateVO implements Serializable {
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime udate;
     }
+
+    @Data
+    @ApiModel("TemplateVO.SelectVO")
+    @Accessors(chain = true)
+    public static class SelectVO implements Serializable {
+
+        @ApiModelProperty(value = "运费模版ID",position = 1)
+        private String id;
+
+        @ApiModelProperty(value = "运费模板名称",position = 2)
+        private String templateName;
+    }
 }
