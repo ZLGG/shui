@@ -8,7 +8,9 @@ import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeck
 import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO.ListQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.SpuListVO;
 
 /**
  * @Author Starry
@@ -23,6 +25,13 @@ public interface IGoodsInfoService {
      * @return
      */
     PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto);
+    
+    /**
+     * 跟据分类查询商品列表
+     * @param qto
+     * @return
+     */
+    PageData<GoodsInfoVO.SpuListVO> listGoodsData(ListQTO qto);
 
     /**
      * 查询商品详情

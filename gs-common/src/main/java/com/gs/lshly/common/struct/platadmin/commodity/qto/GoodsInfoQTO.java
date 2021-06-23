@@ -1,25 +1,38 @@
 package com.gs.lshly.common.struct.platadmin.commodity.qto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gs.lshly.common.struct.BaseQTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gs.lshly.common.struct.BaseQTO;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * @Author Starry
  * @Date 16:11 2020/10/14
  */
+@SuppressWarnings("serial")
 public abstract class GoodsInfoQTO implements Serializable {
 
+	@EqualsAndHashCode(callSuper=false)
+	@Data
+    @ApiModel("GoodsInfoQTO.ListQTO")
+    @Accessors(chain = true)
+    public static class ListQTO extends BaseQTO {
+
+		@ApiModelProperty("类目id")
+        private String categoryId;
+
+    }
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("GoodsInfoQTO.QTO")
     @Accessors(chain = true)
@@ -87,7 +100,7 @@ public abstract class GoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品分区[(10:电信专区,20:in会员专区,30:电信国际,40:秒杀专区,50:扶贫专区]")
         private Integer goodsPlace;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("GoodsInfoQTO.ShopFloorQTO")
     public static class ShopFloorQTO extends BaseQTO {
@@ -102,7 +115,7 @@ public abstract class GoodsInfoQTO implements Serializable {
         private Integer usePlatform;
 
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("GoodsInfoQTO.FupinFloorQTO")
     public static class FupinFloorQTO extends BaseQTO {
@@ -120,7 +133,7 @@ public abstract class GoodsInfoQTO implements Serializable {
         private Integer usePlatform;
 
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("GoodsInfoQTO.CategoryIdQTO")
     public static class CategoryIdQTO extends BaseQTO {
@@ -131,7 +144,7 @@ public abstract class GoodsInfoQTO implements Serializable {
         @ApiModelProperty("类型 不传将无法查到数据")
         private Integer useFiled = 0;
     }
-
+	@EqualsAndHashCode(callSuper=false)
     @Data
     @ApiModel("GoodsInfoQTO.CategoryGoodsQTO")
     public static class CategoryGoodsQTO extends BaseQTO {

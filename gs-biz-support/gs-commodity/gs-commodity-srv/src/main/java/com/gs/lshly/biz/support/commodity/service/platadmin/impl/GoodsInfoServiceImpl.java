@@ -1,28 +1,11 @@
 package com.gs.lshly.biz.support.commodity.service.platadmin.impl;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
-import com.gs.lshly.biz.support.commodity.repository.*;
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.*;
-import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityGoodsVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.CtccPtActivityVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
-import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
-import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityGoodsRpc;
-import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
-import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -36,13 +19,44 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gs.lshly.biz.support.commodity.entity.CtccCategoryGoods;
+import com.gs.lshly.biz.support.commodity.entity.GoodsAuditRecord;
+import com.gs.lshly.biz.support.commodity.entity.GoodsCategory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.entity.GoodsServe;
+import com.gs.lshly.biz.support.commodity.entity.GoodsServeCor;
+import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigation;
+import com.gs.lshly.biz.support.commodity.entity.GoodsTempalte;
+import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
+import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
+import com.gs.lshly.biz.support.commodity.repository.ICtccCategoryGoodsRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsAuditRecordRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsCategoryRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsServeCorRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsServeRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteRepository;
+import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAuditRecordService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsCategoryService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsRelationLabelService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.ISkuGoodInfoService;
+import com.gs.lshly.common.enums.GoodAuditRecordEnum;
+import com.gs.lshly.common.enums.GoodsPlaceEnum;
+import com.gs.lshly.common.enums.GoodsQueryTypeEnum;
+import com.gs.lshly.common.enums.GoodsStateEnum;
+import com.gs.lshly.common.enums.GoodsUsePlatformEnums;
+import com.gs.lshly.common.enums.ShopTypeEnum;
+import com.gs.lshly.common.enums.SingleStateEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -58,27 +72,44 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsRelationLabelDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.SkuGoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsAuditRecordQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO.ListQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsAuditRecordVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsBrandVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.SpuListVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsLabelVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.SkuGoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
+import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockTemplateRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityGoodsRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * @Author Starry
  * @Date 15:59 2020/10/14
  */
+@SuppressWarnings("unchecked")
 @Service
 public class GoodsInfoServiceImpl implements IGoodsInfoService {
     @Autowired
     private IGoodsInfoRepository repository;
-    @Autowired
-    private IGoodsInfoTempRepository goodsInfoTempRepository;
     @Autowired
     private GoodsInfoMapper goodsInfoMapper;
     @Autowired
@@ -107,8 +138,14 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     private IGoodsServeRepository goodsServeRepository;
     @Autowired
     private ICtccCategoryGoodsRepository ctccCategoryGoodsRepository;
+    @Autowired
+    private IGoodsCategoryRepository goodsCategoryRepository;
+    @Autowired
+    private GoodsCategoryMapper goodsCategoryMapper;
+    
     @DubboReference
     private ICommonStockRpc commonStockRpc;
+    
 
     @DubboReference
     private ICommonShopRpc commonShopRpc;
@@ -938,6 +975,50 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         }
         return null;
     }
+
+	@Override
+	public PageData<SpuListVO> listGoodsData(ListQTO qto) {
+		
+		if(qto.getPageNum()==null){
+			qto.setPageNum(1);
+		}
+		if(qto.getPageSize()==null){
+			qto.setPageSize(9999);
+		}
+		
+		QueryWrapper<GoodsInfoVO.SpuListVO> boost = MybatisPlusUtil.query();
+        IPage<GoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
+        boost.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
+        boost.in("category_id",listCategoryIds(qto.getCategoryId()));
+        IPage<GoodsInfoVO.SpuListVO> spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
+        return MybatisPlusUtil.toPageData(qto, GoodsInfoVO.SpuListVO.class, spuListVOIPage);
+	}
+	
+	private List<String> listCategoryIds(String categoryId){
+		
+		List<String> cateogryIds = new ArrayList<String>();
+		GoodsCategory goodsCategory = goodsCategoryMapper.selectById(categoryId);
+		if(goodsCategory!=null){
+			cateogryIds.add(categoryId);
+			if(goodsCategory.getGsCategoryLevel().equals(1)){
+				List<String> level3 = goodsCategoryMapper.selectLevel3CategoryList(categoryId);
+				cateogryIds.addAll(level3);
+			}else if(goodsCategory.getGsCategoryLevel().equals(2)){
+				QueryWrapper<GoodsCategory> boost = MybatisPlusUtil.query();
+		        boost.eq("parent_id",categoryId);
+				List<GoodsCategory> level3 = goodsCategoryRepository.list(boost);
+				if(CollectionUtil.isNotEmpty(level3)){
+					for(GoodsCategory category:level3){
+						cateogryIds.add(category.getId());
+					}
+				}
+				
+			}
+		}
+		return cateogryIds;
+		
+		
+	}
 
 
 }

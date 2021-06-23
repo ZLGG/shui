@@ -234,5 +234,6 @@ public interface IGoodsCategoryService {
      * @return
      */
     List<GoodsCategoryVO.InnerListVO> innerCategoryList(BaseDTO dto);
-
+    
+    
 }

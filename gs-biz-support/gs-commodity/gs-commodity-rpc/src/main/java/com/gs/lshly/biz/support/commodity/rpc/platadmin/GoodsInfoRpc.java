@@ -2,30 +2,26 @@ package com.gs.lshly.biz.support.commodity.rpc.platadmin;
 
 import java.util.List;
 
-import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
-import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoTempService;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.qto.PCMerchMarketPtSeckillQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsFupinService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsInfoTempService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO;
+import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsInfoQTO.ListQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.ListVO;
-import com.gs.lshly.common.struct.platadmin.commodityfupin.qto.GoodsFupinQTO;
-import com.gs.lshly.common.struct.platadmin.commodityfupin.vo.GoodsFupinVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO.SpuListVO;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Starry
@@ -200,5 +196,10 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     public PageData<ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto) {
         return goodsInfoService.pageInGoods(qto);
     }
+
+	@Override
+	public PageData<SpuListVO> listGoodsData(ListQTO qto) {
+		return goodsInfoService.listGoodsData(qto);
+	}
 
 }

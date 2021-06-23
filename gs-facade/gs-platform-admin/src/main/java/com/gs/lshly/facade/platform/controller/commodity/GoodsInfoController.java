@@ -45,6 +45,13 @@ public class GoodsInfoController {
         return ResponseData.data(goodsInfoRpc.pageGoodsData(qto));
     }
 
+    @ApiOperation("跟据分类ID查询商品列表")
+    @GetMapping("")
+    @Func(code = "view", name = "查看")
+    public ResponseData<PageData<GoodsInfoVO.SpuListVO>> list(GoodsInfoQTO.ListQTO qto) {
+        return ResponseData.data(goodsInfoRpc.listGoodsData(qto));
+    }
+    
     @ApiOperation("商品管理列表详情")
     @GetMapping(value = "{id}")
     @Func(code = "view", name = "查看")
