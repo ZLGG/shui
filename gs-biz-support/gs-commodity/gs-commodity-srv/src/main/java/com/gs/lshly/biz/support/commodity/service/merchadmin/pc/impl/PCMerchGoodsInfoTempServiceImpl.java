@@ -259,7 +259,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         //建立商品与运费模板的关联关系
 
         Map columnMap = new HashMap<>();
-        columnMap.put("good_id", goodId);
+        columnMap.put("goods_id", goodId);
         goodsTempalteTempRepository.removeByMap(columnMap);
 
         GoodsTempalteTemp template = new GoodsTempalteTemp();
