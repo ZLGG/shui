@@ -9,8 +9,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.commodity.entity.GoodsServe;
 import com.gs.lshly.biz.support.commodity.entity.GoodsServeCor;
+import com.gs.lshly.biz.support.commodity.entity.GoodsServeCorTemp;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsServeCorMapper;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsServeCorRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsServeCorTempRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsServeRepository;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsServeService;
 import com.gs.lshly.common.exception.BusinessException;
@@ -41,7 +43,7 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
     private IGoodsServeCorRepository goodsServeCorRepository;
 
     @Autowired
-    private IGoodsServeCorRepository goodsServeCorTempRepository;
+    private IGoodsServeCorTempRepository goodsServeCorTempRepository;
 
     @Override
     public PageData<PCMerchGoodsServeVO.ListVO> pageGoodsServeData(PCMerchGoodsServeQTO.QTO qto) {
@@ -85,9 +87,9 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
-        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
+        QueryWrapper<GoodsServeCorTemp> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
-        GoodsServeCor goodsServeCor = goodsServeCorTempRepository.getOne(query);
+        GoodsServeCorTemp goodsServeCor = goodsServeCorTempRepository.getOne(query);
         if (ObjectUtil.isEmpty(goodsServeCor)) {
             return null;
         }
