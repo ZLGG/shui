@@ -26,6 +26,8 @@ public class MsgConst {
 
     public static final String DELETE_SUCCESS = "删除成功";
 
+    public static final String DELETE_FAILURE = "保存失败";
+
     public static final String ENABLE_SUCCESS = "启用成功";
 
     public static final String DISABLE_SUCCESS = "禁用成功";

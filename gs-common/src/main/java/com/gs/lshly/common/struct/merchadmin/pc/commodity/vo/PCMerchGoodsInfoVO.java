@@ -167,6 +167,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("是否包含非库存字段修改")
         private Boolean isIncludeOthers;
+
+        @ApiModelProperty("结算价格")
+        private BigDecimal settlementPrice;
     }
 
     @Data
