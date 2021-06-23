@@ -280,7 +280,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         initGoodsStock(eto, items);
 
         columnMap = new HashMap<>();
-        columnMap.put("good_id", goodId);
+        columnMap.put("goods_id", goodId);
         goodsServeCorTempRepository.removeByMap(columnMap);
 
         PCMerchGoodsInfoVO.GoodsIdVO goodsIdVO = new PCMerchGoodsInfoVO.GoodsIdVO();
