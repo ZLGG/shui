@@ -54,7 +54,7 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
     @Override
     public void addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-        goodsInfoTempService.addGoodsInfo(eto);
+        goodsInfoTempService.addGoodsInfo(eto,1);
     }
 
     @Override

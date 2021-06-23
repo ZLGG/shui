@@ -94,9 +94,14 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         String goodId = eto.getId();
 
         //获取原来发布商品的传参对象
-        PCMerchGoodsInfoVO.EditDetailVO editDetailVO = getEditDetailEto(new PCMerchGoodsInfoDTO.IdDTO(goodId));
+        //PCMerchGoodsInfoVO.EditDetailVO editDetailVO = getEditDetailEto(new PCMerchGoodsInfoDTO.IdDTO(goodId));
 
         GoodsInfoTemp oldGoodsInfoTemp = repository.getById(goodId);
+        if(ObjectUtil.isEmpty(oldGoodsInfoTemp)){
+            //temp表新增
+            addGoodsInfo(eto,2);
+            return;
+        }
 
         GoodsInfoTemp goodsInfoTemp = new GoodsInfoTemp();
         BeanUtils.copyProperties(eto, goodsInfoTemp);
@@ -125,7 +130,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             attributeInfoTempRepository.removeByMap(columnMap);
 
             PCMerchGoodsAttributeInfoDTO.ETO attributeInfo;
-            for (PCMerchGoodsAttributeInfoVO.ListVO attributeInfoListVO : editDetailVO.getAttributeList()) {
+            for (PCMerchGoodsAttributeInfoDTO.ETO attributeInfoListVO : eto.getAttributeList()) {
                 attributeInfo = new PCMerchGoodsAttributeInfoDTO.ETO();
                 BeanCopyUtils.copyProperties(attributeInfoListVO, attributeInfo);
                 attributeInfo.setGoodId(goodsInfoTemp.getId());
@@ -145,7 +150,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             extendParamsTempRepository.removeByMap(columnMap);
 
             PCMerchGoodsExtendParamsDTO.ETO paramsInfo;
-            for (PCMerchGoodsExtendParamsVO.ListVO paramsInfoListVO : editDetailVO.getParamsList()) {
+            for (PCMerchGoodsExtendParamsDTO.ETO paramsInfoListVO : eto.getParamsList()) {
                 paramsInfo = new PCMerchGoodsExtendParamsDTO.ETO();
                 BeanCopyUtils.copyProperties(paramsInfoListVO, paramsInfo);
                 paramsInfo.setGoodId(goodsInfoTemp.getId());
@@ -174,7 +179,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             goodsSpecInfoTempRepository.removeByMap(columnMap);
 
             PCMerchGoodsSpecInfoDTO.ETO specInfo;
-            for (PCMerchGoodsSpecInfoVO.ListVO specInfoListVO : editDetailVO.getSpecList()) {
+            for (PCMerchGoodsSpecInfoDTO.ETO specInfoListVO : eto.getSpecList()) {
                 specInfo = new PCMerchGoodsSpecInfoDTO.ETO();
                 BeanCopyUtils.copyProperties(specInfoListVO, specInfo);
                 specInfo.setGoodId(goodsInfoTemp.getId());
@@ -193,7 +198,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
 
             List<SkuGoodInfoTemp> skuGoodInfos = new ArrayList<>();
             SkuGoodInfoTemp skuGoodInfo;
-            for (PCMerchSkuGoodInfoVO.DetailVO skuInfo : editDetailVO.getSkuVoList()) {
+            for (PCMerchSkuGoodInfoDTO.AddETO skuInfo : eto.getEtoList()) {
                 skuGoodInfo = new SkuGoodInfoTemp();
                 BeanUtils.copyProperties(skuInfo, skuGoodInfo);
                 skuGoodInfo.setGoodId(goodId);
@@ -207,10 +212,10 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
                 skuGoodInfo.setMerchantId(eto.getMerchantId());
                 skuGoodInfo.setShopId(eto.getJwtShopId());
                 if (skuInfo.getPointPrice() != null) {
-                    skuGoodInfo.setPointPrice(skuInfo.getPointPrice());
+                    skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
                 }
                 if (skuInfo.getInMemberPointPrice() != null) {
-                    skuGoodInfo.setInMemberPointPrice(skuInfo.getInMemberPointPrice());
+                    skuGoodInfo.setInMemberPointPrice(new BigDecimal(skuInfo.getInMemberPointPrice()));
                 }
                 skuGoodInfo.setRemarks(eto.getRemarks());
                 skuGoodInfos.add(skuGoodInfo);
@@ -385,7 +390,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
     }
 
     @Override
-    public PCMerchGoodsInfoVO.GoodsIdVO addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
+    public PCMerchGoodsInfoVO.GoodsIdVO addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto,Integer applyType) {
         //数据校验
         checkAddGoodsData(eto);
         //判断编号的唯一性
@@ -403,7 +408,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId()) ? eto.getJwtShopId() : eto.getShopId());
         goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId()) ? eto.getJwtMerchantId() : eto.getMerchantId());
         //goodsInfo.setGoodsState(GoodsStateEnum.待审核.getCode());
-        goodsInfo.setApplyType(1);
+        goodsInfo.setApplyType(applyType);
         goodsInfo.setFlag(false);
         goodsInfo.setCdate(new Date());
         goodsInfo.setUdate(new Date());

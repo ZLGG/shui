@@ -34,7 +34,7 @@ public interface IPCMerchGoodsInfoTempService {
      * @param eto
      * @return
      */
-    PCMerchGoodsInfoVO.GoodsIdVO addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto);
+    PCMerchGoodsInfoVO.GoodsIdVO addGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto,Integer applyType);
 
     int countGoodsNo(PCMerchGoodsInfoDTO.GoodNoDTO dto);
 
