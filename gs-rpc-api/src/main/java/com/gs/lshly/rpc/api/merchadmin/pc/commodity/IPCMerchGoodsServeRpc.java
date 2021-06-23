@@ -1,15 +1,13 @@
 package com.gs.lshly.rpc.api.merchadmin.pc.commodity;
 
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboService;
+
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
-import org.apache.dubbo.config.annotation.DubboService;
-
-import java.util.List;
 
 /**
  * @author hanly
@@ -33,4 +31,6 @@ public interface IPCMerchGoodsServeRpc {
     List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailByGoodsId(PCMerchGoodsServeDTO.IdDTO dto);
 
     List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTempByGoodsId(PCMerchGoodsServeDTO.IdDTO dto);
+    
+    List<String> getServeTempIdByGoodsId(PCMerchGoodsServeDTO.IdDTO dto);
 }

@@ -326,7 +326,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private PCMerchGoodsFupinVO.DetailVO fuPinDetailVO;
 
         @ApiModelProperty(value = "服务数据")
-        private List<PCMerchGoodsServeVO.ListVO> goodsServeList;
+        private List<String> goodsServeList;
     }
 
     @Data

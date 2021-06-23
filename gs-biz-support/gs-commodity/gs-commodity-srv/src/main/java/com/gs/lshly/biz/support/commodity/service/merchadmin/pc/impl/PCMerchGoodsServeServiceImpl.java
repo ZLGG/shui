@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,11 +19,13 @@ import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsSer
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO.IdDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsServeQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsServeVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,64 +54,76 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         query.orderByDesc("cdate");
         IPage page = MybatisPlusUtil.pager(qto);
         repository.page(page, query);
-        return MybatisPlusUtil.toPageData(qto, GoodsServeVO.ListVO.class, page);
+        return MybatisPlusUtil.toPageData(qto, PCMerchGoodsServeVO.ListVO.class, page);
     }
 
     @Override
     public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetail(PCMerchGoodsServeDTO.IdDTO dto) {
+    	
+    	List<PCMerchGoodsServeVO.ListVO> list = new ArrayList<PCMerchGoodsServeVO.ListVO>();
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
         QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
-        GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
-        if (ObjectUtil.isEmpty(goodsServeCor)) {
+        List<GoodsServeCor> goodsServeCor = goodsServeCorRepository.list(query);
+        if (CollectionUtil.isEmpty(goodsServeCor)) {
             return null;
         }
-        List<PCMerchGoodsServeVO.ListVO> listVOS = new ArrayList<>();
-        if(ObjectUtil.isEmpty(goodsServeCor.getServeId())){
-            return listVOS;
+        PCMerchGoodsServeVO.ListVO listVO = null;
+        for(GoodsServeCor temp:goodsServeCor){
+        	listVO = new PCMerchGoodsServeVO.ListVO();
+        	String serveId = temp.getServeId();
+        	GoodsServe serve = repository.getById(serveId);
+        	BeanCopyUtils.copyProperties(serve, listVO);
+        	list.add(listVO);
         }
-        List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-        List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-        if (CollUtil.isEmpty(goodsServeList)) {
-            return null;
-        }
-        for (GoodsServe goodsServe : goodsServeList) {
-            PCMerchGoodsServeVO.ListVO listVO = new PCMerchGoodsServeVO.ListVO();
-            BeanUtil.copyProperties(goodsServe, listVO);
-            listVOS.add(listVO);
-        }
-        return listVOS;
+        
+        return list;
     }
 
     @Override
     public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTemp(PCMerchGoodsServeDTO.IdDTO dto) {
+    	List<PCMerchGoodsServeVO.ListVO> list = new ArrayList<PCMerchGoodsServeVO.ListVO>();
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
         QueryWrapper<GoodsServeCorTemp> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
-        GoodsServeCorTemp goodsServeCor = goodsServeCorTempRepository.getOne(query);
-        if (ObjectUtil.isEmpty(goodsServeCor)) {
+        List<GoodsServeCorTemp> goodsServeCor = goodsServeCorTempRepository.list(query);
+        if (CollectionUtil.isEmpty(goodsServeCor)) {
             return null;
         }
-        List<PCMerchGoodsServeVO.ListVO> listVOS = new ArrayList<>();
-        if(ObjectUtil.isEmpty(goodsServeCor.getServeId())){
-            return listVOS;
+        PCMerchGoodsServeVO.ListVO listVO = null;
+        for(GoodsServeCorTemp temp:goodsServeCor){
+        	listVO = new PCMerchGoodsServeVO.ListVO();
+        	String serveId = temp.getServeId();
+        	GoodsServe serve = repository.getById(serveId);
+        	BeanCopyUtils.copyProperties(serve, listVO);
+        	list.add(listVO);
         }
-        List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-
-        List<GoodsServe> goodsServeList = repository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-        if (CollUtil.isEmpty(goodsServeList)) {
-            return null;
-        }
-
-        for (GoodsServe goodsServe : goodsServeList) {
-            PCMerchGoodsServeVO.ListVO listVO = new PCMerchGoodsServeVO.ListVO();
-            BeanUtil.copyProperties(goodsServe, listVO);
-            listVOS.add(listVO);
-        }
-        return listVOS;
+        
+        return list;
     }
+
+	@Override
+	public List<String> getServeTempIdByGoodsId(IdDTO dto) {
+		List<String> list = new ArrayList<String>();
+        if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
+            throw new BusinessException("参数不能为空！");
+        }
+        QueryWrapper<GoodsServeCorTemp> query = MybatisPlusUtil.query();
+        query.eq("goods_id", dto.getId());
+        List<GoodsServeCorTemp> goodsServeCor = goodsServeCorTempRepository.list(query);
+        if (CollectionUtil.isEmpty(goodsServeCor)) {
+            return null;
+        }
+        PCMerchGoodsServeVO.ListVO listVO = null;
+        for(GoodsServeCorTemp temp:goodsServeCor){
+        	
+        	list.add(temp.getServeId());
+        }
+        
+        return list;
+	}
 }

@@ -944,8 +944,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             one = new GoodsServeCor();
             one.setGoodsId(goodId);
             StringBuilder sb = new StringBuilder();
-            for (PCMerchGoodsServeVO.ListVO goodsServe : editDetailVO.getGoodsServeList()) {
-                sb.append(goodsServe.getId() + ",");
+            for (String goodsServe : editDetailVO.getGoodsServeList()) {
+                sb.append(goodsServe + ",");
             }
             String serveIds = sb.toString();
             one.setServeId(serveIds.substring(0, sb.length() - 1));
@@ -953,8 +953,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         } else {
             one.setGoodsId(goodId);
             StringBuilder sb = new StringBuilder();
-            for (PCMerchGoodsServeVO.ListVO goodsServe : editDetailVO.getGoodsServeList()) {
-                sb.append(goodsServe.getId() + ",");
+            for (String goodsServe : editDetailVO.getGoodsServeList()) {
+                sb.append(goodsServe + ",");
             }
             String serveIds = sb.toString();
             one.setServeId(serveIds.substring(0, sb.length() - 1));
@@ -1121,8 +1121,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             GoodsServeCor goodsServeCor = new GoodsServeCor();
             goodsServeCor.setGoodsId(goodsInfo.getId());
             StringBuilder sb = new StringBuilder();
-            for (PCMerchGoodsServeVO.ListVO listVO : editDetailVO.getGoodsServeList()) {
-                sb.append(listVO.getId() + ",");
+            for (String id : editDetailVO.getGoodsServeList()) {
+                sb.append(id + ",");
             }
             String serveIds = sb.toString();
             if (StringUtils.isNotEmpty(serveIds)) {
@@ -1547,7 +1547,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         // spu库存
         detailVO.setSpuStock(getSpuStockNum(goodsInfo.getId(), dto.getJwtShopId()));
         PCMerchGoodsServeDTO.IdDTO idDTO = new PCMerchGoodsServeDTO.IdDTO(dto.getId());
-        List<PCMerchGoodsServeVO.ListVO> serveListVO = goodsServeRpc.getGoodsServeDetailByGoodsId(idDTO);
+        List<String> serveListVO = goodsServeRpc.getServeTempIdByGoodsId(idDTO);
         if (CollUtil.isNotEmpty(serveListVO)) {
             detailVO.setGoodsServeList(serveListVO);
         }

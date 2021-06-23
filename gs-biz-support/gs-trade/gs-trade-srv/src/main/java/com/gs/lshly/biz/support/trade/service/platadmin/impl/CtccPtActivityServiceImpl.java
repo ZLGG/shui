@@ -340,8 +340,8 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
 
 	@Override
 	public void deleteCategory(IdDTO dto) {
-		UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
-		wrapper.set("categoryId", dto.getId());
+		QueryWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.query();
+		wrapper.eq("category_id", dto.getId());
 		List list = activityGoodsRepository.list(wrapper);
 		if (CollectionUtil.isNotEmpty(list))
 			throw new BusinessException("类目下有商品无法删除");

@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.commodity.rpc.merchadmin.pc;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsServeService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO.IdDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchGoodsServeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsServeVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsServeDTO;
@@ -34,4 +35,9 @@ public class PCMerchAdminGoodsServeRpc implements IPCMerchGoodsServeRpc {
     public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTempByGoodsId(PCMerchGoodsServeDTO.IdDTO dto) {
         return goodsServeService.getGoodsServeDetailTemp(dto);
     }
+
+	@Override
+	public List<String> getServeTempIdByGoodsId(IdDTO dto) {
+		return goodsServeService.getServeTempIdByGoodsId(dto);
+	}
 }
