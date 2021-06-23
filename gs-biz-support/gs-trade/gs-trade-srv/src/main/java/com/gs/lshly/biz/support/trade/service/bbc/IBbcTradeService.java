@@ -84,5 +84,11 @@ public interface IBbcTradeService {
      * @param dto
      */
     void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
+    
+    /**
+     * 没有支付关闭订单
+     * @param trade
+     */
+    void closeTradeFromNoPay(String trade);
 
 }

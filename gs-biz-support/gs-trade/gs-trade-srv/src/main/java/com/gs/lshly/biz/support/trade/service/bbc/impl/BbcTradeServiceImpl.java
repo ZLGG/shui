@@ -15,10 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.lakala.boss.api.utils.DateUtil;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.joda.time.format.DateTimeFormat;
+import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,7 @@ import com.gs.lshly.biz.support.trade.entity.TradePayOfflineImg;
 import com.gs.lshly.biz.support.trade.entity.TradeRights;
 import com.gs.lshly.biz.support.trade.entity.TradeRightsGoods;
 import com.gs.lshly.biz.support.trade.enums.MarketPtCardStatusEnum;
+import com.gs.lshly.biz.support.trade.job.QuartzSchedulerManager;
 import com.gs.lshly.biz.support.trade.mapper.CouponMapper;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
 import com.gs.lshly.biz.support.trade.mapper.TradePayMapper;
@@ -120,10 +122,10 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcUserIntegralDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserShoppingCarDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SkuQuantityVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
-import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
@@ -134,6 +136,7 @@ import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.middleware.mq.aliyun.producerService.ProducerService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
@@ -157,6 +160,7 @@ import com.lakala.boss.api.entity.request.QRCodePaymentCommitRequest;
 import com.lakala.boss.api.entity.response.EntOffLinePaymentResponse;
 import com.lakala.boss.api.entity.response.QRCodePaymentCommitResponse;
 import com.lakala.boss.api.utils.BossClient;
+import com.lakala.boss.api.utils.DateUtil;
 import com.lakala.boss.api.utils.UuidUtil;
 
 import cn.hutool.core.collection.CollUtil;
@@ -175,6 +179,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 public class BbcTradeServiceImpl implements IBbcTradeService {
+	
+	private final String PAYING_TRADE = "trade_paying";
+	
+	@Resource
+    private QuartzSchedulerManager quartzSchedulerManager;
 
     private final ITradeRepository tradeRepository;
 
@@ -228,6 +237,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Autowired
     private CouponMapper couponMapper;
+    
+    @Autowired
+    private RedisUtil redisUtil;
 
     @DubboReference
     private IBbcInUserCouponRpc bbcInUserCouponRpc;
@@ -1040,8 +1052,28 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             }
             ids.add(trade.getId());
         }
-
-
+        /**
+         * 把订单ID放到redis里面
+         */
+        Map<Object,Object> map = redisUtil.hmget(PAYING_TRADE);
+        if(map==null)
+        	map = new HashMap<Object,Object>();
+        if(CollectionUtil.isNotEmpty(ids)){
+        	for(String id:ids){
+        		map.put(id, DateUtils.getAfterMin(30));
+        	}
+        }
+        redisUtil.hmset(PAYING_TRADE, map);
+        /**
+         * 启动监听
+         */
+        try {
+			quartzSchedulerManager.closeTradeFromNoPayJob(DateUtils.parseDate(DateUtils.timeFormatStr, DateUtils.getAfterMin(30)));
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+        
+        
         return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids, totalAmount, totalPointAmount));
     }
 
@@ -2485,6 +2517,19 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             return ResponseData.fail(responseJson.toString());
         }
         responseJson.put("result", "支付成功！");
+        
+        //从redis里面取出数据来
+        /**
+         * 把订单ID放到redis里面
+         */
+        Map<Object,Object> map = redisUtil.hmget(PAYING_TRADE);
+        if(map!=null){
+        	for (String tradeId : tradeIds) {
+        		map.remove(tradeId);
+        	}
+        }
+        redisUtil.hmset(PAYING_TRADE, map);
+        
         return ResponseData.success(responseJson.toString());
     }
 
@@ -2635,4 +2680,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
         return responseJson.toString();
     }
+
+	@Override
+	public void closeTradeFromNoPay(String trade) {
+		// TODO Auto-generated method stub
+		
+	}
 }

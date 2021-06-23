@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author OY
+ * 
+ *
+ * 
+ * @author yingjun
+ * @date 2021年6月18日 下午5:39:11
  */
 public enum TradeStateEnum implements EnumMessage {
 
@@ -15,8 +19,10 @@ public enum TradeStateEnum implements EnumMessage {
     待收货(30, "待收货"),
     已完成(40, "已完成"),
     已取消(50, "已取消"),
-    待评价(60, "已取消"),
-    售后处理中(70, "售后处理中"),;
+    待评价(60, "待评价"),
+    售后处理中(70, "售后处理中"),
+    关闭(100, "关闭"),
+    ;
 
 
     TradeStateEnum(Integer code, String remark){

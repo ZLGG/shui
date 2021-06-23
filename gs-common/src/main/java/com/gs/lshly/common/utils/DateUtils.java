@@ -210,6 +210,22 @@ public  class DateUtils {
         String qyt= format.format(start);//前一天
         return qyt;
     }
+    
+    /**
+     * 获取当前时间后多少分钟时间
+     *
+     * @return
+     */
+    public static String getAfterMin(int num) {
+    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        
+        c.add(Calendar.MINUTE, num);
+        Date start = c.getTime();
+        String qyt= format.format(start);//前一天
+        return qyt;
+    }
 
     public static Integer betweenStartAndEnd(LocalDate startTime, LocalDate endTime) {
         Long days = startTime.until(endTime, ChronoUnit.DAYS);
