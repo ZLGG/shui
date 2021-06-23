@@ -46,6 +46,24 @@ public interface GoodsInfoMapper extends BaseMapper<GoodsInfo> {
             "WHERE gs.flag = 0 AND ${ew.sqlSegment}")
     IPage<GoodsInfoVO.SpuListVO> getGoodsInfo(IPage<GoodsInfoVO.SpuListVO> page,@Param(Constants.WRAPPER) QueryWrapper<GoodsInfoVO.SpuListVO> qw);
 
+    /**
+     * 查询平台商品信息
+     * @param page
+     * @param qw
+     * @return
+     */
+    @Select("SELECT DISTINCT\n" +
+            "gs.id,gs.merchant_id,gs.shop_id,gs.brand_id,gs.spec_info_id,gs.attribute_info_id,gs.extend_params_id,gs.goods_name,gs.goods_title,gs.goods_state,gs.goods_no,gs.sale_price,gs.old_price,gs.cost_price,gs.goods_weight,gs.goods_valid_days,gs.goods_image,gs.is_single,\n" +
+            "gs.is_show_old_price,gs.goods_price_unit,gs.use_platform,gs.publish_time,gs.cdate,gs.udate,gs.point_price,gs.remarks,gs.is_point_good,gs.is_in_member_gift,gs.in_member_point_price,gs.sale_type,gs.third_product_id,gs.exchange_type," +
+            "gc.gs_category_name categoryName,\n" +
+            "gb.brand_name brandName\n" +
+            "FROM\n" +
+            "gs_goods_info gs\n" +
+            "LEFT JOIN gs_goods_category gc ON gs.category_id = gc.id\n" +
+            "LEFT JOIN gs_goods_brand gb ON  gs.brand_id = gb.id\n" +
+            "LEFT JOIN gs_goods_relation_label grl ON gs.id = grl.goods_id\n" +
+            "WHERE gs.flag = 0 AND ${ew.sqlSegment}")
+    List<GoodsInfoVO.SpuListVO> listGoodsInfo(@Param(Constants.WRAPPER) QueryWrapper<GoodsInfoVO.SpuListVO> qw);
 
 
 

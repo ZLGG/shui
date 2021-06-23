@@ -48,7 +48,7 @@ public interface ICtccPtActivityService {
      * 添加电信国际类目下商品
      * @param list
      */
-    void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list);
+    void addCategoryGoods(CtccPtActivityDTO.AddCategoryGoodsDTO dto);
 
     /**
      * 查看商品详情

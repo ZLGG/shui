@@ -31,7 +31,7 @@ public interface IGoodsInfoService {
      * @param qto
      * @return
      */
-    PageData<GoodsInfoVO.SpuListVO> listGoodsData(ListQTO qto);
+    List<GoodsInfoVO.SpuListVO> listGoodsData(ListQTO qto);
 
     /**
      * 查询商品详情

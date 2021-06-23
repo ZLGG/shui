@@ -26,7 +26,7 @@ public abstract class GoodsInfoQTO implements Serializable {
 	@Data
     @ApiModel("GoodsInfoQTO.ListQTO")
     @Accessors(chain = true)
-    public static class ListQTO extends BaseQTO {
+    public static class ListQTO implements Serializable {
 
 		@ApiModelProperty("类目id")
         private String categoryId;

@@ -58,8 +58,8 @@ public class CtccPtActivityRpc implements ICtccPtActivityRpc {
     }
 
     @Override
-    public void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list) {
-        ctccPtActivityService.addCategoryGoods(list);
+    public void addCategoryGoods(CtccPtActivityDTO.AddCategoryGoodsDTO dto) {
+        ctccPtActivityService.addCategoryGoods(dto);
     }
 
     @Override

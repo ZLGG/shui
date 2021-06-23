@@ -977,21 +977,13 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     }
 
 	@Override
-	public PageData<SpuListVO> listGoodsData(ListQTO qto) {
-		
-		if(qto.getPageNum()==null){
-			qto.setPageNum(1);
-		}
-		if(qto.getPageSize()==null){
-			qto.setPageSize(9999);
-		}
+	public List<SpuListVO> listGoodsData(ListQTO qto) {
 		
 		QueryWrapper<GoodsInfoVO.SpuListVO> boost = MybatisPlusUtil.query();
-        IPage<GoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
         boost.eq("gs.goods_state",GoodsStateEnum.已上架.getCode());
         boost.in("category_id",listCategoryIds(qto.getCategoryId()));
-        IPage<GoodsInfoVO.SpuListVO> spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
-        return MybatisPlusUtil.toPageData(qto, GoodsInfoVO.SpuListVO.class, spuListVOIPage);
+        List<GoodsInfoVO.SpuListVO> list = goodsInfoMapper.listGoodsInfo(boost);
+        return list;
 	}
 	
 	private List<String> listCategoryIds(String categoryId){

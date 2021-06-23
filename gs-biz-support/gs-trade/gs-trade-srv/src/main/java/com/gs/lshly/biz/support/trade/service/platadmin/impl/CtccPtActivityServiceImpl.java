@@ -176,14 +176,30 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
         return ctccGoodsDetailVO;
     }
 
+    @Transactional
     @Override
-    public void addCategoryGoods(List<CtccPtActivityDTO.AddCategoryGoodsDTO> list) {
-        List<CtccCategoryGoods> categoryGoodsList = ListUtil.listCover(CtccCategoryGoods.class, list);
-        categoryGoodsList.forEach(category ->{
-            category.setSubject(SubjectEnum.电信国际.getCode())
-                    .setTerminal(20);
-        });
-        goodsRepository.saveBatch(categoryGoodsList);
+    public void addCategoryGoods(CtccPtActivityDTO.AddCategoryGoodsDTO dto) {
+    	String categoryId = dto.getCategoryId();
+    	List<String> goodsIds = dto.getGoodsId();
+    	if(CollectionUtil.isNotEmpty(goodsIds)){
+    		CtccActivityGoods ctccActivityGoods = null;
+    		for(String goodsId:goodsIds){
+    			UpdateWrapper<CtccActivityGoods> wrapper = MybatisPlusUtil.update();
+    	        wrapper.set("category_id", categoryId);
+    	        wrapper.eq("goods_id", goodsId);
+    	        
+    	        List<CtccActivityGoods> list = activityGoodsRepository.list(wrapper);
+    	        if(CollectionUtil.isNotEmpty(list))
+    	        	throw new BusinessException("ID="+goodsId+"的商品已添加了！");
+    	        
+    	        ctccActivityGoods = new CtccActivityGoods();
+    	        ctccActivityGoods.setCategoryId(categoryId);
+    	        ctccActivityGoods.setGoodsId(goodsId);
+    	        activityGoodsRepository.saveOrUpdate(ctccActivityGoods);
+    		}
+    	}
+    	
+        
     }
 
     @Override

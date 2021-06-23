@@ -205,10 +205,8 @@ public class CtccPtActivityDTO implements Serializable {
 
         @ApiModelProperty("商品id")
         @NotBlank(message = "商品id不能为空")
-        private String goodsId;
+        private List<String> goodsId;
 
-        @ApiModelProperty("排序")
-        private Integer idx;
     }
 
     @Data

@@ -27,7 +27,7 @@ public interface IGoodsInfoRpc {
      * @param qto
      * @return
      */
-    PageData<GoodsInfoVO.SpuListVO> listGoodsData(GoodsInfoQTO.ListQTO qto);
+    List<GoodsInfoVO.SpuListVO> listGoodsData(GoodsInfoQTO.ListQTO qto);
 
     /**
      * 查询商品详情

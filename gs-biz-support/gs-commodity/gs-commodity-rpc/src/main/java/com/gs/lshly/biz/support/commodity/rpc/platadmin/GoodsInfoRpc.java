@@ -198,7 +198,7 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     }
 
 	@Override
-	public PageData<SpuListVO> listGoodsData(ListQTO qto) {
+	public List<SpuListVO> listGoodsData(ListQTO qto) {
 		return goodsInfoService.listGoodsData(qto);
 	}
 

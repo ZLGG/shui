@@ -1,8 +1,9 @@
 package com.gs.lshly.facade.platform.controller.commodity;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
-import cn.hutool.core.util.StrUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,9 +47,9 @@ public class GoodsInfoController {
     }
 
     @ApiOperation("跟据分类ID查询商品列表")
-    @GetMapping("")
+    @GetMapping("/listByCategoryId")
     @Func(code = "view", name = "查看")
-    public ResponseData<PageData<GoodsInfoVO.SpuListVO>> list(GoodsInfoQTO.ListQTO qto) {
+    public ResponseData<List<GoodsInfoVO.SpuListVO>> listByCategoryId(GoodsInfoQTO.ListQTO qto) {
         return ResponseData.data(goodsInfoRpc.listGoodsData(qto));
     }
     

@@ -89,8 +89,8 @@ public class CtccPtActivityController {
     @ApiOperation("电信国际类目-新增类目商品")
     @PostMapping("/addCategoryGoods")
     @Func(code = "add",name = "增")
-    public ResponseData addCategoryGoods(@RequestBody List<CtccPtActivityDTO.AddCategoryGoodsDTO> list) {
-        iCtccPtActivityRpc.addCategoryGoods(list);
+    public ResponseData addCategoryGoods(@RequestBody CtccPtActivityDTO.AddCategoryGoodsDTO dto) {
+        iCtccPtActivityRpc.addCategoryGoods(dto);
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
