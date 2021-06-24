@@ -77,7 +77,7 @@ public class BbbSiteTopicServiceImpl implements IBbbSiteTopicService {
 
 					String goodsId = siteTopicGoods.getGoodsId();
 					GoodsInfoVO.DetailVO goodsInfoDetailVO = goodsInfoRpc
-							.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+							.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId),1);
 					goodsInfoList.add(goodsInfoDetailVO);
 
 				}

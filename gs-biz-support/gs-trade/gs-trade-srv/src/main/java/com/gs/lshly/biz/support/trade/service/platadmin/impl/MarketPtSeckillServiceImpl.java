@@ -240,7 +240,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             for (MarketPtSeckillGoodsSpu record : page.getRecords()) {
                 MarketPtSeckillVO.KillGoodsVO killGoodsVO = new MarketPtSeckillVO.KillGoodsVO();
                 BeanUtil.copyProperties(record, killGoodsVO);
-                GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(record.getGoodsId()));
+                GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(record.getGoodsId()),1);
                 killGoodsVO.setKillSpuId(record.getId());
                 killGoodsVO.setGoodsName(goodsDetail.getGoodsName());
                 killGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());

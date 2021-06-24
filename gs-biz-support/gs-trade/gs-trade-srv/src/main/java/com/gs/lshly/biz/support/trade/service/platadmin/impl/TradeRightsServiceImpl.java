@@ -301,7 +301,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             if (ObjectUtil.isNotEmpty(detailVO)) {
                 tradeRightsGoodsVO.setShopName(detailVO.getShopName());
             }
-            GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getGoodsId()));
+            GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(tradeRightsGoods.getGoodsId()),1);
             tradeRightsGoodsVO.setGoodsTitle(goodsDetail.getGoodsTitle());
             //查询具体sku信息
             TradeRightsVO.SkuGoodsInfo skuGoodsInfo = iSkuGoodsInfoRpc.selectImageAndPrice(tradeRightsGoods.getSkuId());

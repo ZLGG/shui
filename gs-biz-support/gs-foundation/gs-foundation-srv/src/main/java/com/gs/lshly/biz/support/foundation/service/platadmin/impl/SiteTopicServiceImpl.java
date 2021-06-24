@@ -129,7 +129,7 @@ public class SiteTopicServiceImpl implements ISiteTopicService {
         		goodsDetailVO = new PCGoodsDetailVO();
         		String goodsId = siteTopicGoods.getGoodsId();
         		
-        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId),1);
         		goodsDetailVO.setId(goodsId);
         		goodsDetailVO.setGoodsName(goodsInfoDetailVO.getGoodsName());
         		goodsDetailVO.setGoodsNo(goodsInfoDetailVO.getGoodsNo());
