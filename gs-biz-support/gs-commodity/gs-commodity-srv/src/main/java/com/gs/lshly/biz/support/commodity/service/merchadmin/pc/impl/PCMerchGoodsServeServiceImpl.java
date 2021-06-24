@@ -66,19 +66,20 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         }
         QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
-        List<GoodsServeCor> goodsServeCor = goodsServeCorRepository.list(query);
-        if (CollectionUtil.isEmpty(goodsServeCor)) {
+        GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
             return null;
         }
         PCMerchGoodsServeVO.ListVO listVO = null;
-        for(GoodsServeCor temp:goodsServeCor){
+        String serveIdstr = goodsServeCor.getServeId();
+        String[] serveIds = serveIdstr.split(",");
+        for(int i =0;i<serveIds.length;i++){
         	listVO = new PCMerchGoodsServeVO.ListVO();
-        	String serveId = temp.getServeId();
+        	String serveId = serveIds[i];
         	GoodsServe serve = repository.getById(serveId);
         	BeanCopyUtils.copyProperties(serve, listVO);
         	list.add(listVO);
         }
-        
         return list;
     }
 
@@ -90,14 +91,16 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         }
         QueryWrapper<GoodsServeCorTemp> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
-        List<GoodsServeCorTemp> goodsServeCor = goodsServeCorTempRepository.list(query);
-        if (CollectionUtil.isEmpty(goodsServeCor)) {
+        GoodsServeCorTemp goodsServeCor = goodsServeCorTempRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
             return null;
         }
         PCMerchGoodsServeVO.ListVO listVO = null;
-        for(GoodsServeCorTemp temp:goodsServeCor){
+        String serveIdstr = goodsServeCor.getServeId();
+        String[] serveIds = serveIdstr.split(",");
+        for(int i =0;i<serveIds.length;i++){
         	listVO = new PCMerchGoodsServeVO.ListVO();
-        	String serveId = temp.getServeId();
+        	String serveId = serveIds[i];
         	GoodsServe serve = repository.getById(serveId);
         	BeanCopyUtils.copyProperties(serve, listVO);
         	list.add(listVO);
@@ -114,14 +117,15 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         }
         QueryWrapper<GoodsServeCorTemp> query = MybatisPlusUtil.query();
         query.eq("goods_id", dto.getId());
-        List<GoodsServeCorTemp> goodsServeCor = goodsServeCorTempRepository.list(query);
-        if (CollectionUtil.isEmpty(goodsServeCor)) {
+        GoodsServeCorTemp goodsServeCor = goodsServeCorTempRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
             return null;
         }
-        PCMerchGoodsServeVO.ListVO listVO = null;
-        for(GoodsServeCorTemp temp:goodsServeCor){
-        	
-        	list.add(temp.getServeId());
+        String serveId = goodsServeCor.getServeId();
+        String[] serveIds = serveId.split(",");
+        
+        for(int i =0;i<serveIds.length;i++){
+        	list.add(serveIds[i]);
         }
         
         return list;
