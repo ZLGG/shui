@@ -128,6 +128,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
     public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
         //数据校验
         checkAddGoodsData(eto);
+        eto.setShopId(eto.getJwtShopId());
         String goodId = eto.getId();
 
         //获取原来发布商品的传参对象
@@ -143,7 +144,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         GoodsInfoTemp goodsInfoTemp = new GoodsInfoTemp();
         BeanUtils.copyProperties(eto, goodsInfoTemp);
         goodsInfoTemp.setId(goodId);
-        goodsInfoTemp.setGoodsState(GoodsStateEnum.待审核.getCode());
+        goodsInfoTemp.setGoodsState(eto.getGoodsState()!=null?eto.getGoodsState():GoodsStateEnum.待审核.getCode());
         //表更新商品
         goodsInfoTemp.setApplyType(2);
         UpdateWrapper<GoodsInfoTemp> goodsBoost = MybatisPlusUtil.update();
