@@ -692,13 +692,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return retList;
     }
 
-    public static void main(String[] args) {
-        Integer integer = 10;
-        Integer integer2 = 10;
-        System.out.println(integer.equals(integer2));
-
-    }
-
     /**
      * 组装商家信息
      * @param shopId
@@ -1077,6 +1070,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids, totalAmount, totalPointAmount));
     }
 
+    public static void main(String args[]){
+    	System.out.println(DateUtils.parseDate(DateUtils.timeFormatStr, DateUtils.getAfterMin(30)));
+    }
     /**
      * 创建订单
      *

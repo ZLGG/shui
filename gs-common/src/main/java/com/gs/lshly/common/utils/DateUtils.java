@@ -217,7 +217,7 @@ public  class DateUtils {
      * @return
      */
     public static String getAfterMin(int num) {
-    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    	SimpleDateFormat format = new SimpleDateFormat(timeFormatStr);
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         

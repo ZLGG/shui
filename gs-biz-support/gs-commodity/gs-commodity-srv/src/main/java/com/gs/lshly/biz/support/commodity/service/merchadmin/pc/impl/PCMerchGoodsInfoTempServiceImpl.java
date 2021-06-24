@@ -1,30 +1,12 @@
 package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.repository.*;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
-import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoTempService;
-import com.gs.lshly.biz.support.commodity.service.platadmin.*;
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.enums.merchant.ShopStateEnum;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.common.CommonStockDTO;
-import com.gs.lshly.common.struct.common.CommonStockVO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.*;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.*;
-import com.gs.lshly.common.utils.BeanCopyUtils;
-import com.gs.lshly.common.utils.GoodsNoUtil;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.common.ICommonStockRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -32,14 +14,69 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.util.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsAttributeInfoTemp;
+import com.gs.lshly.biz.support.commodity.entity.GoodsExtendParamsTemp;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfoTemp;
+import com.gs.lshly.biz.support.commodity.entity.GoodsServeCorTemp;
+import com.gs.lshly.biz.support.commodity.entity.GoodsShopNavigationTemp;
+import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfoTemp;
+import com.gs.lshly.biz.support.commodity.entity.GoodsTempalteTemp;
+import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfoTemp;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsAttributeInfoTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsExtendParamsTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsServeCorTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsShopNavigationTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsTempalteTempRepository;
+import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoTempRepository;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoTempService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoTempService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsExtendParamsTempService;
+import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsSpecInfoTempService;
+import com.gs.lshly.common.enums.GoodsStateEnum;
+import com.gs.lshly.common.enums.ShowOldPriceEnum;
+import com.gs.lshly.common.enums.SingleStateEnum;
+import com.gs.lshly.common.enums.StockDataFromTypeEnum;
+import com.gs.lshly.common.enums.StockLocationEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.enums.merchant.ShopStateEnum;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.common.CommonStockDTO;
+import com.gs.lshly.common.struct.common.CommonStockVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsAttributeInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsExtendParamsDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsSpecInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchSkuGoodInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsAttributeInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsExtendParamsVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsSpecInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.GoodsNoUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenyang
  */
 @Component
+@Slf4j
 public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempService {
 
     @DubboReference
@@ -289,8 +326,10 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         GoodsServeCorTemp goodsServeCor = new GoodsServeCorTemp();
         goodsServeCor.setGoodsId(goodId);
         StringBuilder sb = new StringBuilder();
-        for (String goodsServeId : eto.getGoodsServeIdS()) {
-            sb.append(goodsServeId + ",");
+        if(CollectionUtil.isNotEmpty(eto.getGoodsServeIdS())){
+	        for (String goodsServeId : eto.getGoodsServeIdS()) {
+	            sb.append(goodsServeId + ",");
+	        }
         }
         String serveIds = sb.toString();
         if (StringUtils.isNotEmpty(serveIds)) {
@@ -680,12 +719,13 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
     }
 
     private void checkAddGoodsData(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
-        Integer shopState = shopRpc.innerShopState(eto.getShopId());
+    	if (eto == null) {
+            throw new BusinessException("参数不能为空");
+        }
+    	log.info("[checkAddGoodsData][eto][shopId==>{}]",eto.getJwtShopId());
+        Integer shopState = shopRpc.innerShopState(eto.getJwtShopId());
         if (ObjectUtils.isEmpty(shopState) || shopState.equals(ShopStateEnum.关闭状态.getCode())) {
             throw new BusinessException("店铺未开通！！");
-        }
-        if (eto == null) {
-            throw new BusinessException("参数不能为空");
         }
         if (StringUtils.isBlank(eto.getCategoryId())) {
             throw new BusinessException("请选择分类");

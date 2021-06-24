@@ -129,6 +129,9 @@ public abstract class PCMerchGoodsInfoDTO implements Serializable {
 
         @ApiModelProperty("结算价格")
         private BigDecimal settlementPrice;
+        
+        @ApiModelProperty("原积分价格")
+        private BigDecimal oldPointPrice;
 
     }
 
