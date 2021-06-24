@@ -59,8 +59,8 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
 
     @Override
     public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetail(PCMerchGoodsServeDTO.IdDTO dto) {
-    	
-    	List<PCMerchGoodsServeVO.ListVO> list = new ArrayList<PCMerchGoodsServeVO.ListVO>();
+
+        List<PCMerchGoodsServeVO.ListVO> list = new ArrayList<PCMerchGoodsServeVO.ListVO>();
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
@@ -73,19 +73,19 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         PCMerchGoodsServeVO.ListVO listVO = null;
         String serveIdstr = goodsServeCor.getServeId();
         String[] serveIds = serveIdstr.split(",");
-        for(int i =0;i<serveIds.length;i++){
-        	listVO = new PCMerchGoodsServeVO.ListVO();
-        	String serveId = serveIds[i];
-        	GoodsServe serve = repository.getById(serveId);
-        	BeanCopyUtils.copyProperties(serve, listVO);
-        	list.add(listVO);
+        for (int i = 0; i < serveIds.length; i++) {
+            listVO = new PCMerchGoodsServeVO.ListVO();
+            String serveId = serveIds[i];
+            GoodsServe serve = repository.getById(serveId);
+            BeanCopyUtils.copyProperties(serve, listVO);
+            list.add(listVO);
         }
         return list;
     }
 
     @Override
     public List<PCMerchGoodsServeVO.ListVO> getGoodsServeDetailTemp(PCMerchGoodsServeDTO.IdDTO dto) {
-    	List<PCMerchGoodsServeVO.ListVO> list = new ArrayList<PCMerchGoodsServeVO.ListVO>();
+        List<PCMerchGoodsServeVO.ListVO> list = new ArrayList<PCMerchGoodsServeVO.ListVO>();
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
@@ -98,20 +98,20 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
         PCMerchGoodsServeVO.ListVO listVO = null;
         String serveIdstr = goodsServeCor.getServeId();
         String[] serveIds = serveIdstr.split(",");
-        for(int i =0;i<serveIds.length;i++){
-        	listVO = new PCMerchGoodsServeVO.ListVO();
-        	String serveId = serveIds[i];
-        	GoodsServe serve = repository.getById(serveId);
-        	BeanCopyUtils.copyProperties(serve, listVO);
-        	list.add(listVO);
+        for (int i = 0; i < serveIds.length; i++) {
+            listVO = new PCMerchGoodsServeVO.ListVO();
+            String serveId = serveIds[i];
+            GoodsServe serve = repository.getById(serveId);
+            BeanCopyUtils.copyProperties(serve, listVO);
+            list.add(listVO);
         }
-        
+
         return list;
     }
 
-	@Override
-	public List<String> getServeTempIdByGoodsId(IdDTO dto) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getServeTempIdByGoodsId(IdDTO dto) {
+        List<String> list = new ArrayList<String>();
         if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
             throw new BusinessException("参数不能为空！");
         }
@@ -122,12 +122,15 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
             return null;
         }
         String serveId = goodsServeCor.getServeId();
-        String[] serveIds = serveId.split(",");
-        
-        for(int i =0;i<serveIds.length;i++){
-        	list.add(serveIds[i]);
+        if(ObjectUtil.isEmpty(serveId)){
+            return null;
         }
-        
+        String[] serveIds = serveId.split(",");
+
+        for (int i = 0; i < serveIds.length; i++) {
+            list.add(serveIds[i]);
+        }
+
         return list;
-	}
+    }
 }
