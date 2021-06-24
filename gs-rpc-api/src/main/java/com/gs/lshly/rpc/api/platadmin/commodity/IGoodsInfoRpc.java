@@ -35,7 +35,7 @@ public interface IGoodsInfoRpc {
      * @param dto
      * @return
      */
-    GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto);
+    GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto,Integer type);
 
     /**
      * 批量上架商品
