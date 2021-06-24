@@ -46,19 +46,19 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     }
 
     @Override
-    public GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto) {
+    public GoodsInfoVO.DetailVO getGoodsDetail(GoodsInfoDTO.IdDTO dto, Integer type) {
 
         //
         GoodsInfoDTO.IdDTO idDTO = new GoodsInfoDTO.IdDTO(dto.getId());
         idDTO.setId(dto.getId());
-        GoodsInfoVO.DetailVO detailVO = goodsInfoTempService.getGoodsDetail(idDTO);
-        //商品扶贫信息
-        /*GoodsFupinQTO.QTO qto = new GoodsFupinQTO.QTO();
-        qto.setGoodsId(dto.getId());
-        GoodsFupinVO.DetailVO fupin = fupinService.detailGoodsFupin(qto);
-        if (ObjectUtils.isNotEmpty(fupin)) {
-            detailVO.setFupinInfo(fupin);
-        }*/
+        GoodsInfoVO.DetailVO detailVO = null;
+        if (type == 2) {
+            detailVO = goodsInfoTempService.getGoodsDetail(idDTO);
+        }
+        if (type == 1) {
+            detailVO = goodsInfoService.getGoodsDetail(idDTO);
+        }
+
         return detailVO;
     }
 
@@ -89,20 +89,20 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
             //更新商品信息
             if (ObjectUtils.isNotEmpty(goodsInfo)) {
                 ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
-                goodsInfoService.checkGoods(dto,2,true);
-                ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(),40);
+                goodsInfoService.checkGoods(dto, 2, true);
+                ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(), 40);
             } else {
                 //新增商品信息
                 ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
-                goodsInfoService.checkGoods(dto,1,true);
-                ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(),40);
+                goodsInfoService.checkGoods(dto, 1, true);
+                ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(), 40);
             }
 
         }
         //审核不通过
         if (ObjectUtils.isNotEmpty(dto) && dto.getState().intValue() == 40) {
-            goodsInfoService.checkGoods(dto,0,false);
-            ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(),40);
+            goodsInfoService.checkGoods(dto, 0, false);
+            ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(), 40);
         }
 
 
@@ -120,7 +120,7 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     @Override
     public void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
         //todo 后面优化
-        if(ObjectUtils.isNotEmpty(dto)&&ObjectUtils.isNotEmpty(dto.getIdList())){
+        if (ObjectUtils.isNotEmpty(dto) && ObjectUtils.isNotEmpty(dto.getIdList())) {
             GoodsInfoDTO.CheckGoodsDTO checkGoodsDTO;
             for (String goodId : dto.getIdList()) {
                 checkGoodsDTO = new GoodsInfoDTO.CheckGoodsDTO();
@@ -197,9 +197,9 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
         return goodsInfoService.pageInGoods(qto);
     }
 
-	@Override
-	public List<SpuListVO> listGoodsData(ListQTO qto) {
-		return goodsInfoService.listGoodsData(qto);
-	}
+    @Override
+    public List<SpuListVO> listGoodsData(ListQTO qto) {
+        return goodsInfoService.listGoodsData(qto);
+    }
 
 }

@@ -106,7 +106,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 					for(SiteTopicGoods siteTopicGoods:goodslist){
 						
 						String goodsId = siteTopicGoods.getGoodsId();
-		        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+		        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId),1);
 		        		goodsInfoList.add(goodsInfoDetailVO);
 						
 					}
@@ -161,7 +161,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
         List<GoodsInfoVO.DetailVO> retList = new ArrayList<GoodsInfoVO.DetailVO>();
         if(CollectionUtils.isNotEmpty(goodsList)){
         	for(SiteTopicGoods goodsId:goodsList){
-        		GoodsInfoVO.DetailVO detailVO = goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId.getGoodsId()));
+        		GoodsInfoVO.DetailVO detailVO = goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId.getGoodsId()),1);
         		retList.add(detailVO);
         	}
         }
@@ -264,7 +264,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 					for(SiteTopicGoods siteTopicGoods:goodslist){
 						
 						String goodsId = siteTopicGoods.getGoodsId();
-		        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+		        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId),1);
 		        		goodsInfoList.add(goodsInfoDetailVO);
 						
 					}
@@ -317,7 +317,7 @@ public class BbcSiteTopicServiceImpl implements IBbcSiteTopicService {
 			for(SiteTopicGoods siteTopicGoods:goodslist){
 				
 				String goodsId = siteTopicGoods.getGoodsId();
-        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId));
+        		GoodsInfoVO.DetailVO goodsInfoDetailVO= goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(goodsId),1);
         		goodsInfoList.add(goodsInfoDetailVO);
 				
 			}
