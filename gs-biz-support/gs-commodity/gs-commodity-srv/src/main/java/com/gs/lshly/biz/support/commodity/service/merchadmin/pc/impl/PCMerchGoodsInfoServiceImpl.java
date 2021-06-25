@@ -18,8 +18,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.gs.lshly.biz.support.commodity.entity.*;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoTempMapper;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsTempalteMapper;
+import com.gs.lshly.biz.support.commodity.mapper.*;
 import com.gs.lshly.biz.support.commodity.repository.*;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.*;
 import com.gs.lshly.common.enums.*;
@@ -40,8 +39,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
-import com.gs.lshly.biz.support.commodity.mapper.GoodsInfoMapper;
 import com.gs.lshly.biz.support.commodity.mapper.view.GoodSkuInfoView;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsAttributeInfoService;
 import com.gs.lshly.biz.support.commodity.service.platadmin.IGoodsBrandService;
@@ -126,6 +123,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     private GoodsInfoTempMapper goodsInfoTempMapper;
     @Autowired
     private GoodsTempalteMapper goodsTempalteMapper;
+    @Autowired
+    private GoodsAuditRecordMapper goodsAuditRecordMapper;
     @Autowired
     private IPCMerchSkuGoodInfoService skuGoodInfoService;
     @Autowired
@@ -238,6 +237,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                     spuListVO.setStockNumList(getStockNumTemp(spuListVO.getId(), qto.getJwtShopId()));
 
                     spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
+
+                    GoodsAuditRecord goodsAuditRecord = goodsAuditRecordMapper.getOneByGoodsId(spuListVO.getId());
+                    if(ObjectUtils.isNotEmpty(goodsAuditRecord)){
+                        spuListVO.setAduitResult(goodsAuditRecord.getState());
+                        spuListVO.setApplyType(goodsAuditRecord.getType());
+                        spuListVO.setAduitTime(goodsAuditRecord.getCdate());
+                    }
                 }
             }
         }
@@ -1239,6 +1245,16 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
         repository.update(goodsInfo, goodsInfoQueryWrapper);
 
+    }
+
+    @Override
+    public void updateGoodsState(String id, Integer state) {
+        GoodsInfo goodsInfo = new GoodsInfo();
+        goodsInfo.setGoodsState(state);
+        goodsInfo.setUdate(LocalDateTime.now());
+        UpdateWrapper<GoodsInfo> goodsBoost = MybatisPlusUtil.update();
+        goodsBoost.eq("id", id);
+        repository.update(goodsInfo, goodsBoost);
     }
 
     @Override

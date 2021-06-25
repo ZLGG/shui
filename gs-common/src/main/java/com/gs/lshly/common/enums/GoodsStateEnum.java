@@ -10,7 +10,8 @@ public enum GoodsStateEnum implements EnumMessage{
     待审核(30, "待审核"),
     已审核(40, "已审核"),
     草稿箱(50, "草稿箱"),
-    已审核上架(60, "新增商品-已审核-上架");
+    已审核上架(60, "新增商品-已审核-上架"),
+    未上架编辑(70, "未上架商品-编辑");
 
 
     GoodsStateEnum(Integer code, String remark){

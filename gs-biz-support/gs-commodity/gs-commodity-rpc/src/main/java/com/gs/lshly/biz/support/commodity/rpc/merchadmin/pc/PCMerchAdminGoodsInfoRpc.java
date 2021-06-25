@@ -80,6 +80,13 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     @Override
     public void editGoodsInfo(PCMerchGoodsInfoDTO.AddGoodsETO eto) {
         //直接更新temp表
+        GoodsInfo goodsInfo = goodsInfoService.getGoodsInfo(eto.getId());
+        if(ObjectUtils.isNotEmpty(goodsInfo)){
+            if(goodsInfo.getGoodsState().intValue() == GoodsStateEnum.未上架.getCode()){
+                //修改info表goods状态
+                goodsInfoService.updateGoodsState(eto.getId(),GoodsStateEnum.未上架编辑.getCode());
+            }
+        }
         goodsInfoTempService.editGoodsInfo(eto);
     }
 

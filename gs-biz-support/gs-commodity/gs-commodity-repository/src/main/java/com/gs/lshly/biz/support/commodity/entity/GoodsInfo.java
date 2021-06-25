@@ -269,4 +269,9 @@ public class GoodsInfo extends Model {
      * '电信商品分类 10：普通商品 20：积分商品 30：IN会员商品；40：定向积分商品'
      */
     private Integer ctccMold;
+
+    /**
+     * 结算现金价格
+     */
+    private BigDecimal settlementPrice;
 }

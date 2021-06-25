@@ -147,6 +147,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         goodsInfoTemp.setGoodsState(eto.getGoodsState()!=null?eto.getGoodsState():GoodsStateEnum.待审核.getCode());
         //表更新商品
         goodsInfoTemp.setApplyType(2);
+        goodsInfoTemp.setCdate(new Date());
         UpdateWrapper<GoodsInfoTemp> goodsBoost = MybatisPlusUtil.update();
         goodsBoost.eq("id", oldGoodsInfoTemp.getId());
         boolean flag = repository.update(goodsInfoTemp, goodsBoost);

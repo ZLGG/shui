@@ -264,14 +264,20 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
             if (qto.getGoodState().intValue() == 30) {
                 boost.eq("gs.goods_state", qto.getGoodState());
+                boost.orderByDesc("gs.cdate");
                 spuListVOIPage = goodsInfoTempMapper.getGoodsInfo(page, boost);
             } else if(qto.getGoodState().intValue() == -1){
+                boost.between("gs.goods_state",10,20);
+                boost.orderByDesc("gs.cdate");
                 spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
             }else {
                 boost.eq("gs.goods_state", qto.getGoodState());
+                boost.orderByDesc("gs.cdate");
                 spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
             }
         } else {
+            boost.between("gs.goods_state",10,20);
+            boost.orderByDesc("gs.cdate");
             spuListVOIPage = goodsInfoMapper.getGoodsInfo(page, boost);
         }
 

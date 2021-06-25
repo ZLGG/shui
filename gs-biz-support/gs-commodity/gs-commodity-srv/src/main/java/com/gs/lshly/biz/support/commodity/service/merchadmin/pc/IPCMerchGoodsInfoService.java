@@ -65,6 +65,8 @@ public interface IPCMerchGoodsInfoService {
 
     void hasCheckedUp(String id);
 
+    void updateGoodsState(String id,Integer state);
+
     /**
      * 批量下架商品
      * @param dto
