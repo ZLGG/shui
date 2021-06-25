@@ -4,11 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -399,6 +395,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
                 skuGoodInfo.setMerchantId(eto.getMerchantId());
                 skuGoodInfo.setShopId(eto.getJwtShopId());
+                skuGoodInfo.setCdate(LocalDateTime.now());
+                skuGoodInfo.setUdate(LocalDateTime.now());
                 if (skuInfo.getCostPrice() != null) {
                     skuGoodInfo.setPointPrice(new BigDecimal(skuInfo.getPointPrice()));
                 }
@@ -437,6 +435,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
             skuGoodInfo.setIsPointGood(eto.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
+            skuGoodInfo.setMerchantId(eto.getMerchantId());
+            skuGoodInfo.setShopId(eto.getJwtShopId());
+            skuGoodInfo.setFlag(false);
             skuGoodInfoRepository.save(skuGoodInfo);
 
             CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
@@ -870,14 +871,16 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setGoodId(goodsInfo.getId());
                 skuGoodInfo.setSkuGoodsNo(StringUtils.isBlank(skuInfo.getSkuGoodsNo()) ? GoodsNoUtil.getGoodsNo() : skuInfo.getSkuGoodsNo());
                 skuGoodInfo.setState(goodsInfo.getGoodsState());
-                skuGoodInfo.setShopId(editDetailVO.getShopId());
-                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
                 skuGoodInfo.setId("");
                 skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(editDetailVO.getPosSpuId()) ? "" : editDetailVO.getPosSpuId());
                 skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
                 skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
-                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
+                skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
+                skuGoodInfo.setShopId(goodsInfo.getShopId());
+                skuGoodInfo.setCdate(LocalDateTime.now());
+                skuGoodInfo.setUdate(LocalDateTime.now());
+                skuGoodInfo.setFlag(false);
                 if (skuInfo.getPointPrice() != null) {
                     skuGoodInfo.setPointPrice(skuInfo.getPointPrice());
                 }
@@ -913,6 +916,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
             skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+            skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
+            skuGoodInfo.setShopId(goodsInfo.getShopId());
+            skuGoodInfo.setCdate(LocalDateTime.now());
+            skuGoodInfo.setUdate(LocalDateTime.now());
+            skuGoodInfo.setFlag(false);
             skuGoodInfoRepository.save(skuGoodInfo);
 
             CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
@@ -1061,7 +1069,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(editDetailVO.getPosSpuId()) ? "" : editDetailVO.getPosSpuId());
                 skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
                 skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
-                skuGoodInfo.setMerchantId(editDetailVO.getMerchantId());
+                skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
+                skuGoodInfo.setShopId(goodsInfo.getShopId());
+                skuGoodInfo.setFlag(false);
+                skuGoodInfo.setCdate(LocalDateTime.now());
+                skuGoodInfo.setUdate(LocalDateTime.now());
                 if (skuInfo.getPointPrice() != null) {
                     skuGoodInfo.setPointPrice(skuInfo.getPointPrice());
                 }
@@ -1097,6 +1109,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
             skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+            skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
+            skuGoodInfo.setShopId(goodsInfo.getShopId());
+            skuGoodInfo.setCdate(LocalDateTime.now());
+            skuGoodInfo.setUdate(LocalDateTime.now());
+            skuGoodInfo.setFlag(false);
             skuGoodInfoRepository.save(skuGoodInfo);
 
             CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
