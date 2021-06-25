@@ -447,7 +447,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         }
         GoodsInfoTemp goodsInfo = new GoodsInfoTemp();
         BeanUtils.copyProperties(eto, goodsInfo);
-        goodsInfo.setGoodsNo(StringUtils.isEmpty(eto.getGoodsNo()) ? GoodsNoUtil.getGoodsNo() : eto.getGoodsNo());
+        goodsInfo.setGoodsNo(eto.getGoodsNo());
         goodsInfo.setIsShowOldPrice(ObjectUtils.isEmpty(goodsInfo.getIsShowOldPrice()) ? ShowOldPriceEnum.不显示原价.getCode() : goodsInfo.getIsShowOldPrice());
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId()) ? eto.getJwtShopId() : eto.getShopId());
         goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId()) ? eto.getJwtMerchantId() : eto.getMerchantId());
@@ -578,9 +578,14 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
             skuGoodInfo.setId("");
             skuGoodInfo.setCategoryId(eto.getCategoryId());
-            skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
             skuGoodInfo.setIsPointGood(eto.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
+            skuGoodInfo.setState(GoodsStateEnum.待审核.getCode());
+            skuGoodInfo.setMerchantId(eto.getMerchantId());
+            skuGoodInfo.setShopId(eto.getShopId());
+            skuGoodInfo.setCdate(new Date());
+            skuGoodInfo.setUdate(new Date());
+            skuGoodInfo.setFlag(false);
             skuGoodInfoTempRepository.save(skuGoodInfo);
 
             CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
