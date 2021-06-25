@@ -360,6 +360,9 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         goodId.setJwtShopId(goodsInfoTemp.getShopId());
         List<PCMerchSkuGoodInfoVO.DetailVO> skuList = skuGoodInfoTempService.getByGoodsId(goodId);
         if (ObjectUtils.isNotEmpty(skuList) && StringUtils.isNotEmpty(skuList.get(0).getSpecsKey())) {
+            for (PCMerchSkuGoodInfoVO.DetailVO vo : skuList) {
+                vo.setSkuStock(getSkuStockNum(dto.getJwtShopId(),vo.getId()));
+            }
             detailVO.setSkuVoList(skuList);
         }
         //商品拓展属性列表
@@ -530,8 +533,8 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
                 skuGoodInfo.setGoodId(goodsInfo.getId());
                 skuGoodInfo.setSkuGoodsNo(StringUtils.isBlank(skuInfo.getSkuGoodsNo()) ? GoodsNoUtil.getGoodsNo() : skuInfo.getSkuGoodsNo());
                 skuGoodInfo.setState(GoodsStateEnum.待审核.getCode());
-                skuGoodInfo.setShopId(StringUtils.isBlank(eto.getShopId()) ? eto.getJwtShopId() : eto.getShopId());
-                skuGoodInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId()) ? eto.getJwtMerchantId() : eto.getMerchantId());
+                skuGoodInfo.setShopId(eto.getJwtShopId());
+                skuGoodInfo.setMerchantId(eto.getMerchantId());
                 skuGoodInfo.setId("");
                 skuGoodInfo.setCategoryId(eto.getCategoryId());
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
