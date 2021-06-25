@@ -3,6 +3,8 @@ package com.gs.lshly.biz.support.commodity.rpc.merchadmin.pc;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsFupinService;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
+import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl.PCMerchGoodsInfoServiceImpl;
+import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
@@ -41,6 +43,8 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     private IPCMerchGoodsFupinService goodsFupinService;
     @Autowired
     private IPCMerchGoodsInfoTempService goodsInfoTempService;
+    @Autowired
+    private IPCMerchGoodsInfoService ipcMerchGoodsInfoService;
 
     @Override
     public PageData<PCMerchGoodsInfoVO.SpuListVO> pageData(PCMerchGoodsInfoQTO.GoodsInfoParamsQTO qto) {
@@ -90,7 +94,10 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
 
     @Override
     public void hasCheckedUp(String id) {
+        //
+        ipcMerchGoodsInfoService.addTempToGoodsInfo(id);
         goodsInfoService.hasCheckedUp(id);
+        goodsInfoTempService.updateGoodsInfoStateTemp(id, GoodsStateEnum.已审核上架.getCode());
     }
 
     @Override
