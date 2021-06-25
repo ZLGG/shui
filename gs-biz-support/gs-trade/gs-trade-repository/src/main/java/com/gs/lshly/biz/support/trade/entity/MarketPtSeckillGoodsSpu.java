@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.trade.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -99,17 +100,14 @@ public class MarketPtSeckillGoodsSpu extends Model {
      */
     private String categoryId;
 
-    /**
-     * 创建时间
-     */
     @TableField(fill = FieldFill.INSERT)
-    private Date cdate;
+    private LocalDateTime cdate;
 
     /**
      * 更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date udate;
+    private LocalDateTime udate;
 
     /**
      * 逻辑删除标记
