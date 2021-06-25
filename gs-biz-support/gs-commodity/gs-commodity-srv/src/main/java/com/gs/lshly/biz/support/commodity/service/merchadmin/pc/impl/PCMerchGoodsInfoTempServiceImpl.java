@@ -582,7 +582,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             skuGoodInfo.setIsPointGood(eto.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
             skuGoodInfo.setState(GoodsStateEnum.待审核.getCode());
-            skuGoodInfo.setMerchantId(eto.getMerchantId());
+            skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
             skuGoodInfo.setShopId(eto.getJwtShopId());
             skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
             skuGoodInfo.setSkuGoodsNo(eto.getGoodsNo());
