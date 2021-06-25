@@ -414,7 +414,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         }
 
         // spu库存
-        detailVO.setSpuStock(getSpuStockNum(goodsInfoTemp.getId(), dto.getJwtShopId()));
+        detailVO.setSpuStock(getSpuStockNum(goodsInfoTemp.getId(), goodsInfoTemp.getShopId()));
         PCMerchGoodsServeDTO.IdDTO idDTO = new PCMerchGoodsServeDTO.IdDTO(dto.getId());
         List<String> serveListVO = goodsServeRpc.getServeTempIdByGoodsId(idDTO);
         if (CollUtil.isNotEmpty(serveListVO)) {

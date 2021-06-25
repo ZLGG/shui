@@ -501,6 +501,19 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
             goodsInfoQueryWrapper.eq("id", dto.getId());
             repository.update(goodsInfo, goodsInfoQueryWrapper);
         }
+        //审核不通过 且已下架商品
+        if(!isAgree){
+            GoodsInfo goodsInfo = repository.getById(dto.getId());
+            if(ObjectUtils.isNotEmpty(goodsInfo)){
+                if(GoodsStateEnum.未上架编辑.getCode() == goodsInfo.getGoodsState().intValue()){
+                    GoodsInfo info = new GoodsInfo();
+                    info.setGoodsState(GoodsStateEnum.未上架.getCode().intValue());
+                    QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
+                    goodsInfoQueryWrapper.eq("id", dto.getId());
+                    repository.update(info, goodsInfoQueryWrapper);
+                }
+            }
+        }
         //审核后添加审核记录
         //GoodsInfoTemp goodsInfoTemp = goodsInfoTempRepository.getById(dto.getId());
         addAuditRecord(dto, type,isAgree);
