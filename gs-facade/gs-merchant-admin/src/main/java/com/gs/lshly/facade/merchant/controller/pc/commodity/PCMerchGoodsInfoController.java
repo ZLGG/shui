@@ -126,7 +126,7 @@ public class PCMerchGoodsInfoController {
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
-    @ApiOperation("已审核状态-新增商品-上架")
+    @ApiOperation("已审核状态-上架")
     @PutMapping(value = "hasCheckedUp/{id}")
     public ResponseData<Void> hasCheckedUp(@PathVariable String id) {
         goodsInfoRpc.hasCheckedUp(id);

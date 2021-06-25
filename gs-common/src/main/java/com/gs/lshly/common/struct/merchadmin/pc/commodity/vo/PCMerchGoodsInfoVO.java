@@ -346,7 +346,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private Integer aduitResult;
 
         @ApiModelProperty(value = "结果反馈")
-        private Integer refuseRemark;
+        private String refuseRemark;
 
         @ApiModelProperty(value = "运费模版名")
         private String templateName;

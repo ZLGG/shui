@@ -88,7 +88,7 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
         if (ObjectUtils.isNotEmpty(dto) && dto.getState().intValue() == 20) {
             //更新商品信息
             if (ObjectUtils.isNotEmpty(goodsInfo)) {
-                ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
+                //ipcMerchGoodsInfoService.changeTempToGoodsInfo(dto.getId());
                 goodsInfoService.checkGoods(dto, 2, true);
                 ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(), 40);
             } else {

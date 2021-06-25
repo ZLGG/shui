@@ -1,6 +1,7 @@
 package com.gs.lshly.biz.support.commodity.rpc.merchadmin.pc;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsFupinService;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchGoodsInfoTempService;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl.PCMerchGoodsInfoServiceImpl;
@@ -95,9 +96,18 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     @Override
     public void hasCheckedUp(String id) {
         //
-        ipcMerchGoodsInfoService.addTempToGoodsInfo(id);
-        goodsInfoService.hasCheckedUp(id);
-        goodsInfoTempService.updateGoodsInfoStateTemp(id, GoodsStateEnum.已审核上架.getCode());
+        GoodsInfo goodsInfo = ipcMerchGoodsInfoService.getGoodsInfo(id);
+        if(ObjectUtils.isNotEmpty(goodsInfo)){
+           //已上架商品-已审核-上架
+            ipcMerchGoodsInfoService.changeTempToGoodsInfo(id);
+            goodsInfoService.hasCheckedUp(id);
+            goodsInfoTempService.updateGoodsInfoStateTemp(id, GoodsStateEnum.已审核上架.getCode());
+        }else {
+            //新增商品-已审核-上架
+            ipcMerchGoodsInfoService.addTempToGoodsInfo(id);
+            goodsInfoService.hasCheckedUp(id);
+            goodsInfoTempService.updateGoodsInfoStateTemp(id, GoodsStateEnum.已审核上架.getCode());
+        }
     }
 
     @Override
