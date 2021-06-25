@@ -452,6 +452,8 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         goodsInfo.setFlag(false);
         goodsInfo.setCdate(new Date());
         goodsInfo.setUdate(new Date());
+        goodsInfo.setMerchantId(eto.getJwtMerchantId());
+        goodsInfo.setShopId(eto.getJwtShopId());
         switch (eto.getCtccMold()) {
             case 20:
                 goodsInfo.setIsPointGood(true);
