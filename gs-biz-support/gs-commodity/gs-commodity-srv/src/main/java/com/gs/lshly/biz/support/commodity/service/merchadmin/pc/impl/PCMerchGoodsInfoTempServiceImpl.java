@@ -534,7 +534,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
                 skuGoodInfo.setSkuGoodsNo(StringUtils.isBlank(skuInfo.getSkuGoodsNo()) ? GoodsNoUtil.getGoodsNo() : skuInfo.getSkuGoodsNo());
                 skuGoodInfo.setState(GoodsStateEnum.待审核.getCode());
                 skuGoodInfo.setShopId(eto.getJwtShopId());
-                skuGoodInfo.setMerchantId(eto.getMerchantId());
+                skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
                 skuGoodInfo.setId("");
                 skuGoodInfo.setCategoryId(eto.getCategoryId());
                 skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
@@ -574,6 +574,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
 
             SkuGoodInfoTemp skuGoodInfo = new SkuGoodInfoTemp();
+
             skuGoodInfo.setGoodId(goodsInfo.getId());
             skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
             skuGoodInfo.setId("");
@@ -582,7 +583,15 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
             skuGoodInfo.setState(GoodsStateEnum.待审核.getCode());
             skuGoodInfo.setMerchantId(eto.getMerchantId());
-            skuGoodInfo.setShopId(eto.getShopId());
+            skuGoodInfo.setShopId(eto.getJwtShopId());
+            skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
+            skuGoodInfo.setSkuGoodsNo(eto.getGoodsNo());
+            skuGoodInfo.setCostPrice(eto.getCostPrice());
+            skuGoodInfo.setCtccMold(eto.getCtccMold());
+            skuGoodInfo.setOldPrice(eto.getOldPrice());
+            skuGoodInfo.setOldPointPrice(eto.getOldPointPrice());
+            skuGoodInfo.setSalePrice(eto.getSalePrice());
+            skuGoodInfo.setSettlementPrice(eto.getSettlementPrice());
             skuGoodInfo.setCdate(new Date());
             skuGoodInfo.setUdate(new Date());
             skuGoodInfo.setFlag(false);
