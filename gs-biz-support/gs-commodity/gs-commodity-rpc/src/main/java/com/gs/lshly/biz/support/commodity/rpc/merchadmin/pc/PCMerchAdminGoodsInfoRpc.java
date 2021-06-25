@@ -89,6 +89,11 @@ public class PCMerchAdminGoodsInfoRpc implements IPCMerchAdminGoodsInfoRpc {
     }
 
     @Override
+    public void hasCheckedUp(String id) {
+        goodsInfoService.hasCheckedUp(id);
+    }
+
+    @Override
     public void underCarriageGoods(PCMerchGoodsInfoDTO.IdListDTO dto) {
         goodsInfoService.underCarriageGoods(dto);
     }

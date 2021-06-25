@@ -126,6 +126,13 @@ public class PCMerchGoodsInfoController {
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
 
+    @ApiOperation("已审核状态-新增商品-上架")
+    @PutMapping(value = "hasCheckedUp/{id}")
+    public ResponseData<Void> hasCheckedUp(@PathVariable String id) {
+        goodsInfoRpc.hasCheckedUp(id);
+        return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
+    }
+
     @ApiOperation("批量下架商品")
     @PutMapping(value = "underCarriageBatch")
     public ResponseData<Void> underCarriageBatch(@RequestBody PCMerchGoodsInfoDTO.IdListDTO dto) {

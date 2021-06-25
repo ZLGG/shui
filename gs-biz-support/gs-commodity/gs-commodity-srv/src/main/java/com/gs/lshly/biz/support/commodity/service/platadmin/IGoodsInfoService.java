@@ -70,6 +70,13 @@ public interface IGoodsInfoService {
     void checkGoods(GoodsInfoDTO.CheckGoodsDTO dto,Integer type,boolean isAgree);
 
     /**
+     * 审核商品(新增商品将商品状态改萎已审核)
+     *
+     * @param dto
+     */
+    void hasCheckGoods(GoodsInfoDTO.CheckGoodsDTO dto,Integer type,boolean isAgree);
+
+    /**
      * 获取商品名称
      *
      * @param dto

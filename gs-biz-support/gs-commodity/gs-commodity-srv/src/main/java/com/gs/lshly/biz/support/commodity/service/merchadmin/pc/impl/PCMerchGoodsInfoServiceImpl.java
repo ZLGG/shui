@@ -1211,6 +1211,37 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
     }
 
     @Override
+    public void hasCheckedUp(String id) {
+        QueryWrapper<SkuGoodInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("good_id", id);
+        List<SkuGoodInfo> infoList = skuGoodInfoRepository.list(wrapper);
+        if (infoList != null && infoList.size() > 0) {
+            for (SkuGoodInfo info : infoList) {
+
+                UpdateWrapper<SkuGoodInfo> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("id", info.getId());
+
+                SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
+                skuGoodInfo.setState(GoodsStateEnum.已上架.getCode());
+
+                skuGoodInfoRepository.update(skuGoodInfo, updateWrapper);
+            }
+        }
+
+        QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
+        wrapper.eq("id", id);
+
+        GoodsInfo goodsInfo = new GoodsInfo();
+        goodsInfo.setGoodsState(GoodsStateEnum.已上架.getCode());
+        //上架时间
+        goodsInfo.setPublishTime(LocalDateTime.now());//上架
+        goodsInfo.setUdate(LocalDateTime.now());
+
+        repository.update(goodsInfo, goodsInfoQueryWrapper);
+
+    }
+
+    @Override
     public void underCarriageGoods(PCMerchGoodsInfoDTO.IdListDTO dto) {
         upOrOnGoods(dto, GoodsStateEnum.未上架.getCode());
     }

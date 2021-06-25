@@ -68,6 +68,8 @@ public interface IPCMerchAdminGoodsInfoRpc {
      */
     void groundingGoods(PCMerchGoodsInfoDTO.IdListDTO dto);
 
+    void hasCheckedUp(String id);
+
     /**
      * 批量下架商品
      * @param dto

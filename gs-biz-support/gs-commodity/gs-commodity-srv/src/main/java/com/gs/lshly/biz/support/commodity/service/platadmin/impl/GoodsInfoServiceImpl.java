@@ -501,6 +501,24 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     }
 
     @Override
+    public void hasCheckGoods(GoodsInfoDTO.CheckGoodsDTO dto, Integer type, boolean isAgree) {
+        if (dto == null) {
+            throw new BusinessException("参数不能为空！");
+        }
+        //新增商品
+        if (type == 1 && isAgree) {
+            GoodsInfo goodsInfo = new GoodsInfo();
+            goodsInfo.setGoodsState(GoodsStateEnum.已审核.getCode().intValue());
+            goodsInfo.setPublishTime(LocalDateTime.now());
+            QueryWrapper<GoodsInfo> goodsInfoQueryWrapper = new QueryWrapper<>();
+            goodsInfoQueryWrapper.eq("id", dto.getId());
+            repository.update(goodsInfo, goodsInfoQueryWrapper);
+        }
+        //审核后添加审核记录
+        addAuditRecord(dto, type,isAgree);
+    }
+
+    @Override
     public GoodsInfoVO.GoodsNameVO getGoodsName(GoodsInfoDTO.IdDTO dto) {
         if (dto == null) {
             throw new BusinessException("参数不能为空！");

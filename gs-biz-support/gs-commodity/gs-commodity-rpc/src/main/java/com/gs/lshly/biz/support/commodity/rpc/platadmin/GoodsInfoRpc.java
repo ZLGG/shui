@@ -92,9 +92,9 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
                 goodsInfoService.checkGoods(dto, 2, true);
                 ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(), 40);
             } else {
-                //新增商品信息
-                ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
-                goodsInfoService.checkGoods(dto, 1, true);
+                //新增商品信息 商品状态处于已审核，需用户手动上架
+                //ipcMerchGoodsInfoService.addTempToGoodsInfo(dto.getId());
+                goodsInfoService.hasCheckGoods(dto, 1, true);
                 ipcMerchGoodsInfoTempService.updateGoodsInfoStateTemp(dto.getId(), 40);
             }
 
