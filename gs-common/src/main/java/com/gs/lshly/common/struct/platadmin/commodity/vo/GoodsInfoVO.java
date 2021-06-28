@@ -210,7 +210,7 @@ public abstract class GoodsInfoVO implements Serializable {
         private List<String> tags;
 
         @ApiModelProperty(value = "服务列表")
-        private List<GoodsServeVO.ListVO> goodsServeList;
+        private List<String> goodsServeList;
     }
 
     @Data

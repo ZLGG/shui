@@ -133,4 +133,29 @@ public class PCMerchGoodsServeServiceImpl implements IPCMerchGoodsServeService {
 
         return list;
     }
+
+	@Override
+	public List<String> getServeIdByGoodsId(IdDTO dto) {
+		List<String> list = new ArrayList<String>();
+        if (ObjectUtil.isEmpty(dto) || StrUtil.isEmpty(dto.getId())) {
+            throw new BusinessException("参数不能为空！");
+        }
+        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
+        query.eq("goods_id", dto.getId());
+        GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
+        if (ObjectUtil.isEmpty(goodsServeCor)) {
+            return null;
+        }
+        String serveId = goodsServeCor.getServeId();
+        if(ObjectUtil.isEmpty(serveId)){
+            return null;
+        }
+        String[] serveIds = serveId.split(",");
+
+        for (int i = 0; i < serveIds.length; i++) {
+            list.add(serveIds[i]);
+        }
+
+        return list;
+	}
 }

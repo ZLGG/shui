@@ -64,6 +64,7 @@ import com.gs.lshly.common.struct.bb.commodity.qto.BbGoodsInfoQTO.QTO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.common.stock.CommonStockTemplateVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsServeDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsAuditRecordDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsBrandDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
@@ -90,6 +91,7 @@ import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockTemplateRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityGoodsRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
@@ -164,6 +166,9 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     @DubboReference
     private ICtccPtActivityGoodsRpc ctccPtActivityGoodsRpc;
+    
+    @DubboReference
+    private IPCMerchGoodsServeRpc goodsServeRpc;
 
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto) {
@@ -398,22 +403,10 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         detailVO.setTags(relationLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
 
         //查询服务
-        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
-        query.eq("goods_id", dto.getId());
-        GoodsServeCor goodsServeCor = goodsServeCorRepository.getOne(query);
-        if (ObjectUtil.isNotEmpty(goodsServeCor)) {
-            List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-            List<GoodsServe> goodsServeList = goodsServeRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-            if (CollUtil.isNotEmpty(goodsServeList)) {
-                List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
-                for (GoodsServe goodsServe : goodsServeList) {
-                    GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
-                    BeanUtil.copyProperties(goodsServe, listVO);
-                    listVOS.add(listVO);
-                }
-                detailVO.setGoodsServeList(listVOS);
-            }
-        }
+		List<String> serveListVO = goodsServeRpc.getServeIdByGoodsId(new PCMerchGoodsServeDTO.IdDTO(goodsInfo.getId()));
+		if (CollUtil.isNotEmpty(serveListVO)) {
+		    detailVO.setGoodsServeList(serveListVO);
+		}
         return detailVO;
     }
 

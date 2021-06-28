@@ -279,27 +279,11 @@ public class GoodsInfoTempServiceImpl implements IGoodsInfoTempService {
         detailVO.setTags(relationLabelService.listGoodsLabelByGoodsId(goodsInfo.getId()));
 
         //查询服务
-        QueryWrapper<GoodsServeCorTemp> query = MybatisPlusUtil.query();
-        query.eq("goods_id", dto.getId());
-        GoodsServeCorTemp goodsServeCor = goodsServeCorTempRepository.getOne(query);
-        if (ObjectUtil.isNotEmpty(goodsServeCor)) {
-            List<String> serveIdList = StrUtil.split(goodsServeCor.getServeId(), ',');
-            if(ObjectUtils.isNotEmpty(serveIdList)){
-                List<GoodsServe> goodsServeList = goodsServeTempRepository.list(Wrappers.<GoodsServe>lambdaQuery().in(GoodsServe::getId, serveIdList));
-                if (CollUtil.isNotEmpty(goodsServeList)) {
-                    List<GoodsServeVO.ListVO> listVOS = new ArrayList<>();
-                    for (GoodsServe goodsServe : goodsServeList) {
-                        GoodsServeVO.ListVO listVO = new GoodsServeVO.ListVO();
-                        BeanUtil.copyProperties(goodsServe, listVO);
-                        listVOS.add(listVO);
-                    }
-                    detailVO.setGoodsServeList(listVOS);
-                }
-            }else {
-                detailVO.setGoodsServeList(new ArrayList<>());
-            }
-
-        }
+        List<String> serveListVO = goodsServeRpc.getServeTempIdByGoodsId(new PCMerchGoodsServeDTO.IdDTO(goodsInfo.getId()));
+		if (CollUtil.isNotEmpty(serveListVO)) {
+		    detailVO.setGoodsServeList(serveListVO);
+		}
+		
         return detailVO;
     }
 

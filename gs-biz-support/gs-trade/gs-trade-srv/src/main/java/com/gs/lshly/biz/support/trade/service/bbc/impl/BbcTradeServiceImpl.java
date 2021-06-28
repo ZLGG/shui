@@ -104,6 +104,7 @@ import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockDeliveryDTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockDeliveryVO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO.DTO.ProductData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeBuildDTO.DTO.ShopData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
@@ -886,11 +887,19 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         idDto.setJwtUserId(dto.getJwtUserId());
         BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
         if (!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
-            //根据id查询地址
-            addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
-            if (ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null) {
-                throw new BusinessException("查询不到收货地址");
-            }
+        	
+        	//查询是不是虚拟商品购买
+        	List<ShopData> shopList = dto.getShopData();
+        	if(shopList.size()==1){
+        		List<ProductData> prod = shopList.get(0).getProductData();
+        		
+        	}else{
+	            //根据id查询地址
+	            addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
+	            if (ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null) {
+	                throw new BusinessException("查询不到收货地址");
+	            }
+        	}
         }
         BigDecimal totalAmount = BigDecimal.ZERO;//总金额
         BigDecimal totalPointAmount = BigDecimal.ZERO;//总积分额

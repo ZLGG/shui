@@ -40,4 +40,9 @@ public class PCMerchAdminGoodsServeRpc implements IPCMerchGoodsServeRpc {
 	public List<String> getServeTempIdByGoodsId(IdDTO dto) {
 		return goodsServeService.getServeTempIdByGoodsId(dto);
 	}
+
+	@Override
+	public List<String> getServeIdByGoodsId(IdDTO dto) {
+		return goodsServeService.getServeIdByGoodsId(dto);
+	}
 }
