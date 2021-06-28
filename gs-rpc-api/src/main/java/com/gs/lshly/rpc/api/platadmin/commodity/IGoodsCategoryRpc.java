@@ -57,6 +57,12 @@ public interface IGoodsCategoryRpc {
      * 获取树形列表
      * @return
      */
+    List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTreeBbc();
+    
+    /**
+     * 获取树形列表
+     * @return
+     */
     List<GoodsCategoryVO.CategoryTreeVO> selectCategoryTree();
 
     /**

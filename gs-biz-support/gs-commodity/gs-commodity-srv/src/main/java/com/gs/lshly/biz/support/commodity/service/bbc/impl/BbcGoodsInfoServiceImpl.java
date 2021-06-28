@@ -427,8 +427,9 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         }
 
         //填充spec规格列表信息
-        if (ObjectUtils.isNotEmpty(getSpecInfoVO(goodsInfo))) {
-            detailVo.setSpecListVOS(getSpecInfoVO(goodsInfo));
+        List<BbcGoodsSpecInfoVO.SpecListVO> specListVO = getSpecInfoVO(goodsInfo);
+        if (CollectionUtils.isNotEmpty(specListVO)) {
+            detailVo.setSpecListVOS(specListVO);
         }
 
         //获取店铺信息

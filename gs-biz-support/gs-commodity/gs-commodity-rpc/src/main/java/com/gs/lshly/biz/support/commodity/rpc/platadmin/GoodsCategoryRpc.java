@@ -10,6 +10,7 @@ import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsCategoryDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsSpecDictionaryDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.qto.GoodsCategoryQTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsCategoryVO.CategoryTreeVO;
 import com.gs.lshly.common.utils.ExcelUtil;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -152,4 +153,9 @@ public class GoodsCategoryRpc implements IGoodsCategoryRpc {
     public List<GoodsCategoryVO.InnerListVO> innerCategoryList(BaseDTO dto) {
         return categoryService.innerCategoryList(dto);
     }
+
+	@Override
+	public List<CategoryTreeVO> selectCategoryTreeBbc() {
+		return categoryService.listCategory();
+	}
 }
