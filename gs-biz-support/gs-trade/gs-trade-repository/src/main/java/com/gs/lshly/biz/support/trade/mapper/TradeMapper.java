@@ -343,7 +343,8 @@ public interface TradeMapper extends BaseMapper<Trade> {
     @Select("select ifnull(avg(describe_grade),0) goodsGrade ,COUNT(1) commentCount from gs_trade_comment where flag=0 AND ${ew.sqlSegment}")
     BbbTradeListVO.InnerGoodsScore selectGoodScore(@Param(Constants.WRAPPER) QueryWrapper<Object> queryWrapper);
 
-    @Select("select count(id) from gs_trade where id in (select trade_id from gs_trade_goods where goods_id = #{id} and flag = 0) and trade_state = 40 and flag = 0 and source_type = 20")
+    //订单状态:10:待支付,20:待发货,30:待收货,40:已完成,50:已取消
+    @Select("select count(id) from gs_trade where id in (select trade_id from gs_trade_goods where goods_id = #{id} and flag = 0) and trade_state != 10 and trade_state !=50 and flag = 0")
     Integer getSaleQuantity(@Param("id") String id);
 
     /**

@@ -44,6 +44,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
     @ApiModel("BbcGoodsInfoVO.SimpleListVO")
     @Accessors(chain = true)
     public static class SimpleListVO implements Serializable {
+    	
+    	@ApiModelProperty("商品类型 10虚拟商品")
+    	private Integer exchangeType;
 
         @ApiModelProperty("积分价格")
         private BigDecimal pointPrice;
@@ -406,6 +409,9 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("销售数量（临时字段）")
         private Integer saleQuantity;
+        
+        @ApiModelProperty("商品原积分价格")
+        private BigDecimal oldPointPrice;
 
     }
 

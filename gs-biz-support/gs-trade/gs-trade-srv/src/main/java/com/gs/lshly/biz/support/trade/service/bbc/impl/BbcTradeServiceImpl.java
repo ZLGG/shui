@@ -65,6 +65,7 @@ import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServi
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.enums.GoodsCouponTypeEnum;
 import com.gs.lshly.common.enums.GoodsCtccApiEnum;
+import com.gs.lshly.common.enums.GoodsExchangeTypeEnum;
 import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.enums.ResponseCodeEnum;
 import com.gs.lshly.common.enums.StockAddressTypeEnum;
@@ -887,19 +888,29 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         idDto.setJwtUserId(dto.getJwtUserId());
         BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
         if (!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
-        	
+        	Boolean flag = true;
         	//查询是不是虚拟商品购买
         	List<ShopData> shopList = dto.getShopData();
         	if(shopList.size()==1){
         		List<ProductData> prod = shopList.get(0).getProductData();
-        		
-        	}else{
-	            //根据id查询地址
+        		if(prod.size()==1){
+        			ProductData productData = prod.get(0);
+        			//获取goodsid 判断是不是虚拟商品 
+        			String goodsId = productData.getGoodsId();
+        			BbcGoodsInfoVO.SimpleListVO goodsInfo = bbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
+        			if(goodsInfo.getExchangeType().equals(GoodsExchangeTypeEnum.虚拟.getCode())){
+        				flag = false;
+        			}
+        		}
+        	}
+        	
+        	if(flag){
+	        	//根据id查询地址
 	            addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
 	            if (ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null) {
 	                throw new BusinessException("查询不到收货地址");
 	            }
-        	}
+            }
         }
         BigDecimal totalAmount = BigDecimal.ZERO;//总金额
         BigDecimal totalPointAmount = BigDecimal.ZERO;//总积分额
