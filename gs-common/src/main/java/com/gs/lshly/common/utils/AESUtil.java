@@ -21,7 +21,8 @@ public class AESUtil {
 	
 	public static void main(String args[]) throws InvalidEncryptedKeyException{
 		System.out.println(aesEncrypt("123456qq","5922e96c-854f-42"));
-        System.out.println(aesDecrypt("zPgCsADyXtKWoNb3AtC0GQ==","5922e96c-854f-42"));
+		System.out.println(aesEncrypt("18658851421","21CTCCLOVECITYDO"));
+        System.out.println(aesDecrypt("ZZqMst7uTJBq4k4f9v5qBw==","5922e96c-854f-42"));
         System.out.println(aesEncrypt("17858373830"));
 	}
 

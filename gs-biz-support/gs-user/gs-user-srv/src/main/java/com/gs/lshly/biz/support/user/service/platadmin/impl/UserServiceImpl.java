@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gs.lshly.common.utils.AESUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -128,7 +129,7 @@ public class UserServiceImpl implements IUserService {
             wrapper.eq("us.city", qto.getCity());
         }
         if (ObjectUtils.isNotEmpty(qto.getPhone())) {
-            wrapper.eq("us.phone", PwdUtil.encode(qto.getPhone()));
+            wrapper.eq("us.phone", AESUtil.aesEncrypt(qto.getPhone()));
         }
 
         if (ObjectUtils.isNotEmpty(qto.getLabelId())) {

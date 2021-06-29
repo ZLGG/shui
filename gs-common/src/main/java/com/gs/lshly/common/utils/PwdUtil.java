@@ -22,7 +22,7 @@ public class PwdUtil {
     }
 
     public static void main(String[] args) {
-        String pwd1 = encode("123456");
+        String pwd1 = encode("18658851421");
         System.out.println(pwd1);
         String pwd2 = encode("123456");
         System.out.println(pwd2);
