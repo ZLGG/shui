@@ -278,6 +278,11 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             //商品关联拓展id
             JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodId);
 
+            //先删除商品sku
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("good_id", goodId);
+            skuGoodInfoTempRepository.removeByMap(columnMap);
+
             SkuGoodInfoTemp skuGoodInfo = new SkuGoodInfoTemp();
             skuGoodInfo.setGoodId(goodId);
             skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());

@@ -13,6 +13,7 @@ import com.gs.lshly.common.struct.ExportDataDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.dubbo.common.utils.StringUtils;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -29,15 +30,15 @@ import java.util.*;
  */
 public class ExcelUtil {
 
-	public static <T> ExportDataDTO treatmentBean(String fileName,List<T> content, Class<T> clazz) throws Exception {
+    public static <T> ExportDataDTO treatmentBean(String fileName, List<T> content, Class<T> clazz) throws Exception {
         List<Map<String, Object>> rowData = new ArrayList<>();
         ExportDataDTO dataDTO = new ExportDataDTO();
         ApiModel apiModel = AnnotationUtil.getAnnotation(clazz, ApiModel.class);
         //导出文件名
-        if(StringUtils.isNotEmpty(fileName)){
-        	dataDTO.setFileName(URLEncoder.encode(fileName,"UTF-8"));
-        }else{
-        	dataDTO.setFileName(URLEncoder.encode(apiModel!=null && StringUtils.isNotEmpty(apiModel.value()) ? apiModel.value() : clazz.getSimpleName(),"UTF-8"));
+        if (StringUtils.isNotEmpty(fileName)) {
+            dataDTO.setFileName(URLEncoder.encode(fileName, "UTF-8"));
+        } else {
+            dataDTO.setFileName(URLEncoder.encode(apiModel != null && StringUtils.isNotEmpty(apiModel.value()) ? apiModel.value() : clazz.getSimpleName(), "UTF-8"));
         }
         //导出列
         dataDTO.setHeaders(getHeader(clazz));
@@ -46,18 +47,18 @@ public class ExcelUtil {
             Map<String, Object> rowMap = new HashMap<>();
             for (ExcelHeader header : dataDTO.getHeaders()) {
                 Object value = BU.getValue(row, header.getProperty());
-                if (value != null){
+                if (value != null) {
                     //处理枚举
-                    if(StringUtils.isNotEmpty(header.getEnumClassName())) {
+                    if (StringUtils.isNotEmpty(header.getEnumClassName())) {
                         value = EnumUtil.getText((Integer) value, (Class<? extends EnumMessage>) ClassLoaderUtil.loadClass(header.getEnumClassName()));
                     }
                     //处理LocalDateTime
                     if (value instanceof LocalDateTime) {
-                        value = LocalDateTimeUtil.format((LocalDateTime)value, "yyyy-MM-dd HH:mm:ss");
+                        value = LocalDateTimeUtil.format((LocalDateTime) value, "yyyy-MM-dd HH:mm:ss");
                     }
                     //处理LocalDate
                     if (value instanceof LocalDate) {
-                        value = LocalDateTimeUtil.format((LocalDate)value, "yyyy-MM-dd");
+                        value = LocalDateTimeUtil.format((LocalDate) value, "yyyy-MM-dd");
                     }
                 }
                 rowMap.put(header.getProperty(), value);
@@ -67,12 +68,13 @@ public class ExcelUtil {
         dataDTO.setRowData(rowData);
         return dataDTO;
     }
+
     public static <T> ExportDataDTO treatmentBean(List<T> content, Class<T> clazz) throws Exception {
         List<Map<String, Object>> rowData = new ArrayList<>();
         ExportDataDTO dataDTO = new ExportDataDTO();
         ApiModel apiModel = AnnotationUtil.getAnnotation(clazz, ApiModel.class);
         //导出文件名
-        dataDTO.setFileName(URLEncoder.encode(apiModel!=null && StringUtils.isNotEmpty(apiModel.value()) ? apiModel.value() : clazz.getSimpleName(),"UTF-8"));
+        dataDTO.setFileName(URLEncoder.encode(apiModel != null && StringUtils.isNotEmpty(apiModel.value()) ? apiModel.value() : clazz.getSimpleName(), "UTF-8"));
         //导出列
         dataDTO.setHeaders(getHeader(clazz));
         //导出数据行
@@ -80,18 +82,18 @@ public class ExcelUtil {
             Map<String, Object> rowMap = new HashMap<>();
             for (ExcelHeader header : dataDTO.getHeaders()) {
                 Object value = BU.getValue(row, header.getProperty());
-                if (value != null){
+                if (value != null) {
                     //处理枚举
-                    if(StringUtils.isNotEmpty(header.getEnumClassName())) {
+                    if (StringUtils.isNotEmpty(header.getEnumClassName())) {
                         value = EnumUtil.getText((Integer) value, (Class<? extends EnumMessage>) ClassLoaderUtil.loadClass(header.getEnumClassName()));
                     }
                     //处理LocalDateTime
                     if (value instanceof LocalDateTime) {
-                        value = LocalDateTimeUtil.format((LocalDateTime)value, "yyyy-MM-dd HH:mm:ss");
+                        value = LocalDateTimeUtil.format((LocalDateTime) value, "yyyy-MM-dd HH:mm:ss");
                     }
                     //处理LocalDate
                     if (value instanceof LocalDate) {
-                        value = LocalDateTimeUtil.format((LocalDate)value, "yyyy-MM-dd");
+                        value = LocalDateTimeUtil.format((LocalDate) value, "yyyy-MM-dd");
                     }
                 }
                 rowMap.put(header.getProperty(), value);
@@ -111,9 +113,11 @@ public class ExcelUtil {
         writeHeader(writer, exportData.getHeaders());
         writer.write(exportData.getRowData());
 
+        String fileName = URLEncoder.encode(exportData.getFileName(), "UTF-8") + ".xlsx";
+
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
 
-        response.setHeader("Content-Disposition","attachment;filename="+ exportData.getFileName() +".xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName +";"+"filename*=utf-8''"+fileName);
 
         ServletOutputStream out = response.getOutputStream();
         writer.flush(out, true);
@@ -138,7 +142,7 @@ public class ExcelUtil {
                 if (apiModelProperty.hidden()) {
                     continue;
                 } else {
-                    header.setIdx(apiModelProperty.position()!=0 ? apiModelProperty.position() : 99);
+                    header.setIdx(apiModelProperty.position() != 0 ? apiModelProperty.position() : 99);
                     header.setTitle(StringUtils.isNotEmpty(apiModelProperty.value()) ? apiModelProperty.value() : filed.getName());
                     header.setProperty(filed.getName());
                 }
@@ -149,13 +153,13 @@ public class ExcelUtil {
                     continue;
                 } else {
                     header.setTitle(StringUtils.isNotEmpty(exportProperty.value()) ? exportProperty.value() : header.getTitle());
-                    header.setIdx(exportProperty.position()!=0 ? exportProperty.position() : header.getIdx());
+                    header.setIdx(exportProperty.position() != 0 ? exportProperty.position() : header.getIdx());
                     header.setEnumClassName(StringUtils.isNotEmpty(exportProperty.enumFullName()) ? exportProperty.enumFullName() : null);
                 }
             }
             headers.add(header);
         }
-        Collections.sort(headers, (o1, o2) -> o1.getIdx()!=null && o2.getIdx()!=null && o1.getIdx()>o2.getIdx() ? 1 : -1);
+        Collections.sort(headers, (o1, o2) -> o1.getIdx() != null && o2.getIdx() != null && o1.getIdx() > o2.getIdx() ? 1 : -1);
         return headers;
     }
 

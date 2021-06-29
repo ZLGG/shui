@@ -1,7 +1,9 @@
 package com.gs.lshly.facade.merchant.controller.pc.commodity;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.gs.lshly.common.constants.MsgConst;
+import com.gs.lshly.common.enums.GoodsStateEnum;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -14,6 +16,7 @@ import com.gs.lshly.common.utils.HuToolExcelUtil;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsInfoRpc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -149,8 +152,18 @@ public class PCMerchGoodsInfoController {
 
     @ApiOperation("导出商品相关数据到Excel表格")
     @GetMapping(value = "/exportData")
-    public void export(@ApiIgnore HttpServletResponse response, PCMerchGoodsInfoQTO.IdListQTO qto) throws Exception {
+    public void export(@ApiIgnore HttpServletResponse response, PCMerchGoodsInfoQTO.IdListQTO qto,@ApiParam(value = "10:待上架商品导出,20:已上架商品导出",required = false)@RequestParam(value = "type",required = false)Integer type) throws Exception {
         ExportDataDTO exportData = goodsInfoRpc.export(qto);
+        if(ObjectUtil.isEmpty(type)){
+            exportData.setFileName("已上架商品信息");
+        }else {
+            if(type == GoodsStateEnum.未上架.getCode().intValue()){
+                exportData.setFileName("待上架商品信息");
+            }
+            if(type == GoodsStateEnum.已上架.getCode().intValue()){
+                exportData.setFileName("已上架商品信息");
+            }
+        }
         ExcelUtil.export(exportData, response);
     }
 

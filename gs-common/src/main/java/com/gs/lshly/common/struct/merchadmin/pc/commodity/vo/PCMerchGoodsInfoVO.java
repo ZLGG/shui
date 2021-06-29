@@ -439,13 +439,13 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private String remarks;
 
         @ApiModelProperty("是否是积分商品")
-        private Boolean isPointGood;
+        private String isPointGood;
 
         @ApiModelProperty("积分价格")
         private Double pointPrice;
 
         @ApiModelProperty("是否是in会员礼品")
-        private Boolean isInMemberGift;
+        private String isInMemberGift;
 
         @ApiModelProperty("in会员积分价格")
         private Double inMemberPointPrice;

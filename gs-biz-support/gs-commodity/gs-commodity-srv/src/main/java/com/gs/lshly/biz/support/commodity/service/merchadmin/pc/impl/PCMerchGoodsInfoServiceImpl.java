@@ -909,6 +909,11 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             //商品关联拓展id
             JoinGoodsExtendIds(attributeBuffer, specBuffer, paramsBuffer, goodsInfo.getId());
 
+            //先删除商品sku
+            Map<String, Object> columnMap = new HashMap<>();
+            columnMap.put("good_id", goodId);
+            skuGoodInfoRepository.removeByMap(columnMap);
+
             SkuGoodInfo skuGoodInfo = new SkuGoodInfo();
             skuGoodInfo.setGoodId(goodId);
             skuGoodInfo.setPosSpuId(editDetailVO.getPosSpuId());
@@ -1350,6 +1355,18 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             }
             if (goodsInfo.getIsShowOldPrice().intValue() == ShowOldPriceEnum.不显示原价.getCode().intValue()) {
                 excelGoodsDataVO.setShowOrNoOldPrice(ShowOldPriceEnum.不显示原价.getRemark());
+            }
+
+            if(goodsInfo.getIsInMemberGift()){
+                excelGoodsDataVO.setIsInMemberGift("是");
+            }else{
+                excelGoodsDataVO.setIsInMemberGift("否");
+            }
+
+            if(goodsInfo.getIsPointGood()){
+                excelGoodsDataVO.setIsPointGood("是");
+            }else {
+                excelGoodsDataVO.setIsPointGood("否");
             }
 
             //TODO 获取店铺分类的数据 excelGoodsDataVO.setShopNavigation();
