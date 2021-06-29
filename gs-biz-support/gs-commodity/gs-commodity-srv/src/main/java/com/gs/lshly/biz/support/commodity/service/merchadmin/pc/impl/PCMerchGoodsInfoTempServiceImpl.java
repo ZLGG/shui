@@ -768,9 +768,9 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         /*if (ObjectUtils.isEmpty(eto.getUsePlatform())) {
             throw new BusinessException("请选择商品发布的平台");
         }*/
-        if (StringUtils.isBlank(eto.getBrandId())) {
+        /*if (StringUtils.isBlank(eto.getBrandId())) {
             throw new BusinessException("请选择品牌，若没有品牌请先去绑定品牌");
-        }
+        }*/
         if (ObjectUtils.isEmpty(eto.getStockSubtractType())) {
             throw new BusinessException("请选择商品的库存计数方式");
         }
