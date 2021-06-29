@@ -170,6 +170,9 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
 
         @ApiModelProperty("结算价格")
         private BigDecimal settlementPrice;
+
+        @ApiModelProperty("in会员优惠券类型（20,30,50,99,200")
+        private Integer inCouponType;
     }
 
     @Data
