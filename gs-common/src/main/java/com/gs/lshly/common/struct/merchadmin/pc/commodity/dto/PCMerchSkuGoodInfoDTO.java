@@ -85,6 +85,9 @@ public abstract class PCMerchSkuGoodInfoDTO implements Serializable {
         @ApiModelProperty("in会员积分价格")
         private Double inMemberPointPrice;
 
+        @ApiModelProperty("原商品积分价格")
+        private BigDecimal oldPointPrice;
+
 
     }
 
