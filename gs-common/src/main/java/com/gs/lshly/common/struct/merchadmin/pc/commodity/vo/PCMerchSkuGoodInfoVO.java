@@ -99,6 +99,9 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
 
         @ApiModelProperty("in会员积分价格")
         private BigDecimal inMemberPointPrice;
+
+        @ApiModelProperty("原积分价格")
+        private BigDecimal oldPointPrice;
     }
 
 }
