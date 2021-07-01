@@ -152,6 +152,9 @@ public abstract class GoodsInfoVO implements Serializable {
         @ApiModelProperty("兑换类型（0实物,1虚拟）")
         private Integer exchangeType;
 
+        @ApiModelProperty("视频地址")
+        private String videoUrl;
+
     }
 
     @Data
