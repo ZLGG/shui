@@ -390,7 +390,7 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         detailVO.setSpuStockNum(getSpuStockNum(goodsInfo.getId(), goodsInfo.getShopId()));
 
         //商品图片
-        detailVO.setGoodsImage(StringUtils.isEmpty(getImage(goodsInfo.getGoodsImage())) ? "" : getImage(goodsInfo.getGoodsImage()));
+        detailVO.setGoodsImage(StringUtils.isEmpty(goodsInfo.getGoodsImage()) ? "" : goodsInfo.getGoodsImage());
         //填充审核记录信息
         List<GoodsAuditRecordVO.ListVO> auditRecords = getAuditRecord(dto);
         if (ObjectUtils.isNotEmpty(auditRecords)) {
