@@ -344,9 +344,9 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
             throw new BusinessException("删除失败,该分类下有子分类！");
         }
         //查询该类目下是否关联了品牌
-        if (countBindBrand(dto) > 0) {
-            throw new BusinessException("删除失败,该分类关联了品牌！");
-        }
+//        if (countBindBrand(dto) > 0) {
+//            throw new BusinessException("删除失败,该分类关联了品牌！");
+//        }
         //查询该类目下是否关联了参数
         if (countBindParams(dto) > 0) {
             throw new BusinessException("删除失败,该分类关联了参数！");
