@@ -348,17 +348,17 @@ public class GoodsCategoryServiceImpl implements IGoodsCategoryService {
 //            throw new BusinessException("删除失败,该分类关联了品牌！");
 //        }
         //查询该类目下是否关联了参数
-        if (countBindParams(dto) > 0) {
-            throw new BusinessException("删除失败,该分类关联了参数！");
-        }
+//        if (countBindParams(dto) > 0) {
+//            throw new BusinessException("删除失败,该分类关联了参数！");
+//        }
         //查询该类目是否关联了属性
-        if (countBindAttribute(dto) > 0) {
-            throw new BusinessException("删除失败,该分类关联了属性！");
-        }
+//        if (countBindAttribute(dto) > 0) {
+//            throw new BusinessException("删除失败,该分类关联了属性！");
+//        }
         //查询该类目是否关联了规格
-        if (countBindSpec(dto) > 0) {
-            throw new BusinessException("删除失败,该分类关联了规格！");
-        }
+//        if (countBindSpec(dto) > 0) {
+//            throw new BusinessException("删除失败,该分类关联了规格！");
+//        }
         categoryRepository.removeById(dto.getId());
     }
 
