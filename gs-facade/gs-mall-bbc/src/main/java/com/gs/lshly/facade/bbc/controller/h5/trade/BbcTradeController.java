@@ -29,6 +29,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 
+import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,10 @@ public class BbcTradeController {
 	@ApiOperation("1、去结算-v1.1.0")
 	@PostMapping("/userCenter/settlement")
 	public ResponseData<BbcTradeSettlementVO.DetailVO> settlement(@Valid @RequestBody BbcTradeBuildDTO.cartIdsDTO dto) {
+		List<String> cartIds = dto.getCartIds();
+		String skuId = dto.getGoodsSkuId();
+		if(CollectionUtil.isEmpty(cartIds)&&StringUtils.isEmpty(skuId))
+			throw new BusinessException("请选择需要结算的商品！");
 		dto.setTerminal(ActivityTerminalEnum.wap端);
 		return bbcTradeRpc.settlementVO(dto);
 	}
