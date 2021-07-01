@@ -209,8 +209,10 @@ public class GoodsInfoTempServiceImpl implements IGoodsInfoTempService {
         detailVO.setCategoryLevel3(parentCategoryVO.getLevName());
 
         //填充品牌信息
-        GoodsBrandVO.DetailVO brandVO = getBrand(goodsInfo.getBrandId());
-        detailVO.setBrandName(brandVO.getBrandName());
+        if(ObjectUtil.isNotEmpty(goodsInfo.getBrandId())){
+            GoodsBrandVO.DetailVO brandVO = getBrand(goodsInfo.getBrandId());
+            detailVO.setBrandName(brandVO.getBrandName());
+        }
 
         //填充sku列表信息
         if (detailVO.getIsSingle().intValue() == SingleStateEnum.多规格.getCode().intValue()) {
