@@ -168,6 +168,74 @@ public class LocalFileServiceImpl implements IFileService {
 
     @Override
     public String uploadVideo(MultipartFile file) {
+    	
+    	String fileDir = ConstantPropertiesUtil.LOCAL_FILE_DIR;
+        String bucketName = ConstantPropertiesUtil.LOCAL_BUCKET_NAME;
+        String fileHost = ConstantPropertiesUtil.LOCAL_FILE_HOST;
+        String module = ConstantPropertiesUtil.LOCAL_MODULE;
+
+        String uploadUrl = null;
+        PicturesVO.DetailVO detailVO = new PicturesVO.DetailVO();
+
+        try {
+
+            //获取上传文件流
+            InputStream inputStream = file.getInputStream();
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            out.write(file.getBytes());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray());
+            //获取原始图片的尺寸
+            BufferedImage sourceImg = ImageIO.read(byteArrayInputStream);
+            // 源图宽度
+//            int imageWidth = sourceImg.getWidth();
+//            // 源图高度
+//            int imageHeight = sourceImg.getHeight();
+
+            //构建日期路径：avatar/2019/11/19/文件名
+            String fileSavePath = module + "/" + new DateTime().toString("yyyy/MM/dd");
+
+            //文件名：uuid.扩展名
+            String original = file.getOriginalFilename();
+            String fileName = UUID.randomUUID().toString();
+            String fileType = original.substring(original.lastIndexOf(".")).toLowerCase();
+            String newName = fileName + fileType;
+            String fileUrl = fileSavePath + "/" + newName;
+
+            /**
+            if (!fileType.equals(".jpg") && !fileType.equals(".png") && !fileType.equals(".bmp") &&
+            !fileType.equals(".gif") && !fileType.equals(".tiff") && !fileType.equals(".jpeg") ){
+                throw new BusinessException("只能上传以下图片格式：JPG、PNG、BMP、GIF、TIFF 、JPEG");
+            }
+            if (file.getSize() >= (1024*20*1024)){
+                throw new BusinessException("文件大小最大不能超过1M");
+            }**/
+            FileUtil.mkdir(fileDir);
+            FileUtil.writeFromStream(inputStream, new File(fileDir +"/" + fileUrl));
+
+            //获取url地址
+            uploadUrl = "http://" + bucketName + "." + fileHost + "/" + fileUrl;
+
+            //获取图片的大小
+            BigDecimal size = BigDecimal.valueOf(file.getSize()).divide(BigDecimal.valueOf(1024), 2, 4);
+            detailVO.setHidden(0);
+            detailVO.setImageName(newName);
+//            detailVO.setImgHeight(imageHeight);
+//            detailVO.setImgWeight(imageWidth);
+            detailVO.setImgType(fileType);
+            detailVO.setSize(size + "KB");
+            detailVO.setStorageEngine("local");
+            detailVO.setImageUrl(uploadUrl);
+            detailVO.setOriginalImageName(original);
+            System.out.println(detailVO + "图片信息");
+        } catch (IOException e) {
+            System.out.println(e);
+            throw new BusinessException("上传异常");
+        }
+
+        return uploadUrl;
+    	
+    	/**
         String endPoint = ConstantPropertiesUtil.END_POINT;
         String accessKeyId = ConstantPropertiesUtil.ACCESS_KEY_ID;
         String accessKeySecret = ConstantPropertiesUtil.ACCESS_KEY_SECRET;
@@ -197,6 +265,7 @@ public class LocalFileServiceImpl implements IFileService {
             System.out.println(e);
             throw new BusinessException("视频上传失败");
         }
+        **/
     }
 
     private static InputStream getUrlStream(String url) {
