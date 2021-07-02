@@ -34,7 +34,7 @@ public abstract class BbcTradeListVO implements Serializable {
     @ApiModel("BbcTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable {
-
+    	
     	@ApiModelProperty("订单编号")
     	private String tradeId;
         /**
@@ -511,6 +511,12 @@ public abstract class BbcTradeListVO implements Serializable {
 
         @ApiModelProperty("优惠积分金额")
         private BigDecimal discountPointAmount;
+        
+        @ApiModelProperty("优惠积分价")
+    	private BigDecimal couponPointAmount;
+    	
+    	@ApiModelProperty("优惠价")
+    	private BigDecimal couponAmount;
 
         @ApiModelProperty("支付总金额")
         private BigDecimal tradeAmount;
@@ -696,6 +702,14 @@ public abstract class BbcTradeListVO implements Serializable {
 			if(rightsType!=null)
 				rightsTypeText = TradeRightsTypeEnum.getRemarkByCode(rightsType);
 			return rightsTypeText;
+		}
+
+		public BigDecimal getCouponPointAmount() {
+			return couponPointAmount;
+		}
+
+		public BigDecimal getCouponAmount() {
+			return couponAmount;
 		}
         
 		

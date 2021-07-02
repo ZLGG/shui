@@ -2281,6 +2281,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         for (TradeGoods tradeGoods : tradeGoodsList) {
             BbcTradeListVO.TradeGoodsVO tradeGoodsVO = new BbcTradeListVO.TradeGoodsVO();
             BeanUtils.copyProperties(tradeGoods, tradeGoodsVO);
+            tradeGoodsVO.setCouponAmount(tradeGoods.getDiscountAmount());
+            tradeGoodsVO.setCouponPointAmount(tradeGoods.getDiscountPointAmount());
             String goodsId = tradeGoods.getGoodsId();
             goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
             tradeGoodsVO.setExchangeType(goodsDetail.getExchangeType());

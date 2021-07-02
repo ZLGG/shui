@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,7 +58,8 @@ public class CtccPtActivityServiceImpl implements ICtccPtActivityService {
     private ICtccActivityGoodsRepository activityGoodsRepository;
     @Autowired
     private ICtccCategoryGoodsRepository goodsRepository;
-    @Autowired
+    
+    @DubboReference
     private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
     @Autowired
     private ICtccCategoryRepository repository;
