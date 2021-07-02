@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -1067,24 +1067,24 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
         /**
          * 把订单ID放到redis里面
+         * PermitNode allPermitNode = (PermitNode)redisUtil.get(RbacContants.SESSION_PERMIT_PREFIX + terminal + RbacContants.ALL_PERMIT);
+        
          */
-        Map<Object,Object> map = redisUtil.hmget(PAYING_TRADE);
-        if(map==null)
-        	map = new HashMap<Object,Object>();
+        
         if(CollectionUtil.isNotEmpty(ids)){
+        	JSONObject o = new JSONObject();
+        	if(redisUtil.get(PAYING_TRADE)!=null){
+        		String data = (String) redisUtil.get(PAYING_TRADE);
+            	o = JSONObject.parseObject(data);
+            }
+        	
+            
         	for(String id:ids){
-        		map.put(id, DateUtils.getAfterMin(30));
+        		o.put(id, DateUtils.getAfterMin(30));
         	}
+        	redisUtil.set(PAYING_TRADE, o.toString());
         }
-        redisUtil.hmset(PAYING_TRADE, map);
-        /**
-         * 启动监听
-         */
-        try {
-			quartzSchedulerManager.closeTradeFromNoPayJob(DateUtils.parseDate(DateUtils.timeFormatStr, DateUtils.getAfterMin(30)));
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
+        
         
         
         return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids, totalAmount, totalPointAmount));
@@ -2540,13 +2540,15 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         /**
          * 把订单ID放到redis里面
          */
-        Map<Object,Object> map = redisUtil.hmget(PAYING_TRADE);
-        if(map!=null){
+        JSONObject o = new JSONObject();
+    	if(redisUtil.get(PAYING_TRADE)!=null){
+    		String data = (String) redisUtil.get(PAYING_TRADE);
+        	o = JSONObject.parseObject(data);
         	for (String tradeId : tradeIds) {
-        		map.remove(tradeId);
+        		o.remove(tradeId);
         	}
         }
-        redisUtil.hmset(PAYING_TRADE, map);
+        redisUtil.set(PAYING_TRADE, o.toString());
         
         return ResponseData.success(responseJson.toString());
     }
