@@ -152,7 +152,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             rightsListVO.setGoodsName(tradeGoods.getGoodsName());
             listVOS.add(rightsListVO);
         }
-        return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), listVOS.size());
+        return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), pager.getTotal());
 /*        if (ObjectUtils.isNotEmpty(qto.getCdate()) || ObjectUtils.isNotEmpty(qto.getCdateState())) {
             GetQuery(query, qto.getCdateState(), qto.getCdate(), qto.getCdateLittleDate());
         }*/
