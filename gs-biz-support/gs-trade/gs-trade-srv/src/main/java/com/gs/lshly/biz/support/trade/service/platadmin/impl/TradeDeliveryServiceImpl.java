@@ -23,6 +23,7 @@ import com.gs.lshly.common.struct.platadmin.trade.qto.TradeDeliveryQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeDeliveryVO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
+import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
@@ -91,6 +92,10 @@ public class TradeDeliveryServiceImpl implements ITradeDeliveryService {
             if (StringUtils.isNotBlank(listVO.getShopId())){
                 shopId.add(listVO.getShopId());
             }
+            if(ObjectUtils.isNotEmpty(listVO.getPhone())){
+                listVO.setPhone(AESUtil.aesDecrypt(listVO.getPhone()));
+            }
+
         }
         List<TradeDeliveryVO.ListVO> records = page.getRecords();
         if (ObjectUtils.isNotEmpty(shopId)){
