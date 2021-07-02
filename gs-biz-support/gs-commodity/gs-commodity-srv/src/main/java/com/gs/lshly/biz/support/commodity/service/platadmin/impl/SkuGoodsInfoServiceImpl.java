@@ -55,10 +55,10 @@ public class SkuGoodsInfoServiceImpl implements ISkuGoodInfoService {
             if (StrUtil.isNotEmpty(skuGoodInfo.getSpecsValue())) {
                 goodsInfo.setSpecsValue(skuGoodInfo.getSpecsValue());
             }
-            if (ObjectUtil.isNotEmpty(skuGoodInfo.getSalePrice())) {
-                goodsInfo.setSaleSkuPrice(skuGoodInfo.getSalePrice());
-            } else if (ObjectUtil.isNotEmpty(skuGoodInfo.getPointPrice())) {
-                goodsInfo.setSaleSkuPrice(skuGoodInfo.getPointPrice());
+            if(skuGoodInfo.getIsPointGood()){
+            	goodsInfo.setSaleSkuPrice(skuGoodInfo.getPointPrice());
+            }else{
+            	goodsInfo.setSaleSkuPrice(skuGoodInfo.getSalePrice());
             }
         }
         return goodsInfo;
