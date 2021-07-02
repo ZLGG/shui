@@ -102,6 +102,7 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
 
         @ApiModelProperty("原积分价格")
         private BigDecimal oldPointPrice;
+        
     }
 
 }

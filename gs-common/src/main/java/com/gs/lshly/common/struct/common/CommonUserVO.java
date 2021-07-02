@@ -12,10 +12,11 @@ import java.io.Serializable;
 * @author xxfc
 * @since 2020-10-05
 */
+@SuppressWarnings("serial")
 public abstract class CommonUserVO implements Serializable {
 
 
-    @Data
+	@Data
     @ApiModel("CommonUserVO.DetailVO")
     public static class DetailVO implements Serializable {
 
@@ -36,6 +37,12 @@ public abstract class CommonUserVO implements Serializable {
 
         @ApiModelProperty("真实姓名")
         private String realName;
+        
+        @ApiModelProperty("会员类型")
+        private Integer memberType;
+
+        @ApiModelProperty("是否为IN会员")
+        private Integer isInUser;
 
     }
     @Data

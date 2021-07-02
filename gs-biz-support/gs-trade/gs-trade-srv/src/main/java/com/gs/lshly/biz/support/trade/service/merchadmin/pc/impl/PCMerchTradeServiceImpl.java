@@ -8,9 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.repository.*;
-import com.gs.lshly.common.enums.*;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +18,28 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.trade.entity.Trade;
+import com.gs.lshly.biz.support.trade.entity.TradeCancel;
+import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
+import com.gs.lshly.biz.support.trade.entity.TradeGoods;
+import com.gs.lshly.biz.support.trade.entity.TradePay;
+import com.gs.lshly.biz.support.trade.entity.TradeRights;
+import com.gs.lshly.biz.support.trade.entity.TradeRightsGoods;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
+import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradePayRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsGoodsRepository;
+import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
+import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
+import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
+import com.gs.lshly.common.enums.TradePayTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsEndStateEnum;
+import com.gs.lshly.common.enums.TradeRightsTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
@@ -31,6 +47,8 @@ import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonShopVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonUserVO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchSkuGoodInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
@@ -43,6 +61,7 @@ import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminSkuGoodInfoRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
 import com.lakala.boss.api.common.Common;
 
@@ -68,7 +87,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     @Autowired
     private ITradeRightsGoodsRepository iTradeRightsGoodsRepository;
     @Autowired
-    private ITradeCancelRepository iTradeCancelRepository;
+    private TradeMapper tradeMapper;
+    
     @DubboReference
     private ICommonShopRpc commonShopRpc;
     @DubboReference
@@ -79,8 +99,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     private IPCMerchUserRpc ipcMerchUserRpc;
     @DubboReference
     private ICommonStockRpc commonStockRpc;
-    @Autowired
-    private TradeMapper tradeMapper;
+    @DubboReference
+    private IPCMerchAdminSkuGoodInfoRpc iPCMerchAdminSkuGoodInfoRpc;
 
     public PCMerchTradeServiceImpl(ITradeRepository tradeRepository, ITradeGoodsRepository tradeGoodsRepository, ITradeDeliveryRepository tradeDeliveryRepository) {
         this.tradeRepository = tradeRepository;
@@ -437,6 +457,21 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             tradeGoodsVO.setTradeState(tradeVO.getTradeState());
             tradeGoodsVO.setTradeStateText(tradeVO.getTradeStateText());
             tradeGoodsVO.setShopName(tradeVO.getShopName());
+            
+            String skuId = tradeGoods.getSkuId();
+            PCMerchSkuGoodInfoVO.DetailVO skuDetail = iPCMerchAdminSkuGoodInfoRpc.detailSkuGoodInfo(new PCMerchSkuGoodInfoDTO.IdDTO(skuId));
+            String userId = tradeGoods.getUserId();
+            
+            CommonUserVO.DetailVO userDetail = commonUserRpc.details(userId);
+            if(userDetail.getMemberType().equals(1)){
+            	tradeGoodsVO.setSalePrice(skuDetail.getSalePrice());
+            }else{
+            	if(userDetail.getIsInUser().equals(1)){
+            		tradeGoodsVO.setSalePrice(skuDetail.getInMemberPointPrice());
+            	}else{
+            		tradeGoodsVO.setSalePrice(skuDetail.getPointPrice());
+            	}
+            }
             tradeGoodsVOS.add(tradeGoodsVO);
         }
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);
