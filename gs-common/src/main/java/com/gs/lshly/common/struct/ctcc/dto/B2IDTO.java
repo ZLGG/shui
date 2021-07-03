@@ -13,7 +13,7 @@ public class B2IDTO implements Serializable{
     @ApiModel(value = "SimpleBusinessAcceptCreateDTO")
 	@Accessors(chain = true)
     public static class SimpleBusinessAcceptCreateDTO {
-
+		private String outOrderSeq;//渠道方流水号
     	private String codeNumber;
     	private String linkMan;
     	private String linkPhone;

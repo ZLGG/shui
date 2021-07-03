@@ -1,8 +1,6 @@
 package com.gs.lshly.biz.support.trade.job;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 

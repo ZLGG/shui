@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,6 +61,7 @@ public class B2IController {
     	json.put("discountCode", "8617013100010006");//优惠编码
     	json.put("discountName", "智慧交通半年服务");//优惠名称
     	json.put("discountType", "促销");//优惠类型
+    	disCountList.add(json);
     	params.put("disCountList", disCountList.toJSONString());
     	
     	JSONArray remarks3 = new JSONArray();
@@ -69,12 +69,12 @@ public class B2IController {
     	json.put("discountCode", "8617013100010006");//优惠编码
     	json.put("attrId", "20000101022");//优惠名称
     	json.put("attrValue", "12000");//优惠类型
+    	remarks3.add(json);
     	params.put("remarks3", remarks3.toJSONString());
     	try {
     		String str = HttpClientUtils.postForm("http://134.96.185.193:30009/b2i/openapi/simpleBusinessAccept/create", params, headers);
     		log.info("请求B2I返回信息==>"+str);
     	} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	return ResponseData.success("导入成功");

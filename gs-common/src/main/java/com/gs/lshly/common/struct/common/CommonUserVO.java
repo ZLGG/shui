@@ -43,6 +43,9 @@ public abstract class CommonUserVO implements Serializable {
 
         @ApiModelProperty("是否为IN会员")
         private Integer isInUser;
+        
+        @ApiModelProperty("手机号码")
+        private String phone;
 
     }
     @Data

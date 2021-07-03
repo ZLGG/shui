@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -63,6 +64,7 @@ import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
+import com.gs.lshly.common.ctcc.b2i.SimpleBusinessAccept;
 import com.gs.lshly.common.enums.GoodsCouponTypeEnum;
 import com.gs.lshly.common.enums.GoodsCtccApiEnum;
 import com.gs.lshly.common.enums.GoodsExchangeTypeEnum;
@@ -131,6 +133,9 @@ import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
+import com.gs.lshly.common.struct.common.CommonUserVO;
+import com.gs.lshly.common.struct.ctcc.dto.B2IDTO;
+import com.gs.lshly.common.struct.ctcc.vo.B2IVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
 import com.gs.lshly.common.utils.Base64;
 import com.gs.lshly.common.utils.BeanCopyUtils;
@@ -152,6 +157,7 @@ import com.gs.lshly.rpc.api.bbc.user.IBbcUserShoppingCarRpc;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReceiptRpc;
 import com.lakala.boss.api.common.Common;
 import com.lakala.boss.api.config.MerchantBaseEnum;
@@ -287,6 +293,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     private IBbcUserCtccPointRpc bbcUserCtccPointRpc;
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
+    @DubboReference
+    private ICommonUserRpc commonUserRpc;
 
 
     @Autowired
@@ -2514,7 +2522,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 throw new BusinessException("您的积分值不够！");
             }
 
-
+            /**
+             * 1、判断是不是需要走b2i
+             */
+            sendCtcc(tradeIds);
             /**
              * 减积分
              */
@@ -2554,6 +2565,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     }
 
 
+    /**
+     * 1、走b2i
+     * @param tradeIds
+     */
     private void sendCtcc(List<String> tradeIds) {
 
         if (tradeIds.size() == 1) {
@@ -2562,13 +2577,53 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
 
             if (tradeGoodsList.size() == 1) {
-                String goodsId = ((TradeGoods) tradeGoodsList.get(0)).getGoodsId();
+            	TradeGoods tradeGoods = (TradeGoods) tradeGoodsList.get(0);
+                String goodsId = tradeGoods.getGoodsId();
 
                 //获取商户是否走B2I;
                 BbcGoodsInfoVO.GoodsCtccApiVO goodsCtccApiVO = bbcGoodsInfoRpc.getCtccApiByGoodId(goodsId);
                 if (goodsCtccApiVO != null && goodsCtccApiVO.getCtccApi().equals(GoodsCtccApiEnum.B2I.getCode())) {
                     //走B2I
-//	        		SimpleBusinessAccept
+                	String userId = tradeGoods.getUserId();
+                	CommonUserVO.DetailVO userDetail = commonUserRpc.details(userId);
+                	B2IDTO.SimpleBusinessAcceptCreateDTO simpleBusinessAcceptCreateDTO = new B2IDTO.SimpleBusinessAcceptCreateDTO();
+                	simpleBusinessAcceptCreateDTO.setCodeNumber(userDetail.getPhone());
+                	simpleBusinessAcceptCreateDTO.setLinkMan(userDetail.getRealName());
+                	simpleBusinessAcceptCreateDTO.setLinkPhone(userDetail.getPhone());
+                	simpleBusinessAcceptCreateDTO.setOutOrderSeq(tradeIds.get(0));
+                	
+                	List<B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList> disCountList = new ArrayList<B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList>();
+                	B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList disCount = new B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList();
+                	disCount.setDiscountCode(goodsCtccApiVO.getCouponCode());
+                	disCount.setDiscountName(goodsCtccApiVO.getCouponName());
+                	disCount.setDiscountType("促销");
+                	disCountList.add(disCount);
+                	simpleBusinessAcceptCreateDTO.setDisCountList(disCountList);
+                	
+                	List<B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3> remarks3 = new ArrayList<B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3>();
+                	B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3 remarks = new B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3();
+                	remarks.setDiscountCode(goodsCtccApiVO.getCouponCode());
+                	remarks.setAttrId(goodsCtccApiVO.getAttrId());
+                	remarks.setAttrValue(goodsCtccApiVO.getAttrValue());
+                	remarks3.add(remarks);
+                	simpleBusinessAcceptCreateDTO.setRemarks3(remarks3);
+                	
+                	
+                	B2IVO.SimpleBusinessAcceptCreateVO simpleBusinessAcceptCreateVO = SimpleBusinessAccept.create(simpleBusinessAcceptCreateDTO);
+                
+                	if(!simpleBusinessAcceptCreateVO.getSuccess())
+                		throw new BusinessException("调B2I接口出错！");
+                	
+                	String data = simpleBusinessAcceptCreateVO.getData();
+                	
+                	//修改订单号
+                	QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
+                    tradePayWrapper.eq("trade_id", tradeIds.get(0));
+                    TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
+                    if (ObjectUtils.isNotEmpty(tradePay)) {
+                    	tradePay.setThirdCode(data);
+                    	tradePayRepository.saveOrUpdate(tradePay);
+                    }
                 }
             }
         }
@@ -2701,9 +2756,5 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return responseJson.toString();
     }
 
-	@Override
-	public void closeTradeFromNoPay(String trade) {
-		// TODO Auto-generated method stub
-		
-	}
+    
 }
