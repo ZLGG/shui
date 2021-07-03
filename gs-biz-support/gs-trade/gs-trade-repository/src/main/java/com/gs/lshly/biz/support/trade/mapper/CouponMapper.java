@@ -32,4 +32,12 @@ public interface CouponMapper extends BaseMapper<Coupon> {
     @Select("SELECT	* FROM gs_coupon WHERE coupon_id in (SELECT	coupon_id FROM gs_coupon_goods_relation	WHERE level_id = '${goodsId}') and coupon_status != 2 and audit_status = 1 and flag = 0")
     List<Coupon> listByGoodsId(@Param("goodsId")String goodsId);
     
+    /**
+     * 跟据类型查询IN会员优惠券列表
+     * @param inCouponType
+     * @return
+     */
+    @Select("select * from gs_coupon where coupon_type = 1 and flag = 0 and coupon_status = 0 and audit_status = 1 and level = 1 and in_coupon_type = ${inCouponType}")
+    List<Coupon> listInCouponByType(@Param("inCouponType")Integer inCouponType);
+    
 }

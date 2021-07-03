@@ -227,6 +227,16 @@ public  class DateUtils {
         return qyt;
     }
 
+    /**
+     * 加时间
+     * @param localDate
+     * @param num
+     * @return
+     */
+    public static LocalDate addDay(LocalDate localDate,int num) {
+    	return localDate.plusDays(num);
+    }
+    
     public static Integer betweenStartAndEnd(LocalDate startTime, LocalDate endTime) {
         Long days = startTime.until(endTime, ChronoUnit.DAYS);
         return Integer.parseInt(days.toString());

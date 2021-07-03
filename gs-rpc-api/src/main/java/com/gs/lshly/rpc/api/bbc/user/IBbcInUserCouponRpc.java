@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.bbc.user;
 
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbc.user.dto.BbcInUserCouponDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
@@ -44,4 +45,9 @@ public interface IBbcInUserCouponRpc {
      * @return
      */
     List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto);
+    
+    /**
+     * 给用户添加IN优惠券
+     */
+    void createInUserCoupon(BbcInUserCouponDTO.CreateDTO dto);
 }

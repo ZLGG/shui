@@ -15,9 +15,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.entity.UserCtccIn;
 import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
 import com.gs.lshly.biz.support.user.mapper.UserCouponDTOMapper;
 import com.gs.lshly.biz.support.user.mapper.UserMapper;
+import com.gs.lshly.biz.support.user.repository.IUserCtccInRepository;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
 import com.gs.lshly.common.enums.InUserCouponStatusEnum;
@@ -25,13 +28,18 @@ import com.gs.lshly.common.enums.UserCouponEnum;
 import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
+import com.gs.lshly.common.struct.bbc.trade.vo.BbcCouponVO;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcInUserCouponDTO.CreateDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.ListUtil;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * @Author yangxi
@@ -41,6 +49,9 @@ import com.gs.lshly.common.utils.ListUtil;
 @SuppressWarnings("unused")
 public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
+	@Autowired
+	private IUserRepository userRepository;
+	
     @Autowired
     private InUserCouponRepository couponRepository;
     @Autowired
@@ -50,6 +61,9 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     
     @Autowired
     private UserCouponDTOMapper userCouponDTOMapper;
+    
+    @Autowired
+    private IUserCtccInRepository userCtccInRepository;
 
     @Override
     public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
@@ -280,5 +294,62 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 	public List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto) {
 		List<ListVO> list = userCouponDTOMapper.listByCouponId(qto.getCouponId(), qto.getJwtUserId());
 		return list;
+	}
+
+	@Override
+	public void createInUserCoupon(CreateDTO dto) {
+		
+		/**
+		 * 改状态
+		 */
+		Integer day = 0;
+		if(dto.getInCouponType()==1){
+			day = 30;
+		}else if(dto.getInCouponType()==2){
+			day = 365;
+		}
+		String phone = dto.getPhone();
+		//跟据手机号码查询用户
+		QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("phone",dto.getPhone());
+        User user = userRepository.getOne(wrapper);
+        if(user==null)
+        	throw new BusinessException("跟据手机号码未找到对应的用户！");
+        
+        if(user.getIsInUser()==1){	//原来已经是IN会员了
+        	LocalDate inUserEndDate = user.getInUserEndDate();
+        	//1=30 2=356
+        	if(inUserEndDate!=null){
+        		inUserEndDate = inUserEndDate.plusDays(day);
+        	}else{
+        		inUserEndDate = LocalDate.now().plusDays(day);
+        	}
+        }else{
+        	user.setInUserEndDate(LocalDate.now().plusDays(day));
+        	user.setIsInUser(1);
+        }
+        
+        userRepository.saveOrUpdate(user);
+        
+        //加明细
+        UserCtccIn userCtccIn = new UserCtccIn();
+        userCtccIn.setEndTime(LocalDate.now().plusDays(day));
+        userCtccIn.setStartTime(LocalDate.now());
+        userCtccIn.setStatus(1);
+        userCtccIn.setType(dto.getInCouponType());
+        userCtccIn.setUserId(user.getId());
+        userCtccInRepository.save(userCtccIn);
+        
+        //加优惠券
+        List<BbcCouponVO.InCouponVO> list = new ArrayList<BbcCouponVO.InCouponVO>();
+        if(CollectionUtil.isNotEmpty(list)){
+        	InUserCoupon userCoupon =null;
+        	for(BbcCouponVO.InCouponVO inCouponVO:list){
+        		userCoupon  = new InUserCoupon();
+        		BeanCopyUtils.copyProperties(inCouponVO, userCoupon);
+        		userCoupon.setUserId(user.getId());
+        		couponRepository.saveOrUpdate(userCoupon);
+        	}
+        }
 	}
 }

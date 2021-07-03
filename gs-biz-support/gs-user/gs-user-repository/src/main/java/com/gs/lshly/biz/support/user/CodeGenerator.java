@@ -62,9 +62,9 @@ public class CodeGenerator {
         //packageConfig.setController("facade.foundation.controller.foundation");
 
         //路径G
-        globalConfig.setOutputDir("C:/works/program/citydo/gs-mall-gitlab/gs-biz-support/gs-user/gs-user-repository/src/main/java");
+        globalConfig.setOutputDir("C:/works/program/citydo/gs-mall-new/gs-biz-support/gs-user/gs-user-repository/src/main/java");
         //表名
-        strategy.setInclude("gs_user_ctcc_point");
+        strategy.setInclude("gs_user_ctcc_in");
         // 作者
         globalConfig.setAuthor("yingjun");
 

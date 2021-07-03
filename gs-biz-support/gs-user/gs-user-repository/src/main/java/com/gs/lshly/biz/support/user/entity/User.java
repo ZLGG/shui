@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.user.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
@@ -216,12 +217,17 @@ public class User extends Model {
      * 定向积分
      */
     private Integer directionIntegral;
+    
+    /**
+     * IN会员结束时间
+     */
+    private LocalDate inUserEndDate;
 
 	/**
 	 * 最近登录时间
 	 */
 	private LocalDateTime loginDate;
-
+	
 	public LocalDateTime getLoginDate() {
 		return loginDate;
 	}
@@ -378,6 +384,10 @@ public class User extends Model {
 
 	public Integer getDirectionIntegral() {
 		return directionIntegral;
+	}
+
+	public LocalDate getInUserEndDate() {
+		return inUserEndDate;
 	}
     
 }

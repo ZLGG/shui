@@ -6,6 +6,7 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
+import com.gs.lshly.common.struct.bbc.user.dto.BbcInUserCouponDTO.CreateDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
@@ -56,5 +57,11 @@ public class BbcInUserCouponRpc implements IBbcInUserCouponRpc {
 	@Override
 	public List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto) {
 		return inUserCouponService.listByCouponId(qto);
+	}
+
+	@Override
+	public void createInUserCoupon(CreateDTO dto) {
+		inUserCouponService.createInUserCoupon(dto);
+		
 	}
 }

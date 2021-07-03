@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.user.service.bbc;
 
+import com.gs.lshly.common.struct.bbc.user.dto.BbcInUserCouponDTO.CreateDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
@@ -57,4 +58,10 @@ public interface IBbcInUserCouponService {
      * @return
      */
     List<ListVO> listByCouponId(BbcUserCouponQTO.ListByCouponIdQTO qto);
+    
+    /**
+     * 添加IN会员优惠券
+     * @param dto
+     */
+    void createInUserCoupon(CreateDTO dto);
 }
