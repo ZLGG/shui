@@ -216,6 +216,9 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
         if (StringUtils.isNotEmpty(qto.getGoodsCategory())) {
             boost.like("gc.gs_category_name", qto.getGoodsCategory());
         }
+        if(StringUtils.isNotBlank(qto.getCategoryId())){
+            boost.eq("gs.category_id",qto.getCategoryId());
+        }
         if (StringUtils.isNotEmpty(qto.getGoodsName())) {
             boost.like("gs.goods_name", qto.getGoodsName());
         }

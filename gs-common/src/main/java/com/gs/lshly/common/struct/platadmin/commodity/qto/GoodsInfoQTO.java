@@ -49,6 +49,9 @@ public abstract class GoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品类目")
         private String goodsCategory;
 
+        @ApiModelProperty("商品类目id")
+        private String categoryId;
+
         @ApiModelProperty("商品品牌")
         private String goodsBrand;
 
