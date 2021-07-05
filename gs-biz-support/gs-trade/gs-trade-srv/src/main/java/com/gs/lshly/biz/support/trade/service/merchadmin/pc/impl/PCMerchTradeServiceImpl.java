@@ -473,6 +473,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             	}
             }
             tradeGoodsVO.setIsPointGood(skuDetail.getIsPointGood());
+            
+            
             tradeGoodsVOS.add(tradeGoodsVO);
         }
         tradeVO.setTradeGoodsVOS(tradeGoodsVOS);

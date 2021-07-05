@@ -2,20 +2,9 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import com.gs.lshly.biz.support.trade.entity.*;
-import com.gs.lshly.biz.support.trade.repository.*;
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
-import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
-import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
-import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
-import com.lakala.boss.api.utils.DateUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +13,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.gs.lshly.biz.support.trade.entity.MarketPtSeckill;
+import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSku;
+import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillGoodsSpu;
+import com.gs.lshly.biz.support.trade.entity.MarketPtSeckillTimeQuantum;
+import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillMapper;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSkuRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSpuRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
+import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
 import com.gs.lshly.biz.support.trade.service.platadmin.IMarketPtSeckillService;
+import com.gs.lshly.common.enums.MarketPtSeckillActivityEnum;
+import com.gs.lshly.common.enums.MarketPtSeckillSkuStateEnum;
+import com.gs.lshly.common.enums.MarketPtSeckillSpuChooseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.MarketPtSeckillDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.MarketPtSeckillQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.MarketPtSeckillVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
+import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
+import com.lakala.boss.api.utils.DateUtil;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * <p>
@@ -60,6 +71,9 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
     @Autowired
     private IMarketPtSeckillGoodsSkuRepository iMarketPtSeckillGoodsSkuRepository;
 
+    @Autowired
+    private MarketPtSeckillMapper marketPtSeckillMapper;
+    
     @DubboReference
     private IGoodsCategoryRpc iGoodsCategoryRpc;
 
@@ -68,6 +82,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
 
     @DubboReference
     private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
+    
 
     /**
      * 秒杀活动列表
@@ -366,6 +381,11 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         BeanUtils.copyProperties(pageRecord, activityListVO);
         return activityListVO;
     }
+
+	@Override
+	public List<String> listGoodsIdBySeckillIng() {
+		return marketPtSeckillMapper.listGoodsIdBySeckillIng();
+	}
 
 /*    @Override
     @Transactional

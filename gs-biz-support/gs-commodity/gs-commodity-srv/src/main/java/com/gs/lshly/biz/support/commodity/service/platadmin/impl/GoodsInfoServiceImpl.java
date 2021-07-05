@@ -94,6 +94,7 @@ import com.gs.lshly.rpc.api.common.ICommonStockTemplateRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchGoodsServeRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ICtccPtActivityGoodsRpc;
+import com.gs.lshly.rpc.api.platadmin.trade.IMarketPtSeckillRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeGoodsRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeRpc;
 
@@ -169,25 +170,46 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
     
     @DubboReference
     private IPCMerchGoodsServeRpc goodsServeRpc;
+    
+    @DubboReference
+    private IMarketPtSeckillRpc marketPtSeckillRpc;
 
     @Override
     public PageData<GoodsInfoVO.SpuListVO> pageGoodsInfoData(GoodsInfoQTO.QTO qto) {
         QueryWrapper<GoodsInfoVO.SpuListVO> boost = MybatisPlusUtil.query();
         if (ObjectUtil.isNotEmpty(qto.getGoodsPlace())) {
+        	List<String> ids = new ArrayList<String>();
+        	ids.add("AAA");
             if (qto.getGoodsPlace().equals(GoodsPlaceEnum.IN会员专区.getCode())) {
                 boost.eq("gs.is_in_member_gift", 1);
-            }
-            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信专区.getCode())) {
+            }else if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信专区.getCode())) {
                 QueryWrapper<CtccCategoryGoods> query = MybatisPlusUtil.query();
                 query.eq("category_id", "ctcc");
                 List<CtccCategoryGoods> categoryGoodsList = ctccCategoryGoodsRepository.list(query);
                 List<String> goodsIdList = CollUtil.getFieldValues(categoryGoodsList, "goodsId", String.class);
-                boost.in("gs.id", goodsIdList);
-            }
-            if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信国际.getCode())) {
+                if(CollectionUtil.isNotEmpty(goodsIdList)){
+                	boost.in("gs.id", goodsIdList);
+                }else{
+                	boost.in("gs.id", ids);
+                }
+                
+            }else if (qto.getGoodsPlace().equals(GoodsPlaceEnum.电信国际.getCode())) {
                 List<String> ctccGoodsList = ctccPtActivityGoodsRpc.getList();
-                boost.in("gs.id", ctccGoodsList);
+                if(CollectionUtil.isNotEmpty(ctccGoodsList)){
+                	boost.in("gs.id", ctccGoodsList);
+                }else{
+                	boost.in("gs.id", ids);
+                }
+                
+            }else if(qto.getGoodsPlace().equals(GoodsPlaceEnum.秒杀专区.getCode())){
+            	List<String> list = marketPtSeckillRpc.listGoodsIdBySeckillIng();
+            	if(CollectionUtil.isNotEmpty(list)){
+            		boost.in("gs.id", list);
+            	}else{
+            		boost.in("gs.id", ids);
+            	}
             }
+            
         }
         if (ObjectUtils.isNotEmpty(qto.getCostPrice()) && qto.getCostPrice().intValue() != 0) {
             boost.ge("gs.cost_price", qto.getCostPrice());

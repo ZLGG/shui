@@ -37,5 +37,10 @@ public interface IMarketPtSeckillService {
 
 
     List<MarketPtSeckillVO.ListVO> list();*/
+    /**
+     * 查询正在进行的秒杀商品id
+     * @return
+     */
+    List<String> listGoodsIdBySeckillIng();
 
 }

@@ -43,5 +43,11 @@ public interface IMarketPtSeckillRpc {
     PageData<MarketPtSeckillVO.QuantumSessionVO> getKillQuanTum(MarketPtSeckillQTO.QuantumQTO dto);
 
     /*    List<MarketPtSeckillVO.ListVO> list();*/
+    /**
+     * 查询正在秒杀活动商品id
+     * @param seckillId
+     * @return
+     */
+    List<String> listGoodsIdBySeckillIng();
 
 }

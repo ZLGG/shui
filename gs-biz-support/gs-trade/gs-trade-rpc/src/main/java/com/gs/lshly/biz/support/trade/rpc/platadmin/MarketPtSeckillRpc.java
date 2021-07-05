@@ -74,6 +74,12 @@ public class MarketPtSeckillRpc implements IMarketPtSeckillRpc {
         return marketPtSeckillService.getKillQuanTum(dto);
     }
 
+
+	@Override
+	public List<String> listGoodsIdBySeckillIng() {
+		return marketPtSeckillService.listGoodsIdBySeckillIng();
+	}
+
 /*    @Override
     public List<MarketPtSeckillVO.ListVO> list() {
         return marketPtSeckillService.list();

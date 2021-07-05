@@ -1,5 +1,7 @@
 package com.gs.lshly.biz.support.trade.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -57,4 +59,7 @@ public interface MarketPtSeckillMapper extends BaseMapper<MarketPtSeckill> {
             "\t AND ${ew.sqlSegment}")
     IPage<BbcMarketSeckillVO.SeckillGoodsVO> pageSeckillGoodsNew(IPage<BbcMarketSeckillVO.SeckillGoodsVO> pager,@Param(Constants.WRAPPER) QueryWrapper<BbcMarketSeckillQTO.QTO> qw);
     
+	@Select("select goods_id from gs_market_pt_seckill_goods_spu where seckill_id in(select id from gs_market_pt_seckill where state =20 and flag =0 and seckill_start_time <= sysdate() and seckill_end_time >= sysdate() )")
+	List<String> listGoodsIdBySeckillIng();
+	
 }
