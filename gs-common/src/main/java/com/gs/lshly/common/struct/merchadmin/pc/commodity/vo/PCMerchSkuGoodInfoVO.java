@@ -86,6 +86,9 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
         
         @ApiModelProperty("是否积分商品")
         private Integer isPointGood;
+        
+        @ApiModelProperty("兑换类型（20实物，10虚拟）")
+        private Integer exchangeType;
     }
 
     @Data

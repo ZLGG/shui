@@ -381,6 +381,9 @@ public abstract class PCMerchTradeListVO implements Serializable {
         
         @ApiModelProperty("是否是积分商品")
         private Integer isPointGood;
+        
+        @ApiModelProperty("兑换类型（20实物，10虚拟）")
+        private Integer exchangeType;
 
 
     }

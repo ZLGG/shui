@@ -3,21 +3,19 @@ package com.gs.lshly.biz.support.commodity.service.merchadmin.pc.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.merchadmin.pc.IPCMerchSkuGoodInfoService;
 import com.gs.lshly.common.exception.BusinessException;
@@ -26,8 +24,13 @@ import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchSkuGoodInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.qto.PCMerchSkuGoodInfoQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMarketPtSeckillVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonStockRpc;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * <p>
@@ -45,6 +48,9 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
 
     @DubboReference
     private ICommonStockRpc commonStockRpc;
+    
+    @Autowired
+    private IGoodsInfoRepository goodsInfoRepository;
 
     @Override
     public PageData<PCMerchSkuGoodInfoVO.ListVO> pageData(PCMerchSkuGoodInfoQTO.QTO qto) {
@@ -89,6 +95,10 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
         }else{
         	detailVo.setIsPointGood(0);
         }
+        String goodsId = skuGoodInfo.getGoodId();
+        GoodsInfo goodsInfo = goodsInfoRepository.getById(goodsId);
+        if(goodsInfo!=null)
+        	detailVo.setExchangeType(goodsInfo.getExchangeType());
         return detailVo;
     }
 
