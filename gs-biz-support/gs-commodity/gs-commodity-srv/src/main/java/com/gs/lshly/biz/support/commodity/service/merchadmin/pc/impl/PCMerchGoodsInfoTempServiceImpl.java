@@ -366,7 +366,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         List<PCMerchSkuGoodInfoVO.DetailVO> skuList = skuGoodInfoTempService.getByGoodsId(goodId);
         if (ObjectUtils.isNotEmpty(skuList) && StringUtils.isNotEmpty(skuList.get(0).getSpecsKey())) {
             for (PCMerchSkuGoodInfoVO.DetailVO vo : skuList) {
-                vo.setSkuStock(getSkuStockNum(dto.getJwtShopId(),vo.getId()));
+                vo.setSkuStock(getSkuStockNum(goodsInfoTemp.getShopId(),vo.getId()));
             }
             detailVO.setSkuVoList(skuList);
         }
