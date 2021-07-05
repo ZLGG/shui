@@ -455,7 +455,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         goodsInfo.setGoodsNo(eto.getGoodsNo());
         goodsInfo.setIsShowOldPrice(ObjectUtils.isEmpty(goodsInfo.getIsShowOldPrice()) ? ShowOldPriceEnum.不显示原价.getCode() : goodsInfo.getIsShowOldPrice());
         goodsInfo.setShopId(StringUtils.isBlank(eto.getShopId()) ? eto.getJwtShopId() : eto.getShopId());
-        goodsInfo.setMerchantId(StringUtils.isBlank(eto.getMerchantId()) ? eto.getJwtMerchantId() : eto.getMerchantId());
+        goodsInfo.setMerchantId(eto.getJwtMerchantId());
         //goodsInfo.setGoodsState(GoodsStateEnum.待审核.getCode());
         goodsInfo.setApplyType(applyType);
         goodsInfo.setFlag(false);
