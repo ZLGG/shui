@@ -29,6 +29,7 @@ import com.gs.lshly.biz.support.commodity.entity.GoodsInfo;
 import com.gs.lshly.biz.support.commodity.entity.GoodsLabel;
 import com.gs.lshly.biz.support.commodity.entity.GoodsRelationLabel;
 import com.gs.lshly.biz.support.commodity.entity.GoodsSearchHistory;
+import com.gs.lshly.biz.support.commodity.entity.GoodsServe;
 import com.gs.lshly.biz.support.commodity.entity.GoodsSpecInfo;
 import com.gs.lshly.biz.support.commodity.entity.SkuGoodInfo;
 import com.gs.lshly.biz.support.commodity.mapper.GoodsCategoryMapper;
@@ -40,11 +41,13 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsCtccApiRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsServeRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsCategoryService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsInfoService;
 import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsLabelService;
+import com.gs.lshly.biz.support.commodity.service.bbc.IBbcGoodsServeService;
 import com.gs.lshly.common.enums.GoodsBuyRemarkEnum;
 import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
 import com.gs.lshly.common.enums.GoodsStateEnum;
@@ -80,7 +83,6 @@ import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.InnerServiceVO
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListCouponVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.PromiseVOS;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.SimpleListVO;
-import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsServeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsSpecInfoVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcSkuGoodInfoVO;
 import com.gs.lshly.common.struct.bbc.foundation.qto.BbcSiteAdvertQTO;
@@ -164,8 +166,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private IBbcGoodsCategoryService bbcGoodsCategoryService;
     @Autowired
     private IGoodsCtccApiRepository goodsCtccApiRepository;
-    
-
+    @Autowired
+    private IBbcGoodsServeService bbcGoodsServeService;
+    @Autowired
+    private IGoodsServeRepository goodsServeRepository;
 
     @DubboReference
     private IBbcShopRpc bbcShopRpc;
@@ -525,18 +529,20 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
      * 填充当前用户类型信息
      */
     private void fillPromiseVOS(BbcGoodsInfoVO.DetailVO detailVo) {
-        List<PromiseVOS> promiseVOS = new ArrayList<PromiseVOS>();
-        BbcGoodsServeQTO.GoodsInfoQTO qto = new BbcGoodsServeQTO.GoodsInfoQTO();
-        qto.setId(detailVo.getGoodsId());
-        List<BbcGoodsServeVO.ListVO> goodsServeList = goodsServeRpc.getGoodsServeDetailByGoodsId(qto);
-        if (CollUtil.isNotEmpty(goodsServeList)) {
-            for (BbcGoodsServeVO.ListVO listVO : goodsServeList) {
+    	List<PromiseVOS> promiseVOS = new ArrayList<>();
+    	BbcGoodsServeQTO.GoodsInfoQTO dto = new BbcGoodsServeQTO.GoodsInfoQTO();
+    	dto.setId(detailVo.getGoodsId());
+    	List<String> list = bbcGoodsServeService.getServeIdByGoodsId(dto);
+        if (CollUtil.isNotEmpty(list)) {
+        	GoodsServe goodsServe = null;
+            for (String serveId : list) {
+            	goodsServe = goodsServeRepository.getById(serveId);
                 PromiseVOS promiseVO = new PromiseVOS();
-                promiseVO.setId(listVO.getId());
-                promiseVO.setName(listVO.getServeName());
-                promiseVO.setContant(listVO.getServeContext());
-                promiseVO.setImageUrl(listVO.getImageUrl());
-                promiseVO.setJumpUrl(listVO.getJumpUrl());
+                promiseVO.setId(goodsServe.getId());
+                promiseVO.setName(goodsServe.getServeName());
+                promiseVO.setContant(goodsServe.getServeContext());
+                promiseVO.setImageUrl(goodsServe.getImageUrl());
+                promiseVO.setJumpUrl(goodsServe.getJumpUrl());
                 promiseVOS.add(promiseVO);
             }
             detailVo.setPromiseVOS(promiseVOS);

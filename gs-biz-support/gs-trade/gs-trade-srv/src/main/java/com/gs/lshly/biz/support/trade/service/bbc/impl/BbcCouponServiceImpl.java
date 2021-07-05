@@ -72,7 +72,7 @@ public class BbcCouponServiceImpl implements IBbcCouponService{
         		if(coupon!=null){
 	        		BeanCopyUtils.copyProperties(coupon, listCouponVO);
 	        		if(coupon.getCouponType().equals(1)){
-	        			listCouponVO.setUseTime("领取后"+coupon.getEffectiveDate());
+	        			listCouponVO.setUseTime("领取后"+coupon.getEffectiveDate()+"天使用");
 	        		}else{
 	        			//2021/01/01 2021/08/01
 	        			if(coupon.getStartTime()!=null&&coupon.getEndTime()!=null){
