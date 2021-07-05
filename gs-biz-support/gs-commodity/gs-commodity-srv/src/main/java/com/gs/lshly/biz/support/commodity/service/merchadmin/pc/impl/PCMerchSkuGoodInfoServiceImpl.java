@@ -84,6 +84,11 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
             throw new BusinessException("没有数据");
         }
         BeanUtils.copyProperties(skuGoodInfo, detailVo);
+        if(skuGoodInfo.getIsPointGood()){
+        	detailVo.setIsPointGood(1);
+        }else{
+        	detailVo.setIsPointGood(0);
+        }
         return detailVo;
     }
 

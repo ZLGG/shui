@@ -378,6 +378,9 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         @ApiModelProperty("订单状态内容（主状态）")
         private String tradeStateText;
+        
+        @ApiModelProperty("是否是积分商品")
+        private Integer isPointGood;
 
 
     }

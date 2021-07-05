@@ -83,6 +83,9 @@ public abstract class PCMerchSkuGoodInfoVO implements Serializable {
 
         @ApiModelProperty("视频地址")
         private String videoUrl;
+        
+        @ApiModelProperty("是否积分商品")
+        private Integer isPointGood;
     }
 
     @Data
