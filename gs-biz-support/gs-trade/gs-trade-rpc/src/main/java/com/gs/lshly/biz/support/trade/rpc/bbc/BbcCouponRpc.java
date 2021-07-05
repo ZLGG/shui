@@ -10,6 +10,7 @@ import com.gs.lshly.biz.support.trade.service.bbc.IBbcCtccPtActivityGoodsService
 import com.gs.lshly.common.struct.bbc.commodity.dto.BbcCtccCategoryGoodsDTO.DTO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcCtccCategoryGoodsVO.CtccInternationalHomeVO;
 import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO.ListCouponVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcCouponVO.InCouponVO;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcCouponRpc;
 
@@ -28,6 +29,11 @@ public class BbcCouponRpc implements IBbcCouponRpc {
 	@Override
 	public List<InCouponVO> listInCouponByType(Integer inCouponType) {
 		return bbcCouponService.listInCouponByType(inCouponType);
+	}
+
+	@Override
+	public List<ListCouponVO> listCouponByGoodsId(String goodsId) {
+		return bbcCouponService.listCouponByGoodsId(goodsId);
 	}
 
     

@@ -135,6 +135,7 @@ import com.gs.lshly.common.struct.common.CommonStockDTO;
 import com.gs.lshly.common.struct.common.CommonStockVO;
 import com.gs.lshly.common.struct.common.CommonUserVO;
 import com.gs.lshly.common.struct.ctcc.dto.B2IDTO;
+import com.gs.lshly.common.struct.ctcc.dto.BSS30DTO;
 import com.gs.lshly.common.struct.ctcc.vo.B2IVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
 import com.gs.lshly.common.utils.Base64;
@@ -2524,8 +2525,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
             /**
              * 1、判断是不是需要走b2i
+             * TODO YINGJUN
              */
-            sendCtcc(tradeIds);
+            //sendCtcc(tradeIds);
             /**
              * 减积分
              */
@@ -2570,7 +2572,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      * @param tradeIds
      */
     private void sendCtcc(List<String> tradeIds) {
-
+    	Boolean flag = true;
         if (tradeIds.size() == 1) {
             QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
             tradeGoodsWrapper.eq("trade_id", tradeIds.get(0));
@@ -2624,10 +2626,23 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                     	tradePay.setThirdCode(data);
                     	tradePayRepository.saveOrUpdate(tradePay);
                     }
+                    
+                    flag = false;
                 }
             }
         }
-
+        if(flag){//走电信积分扣减服务
+        	for(String tradeId:tradeIds){
+        		QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
+        		tradeWrapper.eq("id", tradeIds);
+        		Trade trade = tradeRepository.getOne(tradeWrapper);
+        		
+        		String userId = trade.getUserId();
+        		
+        		BSS30DTO.PointRightsDealForKJDTO pointRightsDealForKJDTO = new BSS30DTO.PointRightsDealForKJDTO();
+//        		pointRightsDealForKJDTO.
+        	}
+        }
     }
 
     /**

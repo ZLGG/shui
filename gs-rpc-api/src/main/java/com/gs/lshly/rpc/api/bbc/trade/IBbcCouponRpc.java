@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.bbc.trade;
 
 import java.util.List;
 
+import com.gs.lshly.common.struct.bbc.commodity.vo.BbcGoodsInfoVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcCouponVO;
 
 /**
@@ -19,5 +20,12 @@ public interface IBbcCouponRpc {
 	 * @return
 	 */
 	List<BbcCouponVO.InCouponVO> listInCouponByType(Integer inCouponType);
+	
+	/**
+	 * 跟据商品ID查询对应的优惠券
+	 * @param goodsId
+	 * @return
+	 */
+	List<BbcGoodsInfoVO.ListCouponVO> listCouponByGoodsId(String goodsId);
 	
 }

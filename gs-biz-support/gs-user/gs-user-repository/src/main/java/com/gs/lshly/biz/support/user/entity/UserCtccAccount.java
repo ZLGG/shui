@@ -1,7 +1,7 @@
 package com.gs.lshly.biz.support.user.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -15,18 +15,17 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 电信会员信息表
+ * 电信客户帐户
  * </p>
  *
  * @author yingjun
  * @since 2021-07-04
  */
-@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("gs_user_ctcc_in")
-public class UserCtccIn extends Model {
+@TableName("gs_user_ctcc_account")
+public class UserCtccAccount extends Model {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,29 +35,79 @@ public class UserCtccIn extends Model {
     private String id;
 
     /**
-     * 用户ID
+     * 会员ID
      */
     private String userId;
 
     /**
-     * 开通时间
+     * 电信用户ID
      */
-    private LocalDate startTime;
+    private String ctccId;
 
     /**
-     * IN会员到期时间
+     * 帐户id
      */
-    private LocalDate endTime;
+    private Long acctId;
 
     /**
-     * 当前状态 1：开通中 0：已失效
+     * 账户名称
      */
-    private Integer status;
+    private String acctName;
 
     /**
-     * 1:月IN会员  2：年IN会员
+     * 合同号
      */
-    private Integer type;
+    private String acctCd;
+
+    /**
+     * 客户ID
+     */
+    private Long custId;
+
+    /**
+     * 帐户计费类型
+     */
+    private String acctBillingType;
+
+    /**
+     * 代表号码id
+     */
+    private Long prodInstId;
+
+    /**
+     * 生效时间
+     */
+    private Date effDate;
+
+    /**
+     * 失效时间
+     */
+    private Date expDate;
+
+    /**
+     * 集团账户编码
+     */
+    private String extAcctId;
+
+    /**
+     * 集团账户库标识
+     */
+    private String groupAcctId;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 状态
+     */
+    private String statusCd;
+
+    /**
+     * 区县ID
+     */
+    private Long regionId;
 
     /**
      * 创建时间

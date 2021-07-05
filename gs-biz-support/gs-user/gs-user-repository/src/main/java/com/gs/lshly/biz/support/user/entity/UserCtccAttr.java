@@ -1,6 +1,5 @@
 package com.gs.lshly.biz.support.user.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -15,18 +14,17 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 电信会员信息表
+ * 电信客户属性
  * </p>
  *
  * @author yingjun
  * @since 2021-07-04
  */
-@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("gs_user_ctcc_in")
-public class UserCtccIn extends Model {
+@TableName("gs_user_ctcc_attr")
+public class UserCtccAttr extends Model {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,29 +34,39 @@ public class UserCtccIn extends Model {
     private String id;
 
     /**
-     * 用户ID
+     * 会员ID
      */
     private String userId;
 
     /**
-     * 开通时间
+     * 电信用户ID
      */
-    private LocalDate startTime;
+    private String ctccId;
 
     /**
-     * IN会员到期时间
+     * 属性标识
      */
-    private LocalDate endTime;
+    private Long attrId;
 
     /**
-     * 当前状态 1：开通中 0：已失效
+     * 属性值标识
      */
-    private Integer status;
+    private Long attrValueId;
 
     /**
-     * 1:月IN会员  2：年IN会员
+     * 属性值
      */
-    private Integer type;
+    private String attrValue;
+
+    /**
+     * 属性名称
+     */
+    private String attrName;
+
+    /**
+     * 备注
+     */
+    private String remark;
 
     /**
      * 创建时间

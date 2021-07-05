@@ -17,4 +17,12 @@ public interface ICommonUserRpc {
     List<CommonUserVO.DetailVO> moreDetail(List<String> userIdList);
 
     CommonUserVO.selectUserIdByShopIdVO selectUserIdByShopId(String userId);
+    
+    /**
+     * 跟据USERID查询电信用户详情
+     * @param userId
+     * @return
+     */
+    CommonUserVO.UserCtccDetailVO userCtccDetails(String userId);
+    
 }

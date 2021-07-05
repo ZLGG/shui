@@ -1,28 +1,31 @@
 package com.gs.lshly.biz.support.user.service.common.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.user.entity.User;
-import com.gs.lshly.biz.support.user.repository.IUserRepository;
-import com.gs.lshly.biz.support.user.service.common.ICommonUserService;
-import com.gs.lshly.common.exception.BusinessException;
-import com.gs.lshly.common.struct.common.CommonUserVO;
-import com.gs.lshly.common.struct.common.LegalDictVO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
-import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
-import com.gs.lshly.common.utils.ListUtil;
-import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.rpc.api.common.ILegalDictRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountRpc;
-import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.entity.UserCtcc;
+import com.gs.lshly.biz.support.user.repository.IUserCtccRepository;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.biz.support.user.service.common.ICommonUserService;
+import com.gs.lshly.common.struct.common.CommonUserVO;
+import com.gs.lshly.common.struct.common.CommonUserVO.UserCtccDetailVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchMerchantAccountVO;
+import com.gs.lshly.common.struct.merchadmin.pc.merchant.vo.PCMerchShopVO;
+import com.gs.lshly.common.utils.BeanCopyUtils;
+import com.gs.lshly.common.utils.ListUtil;
+import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.common.ILegalDictRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchMerchantAccountRpc;
+import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
 
 /**
 * <p>
@@ -36,12 +39,16 @@ public class CommonUserServiceImpl implements ICommonUserService {
 
     @Autowired
     private IUserRepository repository;
+    @Autowired
+    private IUserCtccRepository userCtccRepository;
+    
     @DubboReference
     private ILegalDictRpc iLegalDictRpc;
     @DubboReference
     private IPCMerchMerchantAccountRpc ipcMerchMerchantAccountRpc;
     @DubboReference
     private IPCMerchShopRpc ipcMerchShopRpc;
+    
 
 
     @Override
@@ -106,5 +113,25 @@ public class CommonUserServiceImpl implements ICommonUserService {
         }
         return new CommonUserVO.selectUserIdByShopIdVO(shopSimpleVO.getPosShopId());
     }
+
+	@Override
+	public UserCtccDetailVO userCtccDetails(String userId) {
+		if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        User user =  repository.getById(userId);
+        if(null == user){
+           return null;
+        }
+        CommonUserVO.UserCtccDetailVO userCtccDetailVO = new CommonUserVO.UserCtccDetailVO();
+        BeanUtils.copyProperties(user,userCtccDetailVO);
+        
+        QueryWrapper<UserCtcc> userCtccWrapper = MybatisPlusUtil.query();
+        userCtccWrapper.eq("user_id",userId);
+        UserCtcc userCtcc = userCtccRepository.getOne(userCtccWrapper);
+        
+        BeanCopyUtils.copyProperties(userCtcc, userCtccDetailVO);
+		return userCtccDetailVO;
+	}
 
 }

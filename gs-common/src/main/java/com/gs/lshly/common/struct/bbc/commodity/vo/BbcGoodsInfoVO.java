@@ -1209,7 +1209,7 @@ public abstract class BbcGoodsInfoVO implements Serializable {
 
 		public String getCouponTypeText() {
 			if(couponType!=null)
-				couponTypeText = GoodsCouponTypeEnum.getRemarkByCode(couponStatus);
+				couponTypeText = GoodsCouponTypeEnum.getRemarkByCode(couponType);
 			return couponTypeText;
 		}
 

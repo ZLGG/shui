@@ -1,6 +1,5 @@
 package com.gs.lshly.common.ctcc.b2i;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +13,12 @@ import com.gs.lshly.common.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 
+ * 客户中心-Dubbo服务协议[统一平台]（20201021）
+ * 4.13	客户详情查询
  *
  * 
  * @author yingjun
- * @date 2020年6月22日 下午2:59:05
+ * @date 2021年7月4日 上午9:31:35
  */
 @Slf4j
 public class SimpleBusinessAccept {

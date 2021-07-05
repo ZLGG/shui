@@ -1,7 +1,7 @@
 package com.gs.lshly.biz.support.user.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -21,12 +21,11 @@ import lombok.experimental.Accessors;
  * @author yingjun
  * @since 2021-07-04
  */
-@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("gs_user_ctcc_in")
-public class UserCtccIn extends Model {
+@TableName("gs_user_ctcc")
+public class UserCtcc extends Model {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,24 +40,89 @@ public class UserCtccIn extends Model {
     private String userId;
 
     /**
-     * 开通时间
+     * 客户ID
      */
-    private LocalDate startTime;
+    private Long custId;
 
     /**
-     * IN会员到期时间
+     * 参与人ID
      */
-    private LocalDate endTime;
+    private Long partyId;
 
     /**
-     * 当前状态 1：开通中 0：已失效
+     * 纳税人ID
      */
-    private Integer status;
+    private Long taxPayerId;
 
     /**
-     * 1:月IN会员  2：年IN会员
+     * 客户名称
      */
-    private Integer type;
+    private String custName;
+
+    /**
+     * 客户编码
+     */
+    private String custNumber;
+
+    /**
+     * 客户地址
+     */
+    private String custAddr;
+
+    /**
+     * 地市ID
+     */
+    private Long regionId;
+
+    /**
+     * 客户类型
+     */
+    private String custType;
+
+    /**
+     * 入网时间
+     */
+    private Date enterDate;
+
+    /**
+     * 集团客户编码
+     */
+    private String extCustId;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 证件类型
+     */
+    private String certType;
+
+    /**
+     * 证件号码
+     */
+    private String certNum;
+
+    /**
+     * 集团参与人编码
+     */
+    private String partyNbr;
+
+    /**
+     * 联系人
+     */
+    private String contactName;
+
+    /**
+     * 联系人地址
+     */
+    private String contactAddr;
+
+    /**
+     * 联系电话
+     */
+    private String contactPhone;
 
     /**
      * 创建时间
@@ -78,6 +142,5 @@ public class UserCtccIn extends Model {
      @TableField(fill = FieldFill.INSERT)
      @TableLogic
      private Boolean flag;
-
 
 }

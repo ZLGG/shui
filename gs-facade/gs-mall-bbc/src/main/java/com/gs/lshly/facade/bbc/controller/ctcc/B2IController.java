@@ -1,7 +1,6 @@
 package com.gs.lshly.facade.bbc.controller.ctcc;
 
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.utils.HttpClientUtils;
 import com.gs.lshly.common.utils.MD5Util;
 
-import cn.hutool.crypto.digest.MD5;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

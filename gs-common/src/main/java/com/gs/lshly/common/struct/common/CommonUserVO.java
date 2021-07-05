@@ -1,12 +1,13 @@
 package com.gs.lshly.common.struct.common;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 /**
 * @author xxfc
@@ -14,7 +15,18 @@ import java.io.Serializable;
 */
 @SuppressWarnings("serial")
 public abstract class CommonUserVO implements Serializable {
-
+	
+	@EqualsAndHashCode(callSuper=false)
+	@Data
+    @ApiModel("CommonUserVO.UserCtccDetailVO")
+    public static class UserCtccDetailVO extends DetailVO {
+		
+		@ApiModelProperty("客户号")
+		private Long custId;
+		@ApiModelProperty("客户类型")
+		private String custType;
+	
+	}
 
 	@Data
     @ApiModel("CommonUserVO.DetailVO")

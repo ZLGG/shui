@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 电信类产品
+ * B2I服务返回
  *
  * 
  * @author yingjun
- * @date 2021年4月20日 上午10:37:25
+ * @date 2021年7月4日 上午9:32:59
  */
 @SuppressWarnings("serial")
 public abstract class B2IVO implements Serializable {

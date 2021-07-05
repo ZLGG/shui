@@ -1,6 +1,8 @@
 package com.gs.lshly.biz.support.user.service.bbc.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,22 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.entity.UserCtcc;
+import com.gs.lshly.biz.support.user.entity.UserCtccAccount;
+import com.gs.lshly.biz.support.user.entity.UserCtccAttr;
 import com.gs.lshly.biz.support.user.entity.UserThirdLogin;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
+import com.gs.lshly.biz.support.user.repository.IUserCtccAccountRepository;
+import com.gs.lshly.biz.support.user.repository.IUserCtccAttrRepository;
+import com.gs.lshly.biz.support.user.repository.IUserCtccRepository;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.IUserThirdLoginRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserAuthService;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcUserCtccPointService;
 import com.gs.lshly.common.constants.SecurityConstants;
+import com.gs.lshly.common.ctcc.bss30.QueryCustomerService;
 import com.gs.lshly.common.enums.GenderEnum;
+import com.gs.lshly.common.enums.UserMerchantTtypeEnum;
 import com.gs.lshly.common.enums.UserStateEnum;
 import com.gs.lshly.common.enums.UserTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -30,6 +40,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcUserCtccPointDTO.CreateCtccPoi
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.UserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.common.struct.ctcc.vo.BSS30VO;
 import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
@@ -39,6 +50,7 @@ import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.IAliSMSService;
 import com.gs.lshly.middleware.sms.ISMSService;
 
+import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -60,6 +72,15 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
 
     @Autowired
     private IUserRepository repository;
+    
+    @Autowired
+    private IUserCtccRepository userCtccRepository;
+    
+    @Autowired
+    private IUserCtccAccountRepository userCtccAccountRepository;
+    
+    @Autowired
+    private IUserCtccAttrRepository userCtccAttrRepository;
 
     @Autowired
     private IUserThirdLoginRepository thirdLoginRepository;
@@ -115,16 +136,12 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     @Override
     public void getPhoneValidCode(BbcUserDTO.GetPhoneValidCodeDTO dto) {
         //通过手机查找是已经注册了会员，如果已经注册，则发送用户登陆验证码，否则发送注册验证码
-//        User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
         String validCode = null;
         try {
-//            if (user != null) {
-//                validCode = smsService.sendLoginSMSCode(dto.getPhone());
-//            } else {
-//                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
-//            }
-        	validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
-        	Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+        	//validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+        	validCode = "888888";
+        	//TODO YINGJUN Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+        	Boolean flag = true;
         	if(!flag){
         		 throw new BusinessException("短信发送失败!");
         	}
@@ -173,6 +190,11 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
                 userDTO.setMemberType(2);
                 repository.saveUserInfo(userDTO);
                 BeanCopyUtils.copyProperties(userDTO, user);
+                
+                
+                
+                //如果是新用户调一下电信的用户信息接口更新用户信息
+                //TODO YINGJUN this.queryCustomer(dto.getPhone());
             }
             vo = userToLoginVO(user, null);
             redisUtil.set(BbcH5PhoneUser + dto.getPhone(), vo, SecurityConstants.EXPIRATION);
@@ -357,5 +379,49 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
             return thirdVO;
         }
         return null;
+    }
+    
+    private void queryCustomer(String phone){
+    	//获取电信用户信息
+    	BSS30VO.QueryCustomerVO queryCustomerVO = QueryCustomerService.queryCustomer(phone);
+    	//查到了对应的用户信息了
+    	if(queryCustomerVO.getMsghead().getResultCode().equals(1)&&queryCustomerVO.getMsgbody().getResultCode().equals(1)){
+    		//跟据手机号码查询user
+    		User user = repository.getOne(new QueryWrapper<User>().eq("phone", AESUtil.aesEncrypt(phone)));
+    		String userId = user.getId();
+    		
+    		UserCtcc userCtcc = new UserCtcc();
+    		BeanCopyUtils.copyProperties(queryCustomerVO.getMsgbody().getResultObject(), userCtcc);
+    		userCtcc.setUserId(userId);
+    		userCtccRepository.saveOrUpdate(userCtcc);
+    		
+    		String ctccId = userCtcc.getId();
+    		UserCtccAccount userCtccAccount = null;
+    		List<BSS30VO.QueryCustomerVO.Msgbody.ResultObject.AccountDtos> accountDtos = new ArrayList<BSS30VO.QueryCustomerVO.Msgbody.ResultObject.AccountDtos>();
+    		if(CollectionUtil.isNotEmpty(accountDtos)){
+    			for(BSS30VO.QueryCustomerVO.Msgbody.ResultObject.AccountDtos accountDto:accountDtos){
+    				userCtccAccount = new UserCtccAccount();
+    				BeanCopyUtils.copyProperties(accountDto, userCtccAccount);
+    				userCtccAccount.setUserId(userId);
+    				userCtccAccount.setCtccId(ctccId);
+    				userCtccAccountRepository.saveOrUpdate(userCtccAccount);
+    			}
+    		}
+    		UserCtccAttr userCtccAttr = null;
+    		List<BSS30VO.QueryCustomerVO.Msgbody.ResultObject.CustAttrReps> custAttrReps = new ArrayList<BSS30VO.QueryCustomerVO.Msgbody.ResultObject.CustAttrReps>();
+    		if(CollectionUtil.isNotEmpty(custAttrReps)){
+    			for(BSS30VO.QueryCustomerVO.Msgbody.ResultObject.CustAttrReps custAttrRep:custAttrReps){
+    				userCtccAttr = new UserCtccAttr();
+    				BeanCopyUtils.copyProperties(custAttrRep, userCtccAttr);
+    				userCtccAttr.setUserId(userId);
+    				userCtccAttr.setCtccId(ctccId);
+    				userCtccAttrRepository.saveOrUpdate(userCtccAttr);
+    			}
+    		}
+    		//BeanCopyUtils.copyProperties(queryCustomerVO.getMsgbody().getResultObject().getAccountDtos(), userCtcc);
+    		user.setMemberType(2);
+    		repository.saveOrUpdate(user);
+    		
+    	}
     }
 }

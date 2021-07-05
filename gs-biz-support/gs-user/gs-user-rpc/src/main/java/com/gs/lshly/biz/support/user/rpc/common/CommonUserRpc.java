@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.user.rpc.common;
 
 import com.gs.lshly.biz.support.user.service.common.ICommonUserService;
 import com.gs.lshly.common.struct.common.CommonUserVO;
+import com.gs.lshly.common.struct.common.CommonUserVO.UserCtccDetailVO;
 import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,10 @@ public class CommonUserRpc implements ICommonUserRpc{
     public CommonUserVO.selectUserIdByShopIdVO selectUserIdByShopId(String userId) {
         return userService.selectUserIdByShopId(userId);
     }
+
+	@Override
+	public UserCtccDetailVO userCtccDetails(String userId) {
+		return userService.userCtccDetails(userId);
+	}
 
 }

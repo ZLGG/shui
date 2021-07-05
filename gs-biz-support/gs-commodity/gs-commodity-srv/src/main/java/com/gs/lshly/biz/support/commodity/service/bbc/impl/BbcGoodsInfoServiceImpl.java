@@ -109,6 +109,7 @@ import com.gs.lshly.rpc.api.bbc.foundation.IBbcSiteTopicRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
+import com.gs.lshly.rpc.api.bbc.trade.IBbcCouponRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketActivityRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcMarketSeckillRpc;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRpc;
@@ -208,6 +209,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     
     @DubboReference
     private IBbcMarketSeckillRpc bbcMarketSeckillRpc;
+    
+    @DubboReference
+    private IBbcCouponRpc bbcCouponRpc;
+    
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsListVO(BbcGoodsInfoQTO.GoodsListByCategoryQTO qto) {
@@ -1957,19 +1962,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @Override
     public List<ListCouponVO> listCoupon(GoodsIdQTO qto) {
-
-        List<ListCouponVO> retList = new ArrayList<ListCouponVO>();
-        ListCouponVO listCouponVO = new ListCouponVO();
-        listCouponVO.setCouponType(1);
-        listCouponVO.setUseTime("2021/01/01 2021/08/01");
-        listCouponVO.setCouponName("仅购买IN会员商品可以使用");
-        listCouponVO.setCouponStatus(2);
-        listCouponVO.setDeduction(new BigDecimal("20.00"));
-        listCouponVO.setUseThreshold(new BigDecimal("40.00"));
-        listCouponVO.setDeductionType(Integer.valueOf(1));
-        listCouponVO.setId("4ecef3ea3d6c421f9fd7f4c82bfcab5b");
-        retList.add(listCouponVO);
-        return retList;
+    	String goodsId = qto.getGoodsId();
+    	return bbcCouponRpc.listCouponByGoodsId(goodsId);
     }
 
 	@Override
