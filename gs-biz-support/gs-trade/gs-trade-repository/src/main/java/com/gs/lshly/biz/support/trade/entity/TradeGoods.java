@@ -111,11 +111,6 @@ public class TradeGoods extends Model {
     private BigDecimal salePrice;
 
     /**
-     * 优惠金额
-     */
-    private BigDecimal discountAmount;
-
-    /**
      * 支付总金额
      */
     private BigDecimal payAmount;
@@ -167,6 +162,11 @@ public class TradeGoods extends Model {
     private BigDecimal goodsAmount;
     
     private BigDecimal goodsPointAmount;
+    
+    /**
+     * 优惠金额
+     */
+    private BigDecimal discountAmount;
     
     private BigDecimal discountPointAmount;
     

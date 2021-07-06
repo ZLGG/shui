@@ -1,15 +1,19 @@
 package com.gs.lshly.common.struct.platadmin.trade.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * @author oy
@@ -18,7 +22,7 @@ import java.util.List;
 public abstract class TradeListVO implements Serializable {
 
 
-    @Data
+    @Setter
     @ApiModel("TradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable{
@@ -146,6 +150,266 @@ public abstract class TradeListVO implements Serializable {
         @ApiModelProperty("平台取消订单处理说明")
         private String cancelReason;
 
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getUserId() {
+			return userId;
+		}
+
+		public void setUserId(String userId) {
+			this.userId = userId;
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+
+		public String getShopId() {
+			return shopId;
+		}
+
+		public void setShopId(String shopId) {
+			this.shopId = shopId;
+		}
+
+		public String getShopName() {
+			return shopName;
+		}
+
+		public void setShopName(String shopName) {
+			this.shopName = shopName;
+		}
+
+		public String getMerchantId() {
+			return merchantId;
+		}
+
+		public void setMerchantId(String merchantId) {
+			this.merchantId = merchantId;
+		}
+
+		public String getTradeCode() {
+			return tradeCode;
+		}
+
+		public void setTradeCode(String tradeCode) {
+			this.tradeCode = tradeCode;
+		}
+
+		public Integer getTradeState() {
+			return tradeState;
+		}
+
+		public void setTradeState(Integer tradeState) {
+			this.tradeState = tradeState;
+		}
+
+		public BigDecimal getGoodsAmount() {
+			return goodsAmount;
+		}
+
+		public void setGoodsAmount(BigDecimal goodsAmount) {
+			this.goodsAmount = goodsAmount;
+		}
+
+		public BigDecimal getDiscountAmount() {
+			return discountAmount;
+		}
+
+		public void setDiscountAmount(BigDecimal discountAmount) {
+			this.discountAmount = discountAmount;
+		}
+
+		public BigDecimal getDeliveryAmount() {
+			return deliveryAmount;
+		}
+
+		public void setDeliveryAmount(BigDecimal deliveryAmount) {
+			this.deliveryAmount = deliveryAmount;
+		}
+
+		public BigDecimal getTradeAmount() {
+			return tradeAmount;
+		}
+
+		public void setTradeAmount(BigDecimal tradeAmount) {
+			this.tradeAmount = tradeAmount;
+		}
+
+		public LocalDateTime getCreateTime() {
+			return createTime;
+		}
+
+		public void setCreateTime(LocalDateTime createTime) {
+			this.createTime = createTime;
+		}
+
+		public LocalDateTime getPayTime() {
+			return payTime;
+		}
+
+		public void setPayTime(LocalDateTime payTime) {
+			this.payTime = payTime;
+		}
+
+		public LocalDateTime getPayDeadline() {
+			return payDeadline;
+		}
+
+		public void setPayDeadline(LocalDateTime payDeadline) {
+			this.payDeadline = payDeadline;
+		}
+
+		public LocalDateTime getRecvTime() {
+			return recvTime;
+		}
+
+		public void setRecvTime(LocalDateTime recvTime) {
+			this.recvTime = recvTime;
+		}
+
+		public Integer getPayType() {
+			return payType;
+		}
+
+		public void setPayType(Integer payType) {
+			this.payType = payType;
+		}
+
+		public Integer getDeliveryType() {
+			return deliveryType;
+		}
+
+		public void setDeliveryType(Integer deliveryType) {
+			this.deliveryType = deliveryType;
+		}
+
+		public String getLogisticsNumber() {
+			return logisticsNumber;
+		}
+
+		public void setLogisticsNumber(String logisticsNumber) {
+			this.logisticsNumber = logisticsNumber;
+		}
+
+		public String getLogisticsCompanyCode() {
+			return logisticsCompanyCode;
+		}
+
+		public void setLogisticsCompanyCode(String logisticsCompanyCode) {
+			this.logisticsCompanyCode = logisticsCompanyCode;
+		}
+
+		public String getLogisticsCompanyName() {
+			return logisticsCompanyName;
+		}
+
+		public void setLogisticsCompanyName(String logisticsCompanyName) {
+			this.logisticsCompanyName = logisticsCompanyName;
+		}
+
+		public String getTakeGoodsCode() {
+			return takeGoodsCode;
+		}
+
+		public void setTakeGoodsCode(String takeGoodsCode) {
+			this.takeGoodsCode = takeGoodsCode;
+		}
+
+		public String getTakeGoodsQrcode() {
+			return takeGoodsQrcode;
+		}
+
+		public void setTakeGoodsQrcode(String takeGoodsQrcode) {
+			this.takeGoodsQrcode = takeGoodsQrcode;
+		}
+
+		public String getRecvAddresId() {
+			return recvAddresId;
+		}
+
+		public void setRecvAddresId(String recvAddresId) {
+			this.recvAddresId = recvAddresId;
+		}
+
+		public String getRecvPersonName() {
+			return recvPersonName;
+		}
+
+		public void setRecvPersonName(String recvPersonName) {
+			this.recvPersonName = recvPersonName;
+		}
+
+		public String getRecvPhone() {
+			return recvPhone;
+		}
+
+		public void setRecvPhone(String recvPhone) {
+			this.recvPhone = recvPhone;
+		}
+
+		public String getRecvFullAddres() {
+			if(StringUtils.isNotEmpty(recvFullAddres)&&recvFullAddres.equals("nullnullnull")){
+				recvFullAddres = "空";
+			}
+			return recvFullAddres;
+		}
+
+		public void setRecvFullAddres(String recvFullAddres) {
+			this.recvFullAddres = recvFullAddres;
+		}
+
+		public Integer getTimeoutCancel() {
+			return timeoutCancel;
+		}
+
+		public void setTimeoutCancel(Integer timeoutCancel) {
+			this.timeoutCancel = timeoutCancel;
+		}
+
+		public String getBuyerRemark() {
+			return buyerRemark;
+		}
+
+		public void setBuyerRemark(String buyerRemark) {
+			this.buyerRemark = buyerRemark;
+		}
+
+		public String getDeliveryRemark() {
+			return deliveryRemark;
+		}
+
+		public void setDeliveryRemark(String deliveryRemark) {
+			this.deliveryRemark = deliveryRemark;
+		}
+
+		public List<TradeGoodsVO> getTradeGoodsVOS() {
+			return tradeGoodsVOS;
+		}
+
+		public void setTradeGoodsVOS(List<TradeGoodsVO> tradeGoodsVOS) {
+			this.tradeGoodsVOS = tradeGoodsVOS;
+		}
+
+		public String getCancelReason() {
+			return cancelReason;
+		}
+
+		public void setCancelReason(String cancelReason) {
+			this.cancelReason = cancelReason;
+		}
+
+        
     }
 
     @Data
@@ -235,6 +499,9 @@ public abstract class TradeListVO implements Serializable {
         
         @ApiModelProperty("交易价格")
         private BigDecimal tradeAmount;
+        
+        @ApiModelProperty("优惠积分价格")
+        private BigDecimal discountPointAmount;
 
     }
     @Data
