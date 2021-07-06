@@ -921,6 +921,19 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
             skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+
+            skuGoodInfo.setState(GoodsStateEnum.已上架.getCode());
+            skuGoodInfo.setSkuGoodsNo(editDetailVO.getGoodsNo());
+            skuGoodInfo.setBarcode(editDetailVO.getGoodsBarcode());
+            skuGoodInfo.setSalePrice(editDetailVO.getSalePrice());//售价
+            skuGoodInfo.setOldPrice(editDetailVO.getOldPrice());//原价
+            skuGoodInfo.setCostPrice(editDetailVO.getCostPrice());//成本价
+            skuGoodInfo.setSettlementPrice(editDetailVO.getSettlementPrice());//结算价
+
+            skuGoodInfo.setOldPointPrice(editDetailVO.getOldPointPrice());//原积分价格
+            skuGoodInfo.setPointPrice(editDetailVO.getPointPrice());//积分价格
+            skuGoodInfo.setInMemberPointPrice(editDetailVO.getInMemberPointPrice());//in会员积分价格
+
             skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
             skuGoodInfo.setShopId(goodsInfo.getShopId());
             skuGoodInfo.setCdate(LocalDateTime.now());
@@ -1118,6 +1131,19 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuGoodInfo.setCategoryId(editDetailVO.getCategoryId());
             skuGoodInfo.setIsPointGood(editDetailVO.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(editDetailVO.getIsInMemberGift());
+
+            skuGoodInfo.setState(GoodsStateEnum.已上架.getCode());
+            skuGoodInfo.setSkuGoodsNo(editDetailVO.getGoodsNo());
+            skuGoodInfo.setBarcode(editDetailVO.getGoodsBarcode());
+            skuGoodInfo.setSalePrice(editDetailVO.getSalePrice());//售价
+            skuGoodInfo.setOldPrice(editDetailVO.getOldPrice());//原价
+            skuGoodInfo.setCostPrice(editDetailVO.getCostPrice());//成本价
+            skuGoodInfo.setSettlementPrice(editDetailVO.getSettlementPrice());//结算价
+
+            skuGoodInfo.setOldPointPrice(editDetailVO.getOldPointPrice());//原积分价格
+            skuGoodInfo.setPointPrice(editDetailVO.getPointPrice());//积分价格
+            skuGoodInfo.setInMemberPointPrice(editDetailVO.getInMemberPointPrice());//in会员积分价格
+
             skuGoodInfo.setMerchantId(goodsInfo.getMerchantId());
             skuGoodInfo.setShopId(goodsInfo.getShopId());
             skuGoodInfo.setCdate(LocalDateTime.now());

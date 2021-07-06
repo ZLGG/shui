@@ -291,6 +291,26 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             skuGoodInfo.setPosSpuId(StringUtils.isBlank(eto.getPosSpuId()) ? "" : eto.getPosSpuId());
             skuGoodInfo.setIsPointGood(eto.getIsPointGood());
             skuGoodInfo.setIsInMemberGift(eto.getIsInMemberGift());
+            skuGoodInfo.setState(GoodsStateEnum.待审核.getCode());
+            skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
+            skuGoodInfo.setShopId(eto.getJwtShopId());
+            skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
+            skuGoodInfo.setSkuGoodsNo(eto.getGoodsNo());
+            skuGoodInfo.setBarcode(eto.getGoodsBarcode());
+            skuGoodInfo.setSalePrice(eto.getSalePrice());//售价
+            skuGoodInfo.setOldPrice(eto.getOldPrice());//原价
+            skuGoodInfo.setCostPrice(eto.getCostPrice());//成本价
+            skuGoodInfo.setSettlementPrice(eto.getSettlementPrice());//结算价
+
+            skuGoodInfo.setOldPointPrice(eto.getOldPointPrice());//原积分价格
+            skuGoodInfo.setPointPrice(eto.getPointPrice());//积分价格
+            skuGoodInfo.setInMemberPointPrice(eto.getInMemberPointPrice());//in会员积分价格
+
+            skuGoodInfo.setCtccMold(eto.getCtccMold());
+            skuGoodInfo.setCdate(new Date());
+            skuGoodInfo.setUdate(new Date());
+            skuGoodInfo.setFlag(false);
+
             skuGoodInfoTempRepository.save(skuGoodInfo);
 
             CommonStockDTO.InnerChangeStockItem stockItem = new CommonStockDTO.InnerChangeStockItem();
@@ -591,12 +611,17 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
             skuGoodInfo.setShopId(eto.getJwtShopId());
             skuGoodInfo.setMerchantId(eto.getJwtMerchantId());
             skuGoodInfo.setSkuGoodsNo(eto.getGoodsNo());
-            skuGoodInfo.setCostPrice(eto.getCostPrice());
+            skuGoodInfo.setBarcode(eto.getGoodsBarcode());
+            skuGoodInfo.setSalePrice(eto.getSalePrice());//售价
+            skuGoodInfo.setOldPrice(eto.getOldPrice());//原价
+            skuGoodInfo.setCostPrice(eto.getCostPrice());//成本价
+            skuGoodInfo.setSettlementPrice(eto.getSettlementPrice());//结算价
+
+            skuGoodInfo.setOldPointPrice(eto.getOldPointPrice());//原积分价格
+            skuGoodInfo.setPointPrice(eto.getPointPrice());//积分价格
+            skuGoodInfo.setInMemberPointPrice(eto.getInMemberPointPrice());//in会员积分价格
+
             skuGoodInfo.setCtccMold(eto.getCtccMold());
-            skuGoodInfo.setOldPrice(eto.getOldPrice());
-            skuGoodInfo.setOldPointPrice(eto.getOldPointPrice());
-            skuGoodInfo.setSalePrice(eto.getSalePrice());
-            skuGoodInfo.setSettlementPrice(eto.getSettlementPrice());
             skuGoodInfo.setCdate(new Date());
             skuGoodInfo.setUdate(new Date());
             skuGoodInfo.setFlag(false);
