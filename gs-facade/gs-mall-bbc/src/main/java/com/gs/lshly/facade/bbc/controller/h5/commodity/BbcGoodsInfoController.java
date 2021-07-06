@@ -99,7 +99,7 @@ public class BbcGoodsInfoController {
 
     @ApiOperation("查询历史搜索记录-v1.1.0")
     @PostMapping("/getSearchHistory")
-    public ResponseData<List<BbcGoodsInfoVO.SearchHistory>> getSearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+    public ResponseData<List<String>> getSearchHistory(@Valid @RequestBody BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         return ResponseData.data(bbcGoodsInfoRpc.getSearchHistory(qto));
     }
 

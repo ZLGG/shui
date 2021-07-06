@@ -41,6 +41,7 @@ import com.gs.lshly.biz.support.commodity.repository.IGoodsCtccApiRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsLabelRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsRelationLabelRepository;
+import com.gs.lshly.biz.support.commodity.repository.IGoodsSearchHistoryRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsServeRepository;
 import com.gs.lshly.biz.support.commodity.repository.IGoodsSpecInfoRepository;
 import com.gs.lshly.biz.support.commodity.repository.ISkuGoodInfoRepository;
@@ -170,6 +171,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     private IBbcGoodsServeService bbcGoodsServeService;
     @Autowired
     private IGoodsServeRepository goodsServeRepository;
+//    @Autowired
+//    private IGoodsSearchHistoryRepository goodsSearchHistoryRepository;
 
     @DubboReference
     private IBbcShopRpc bbcShopRpc;
@@ -562,7 +565,16 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
     @Override
     public PageData<BbcGoodsInfoVO.GoodsListVO> pageGoodsData(BbcGoodsInfoQTO.GoodsSearchListQTO qto) {
-    	
+    	if(!qto.getSearchEntry().equals(0)&&StringUtils.isNotEmpty(qto.getGoodsName())){
+    		String userId = qto.getJwtUserId();
+    		GoodsSearchHistory goodsSearchHistory = new GoodsSearchHistory();
+    		goodsSearchHistory.setKeyword(qto.getGoodsName());
+    		goodsSearchHistory.setSearchEntry(1);
+    		goodsSearchHistory.setUserId(userId);
+    		goodsSearchHistory.setFlag(false);
+    		searchHistoryMapper.insert(goodsSearchHistory);
+    		
+    	}
     	BbcUserVO.DetailVO detailVO = userRpc.getUserInfoNoLogin(qto);
     	
         QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
@@ -1490,14 +1502,14 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
     }
 
     @Override
-    public List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+    public List<String> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         QueryWrapper<GoodsSearchHistory> wrapper = MybatisPlusUtil.query();
         wrapper.eq("search_entry", qto.getSearchEntry());
         wrapper.eq("user_id", qto.getUserId());
         wrapper.eq("flag", false);
         wrapper.orderByDesc("cdate");
         wrapper.last("limit 10");
-        List<BbcGoodsInfoVO.SearchHistory> searchHistoryList = searchHistoryMapper.getSearchHistory(wrapper);
+        List<String> searchHistoryList = searchHistoryMapper.getSearchHistory(wrapper);
         return searchHistoryList;
     }
 

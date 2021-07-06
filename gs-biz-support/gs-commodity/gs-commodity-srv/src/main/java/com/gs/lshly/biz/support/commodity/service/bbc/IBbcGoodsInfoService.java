@@ -140,7 +140,7 @@ public interface IBbcGoodsInfoService {
      * @param qto
      * @return
      */
-    List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
+    List<String> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
 
     /**
      * 清空历史搜索记录

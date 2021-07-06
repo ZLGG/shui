@@ -162,7 +162,7 @@ public interface IBbcGoodsInfoRpc {
      * @param qto
      * @return
      */
-    List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
+    List<String> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto);
 
     /**
      * 清空搜索历史记录

@@ -26,7 +26,7 @@ public interface GoodsSearchHistoryMapper extends BaseMapper<GoodsSearchHistory>
      * @return
      */
     @Select("select keyword from gs_goods_search_history where ${ew.sqlSegment}")
-    List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(@Param(Constants.WRAPPER) QueryWrapper<GoodsSearchHistory> wrapper);
+    List<String> getSearchHistory(@Param(Constants.WRAPPER) QueryWrapper<GoodsSearchHistory> wrapper);
 
     /**
      * 清空历史搜索记录

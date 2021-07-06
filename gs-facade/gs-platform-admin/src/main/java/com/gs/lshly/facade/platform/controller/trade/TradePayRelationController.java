@@ -30,7 +30,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platadmin/tradePay")
 @Api(tags = "交易订单支付关联表管理")
-@Module(code = "listAssociationPayment",parent = "transaction",name = "支付关联列表",index = 5)
+@Module(code = "listAssociationPayment",parent = "transaction",name = "业务订单列表",index = 5)
 public class TradePayRelationController {
 
     @DubboReference

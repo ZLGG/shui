@@ -78,5 +78,12 @@ public class BbcStockAddressController {
         bbcStockAddressRpc.setDefault(new BbcStockAddressDTO.IdDTO(id), StockAddressTypeEnum.收货.getCode());
         return ResponseData.success(MsgConst.UPDATE_SUCCESS);
     }
+    
+    @ApiOperation("跟据父ID查询子区县,默认第一级0")
+    @PutMapping("/listBasicAreas/{pid}")
+    public ResponseData<Void>  listBasicAreas(@PathVariable String pid){
+//        bbcStockAddressRpc.setDefault(new BbcStockAddressDTO.IdDTO(pid));
+        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    }
 
 }

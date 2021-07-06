@@ -120,7 +120,7 @@ public class BbcGoodsInfoRpc implements IBbcGoodsInfoRpc{
 	}
 
     @Override
-    public List<BbcGoodsInfoVO.SearchHistory> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
+    public List<String> getSearchHistory(BbcGoodsInfoQTO.SearchHistoryQTO qto) {
         return bbcGoodsInfoService.getSearchHistory(qto);
     }
 
