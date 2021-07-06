@@ -3,13 +3,10 @@ package com.gs.lshly.rpc.api.platadmin.trade;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
-import com.gs.lshly.common.struct.platadmin.trade.qto.TradePayQTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
-
-import java.util.List;
 
 /**
  * @author oy

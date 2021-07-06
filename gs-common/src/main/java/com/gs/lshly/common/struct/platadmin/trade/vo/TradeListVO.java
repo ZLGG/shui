@@ -229,6 +229,12 @@ public abstract class TradeListVO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
+        
+        @ApiModelProperty("交易积分价格")
+        private BigDecimal tradePointAmount;
+        
+        @ApiModelProperty("交易价格")
+        private BigDecimal tradeAmount;
 
     }
     @Data
