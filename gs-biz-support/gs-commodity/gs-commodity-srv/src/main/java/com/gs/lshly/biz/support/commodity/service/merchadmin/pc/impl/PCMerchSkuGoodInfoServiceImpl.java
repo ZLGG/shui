@@ -87,7 +87,8 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
         SkuGoodInfo skuGoodInfo = repository.getById(dto.getId());
         PCMerchSkuGoodInfoVO.DetailVO detailVo = new PCMerchSkuGoodInfoVO.DetailVO();
         if (ObjectUtils.isEmpty(skuGoodInfo)) {
-            throw new BusinessException("没有数据");
+//            throw new BusinessException("没有数据");
+        	skuGoodInfo = new SkuGoodInfo();
         }
         BeanUtils.copyProperties(skuGoodInfo, detailVo);
         if(skuGoodInfo.getIsPointGood()){

@@ -645,38 +645,58 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         	List<BbcMarketSeckillVO.SeckillGoodsVO> retList = page.getRecords();
         	if(CollectionUtil.isNotEmpty(retList)){
         		BbcGoodsInfoVO.DetailVO goodsDetail = null;
+        			//查询条件
+        		MarketPtSeckillGoodsSku sku = null;
         		for(BbcMarketSeckillVO.SeckillGoodsVO seckillGoodsVO:retList){
+        			String itemId = seckillGoodsVO.getItemId();
         			String goodsId = seckillGoodsVO.getGoodsId();
+        			QueryWrapper<MarketPtSeckillGoodsSku> skuQuery = MybatisPlusUtil.query();
+        			skuQuery.eq("goods_spu_item_id",itemId);
+        			skuQuery.eq("goods_id",goodsId);
+        			sku = marketPtSeckillGoodsSkuRepository.getOne(skuQuery);
+        			
+        			
         			goodsDetail = iBbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
         			seckillGoodsVO.setGoodsName(goodsDetail.getGoodsName());
         			seckillGoodsVO.setGoodsImage(ObjectUtils.isEmpty(getImage(goodsDetail.getGoodsImage())) ? "" : getImage(goodsDetail.getGoodsImage()));
         			if(goodsDetail.getIsInMemberGift()){
         				seckillGoodsVO.setSeckillId(id);
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
-        				seckillGoodsVO.setOldPrice(goodsDetail.getInMemberPointPrice());
-        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillInMemberPointPrice());
-        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillInMemberPointPrice());
+        				seckillGoodsVO.setOldPrice(goodsDetail.getInMemberPointPrice());//原价
+        				if(sku!=null){
+        					seckillGoodsVO.setSalePrice(sku.getSeckillSaleSkuPrice());//
+        				}else{
+        					seckillGoodsVO.setSalePrice(BigDecimal.ZERO);
+        				}
         			}else if(goodsDetail.getIsPointGood()){
 						seckillGoodsVO.setSeckillId(id);
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getPointPrice());
-        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSeckillPointPrice());
-        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSeckillPointPrice());
+        				if(sku!=null){
+        					seckillGoodsVO.setSalePrice(sku.getSeckillSaleSkuPrice());
+        				}else{
+        					seckillGoodsVO.setSalePrice(BigDecimal.ZERO);
+        				}
         			}else{
 						seckillGoodsVO.setSeckillId(id);
         				seckillGoodsVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
         				seckillGoodsVO.setOldPrice(goodsDetail.getSalePrice());
-        				seckillGoodsVO.setSeckillPrice(seckillGoodsVO.getSalePrice());
-        				seckillGoodsVO.setSalePrice(seckillGoodsVO.getSalePrice());
+        				if(sku!=null){
+        					seckillGoodsVO.setSalePrice(sku.getSeckillSaleSkuPrice());
+        				}else{
+        					seckillGoodsVO.setSalePrice(BigDecimal.ZERO);
+        				}
         			}
         				
-        			//TODO yingjun
+        			/***
+        			 * TODO yingjun
         			BbcMarketSeckillVO.CouponVO couponVO = new BbcMarketSeckillVO.CouponVO();
         			couponVO.setType(10);
         			couponVO.setName("满100减50");
         			List<BbcMarketSeckillVO.CouponVO> coupons = new ArrayList<BbcMarketSeckillVO.CouponVO>();
         			coupons.add(couponVO);
         			seckillGoodsVO.setCoupons(coupons);
+					 */
         			seckillGoodsVO.setSaleRate(new BigDecimal("0.9"));
         		}
         	}
@@ -701,20 +721,22 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		
 		BeanCopyUtils.copyProperties(detailVO, seckillDetailVO);
 		
+		QueryWrapper<MarketPtSeckillGoodsSku> skuQuery = MybatisPlusUtil.query();
+		skuQuery.eq("goods_spu_item_id",marketPtSeckillGoodsSpu.getId());
+		skuQuery.eq("goods_id",qto.getGoodsId());
+		MarketPtSeckillGoodsSku sku = marketPtSeckillGoodsSkuRepository.getOne(skuQuery);
 		
-		seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
+		seckillDetailVO.setSeckillPrice(sku.getSeckillSaleSkuPrice());
+		seckillDetailVO.setSalePrice(sku.getSeckillSaleSkuPrice());
 		if(seckillDetailVO.getIsInMemberGift()){
 			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.IN会员商品.getCode());
 			seckillDetailVO.setOldPrice(seckillDetailVO.getInMemberPointPrice());
-			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillInMemberPointPrice());
 		}else if(seckillDetailVO.getIsPointGood()){
 			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.积分商品.getCode());
 			seckillDetailVO.setOldPrice(seckillDetailVO.getPointPrice());
-			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillPointPrice());
 		}else{
 			seckillDetailVO.setGoodsType(GoodsPointTypeEnum.普通商品.getCode());
 			seckillDetailVO.setOldPrice(seckillDetailVO.getSalePrice());
-			seckillDetailVO.setSeckillPrice(marketPtSeckillGoodsSpu.getSeckillSalePrice());
 		}
 		String seckillId = marketPtSeckillGoodsSpu.getSeckillId();
 		MarketPtSeckill marketPtSeckill = marketPtSeckillMapper.selectById(seckillId);

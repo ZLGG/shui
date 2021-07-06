@@ -6,6 +6,8 @@ import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.platadmin.foundation.dto.*;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.*;
+import com.gs.lshly.middleware.auth.rbac.Func;
+import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.foundation.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/settings")
 @Api(tags = "基本设置管理")
+@Module(code = "settings",parent = "transaction",name = "订单设置",index = 5)
 public class SettingsController {
 
     @DubboReference
@@ -144,13 +147,15 @@ public class SettingsController {
         return ResponseData.success(MsgConst.ADD_SUCCESS);
     }
 
+    @Func(code = "edit",name = "设置")
     @ApiOperation("售后设置")
     @PostMapping("/rightsSettings")
     public ResponseData<Void> rightsSettings(@Valid @RequestBody SettingsDTO.RightsSetting dto) {
         settingsRpc.rightsSettings(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
-
+    
+    @Func(code = "view",name = "显示")
     @ApiOperation("售后显示")
     @GetMapping("/rightsSettingsView")
     public ResponseData<SettingsVO.Rights> rightsSettingsView() {

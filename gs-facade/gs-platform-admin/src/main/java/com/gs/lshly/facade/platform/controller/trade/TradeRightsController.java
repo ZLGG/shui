@@ -8,6 +8,8 @@ import com.gs.lshly.common.struct.platadmin.trade.dto.TradeRightsRefundDTO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeRightsQTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsRefundVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeRightsVO;
+import com.gs.lshly.middleware.auth.rbac.Func;
+import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.bbc.trade.IBbcTradeRightsLogRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeRightsRpc;
 import io.swagger.annotations.Api;
@@ -28,49 +30,52 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/tradeRights")
 @Api(tags = "平台退换货管理")
+@Module(code = "listTradeRights",parent = "transaction",name = "退款售后申请列表",index = 4)
 public class TradeRightsController {
 
     @DubboReference
     private ITradeRightsRpc iTradeRightsRpc;
 
+    @Func(code = "view" ,name = "查看")
     @ApiOperation("售后申请列表")
     @PostMapping("")
     public ResponseData<PageData<TradeRightsVO.RightsListVO>> list(@RequestBody TradeRightsQTO.StateDTO qto) {
         return ResponseData.data(iTradeRightsRpc.pageData(qto));
     }
-
+    @Func(code = "view" ,name = "查看")
     @ApiOperation("售后申请详情")
     @GetMapping(value = "/{id}")
     public ResponseData<TradeRightsVO.RightsListViewVO> get(TradeRightsDTO.IdDTO dto) {
         return ResponseData.data(iTradeRightsRpc.get(dto));
     }
-
-/*    @ApiOperation("二次审核")
-    @GetMapping(value = "/check/{id}")
-    public ResponseData<String> twoCheck(TradeRightsDTO.IdDTO dto) {
-        return ResponseData.data(iTradeRightsRpc.get(dto));
-    }*/
-
+    @Func(code = "edit" ,name = "提交")
     @ApiOperation("提交平台处理说明")
     @PostMapping(value = "/reason")
     public ResponseData<Void> setPlatformCheckReason(@RequestBody TradeRightsDTO.PlatformCheckReasonDTO dto) {
         iTradeRightsRpc.setPlatformChenkReason(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
-
+    @Func(code = "edit" ,name = "审核")
     @ApiOperation("平台审核通过")
     @GetMapping(value = "/pass/{id}")
     public ResponseData<Void> platformPass(TradeRightsDTO.IdDTO dto) {
         iTradeRightsRpc.platformCheckReason(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
-
+    @Func(code = "edit" ,name = "拒绝")
     @ApiOperation("平台审核拒绝")
     @GetMapping(value = "/disPass/{id}")
     public ResponseData<Void> platformDisPass(TradeRightsDTO.IdDTO dto) {
         iTradeRightsRpc.platformDisPass(dto);
         return ResponseData.success(MsgConst.OPERATOR_SUCCESS);
     }
+/*    @ApiOperation("二次审核")
+    @GetMapping(value = "/check/{id}")
+    public ResponseData<String> twoCheck(TradeRightsDTO.IdDTO dto) {
+        return ResponseData.data(iTradeRightsRpc.get(dto));
+    }*/
+
+    
 /*    @ApiOperation("退款申请列表(无)")
     @GetMapping("/rightsList")
     public ResponseData<PageData<TradeRightsVO.RightsRefundListVO>> rightsRefundList(TradeRightsQTO.StateRefundDTO qto) {

@@ -50,7 +50,8 @@ public interface MarketPtSeckillMapper extends BaseMapper<MarketPtSeckill> {
             "\tgoods.seckill_sale_price seckill_price,\n" +
             "\tgoods.seckill_point_price seckill_point_price,\n" +
             "\tgoods.seckill_in_member_point_price seckill_in_member_point_price,\n" +
-            "\tgoods.goods_id goods_id\n" +
+            "\tgoods.goods_id goods_id,\n" +
+            "\tgoods.id item_id\n" +
             "FROM\n" +
             "\tgs_market_pt_seckill_goods_spu goods\n" +
             "\tLEFT JOIN gs_goods_info g on g.id = goods.goods_id \n" +
