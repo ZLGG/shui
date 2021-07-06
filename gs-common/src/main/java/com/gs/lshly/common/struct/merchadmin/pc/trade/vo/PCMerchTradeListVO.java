@@ -1,16 +1,20 @@
 package com.gs.lshly.common.struct.merchadmin.pc.trade.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gs.lshly.common.struct.bbb.pc.trade.vo.BbbTradeListVO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import io.netty.util.internal.StringUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * @author oy
@@ -19,7 +23,7 @@ import java.util.List;
 public abstract class PCMerchTradeListVO implements Serializable {
 
 
-    @Data
+    @Setter
     @ApiModel("PCMerchTradeListVO.tradeVO")
     @Accessors(chain = true)
     public static class tradeVO implements Serializable{
@@ -171,6 +175,154 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         }
 
+		public String getId() {
+			return id;
+		}
+
+		public String getUserId() {
+			return userId;
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+
+		public String getShopId() {
+			return shopId;
+		}
+
+		public String getShopName() {
+			return shopName;
+		}
+
+		public String getMerchantId() {
+			return merchantId;
+		}
+
+		public String getTradeCode() {
+			return tradeCode;
+		}
+
+		public Integer getTradeState() {
+			return tradeState;
+		}
+
+		public String getTradeStateText() {
+			return tradeStateText;
+		}
+
+		public BigDecimal getGoodsAmount() {
+			return goodsAmount;
+		}
+
+		public BigDecimal getDiscountAmount() {
+			return discountAmount;
+		}
+
+		public BigDecimal getDeliveryAmount() {
+			return deliveryAmount;
+		}
+
+		public BigDecimal getTradeAmount() {
+			return tradeAmount;
+		}
+
+		public BigDecimal getTradePointAmount() {
+			return tradePointAmount;
+		}
+
+		public LocalDateTime getCreateTime() {
+			return createTime;
+		}
+
+		public LocalDateTime getPayTime() {
+			return payTime;
+		}
+
+		public LocalDateTime getPayDeadline() {
+			return payDeadline;
+		}
+
+		public LocalDateTime getRecvTime() {
+			return recvTime;
+		}
+
+		public Integer getPayType() {
+			return payType;
+		}
+
+		public Integer getDeliveryType() {
+			return deliveryType;
+		}
+
+		public String getLogisticsNumber() {
+			return logisticsNumber;
+		}
+
+		public String getLogisticsCompanyCode() {
+			return logisticsCompanyCode;
+		}
+
+		public String getLogisticsCompanyName() {
+			return logisticsCompanyName;
+		}
+
+		public String getTakeGoodsCode() {
+			return takeGoodsCode;
+		}
+
+		public String getTakeGoodsQrcode() {
+			return takeGoodsQrcode;
+		}
+
+		public String getRecvAddresId() {
+			return recvAddresId;
+		}
+
+		public String getRecvPersonName() {
+			return recvPersonName;
+		}
+
+		public String getRecvPhone() {
+			return recvPhone;
+		}
+
+		public String getRecvFullAddres() {
+			if(StringUtils.isNotEmpty(recvFullAddres)&&recvFullAddres.equals("nullnullnull")){
+				recvFullAddres = "空";
+			}
+			return recvFullAddres;
+		}
+
+		public Integer getTimeoutCancel() {
+			return timeoutCancel;
+		}
+
+		public String getBuyerRemark() {
+			return buyerRemark;
+		}
+
+		public String getDeliveryRemark() {
+			return deliveryRemark;
+		}
+
+		public List<TradeGoodsVO> getTradeGoodsVOS() {
+			return tradeGoodsVOS;
+		}
+
+		public PCMerchTradeListVO.tradeVO.Right getRightsInfo() {
+			return rightsInfo;
+		}
+
+		public BigDecimal getPointPriceActuallyPaid() {
+			return pointPriceActuallyPaid;
+		}
+
+		public BigDecimal getAmountActuallyPaid() {
+			return amountActuallyPaid;
+		}
+
+        
     }
     @Data
     @ApiModel("PCMerchTradeListVO.tradeVOExport")

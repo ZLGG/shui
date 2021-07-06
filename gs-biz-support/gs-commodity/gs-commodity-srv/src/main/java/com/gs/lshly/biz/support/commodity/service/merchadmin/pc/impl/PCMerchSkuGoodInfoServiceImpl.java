@@ -89,17 +89,22 @@ public class PCMerchSkuGoodInfoServiceImpl implements IPCMerchSkuGoodInfoService
         if (ObjectUtils.isEmpty(skuGoodInfo)) {
 //            throw new BusinessException("没有数据");
         	skuGoodInfo = new SkuGoodInfo();
-        }
-        BeanUtils.copyProperties(skuGoodInfo, detailVo);
-        if(skuGoodInfo.getIsPointGood()){
-        	detailVo.setIsPointGood(1);
-        }else{
+        	BeanUtils.copyProperties(skuGoodInfo, detailVo);
         	detailVo.setIsPointGood(0);
+        	detailVo.setExchangeType(10);
+        }else{
+        	BeanUtils.copyProperties(skuGoodInfo, detailVo);
+            if(skuGoodInfo.getIsPointGood()){
+            	detailVo.setIsPointGood(1);
+            }else{
+            	detailVo.setIsPointGood(0);
+            }
+            String goodsId = skuGoodInfo.getGoodId();
+            GoodsInfo goodsInfo = goodsInfoRepository.getById(goodsId);
+            if(goodsInfo!=null)
+            	detailVo.setExchangeType(goodsInfo.getExchangeType());
         }
-        String goodsId = skuGoodInfo.getGoodId();
-        GoodsInfo goodsInfo = goodsInfoRepository.getById(goodsId);
-        if(goodsInfo!=null)
-        	detailVo.setExchangeType(goodsInfo.getExchangeType());
+        
         return detailVo;
     }
 
