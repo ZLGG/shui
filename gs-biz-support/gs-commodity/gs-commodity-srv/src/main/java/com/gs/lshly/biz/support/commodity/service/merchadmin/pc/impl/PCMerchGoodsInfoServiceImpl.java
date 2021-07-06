@@ -963,20 +963,24 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             one = new GoodsServeCor();
             one.setGoodsId(goodId);
             StringBuilder sb = new StringBuilder();
-            for (String goodsServe : editDetailVO.getGoodsServeList()) {
-                sb.append(goodsServe + ",");
+            if(ObjectUtils.isNotEmpty(editDetailVO.getGoodsServeList())){
+                for (String goodsServe : editDetailVO.getGoodsServeList()) {
+                    sb.append(goodsServe + ",");
+                }
+                String serveIds = sb.toString();
+                one.setServeId(serveIds.substring(0, sb.length() - 1));
             }
-            String serveIds = sb.toString();
-            one.setServeId(serveIds.substring(0, sb.length() - 1));
             goodsServeCorRepository.save(one);
         } else {
             one.setGoodsId(goodId);
             StringBuilder sb = new StringBuilder();
-            for (String goodsServe : editDetailVO.getGoodsServeList()) {
-                sb.append(goodsServe + ",");
+            if(ObjectUtils.isNotEmpty(editDetailVO.getGoodsServeList())) {
+                for (String goodsServe : editDetailVO.getGoodsServeList()) {
+                    sb.append(goodsServe + ",");
+                }
+                String serveIds = sb.toString();
+                one.setServeId(serveIds.substring(0, sb.length() - 1));
             }
-            String serveIds = sb.toString();
-            one.setServeId(serveIds.substring(0, sb.length() - 1));
             goodsServeCorRepository.updateById(one);
         }
         // 建立商品以及sku与库存的关联
