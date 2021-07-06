@@ -140,9 +140,9 @@ public class GoodsBrandServiceImpl implements IGoodsBrandService {
         QueryWrapper<GoodsBrand> brandQueryWrapper = MybatisPlusUtil.query();
         brandQueryWrapper.eq("id", dto.getId());
         GoodsBrand brand = repository.getOne(brandQueryWrapper);
-        if (ObjectUtils.isEmpty(brand)) {
+        /*if (ObjectUtils.isEmpty(brand)) {
             throw new BusinessException("数据查询异常或者品牌id不存在！！");
-        }
+        }*/
         GoodsBrandVO.DetailVO goodsBrandVO = new GoodsBrandVO.DetailVO();
         BeanUtil.copyProperties(brand, goodsBrandVO);
         return goodsBrandVO;

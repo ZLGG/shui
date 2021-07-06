@@ -1359,13 +1359,13 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             excelGoodsDataVO.setCategoryLevel3Name(parentCategoryVO.getLevName());
 
             //获取品牌名称
-            if (StringUtils.isEmpty(goodsInfo.getBrandId())) {
+            /*if (StringUtils.isEmpty(goodsInfo.getBrandId())) {
                 throw new BusinessException("数据异常！");
-            }
+            }*/
             GoodsBrandVO.DetailVO brand = brandService.select(new GoodsBrandDTO.IdDTO(goodsInfo.getBrandId()));
-            if (brand == null) {
+            /*if (brand == null) {
                 throw new BusinessException("数据异常");
-            }
+            }*/
             excelGoodsDataVO.setBrandName(brand.getBrandName());
 
             //获取发布平台
