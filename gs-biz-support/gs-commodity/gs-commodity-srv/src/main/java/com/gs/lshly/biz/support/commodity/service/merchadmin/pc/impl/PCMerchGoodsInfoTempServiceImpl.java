@@ -435,6 +435,7 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         //库存计数方式
         if (ObjectUtils.isNotEmpty(tempalte.getStockSubtractType())) {
             detailVO.setStockChargeWay(tempalte.getStockSubtractType());
+            detailVO.setStockSubtractType(tempalte.getStockSubtractType());
         }
 
         //店铺自定义类目id

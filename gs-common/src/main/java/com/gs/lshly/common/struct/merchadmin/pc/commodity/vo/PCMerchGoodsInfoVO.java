@@ -384,17 +384,11 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "三级类目", position = 3)
         private String categoryLevel3Name;
 
-        @ApiModelProperty(value = "店铺分类", position = 4)
-        private String shopNavigation;
-
         @ApiModelProperty(value = "商品标题", position = 5)
         private String goodsName;
 
         @ApiModelProperty(value = "商品副标题", position = 6)
         private String goodsTitle;
-
-        @ApiModelProperty(value = "品牌", position = 7)
-        private String brandName;
 
         @ApiModelProperty(value = "商品货号", position = 8)
         private String goodsNo;
@@ -402,10 +396,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "条形码", position = 9)
         private String goodsBarcode;
 
-        @ApiModelProperty(value = "发布平台", position = 10)
-        private String publishPlatform;
-
-        @ApiModelProperty(value = "销售价", position = 11)
+        @ApiModelProperty(value = "销售价(元/积分)", position = 11)
         private BigDecimal salePrice;
 
         @ApiModelProperty(value = "库存", position = 12)
@@ -414,14 +405,11 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "库存计数方式", position = 13)
         private String stockSubtractType;
 
-        @ApiModelProperty(value = "原价", position = 14)
+        @ApiModelProperty(value = "原价(元/积分)", position = 14)
         private BigDecimal oldPrice;
 
         @ApiModelProperty(value = "是否显示原价", position = 15)
         private String showOrNoOldPrice;
-
-        @ApiModelProperty(value = "成本价", position = 16)
-        private BigDecimal costPrice;
 
         @ApiModelProperty(value = "重量", position = 17)
         private BigDecimal goodsWeight;
@@ -435,7 +423,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty(value = "规格值", position = 20)
         private String specValue;
 
-        @ApiModelProperty(value = "商品有效期", position = 21)
+        @ApiModelProperty(value = "商品有效期(天)", position = 21)
         private Integer goodsValidDays;
 
         @ApiModelProperty("办理备注")
@@ -444,20 +432,20 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         @ApiModelProperty("是否是积分商品")
         private String isPointGood;
 
-        @ApiModelProperty("积分价格")
-        private Double pointPrice;
+        @ApiModelProperty("积分价格(元/积分)")
+        private BigDecimal pointPrice;
 
         @ApiModelProperty("是否是in会员礼品")
         private String isInMemberGift;
 
-        @ApiModelProperty("in会员积分价格")
-        private Double inMemberPointPrice;
+        @ApiModelProperty("in会员积分价格(元/积分)")
+        private BigDecimal inMemberPointPrice;
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
 
         @ApiModelProperty("兑换类型（虚拟，实物）")
-        private Integer exchangeType;
+        private String exchangeType;
 
     }
 

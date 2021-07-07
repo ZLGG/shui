@@ -1358,27 +1358,6 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             excelGoodsDataVO.setCategoryLevel2Name(parentCategoryVO.getLev1Name());
             excelGoodsDataVO.setCategoryLevel3Name(parentCategoryVO.getLevName());
 
-            //获取品牌名称
-            /*if (StringUtils.isEmpty(goodsInfo.getBrandId())) {
-                throw new BusinessException("数据异常！");
-            }*/
-            GoodsBrandVO.DetailVO brand = brandService.select(new GoodsBrandDTO.IdDTO(goodsInfo.getBrandId()));
-            /*if (brand == null) {
-                throw new BusinessException("数据异常");
-            }*/
-            excelGoodsDataVO.setBrandName(brand.getBrandName());
-
-            //获取发布平台
-            if (goodsInfo.getUsePlatform().intValue() == GoodsUsePlatformEnums.B商城和C商城.getCode().intValue()) {
-                excelGoodsDataVO.setPublishPlatform("全部");
-            }
-            if (goodsInfo.getUsePlatform().intValue() == GoodsUsePlatformEnums.B商城.getCode().intValue()) {
-                excelGoodsDataVO.setPublishPlatform(GoodsUsePlatformEnums.B商城.getRemark());
-            }
-            if (goodsInfo.getUsePlatform().intValue() == GoodsUsePlatformEnums.C商城.getCode().intValue()) {
-                excelGoodsDataVO.setPublishPlatform(GoodsUsePlatformEnums.C商城.getRemark());
-            }
-
             //获取是否显示原价
             if (goodsInfo.getIsShowOldPrice().intValue() == ShowOldPriceEnum.显示原价.getCode().intValue()) {
                 excelGoodsDataVO.setShowOrNoOldPrice(ShowOldPriceEnum.显示原价.getRemark());
@@ -1399,17 +1378,41 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 excelGoodsDataVO.setIsPointGood("否");
             }
 
-            //TODO 获取店铺分类的数据 excelGoodsDataVO.setShopNavigation();
+            if (goodsInfo.getExchangeType().intValue() == 10) {
+                excelGoodsDataVO.setExchangeType("虚拟");
+            }
+
+            if(goodsInfo.getExchangeType().intValue() == 20){
+                excelGoodsDataVO.setExchangeType("实物");
+            }
+
 
             // 获取商品库存数
             excelGoodsDataVO.setStockNum(getSpuStockNum(goodsInfo.getId(), qto.getJwtShopId()));
 
             //TODO 获取库存计数方式 excelGoodsDataVO.setStockChargeWay();
+             //运费模板ID
+            QueryWrapper<GoodsTempalte> tempalteBoost = MybatisPlusUtil.query();
+            tempalteBoost.eq("goods_id", goodsInfo.getId());
+            GoodsTempalte tempalte = goodsTempalteRepository.getOne(tempalteBoost);
+
+            //库存计数方式
+            if (ObjectUtils.isNotEmpty(tempalte)) {
+                if(ObjectUtils.isNotEmpty(tempalte.getStockSubtractType())){
+                    if(tempalte.getStockSubtractType().intValue() == 10){
+                        excelGoodsDataVO.setStockSubtractType("付款减库存");
+                    }
+                    if(tempalte.getStockSubtractType().intValue() == 20){
+                        excelGoodsDataVO.setStockSubtractType("下单减库存");
+                    }
+                }
+            }
 
             //获取计价单位
             excelGoodsDataVO.setChargeUnit(goodsInfo.getGoodsPriceUnit());
 
             //TODO 获取运费模板名称 excelGoodsDataVO.setTemplateName();
+            excelGoodsDataVO.setTemplateName(getHasTemplate(goodsInfo.getId()));
 
             //根据商品id对应的sku
             QueryWrapper<SkuGoodInfo> skuWrapper = new QueryWrapper<>();
@@ -1426,9 +1429,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                     skuGoodExcelInfo.setGoodsBarcode(skuGoodInfo.getBarcode());
                     skuGoodExcelInfo.setSalePrice(skuGoodInfo.getSalePrice());
                     skuGoodExcelInfo.setOldPrice(skuGoodInfo.getOldPrice());
-                    skuGoodExcelInfo.setCostPrice(skuGoodInfo.getCostPrice());
                     skuGoodExcelInfo.setSpecValue(skuGoodInfo.getSpecsValue());
-
+                    skuGoodExcelInfo.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
+                    skuGoodExcelInfo.setPointPrice(skuGoodInfo.getPointPrice());
                     //获取sku商品库存数
                     skuGoodExcelInfo.setStockNum(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
 
