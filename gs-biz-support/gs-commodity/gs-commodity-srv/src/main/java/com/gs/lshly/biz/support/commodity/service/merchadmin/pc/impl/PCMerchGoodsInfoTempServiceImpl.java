@@ -148,6 +148,20 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         //表更新商品
         goodsInfoTemp.setApplyType(2);
         goodsInfoTemp.setCdate(new Date());
+        switch (eto.getCtccMold()) {
+            case 20:
+                goodsInfoTemp.setIsPointGood(true);
+                goodsInfoTemp.setIsInMemberGift(false);
+                break;
+            case 30:
+                goodsInfoTemp.setIsPointGood(false);
+                goodsInfoTemp.setIsInMemberGift(true);
+                break;
+            default:
+                goodsInfoTemp.setIsPointGood(false);
+                goodsInfoTemp.setIsInMemberGift(false);
+                break;
+        }
         UpdateWrapper<GoodsInfoTemp> goodsBoost = MybatisPlusUtil.update();
         goodsBoost.eq("id", oldGoodsInfoTemp.getId());
         boolean flag = repository.update(goodsInfoTemp, goodsBoost);
