@@ -141,7 +141,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             }
         }
         if(StringUtils.isNotBlank(qto.getKeywords())){
-        	 wrapper.and(i -> i.like("t.`trade_code`",qto.getTradeCode()));
+        	 wrapper.and(i -> i.like("t.`trade_code`",qto.getKeywords()));
         }
         wrapper.orderByDesc("t.cdate");
 
