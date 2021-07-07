@@ -1352,7 +1352,8 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             if (parentCategoryVO == null) {
                 throw new BusinessException("数据异常！");
             }
-
+            excelGoodsDataVO.setPointPrice(ObjectUtils.isNotEmpty(goodsInfo.getPointPrice())?goodsInfo.getPointPrice().toString():"0");
+            excelGoodsDataVO.setOldPrice(ObjectUtils.isNotEmpty(goodsInfo.getOldPointPrice())?goodsInfo.getPointPrice().toString():"0");
             //获取商品的类目名称
             excelGoodsDataVO.setCategoryLevel1Name(parentCategoryVO.getLev2Name());
             excelGoodsDataVO.setCategoryLevel2Name(parentCategoryVO.getLev1Name());
@@ -1427,11 +1428,22 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
                     skuGoodExcelInfo.setGoodsNo(skuGoodInfo.getSkuGoodsNo());
                     skuGoodExcelInfo.setGoodsBarcode(skuGoodInfo.getBarcode());
-                    skuGoodExcelInfo.setSalePrice(skuGoodInfo.getSalePrice());
-                    skuGoodExcelInfo.setOldPrice(skuGoodInfo.getOldPrice());
+
+                    if(goodsInfo.getIsPointGood()){
+                        skuGoodExcelInfo.setInMemberPointPrice(ObjectUtils.isNotEmpty(goodsInfo.getInMemberPointPrice())?goodsInfo.getInMemberPointPrice().setScale(0).toString():"0");
+                        skuGoodExcelInfo.setPointPrice(ObjectUtils.isNotEmpty(goodsInfo.getPointPrice())?goodsInfo.getPointPrice().setScale(0).toString():"0");
+                        skuGoodExcelInfo.setSalePrice(ObjectUtils.isNotEmpty(goodsInfo.getSalePrice())?goodsInfo.getSalePrice().setScale(0).toString():"0");
+                        skuGoodExcelInfo.setOldPrice(ObjectUtils.isNotEmpty(goodsInfo.getOldPrice())?goodsInfo.getOldPrice().setScale(0).toString():"0");
+                    }else {
+                        skuGoodExcelInfo.setInMemberPointPrice(ObjectUtils.isNotEmpty(goodsInfo.getInMemberPointPrice())?goodsInfo.getInMemberPointPrice().toString():"0");
+                        skuGoodExcelInfo.setPointPrice(ObjectUtils.isNotEmpty(goodsInfo.getPointPrice())?goodsInfo.getPointPrice().toString():"0");
+                        skuGoodExcelInfo.setSalePrice(ObjectUtils.isNotEmpty(goodsInfo.getSalePrice())?goodsInfo.getSalePrice().toString():"0");
+                        skuGoodExcelInfo.setOldPrice(ObjectUtils.isNotEmpty(goodsInfo.getOldPrice())?goodsInfo.getOldPrice().toString():"0");
+                    }
+
                     skuGoodExcelInfo.setSpecValue(skuGoodInfo.getSpecsValue());
-                    skuGoodExcelInfo.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice());
-                    skuGoodExcelInfo.setPointPrice(skuGoodInfo.getPointPrice());
+
+                    skuGoodExcelInfo.setGoodsWeight(ObjectUtils.isNotEmpty(goodsInfo.getGoodsWeight())?goodsInfo.getGoodsWeight().toString():"0");
                     //获取sku商品库存数
                     skuGoodExcelInfo.setStockNum(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
 

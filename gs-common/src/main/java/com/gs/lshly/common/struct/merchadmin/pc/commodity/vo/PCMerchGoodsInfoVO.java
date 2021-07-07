@@ -397,7 +397,7 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private String goodsBarcode;
 
         @ApiModelProperty(value = "销售价(元/积分)", position = 11)
-        private BigDecimal salePrice;
+        private String salePrice;
 
         @ApiModelProperty(value = "库存", position = 12)
         private Integer stockNum;
@@ -406,13 +406,13 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private String stockSubtractType;
 
         @ApiModelProperty(value = "原价(元/积分)", position = 14)
-        private BigDecimal oldPrice;
+        private String oldPrice;
 
         @ApiModelProperty(value = "是否显示原价", position = 15)
         private String showOrNoOldPrice;
 
         @ApiModelProperty(value = "重量", position = 17)
-        private BigDecimal goodsWeight;
+        private String goodsWeight;
 
         @ApiModelProperty(value = "计价单位", position = 18)
         private String chargeUnit;
@@ -433,13 +433,13 @@ public abstract class PCMerchGoodsInfoVO implements Serializable {
         private String isPointGood;
 
         @ApiModelProperty("积分价格(元/积分)")
-        private BigDecimal pointPrice;
+        private String pointPrice;
 
         @ApiModelProperty("是否是in会员礼品")
         private String isInMemberGift;
 
         @ApiModelProperty("in会员积分价格(元/积分)")
-        private BigDecimal inMemberPointPrice;
+        private String inMemberPointPrice;
 
         @ApiModelProperty("信天游产品号")
         private Integer thirdProductId;
