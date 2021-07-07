@@ -235,7 +235,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                     spuListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(spuListVO.getGoodsImage())) ? "" : getImage(spuListVO.getGoodsImage()));
 
                     GoodsAuditRecord goodsAuditRecord = goodsAuditRecordMapper.getOneByGoodsId(spuListVO.getId());
-                    if(ObjectUtils.isNotEmpty(goodsAuditRecord)){
+                    if (ObjectUtils.isNotEmpty(goodsAuditRecord)) {
                         spuListVO.setAduitResult(goodsAuditRecord.getState());
                         spuListVO.setApplyType(goodsAuditRecord.getType());
                         spuListVO.setAduitTime(goodsAuditRecord.getCdate());
@@ -976,7 +976,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             one = new GoodsServeCor();
             one.setGoodsId(goodId);
             StringBuilder sb = new StringBuilder();
-            if(ObjectUtils.isNotEmpty(editDetailVO.getGoodsServeList())){
+            if (ObjectUtils.isNotEmpty(editDetailVO.getGoodsServeList())) {
                 for (String goodsServe : editDetailVO.getGoodsServeList()) {
                     sb.append(goodsServe + ",");
                 }
@@ -987,7 +987,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         } else {
             one.setGoodsId(goodId);
             StringBuilder sb = new StringBuilder();
-            if(ObjectUtils.isNotEmpty(editDetailVO.getGoodsServeList())) {
+            if (ObjectUtils.isNotEmpty(editDetailVO.getGoodsServeList())) {
                 for (String goodsServe : editDetailVO.getGoodsServeList()) {
                     sb.append(goodsServe + ",");
                 }
@@ -1387,15 +1387,15 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 excelGoodsDataVO.setShowOrNoOldPrice(ShowOldPriceEnum.不显示原价.getRemark());
             }
 
-            if(goodsInfo.getIsInMemberGift()){
+            if (goodsInfo.getIsInMemberGift()) {
                 excelGoodsDataVO.setIsInMemberGift("是");
-            }else{
+            } else {
                 excelGoodsDataVO.setIsInMemberGift("否");
             }
 
-            if(goodsInfo.getIsPointGood()){
+            if (goodsInfo.getIsPointGood()) {
                 excelGoodsDataVO.setIsPointGood("是");
-            }else {
+            } else {
                 excelGoodsDataVO.setIsPointGood("否");
             }
 
@@ -1416,18 +1416,23 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             skuWrapper.eq("good_id", goodsInfo.getId());
             List<SkuGoodInfo> skuGoodInfos = skuGoodInfoRepository.list(skuWrapper);
             if (skuGoodInfos != null && skuGoodInfos.size() > 0) {
+                PCMerchGoodsInfoVO.ExcelGoodsDataVO skuGoodExcelInfo;
                 for (SkuGoodInfo skuGoodInfo : skuGoodInfos) {
-                    excelGoodsDataVO.setGoodsNo(skuGoodInfo.getSkuGoodsNo());
-                    excelGoodsDataVO.setGoodsBarcode(skuGoodInfo.getBarcode());
-                    excelGoodsDataVO.setSalePrice(skuGoodInfo.getSalePrice());
-                    excelGoodsDataVO.setOldPrice(skuGoodInfo.getOldPrice());
-                    excelGoodsDataVO.setCostPrice(skuGoodInfo.getCostPrice());
-                    excelGoodsDataVO.setSpecValue(skuGoodInfo.getSpecsValue());
+
+                    skuGoodExcelInfo = new PCMerchGoodsInfoVO.ExcelGoodsDataVO();
+                    BeanUtils.copyProperties(excelGoodsDataVO, skuGoodExcelInfo);
+
+                    skuGoodExcelInfo.setGoodsNo(skuGoodInfo.getSkuGoodsNo());
+                    skuGoodExcelInfo.setGoodsBarcode(skuGoodInfo.getBarcode());
+                    skuGoodExcelInfo.setSalePrice(skuGoodInfo.getSalePrice());
+                    skuGoodExcelInfo.setOldPrice(skuGoodInfo.getOldPrice());
+                    skuGoodExcelInfo.setCostPrice(skuGoodInfo.getCostPrice());
+                    skuGoodExcelInfo.setSpecValue(skuGoodInfo.getSpecsValue());
 
                     //获取sku商品库存数
-                    excelGoodsDataVO.setStockNum(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
+                    skuGoodExcelInfo.setStockNum(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
 
-                    excelGoodsDataVOS.add(excelGoodsDataVO);
+                    excelGoodsDataVOS.add(skuGoodExcelInfo);
                 }
             } else {
                 excelGoodsDataVOS.add(excelGoodsDataVO);
@@ -1658,7 +1663,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         // spu库存
         detailVO.setSpuStock(getSpuStockNum(goodsInfo.getId(), dto.getJwtShopId()));
         PCMerchGoodsServeDTO.IdDTO idDTO = new PCMerchGoodsServeDTO.IdDTO(dto.getId());
-        
+
         List<String> serveListVO = goodsServeRpc.getServeTempIdByGoodsId(idDTO);
         if (CollUtil.isNotEmpty(serveListVO)) {
             detailVO.setGoodsServeList(serveListVO);
