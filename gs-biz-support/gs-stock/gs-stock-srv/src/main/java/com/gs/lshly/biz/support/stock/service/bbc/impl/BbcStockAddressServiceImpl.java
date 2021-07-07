@@ -20,9 +20,15 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import com.gs.lshly.common.struct.bbc.stock.qto.BbcStockAddressQTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
+import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO.ListBasicAreasVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.BasicAreasVO;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.rpc.api.platadmin.foundation.IBasicAreasRpc;
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,6 +61,9 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
 
     @Autowired
     private StockProvinceAddressMapper stockProvinceAddressMapper;
+    
+    @DubboReference
+    private IBasicAreasRpc basicAreasRpc;
 
     @Override
     public List<BbcStockAddressVO.ListVO> list(BbcStockAddressQTO.QTO qto,Integer addressType) {
@@ -243,4 +252,10 @@ public class BbcStockAddressServiceImpl implements IBbcStockAddressService {
         stockAddressChildRepository.update(updateWrapper);
 
     }
+
+	@Override
+	public List<BasicAreasVO.AddressListVO> listBasicAreas(Integer pid) {
+		List<BasicAreasVO.AddressListVO> list = basicAreasRpc.addressList(pid);
+		return list;
+	}
 }

@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("gs_user_coupon")
-public class InUserCoupon extends Model {
+public class UserCoupon extends Model {
     private static final long serialVersionUID = 1L;
 
     /**

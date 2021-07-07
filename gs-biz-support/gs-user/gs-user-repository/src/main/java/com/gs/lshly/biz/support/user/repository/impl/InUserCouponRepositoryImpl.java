@@ -1,7 +1,7 @@
 package com.gs.lshly.biz.support.user.repository.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.gs.lshly.biz.support.user.entity.InUserCoupon;
+import com.gs.lshly.biz.support.user.entity.UserCoupon;
 import com.gs.lshly.biz.support.user.mapper.UserCouponDTOMapper;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @create 2021/3/30 9:29
  */
 @Service
-public class InUserCouponRepositoryImpl extends ServiceImpl<UserCouponDTOMapper, InUserCoupon>implements InUserCouponRepository {
+public class InUserCouponRepositoryImpl extends ServiceImpl<UserCouponDTOMapper, UserCoupon>implements InUserCouponRepository {
     @Autowired
     private UserCouponDTOMapper userCouponMapper;
 

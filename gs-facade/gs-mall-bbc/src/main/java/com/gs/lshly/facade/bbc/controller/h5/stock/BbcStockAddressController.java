@@ -1,4 +1,18 @@
 package com.gs.lshly.facade.bbc.controller.h5.stock;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.enums.StockAddressTypeEnum;
 import com.gs.lshly.common.response.ResponseData;
@@ -6,14 +20,11 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import com.gs.lshly.common.struct.bbc.stock.qto.BbcStockAddressQTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.BasicAreasVO;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
-import java.util.List;
 
 /**
 * <p>
@@ -80,10 +91,9 @@ public class BbcStockAddressController {
     }
     
     @ApiOperation("跟据父ID查询子区县,默认第一级0")
-    @PutMapping("/listBasicAreas/{pid}")
-    public ResponseData<Void>  listBasicAreas(@PathVariable String pid){
-//        bbcStockAddressRpc.setDefault(new BbcStockAddressDTO.IdDTO(pid));
-        return ResponseData.success(MsgConst.UPDATE_SUCCESS);
+    @GetMapping("/listBasicAreas/{pid}")
+    public ResponseData<List<BasicAreasVO.DropListVO>> listBasicAreas(@PathVariable Integer pid){
+        return ResponseData.data(bbcStockAddressRpc.listBasicAreas(pid));
     }
 
 }

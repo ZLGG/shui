@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -92,6 +93,7 @@ import com.gs.lshly.common.enums.TradeSourceTypeEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.enums.TradeTimeOutCancelEnum;
 import com.gs.lshly.common.enums.TradeTrueFalseEnum;
+import com.gs.lshly.common.enums.UserCouponStatusEnum;
 import com.gs.lshly.common.enums.commondity.GoodsSourceTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -249,7 +251,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     
     @Autowired
     private RedisUtil redisUtil;
-
+    
     @DubboReference
     private IBbcInUserCouponRpc bbcInUserCouponRpc;
 
@@ -493,9 +495,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                                         listCouponVO.setDeductionType(1);
                                         listCouponVO.setId(listVO.getId());
                                         listCouponVO.setUseThreshold(coupon.getUseThreshold());
-                                        String useTime = DateUtils.fomatLocalDate(listVO.getStartTime(), DateUtils.dateFormatStr_1)
-                                                + "~" + DateUtils.fomatLocalDate(listVO.getStartTime(), DateUtils.dateFormatStr_1);
-                                        listCouponVO.setUseTime(useTime);
+                                        listCouponVO.setUseTime("领取后"+coupon.getEffectiveDate()+"天内使用");
                                         if (defaultCouponList == null || defaultCouponList.size() == 0) {
                                             defaultCouponList.add(listCouponVO);
                                         }
@@ -888,6 +888,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         if (userInfo == null || StringUtils.isEmpty(userInfo.getId())) {
             throw new BusinessException("用户不存在！");
         }
+        
+        //验证优惠券
+        List<String> couponIds = bbcInUserCouponRpc.modifyUserCoupon(dto.getCouponIds(), dto.getJwtUserId(), UserCouponStatusEnum.使用中.getCode());
+        
         Integer telecomsIntegral = userInfo.getTelecomsIntegral();
 
         BigDecimal realTradePointAmount = BigDecimal.ZERO;    //实际应该付的积分值
@@ -1048,7 +1052,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             BeanCopyUtils.copyProperties(shopData, singtonDTO);
 
             Trade trade = saveTrade(singtonDTO, addressVO,
-                    tradeAmount, tradePointAmount, totalGoodsAmount, totalGoodsPointAmount, BigDecimal.ZERO);
+                    tradeAmount, tradePointAmount, totalGoodsAmount, totalGoodsPointAmount, BigDecimal.ZERO,couponIds);
             try {
                 producerService.sendHttpMessage(trade.getId());
                 // HttpProducerUtil.sendMessage(trade.getId());
@@ -1095,7 +1099,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         }
         
         
-        
         return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids, totalAmount, totalPointAmount));
     }
 
@@ -1112,7 +1115,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      */
     private Trade saveTrade(BbcTradeBuildDTO.SingtonDTO dto, BbcStockAddressVO.ListVO addressVO, BigDecimal tradeAmount,
                             BigDecimal tradePointAmount, BigDecimal goodsAmount, BigDecimal goodsPointAmount,
-                            BigDecimal deliveryAmount) {
+                            BigDecimal deliveryAmount,List<String> couponIds) {
         Trade trade = new Trade();
         trade.setUserId(dto.getJwtUserId());
         trade.setShopId(dto.getShopId());
@@ -1165,7 +1168,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         trade.setTradeAmount(tradeAmount);
         trade.setTradePointAmount(tradePointAmount);
-
+        if(CollectionUtils.isNotEmpty(couponIds)){
+        	String cids = "";
+        	for(String couponId:couponIds){
+        		cids +=couponId+",";
+        	}
+        	trade.setCouponIds(cids);
+        }
         tradeRepository.save(trade);
 
         return trade;
@@ -2698,6 +2707,21 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //                }
 //            }
 //            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
+            
+            //扣减优惠券
+            String couponIds = trade.getCouponIds();
+            List<String> couponIdList = new ArrayList<String>();
+            if(StringUtils.isNotEmpty(couponIds)){
+            	String[] coupons = couponIds.split(",");
+            	if(coupons!=null&&coupons.length>0){
+            		for(int i=0;i<coupons.length;i++){
+            			String couponId = coupons[i];
+            			couponIdList.add(couponId);
+            		}
+            		
+            		bbcInUserCouponRpc.modifyUserCoupon(couponIdList, trade.getUserId(), UserCouponStatusEnum.已过期.getCode());
+            	}
+            }
             responseJson.put("code", 0);
             responseJson.put("result", "支付成功！");
 

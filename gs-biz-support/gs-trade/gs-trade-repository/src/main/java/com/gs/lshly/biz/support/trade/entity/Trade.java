@@ -271,6 +271,9 @@ public class Trade extends Model {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean flag;
+    
+    
+    private String couponIds;
 
 
 }

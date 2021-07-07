@@ -1,14 +1,14 @@
 package com.gs.lshly.biz.support.user.service.bbb.pc.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gs.lshly.biz.support.user.entity.InUserCoupon;
+import com.gs.lshly.biz.support.user.entity.UserCoupon;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
 import com.gs.lshly.biz.support.user.mapper.UserMapper;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
 import com.gs.lshly.biz.support.user.service.bbb.pc.IPCBBBInUserCouponService;
 import com.gs.lshly.common.enums.InUserCouponPriceEnum;
-import com.gs.lshly.common.enums.InUserCouponStatusEnum;
+import com.gs.lshly.common.enums.UserCouponStatusEnum;
 import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
@@ -52,7 +52,7 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
         if (0 == user.getIsInUser()) {
             throw new BusinessException("非in会员用户不能获取in会员优惠券");
         }
-        List<InUserCoupon> dtoList = new ArrayList<>();
+        List<UserCoupon> dtoList = new ArrayList<>();
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二十抵扣券.getCode())));
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.三十抵扣券.getCode())));
         dtoList.add(generateCoupon(qto,new BigDecimal(InUserCouponPriceEnum.五十抵扣券.getCode())));
@@ -72,7 +72,7 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
         if (num != 0) {
             throw new BusinessException("本月已分享获得过优惠券，不可重复获得");
         }
-        List<InUserCoupon> userCouponList = new ArrayList<>();
+        List<UserCoupon> userCouponList = new ArrayList<>();
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.二十抵扣券.getCode())));
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.三十抵扣券.getCode())));
         userCouponList.add(getCoupon(qto,new BigDecimal(InUserCouponPriceEnum.五十抵扣券.getCode())));
@@ -81,16 +81,16 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
         couponRepository.saveBatch(userCouponList);
     }
 
-    private InUserCoupon getCoupon(BbbInUserCouponQTO.ShareCouponQTO qto, BigDecimal money) {
+    private UserCoupon getCoupon(BbbInUserCouponQTO.ShareCouponQTO qto, BigDecimal money) {
         LocalDate startTime = LocalDate.now();
         LocalDate endTime =  DateUtils.getNextMonthDate(startTime);
-        InUserCoupon dto = new InUserCoupon()
+        UserCoupon dto = new UserCoupon()
                 .setCouponPrice(money)
                 .setCouponDesc("仅限in会员精品专区使用")
                 .setStartTime(startTime)
                 .setEndTime(endTime)
                 .setUserId(qto.getUserId())
-                .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                .setCouponStatus(UserCouponStatusEnum.未使用.getCode())
                 .setCouponType(InUserCouponTypeEnum.分享赠送.getCode())
                 .setCreateTime(new Date())
                 .setModifyTime(new Date());
@@ -98,20 +98,20 @@ public class PCBBBInUserCouponServiceImpl implements IPCBBBInUserCouponService {
         return dto;
     }
 
-    private InUserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
+    private UserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
         // 判断in会员类型 0-年 1-月
         LocalDate startTime = LocalDate.now();
         LocalDate endTime =  DateUtils.getHalfNextYearDate(startTime);
         if (1 == qto.getVipType()) {
             endTime = DateUtils.getNextMonthDate(startTime);
         }
-        InUserCoupon dto = new InUserCoupon()
+        UserCoupon dto = new UserCoupon()
                 .setCouponPrice(money)
                 .setCouponDesc("仅限in会员精品专区使用")
                 .setStartTime(startTime)
                 .setEndTime(endTime)
                 .setUserId(qto.getUserId())
-                .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                .setCouponStatus(UserCouponStatusEnum.未使用.getCode())
                 .setCouponType(InUserCouponTypeEnum.购买赠送.getCode())
                 .setCreateTime(new Date())
                 .setModifyTime(new Date());

@@ -27,7 +27,6 @@ import com.gs.lshly.biz.support.trade.mapper.MarketPtSeckillTimeQuantumMapper;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSkuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillGoodsSpuRepository;
 import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillRepository;
-import com.gs.lshly.biz.support.trade.repository.IMarketPtSeckillTimeQuantumRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcMarketSeckillService;
 import com.gs.lshly.common.enums.GoodsPointTypeEnum;
 import com.gs.lshly.common.enums.GoodsStateEnum;
@@ -50,7 +49,6 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.HomePageSeckill;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.ListSkuVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillGoodsVO;
-import com.gs.lshly.common.struct.bbc.trade.vo.BbcMarketSeckillVO.SeckillSpuVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
 import com.gs.lshly.common.utils.DateUtils;
@@ -62,6 +60,7 @@ import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 
 import cn.hutool.core.collection.CollectionUtil;
 
+@SuppressWarnings({"static-access","unchecked"})
 @Component
 public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     
@@ -70,9 +69,6 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     
     @Autowired
     private MarketPtSeckillGoodsSpuMapper marketPtSeckillGoodsSpuMapper;
-    
-    @Autowired
-    private IMarketPtSeckillTimeQuantumRepository marketPtSeckillTimeQuantumRepository;
     
     @Autowired
     private MarketPtSeckillTimeQuantumMapper marketPtSeckillTimeQuantumMapper;
@@ -355,7 +351,6 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		MarketPtSeckill beforeSeckill = marketPtSeckillRepository.getOne(wrapper);
 
 		SeckillHome seckillHome = new SeckillHome();
-		SeckillTimeQuantum seckillTimeQuantum = null;
 		HomePageSeckill homePageSeckill = null;
 		if (seckillHome != null && beforeSeckill != null) {
 			
@@ -480,10 +475,17 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 							BbcGoodsInfoVO.SimpleListVO simpleGooods=null;
 							
 							BbcMarketSeckillVO.SeckillGoodsVO sckillGoodsVO = null;
+							MarketPtSeckillGoodsSku sku = null;
 							for(MarketPtSeckillGoodsSpu spu:spuList){
 								
 								sckillGoodsVO = new BbcMarketSeckillVO.SeckillGoodsVO();
 								String goodsId = spu.getGoodsId();
+								
+								//查询SKU
+								QueryWrapper<MarketPtSeckillGoodsSku> skuQuery = MybatisPlusUtil.query();
+			        			skuQuery.eq("goods_spu_item_id",spu.getId());
+			        			skuQuery.eq("goods_id",goodsId);
+			        			sku = marketPtSeckillGoodsSkuRepository.getOne(skuQuery);
 								
 								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
 								if(!simpleGooods.getGoodsState().equals(GoodsStateEnum.已上架.getCode()))
@@ -491,15 +493,15 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								sckillGoodsVO.setSeckillId(timeQuantumId);
 								if(simpleGooods.getIsPointGood()){//是不是积分
 									sckillGoodsVO.setSalePrice(simpleGooods.getPointPrice());
-									sckillGoodsVO.setSeckillPointPrice(spu.getSeckillPointPrice());
-									sckillGoodsVO.setSeckillInMemberPointPrice(spu.getSeckillPointPrice());
+									sckillGoodsVO.setSeckillPointPrice(sku.getSeckillSaleSkuPrice());
+									sckillGoodsVO.setSeckillInMemberPointPrice(sku.getSeckillSaleSkuPrice());
 									
 									sckillGoodsVO.setGoodsType(20);
 								}else{
 									sckillGoodsVO.setGoodsType(10);
 									sckillGoodsVO.setSalePrice(simpleGooods.getSalePrice());
-									sckillGoodsVO.setSeckillPrice(spu.getSeckillSalePrice());
-									sckillGoodsVO.setSeckillInMemberPointPrice(spu.getSeckillSalePrice());
+									sckillGoodsVO.setSeckillPrice(sku.getSeckillSaleSkuPrice());
+									sckillGoodsVO.setSeckillInMemberPointPrice(sku.getSeckillSaleSkuPrice());
 								}
 								
 								sckillGoodsVO.setGoodsId(simpleGooods.getId());
@@ -571,8 +573,6 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 
 	@Override
 	public SeckillHome seckillHomeNew(DTO dto) {
-		BbcMarketSeckillVO.SeckillIngVO seckillIngVO = new BbcMarketSeckillVO.SeckillIngVO();
-		List<BbcMarketSeckillVO.SeckillGoodsVO> list = new ArrayList<BbcMarketSeckillVO.SeckillGoodsVO>();
 		String now = DateUtils.fomatDate(new Date(), DateUtils.dateFormatStr);
 		List<BbcMarketSeckillVO.MarketPtSeckillTimeQuantumVO> nowList = marketPtSeckillTimeQuantumMapper.list(now+" 00:00:00", now+" 23:59:59");
 		List<SeckillTimeQuantum> timeQuantum = new ArrayList<SeckillTimeQuantum>();	//秒杀时间段

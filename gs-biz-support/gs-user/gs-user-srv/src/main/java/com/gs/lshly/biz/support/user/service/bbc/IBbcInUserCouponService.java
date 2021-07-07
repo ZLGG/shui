@@ -64,4 +64,12 @@ public interface IBbcInUserCouponService {
      * @param dto
      */
     void createInUserCoupon(CreateDTO dto);
+    
+    /**
+     * 
+     * @param couponIds
+     * @param userId
+     * @param status
+     */
+    List<String> modifyUserCoupon(List<String> couponIds, String userId, Integer status) ;
 }

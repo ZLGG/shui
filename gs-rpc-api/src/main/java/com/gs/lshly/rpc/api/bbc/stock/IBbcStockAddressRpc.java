@@ -4,8 +4,12 @@ import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import com.gs.lshly.common.struct.bbc.stock.qto.BbcStockAddressQTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
+import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO.ListBasicAreasVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.BasicAreasVO;
 
 import java.util.List;
+
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
 *会员地址管理
@@ -35,5 +39,7 @@ public interface IBbcStockAddressRpc {
      * @return
      */
     BbcStockAddressVO.DetailVO innerGetDefault(BaseDTO dto,Integer addressType);
+    
+    List<BasicAreasVO.AddressListVO> listBasicAreas(Integer pid);
 
 }

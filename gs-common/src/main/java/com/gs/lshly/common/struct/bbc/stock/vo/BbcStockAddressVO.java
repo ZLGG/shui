@@ -1,12 +1,11 @@
 package com.gs.lshly.common.struct.bbc.stock.vo;
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.util.StringUtils;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
 * @author xxfc
@@ -126,5 +125,19 @@ public abstract class BbcStockAddressVO implements Serializable {
         @ApiModelProperty("匹配器")
         private String regex;
     }
+    
+    @Data
+    @ApiModel("BbcStockAddressVO.ListBasicAreasVO")
+    public static class ListBasicAreasVO implements Serializable{
 
+    	@ApiModelProperty("id")
+        private Integer id;
+
+    	@ApiModelProperty("名称")
+        private String name;
+
+    	@ApiModelProperty("父ID")
+        private Integer pid;
+    }
+    
 }

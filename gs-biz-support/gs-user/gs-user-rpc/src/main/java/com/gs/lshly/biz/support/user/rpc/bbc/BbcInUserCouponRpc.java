@@ -64,4 +64,10 @@ public class BbcInUserCouponRpc implements IBbcInUserCouponRpc {
 		inUserCouponService.createInUserCoupon(dto);
 		
 	}
+
+	@Override
+	public List<String> modifyUserCoupon(List<String> couponIds, String userId, Integer status) {
+		return inUserCouponService.modifyUserCoupon(couponIds,userId,status);
+		
+	}
 }

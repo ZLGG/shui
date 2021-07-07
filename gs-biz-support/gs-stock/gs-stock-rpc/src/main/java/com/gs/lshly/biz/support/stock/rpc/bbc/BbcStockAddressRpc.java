@@ -1,15 +1,16 @@
 package com.gs.lshly.biz.support.stock.rpc.bbc;
-import com.gs.lshly.common.response.PageData;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gs.lshly.biz.support.stock.service.bbc.IBbcStockAddressService;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.bbc.stock.dto.BbcStockAddressDTO;
 import com.gs.lshly.common.struct.bbc.stock.qto.BbcStockAddressQTO;
 import com.gs.lshly.common.struct.bbc.stock.vo.BbcStockAddressVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.BasicAreasVO;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
-import com.gs.lshly.biz.support.stock.service.bbc.IBbcStockAddressService;
-import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
 *
@@ -66,5 +67,10 @@ public class BbcStockAddressRpc implements IBbcStockAddressRpc{
     public BbcStockAddressVO.DetailVO innerGetDefault(BaseDTO dto, Integer addressType) {
        return bbcStockAddressService.getDefault(dto,addressType);
     }
+
+	@Override
+	public List<BasicAreasVO.AddressListVO> listBasicAreas(Integer pid) {
+		return bbcStockAddressService.listBasicAreas(pid);
+	}
 
 }

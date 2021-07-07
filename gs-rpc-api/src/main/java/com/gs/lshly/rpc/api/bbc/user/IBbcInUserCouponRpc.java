@@ -50,4 +50,11 @@ public interface IBbcInUserCouponRpc {
      * 给用户添加IN优惠券
      */
     void createInUserCoupon(BbcInUserCouponDTO.CreateDTO dto);
+    
+    /**
+     * 更新用户优惠券状态
+     * @param couponIds
+     * @param userId
+     */
+    List<String> modifyUserCoupon(List<String> couponIds,String userId,Integer status);
 }

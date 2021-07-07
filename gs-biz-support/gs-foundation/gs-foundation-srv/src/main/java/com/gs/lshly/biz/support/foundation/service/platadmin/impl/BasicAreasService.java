@@ -8,6 +8,7 @@ import com.gs.lshly.biz.support.foundation.repository.IBasicAreasRepository;
 import com.gs.lshly.biz.support.foundation.repository.ISysSmRepository;
 import com.gs.lshly.biz.support.foundation.service.platadmin.IBasicAreasService;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.BasicAreasVO;
+import com.gs.lshly.common.struct.platadmin.foundation.vo.BasicAreasVO.AddressListVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.PicturesVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import org.springframework.beans.BeanUtils;
@@ -48,4 +49,25 @@ public class BasicAreasService implements IBasicAreasService {
         }
         return listVOS;
     }
+
+	@Override
+	public List<AddressListVO> addressList(Integer pid) {
+		if (null == pid) {
+            pid = 330000;
+        }
+        QueryWrapper<BasicAreas> query = MybatisPlusUtil.query();
+        query.eq("pid", pid);
+        List<BasicAreas> areas = repository.list(query);
+        List<BasicAreasVO.AddressListVO> listVOS = new ArrayList<>();
+        BasicAreasVO.AddressListVO listVO;
+        if (ObjectUtils.isNotEmpty(areas)) {
+            for (BasicAreas city : areas) {
+                listVO = new BasicAreasVO.AddressListVO();
+                listVO.setValue(city.getId());
+                listVO.setText(city.getName());
+                listVOS.add(listVO);
+            }
+        }
+        return listVOS;
+	}
 }

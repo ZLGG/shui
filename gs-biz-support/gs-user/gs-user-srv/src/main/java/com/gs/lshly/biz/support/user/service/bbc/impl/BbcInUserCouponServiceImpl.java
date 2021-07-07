@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.user.entity.InUserCoupon;
 import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.entity.UserCoupon;
 import com.gs.lshly.biz.support.user.entity.UserCtccIn;
 import com.gs.lshly.biz.support.user.mapper.InUserCouponMapper;
 import com.gs.lshly.biz.support.user.mapper.UserCouponDTOMapper;
@@ -23,8 +23,8 @@ import com.gs.lshly.biz.support.user.repository.IUserCtccInRepository;
 import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.biz.support.user.repository.InUserCouponRepository;
 import com.gs.lshly.biz.support.user.service.bbc.IBbcInUserCouponService;
-import com.gs.lshly.common.enums.InUserCouponStatusEnum;
 import com.gs.lshly.common.enums.UserCouponEnum;
+import com.gs.lshly.common.enums.UserCouponStatusEnum;
 import com.gs.lshly.common.enums.user.InUserCouponTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.struct.bbb.pc.user.qto.BbbInUserCouponQTO;
@@ -67,13 +67,13 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 
     @Override
     public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
-        QueryWrapper<InUserCoupon> wrapper = new QueryWrapper<>();
+        QueryWrapper<UserCoupon> wrapper = new QueryWrapper<>();
         wrapper .eq("user_id",qto.getJwtUserId());
         wrapper.eq("coupon_status",0);
         if (qto.getCouponType() != UserCouponEnum.全部抵扣券.getCode()) {
             wrapper.eq("coupon_type",qto.getCouponType());
         }
-        List<InUserCoupon> userCouponList = couponRepository.list(wrapper);
+        List<UserCoupon> userCouponList = couponRepository.list(wrapper);
         List<BbcInUserCouponVO.ListVO> resultList = ListUtil.listCover(BbcInUserCouponVO.ListVO.class,userCouponList);
         resultList.forEach(coupon ->{
             // 计算距离过期还剩的天数
@@ -97,13 +97,13 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         // 去运营平台获取可发放的优惠券
         List<BbcInUserCouponVO.Coupon> couponList = inUserCouponMapper.queryCouponByBought();
         // 根据运营平台发放规则发放优惠券
-        List<InUserCoupon> list = new ArrayList<>();
+        List<UserCoupon> list = new ArrayList<>();
         for (BbcInUserCouponVO.Coupon coupon : couponList) {
-            InUserCoupon inUserCoupon = new InUserCoupon()
+            UserCoupon inUserCoupon = new UserCoupon()
                     .setCouponName(coupon.getCouponName())
                     .setUserId(qto.getUserId())
                     .setCouponDesc(coupon.getCouponDesc())
-                    .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                    .setCouponStatus(UserCouponStatusEnum.未使用.getCode())
                     .setCouponType(UserCouponEnum.IN会员抵扣券.getCode())
                     .setCouponPrice(coupon.getDeductionAmount())
                     .setMinPrice(coupon.getUseThreshold())
@@ -162,7 +162,7 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     @Override
     public List<BbcInUserCouponVO.MyCouponListVO> getMyCouponToUse(BbcInUserCouponQTO.MyCouponQTO qto) {
         // 1.获取当前用户所有优惠券
-        List<InUserCoupon> userCouponList = couponRepository.list(new QueryWrapper<InUserCoupon>()
+        List<UserCoupon> userCouponList = couponRepository.list(new QueryWrapper<UserCoupon>()
                 .eq("user_id", qto.getJwtUserId())
                 .eq("coupon_status", 0));
         // 2.筛选当前商品可用优惠券
@@ -170,11 +170,11 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         // 查询可否使用in会员优惠券
         Boolean isInGoods = couponRepository.isInUserGoods(qto.getGoodsId());
         if (isInGoods) {
-            List<InUserCoupon> inCouponList = userCouponList.stream().filter(m -> m.getCouponType().equals(UserCouponEnum.IN会员抵扣券.getCode())).collect(Collectors.toList());
+            List<UserCoupon> inCouponList = userCouponList.stream().filter(m -> m.getCouponType().equals(UserCouponEnum.IN会员抵扣券.getCode())).collect(Collectors.toList());
             resultList = ListUtil.listCover(BbcInUserCouponVO.MyCouponListVO.class, inCouponList);
         }
         // 查询商品可用优惠券
-        for (InUserCoupon coupon : userCouponList) {
+        for (UserCoupon coupon : userCouponList) {
             // 根据商品id匹配可用优惠券
             if (StringUtils.isNotBlank(qto.getGoodsId())) {
                 Boolean isExist = couponRepository.getMyCouponByGoodsId(qto.getGoodsId(), coupon.getCouponId());
@@ -225,13 +225,13 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         // 去运营平台获取可发放的优惠券
         List<BbcInUserCouponVO.Coupon> couponList = inUserCouponMapper.queryCouponByShare();
         // 根据运营平台发放规则发放优惠券
-        List<InUserCoupon> list = new ArrayList<>();
+        List<UserCoupon> list = new ArrayList<>();
         for (BbcInUserCouponVO.Coupon coupon : couponList) {
-            InUserCoupon inUserCoupon = new InUserCoupon()
+        	UserCoupon inUserCoupon = new UserCoupon()
                     .setCouponName(coupon.getCouponName())
                     .setUserId(qto.getUserId())
                     .setCouponDesc(coupon.getCouponDesc())
-                    .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                    .setCouponStatus(UserCouponStatusEnum.未使用.getCode())
                     .setCouponType(UserCouponEnum.IN会员抵扣券.getCode())
                     .setCouponPrice(coupon.getDeductionAmount())
                     .setMinPrice(coupon.getUseThreshold())
@@ -252,16 +252,16 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         couponRepository.saveBatch(userCouponList);*/
     }
 
-    private InUserCoupon getCoupon(BbcInUserCouponQTO.ShareCouponQTO qto, BigDecimal money) {
+    private UserCoupon getCoupon(BbcInUserCouponQTO.ShareCouponQTO qto, BigDecimal money) {
         LocalDate startTime = LocalDate.now();
         LocalDate endTime =  DateUtils.getNextMonthDate(startTime);
-        InUserCoupon dto = new InUserCoupon()
+        UserCoupon dto = new UserCoupon()
                 .setCouponPrice(money)
                 .setCouponDesc("仅限in会员精品专区使用")
                 .setStartTime(startTime)
                 .setEndTime(endTime)
                 .setUserId(qto.getUserId())
-                .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                .setCouponStatus(UserCouponStatusEnum.未使用.getCode())
                 .setCouponType(InUserCouponTypeEnum.分享赠送.getCode())
                 .setCreateTime(new Date())
                 .setModifyTime(new Date());
@@ -269,20 +269,20 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         return dto;
     }
 
-	private InUserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
+	private UserCoupon generateCoupon(BbbInUserCouponQTO.BuyCouponQTO qto, BigDecimal money) {
         // 判断in会员类型 0-年 1-月
         LocalDate startTime = LocalDate.now();
         LocalDate endTime =  DateUtils.getHalfNextYearDate(startTime);
         if (1 == qto.getVipType()) {
             endTime = DateUtils.getNextMonthDate(startTime);
         }
-        InUserCoupon dto = new InUserCoupon()
+        UserCoupon dto = new UserCoupon()
                 .setCouponPrice(money)
                 .setCouponDesc("仅限in会员精品专区使用")
                 .setStartTime(startTime)
                 .setEndTime(endTime)
                 .setUserId(qto.getUserId())
-                .setCouponStatus(InUserCouponStatusEnum.未使用.getCode())
+                .setCouponStatus(UserCouponStatusEnum.未使用.getCode())
                 .setCouponType(InUserCouponTypeEnum.购买赠送.getCode())
                 .setCreateTime(new Date())
                 .setModifyTime(new Date());
@@ -343,13 +343,37 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         //加优惠券
         List<BbcCouponVO.InCouponVO> list = new ArrayList<BbcCouponVO.InCouponVO>();
         if(CollectionUtil.isNotEmpty(list)){
-        	InUserCoupon userCoupon =null;
+        	UserCoupon userCoupon =null;
         	for(BbcCouponVO.InCouponVO inCouponVO:list){
-        		userCoupon  = new InUserCoupon();
+        		userCoupon  = new UserCoupon();
         		BeanCopyUtils.copyProperties(inCouponVO, userCoupon);
         		userCoupon.setUserId(user.getId());
         		couponRepository.saveOrUpdate(userCoupon);
         	}
         }
+	}
+
+	@Override
+	public List<String> modifyUserCoupon(List<String> couponIds, String userId, Integer status) {
+		List<String> retList = new ArrayList<String>();
+		if(CollectionUtil.isNotEmpty(couponIds)){
+			UserCoupon userCoupon = null;
+			for(String couponId:couponIds){
+				QueryWrapper<UserCoupon> wrapper = new QueryWrapper<>();
+		        wrapper .eq("user_id",userId);
+		        if(status.equals(UserCouponStatusEnum.使用中.getCode())){
+		        	wrapper.eq("coupon_status",UserCouponStatusEnum.未使用.getCode());
+		        }else if(status.equals(UserCouponStatusEnum.已使用.getCode())){
+		        	wrapper.eq("coupon_status",UserCouponStatusEnum.使用中.getCode());
+		        }
+		        wrapper.eq("coupon_id", couponId);
+		        userCoupon = couponRepository.getOne(wrapper);
+		        if(userCoupon==null)
+		        	throw new BusinessException("没有找到对应的优惠券！");
+		        userCoupon.setCouponStatus(status);
+		        retList.add(userCoupon.getId());
+			}
+		}
+		return retList;
 	}
 }

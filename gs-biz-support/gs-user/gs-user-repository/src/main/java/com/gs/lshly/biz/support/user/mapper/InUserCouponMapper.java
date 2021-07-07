@@ -3,7 +3,7 @@ package com.gs.lshly.biz.support.user.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.gs.lshly.biz.support.user.entity.InUserCoupon;
+import com.gs.lshly.biz.support.user.entity.UserCoupon;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -18,7 +18,7 @@ import java.util.List;
  * @create 2021/3/22 15:12
  */
 @Repository
-public interface InUserCouponMapper extends BaseMapper<InUserCoupon> {
+public interface InUserCouponMapper extends BaseMapper<UserCoupon> {
 
     @Update("update gs_user_coupon set coupon_status = 2 where coupon_id = #{couponId}")
     void updateCouponStatus(@Param("couponId") Long couponId);
