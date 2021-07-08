@@ -188,7 +188,7 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         wrapperBoost.eq("gs.shop_id", qto.getJwtShopId());
         wrapperBoost.eq("gs.merchant_id", qto.getJwtMerchantId());
         if (StringUtils.isNotEmpty(qto.getGoodsName())) {
-            wrapperBoost.likeRight("gs.goods_name", qto.getGoodsName());
+            wrapperBoost.like("gs.goods_name", qto.getGoodsName());
         }
         if (ObjectUtils.isNotEmpty(qto.getAduitType())) {
             wrapperBoost.eq("ar.state", qto.getAduitType());
@@ -1382,15 +1382,15 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
                 excelGoodsDataVO.setIsPointGood("否");
             }
 
-            if (goodsInfo.getExchangeType().intValue() == 10) {
-                excelGoodsDataVO.setExchangeType("虚拟");
+            if(ObjectUtils.isNotEmpty(goodsInfo.getExchangeType())){
+                if (goodsInfo.getExchangeType().intValue() == 10) {
+                    excelGoodsDataVO.setExchangeType("虚拟");
+                }
+
+                if(goodsInfo.getExchangeType().intValue() == 20){
+                    excelGoodsDataVO.setExchangeType("实物");
+                }
             }
-
-            if(goodsInfo.getExchangeType().intValue() == 20){
-                excelGoodsDataVO.setExchangeType("实物");
-            }
-
-
             // 获取商品库存数
             excelGoodsDataVO.setStockNum(getSpuStockNum(goodsInfo.getId(), qto.getJwtShopId()));
 
