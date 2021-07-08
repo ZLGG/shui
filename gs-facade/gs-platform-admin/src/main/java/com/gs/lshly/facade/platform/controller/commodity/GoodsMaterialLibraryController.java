@@ -31,7 +31,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/platform/goodsMaterialLibrary")
 @Api(tags = "商品素材库管理管理")
-@Module(code = "materialLibrary", parent = "commodity", name = "商品素材库", index = 3)
+@Module(code = "materialLibrary", parent = "commodity", name = "商品素材库", index = 2)
 public class GoodsMaterialLibraryController {
 
     @DubboReference

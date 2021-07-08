@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/platform/GoodsServe")
 @Api(tags = "商品服务管理-v1.1.0")
-//@Module(code = "commodityServe", parent = "commodity", name = "商品服务管理", index = 4)
+//@Module(code = "commodityServeManagemet", parent = "commodity", name = "商品服务配置", index = 8)
 public class GoodsServeController {
 
     @DubboReference

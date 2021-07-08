@@ -366,11 +366,12 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 		        }else if(status.equals(UserCouponStatusEnum.已使用.getCode())){
 		        	wrapper.eq("coupon_status",UserCouponStatusEnum.使用中.getCode());
 		        }
-		        wrapper.eq("coupon_id", couponId);
+		        wrapper.eq("id", couponId);
 		        userCoupon = couponRepository.getOne(wrapper);
 		        if(userCoupon==null)
 		        	throw new BusinessException("没有找到对应的优惠券！");
 		        userCoupon.setCouponStatus(status);
+		        couponRepository.saveOrUpdate(userCoupon);
 		        retList.add(userCoupon.getId());
 			}
 		}
