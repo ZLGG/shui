@@ -419,6 +419,109 @@ public abstract class PCMerchTradeListVO implements Serializable {
     }
 
     @Data
+    @ApiModel("PCMerchTradeListVO.waitSendTradeExport")
+    @Accessors(chain = true)
+    public static class waitSendTradeExport implements Serializable{
+
+        @ApiModelProperty(value = "订单编号",position = 1)
+        private String tradeCode;
+
+
+        @ApiModelProperty(value = "订单状态",position = 2)
+        private String tradeState;
+
+
+        @ApiModelProperty(value = "实付金额",position = 3)
+        private BigDecimal amountActuallyPaid;
+
+
+        @ApiModelProperty(value = "实付积分",position = 4)
+        private String pointPriceActuallyPaid;
+
+
+        @ApiModelProperty(value = "运费",position = 5)
+        private BigDecimal deliveryAmount;
+
+
+        @ApiModelProperty(value = "下单时间",position = 6)
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime createTime;
+
+        @ApiModelProperty(value = "支付时间",position = 7)
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime payTime;
+
+        @ApiModelProperty(value = "收件人姓名",position = 8)
+        private String recvPersonName;
+
+
+        @ApiModelProperty(value = "收件人电话",position = 9)
+        private String recvPhone;
+
+        @ApiModelProperty(value = "收件人地址",position = 10)
+        private String recvFullAddres;
+
+        @ApiModelProperty(value = "客户备注信息",position = 11)
+        private String buyerRemark;
+    }
+
+    @Data
+    @ApiModel("PCMerchTradeListVO.hasSentTradeExport")
+    @Accessors(chain = true)
+    public static class hasSentTradeExport implements Serializable{
+
+        @ApiModelProperty(value = "订单编号",position = 1)
+        private String tradeCode;
+
+
+        @ApiModelProperty(value = "订单状态",position = 2)
+        private String tradeState;
+
+
+        @ApiModelProperty(value = "实付金额",position = 3)
+        private BigDecimal amountActuallyPaid;
+
+
+        @ApiModelProperty(value = "实付积分",position = 4)
+        private String pointPriceActuallyPaid;
+
+
+        @ApiModelProperty(value = "运费",position = 5)
+        private BigDecimal deliveryAmount;
+
+
+        @ApiModelProperty(value = "下单时间",position = 6)
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime createTime;
+
+        @ApiModelProperty(value = "支付时间",position = 7)
+        @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime payTime;
+
+        @ApiModelProperty(value = "收件人姓名",position = 8)
+        private String recvPersonName;
+
+
+        @ApiModelProperty(value = "收件人电话",position = 9)
+        private String recvPhone;
+
+        @ApiModelProperty(value = "收件人地址",position = 10)
+        private String recvFullAddres;
+
+        @ApiModelProperty(value = "客户备注信息",position = 11)
+        private String buyerRemark;
+
+        @ApiModelProperty(value = "物流信息",position = 12)
+        private String logisticsCompanyName;
+
+        @ApiModelProperty(value = "快递单号",position = 13)
+        private String logisticsNumber;
+
+        @ApiModelProperty(value = "发货备注",position = 14)
+        private String deliveryRemark;
+    }
+
+    @Data
     @ApiModel("PCMerchTradeListVO.innerGoodsIdAndName")
     @Accessors(chain = true)
     public static class innerGoodsIdAndName implements Serializable{

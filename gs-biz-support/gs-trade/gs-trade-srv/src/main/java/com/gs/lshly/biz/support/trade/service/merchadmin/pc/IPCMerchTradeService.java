@@ -26,7 +26,9 @@ public interface IPCMerchTradeService {
 
     TradeVO.OperationlistVO operationList(TradeDTO.OperationList dto);
 
-    List<PCMerchTradeListVO.tradeVOExport> export(PCMerchTradeQTO.IdListQTO qo);
+    List<PCMerchTradeListVO.waitSendTradeExport> export(PCMerchTradeQTO.IdListQTO qo);
+
+    List<PCMerchTradeListVO.hasSentTradeExport> hasSentExport(PCMerchTradeQTO.IdListQTO qo);
 
 
 }

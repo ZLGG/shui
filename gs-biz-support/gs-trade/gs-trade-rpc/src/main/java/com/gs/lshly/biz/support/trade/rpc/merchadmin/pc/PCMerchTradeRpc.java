@@ -65,7 +65,10 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc{
 
     @Override
     public ExportDataDTO export(PCMerchTradeQTO.IdListQTO qo) throws Exception {
-        return  ExcelUtil.treatmentBean(pCMerchTradeService.export(qo),PCMerchTradeListVO.tradeVOExport.class);
+        if(qo.getType().intValue() == 1){
+            return ExcelUtil.treatmentBean(pCMerchTradeService.export(qo),PCMerchTradeListVO.waitSendTradeExport.class);
+        }
+        return  ExcelUtil.treatmentBean(pCMerchTradeService.hasSentExport(qo),PCMerchTradeListVO.hasSentTradeExport.class);
     }
 
 }

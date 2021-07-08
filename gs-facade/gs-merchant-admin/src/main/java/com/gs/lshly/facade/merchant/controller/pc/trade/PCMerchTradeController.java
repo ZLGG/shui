@@ -58,6 +58,7 @@ public class PCMerchTradeController {
     @GetMapping(value = "/export")
     public void export(PCMerchTradeQTO.IdListQTO qo, @ApiIgnore HttpServletResponse response) throws Exception {
         ExportDataDTO exportData = pcMerchTradeRpc.export(qo);
+        exportData.setFileName("订单");
         ExcelUtil.export(exportData, response);
     }
 

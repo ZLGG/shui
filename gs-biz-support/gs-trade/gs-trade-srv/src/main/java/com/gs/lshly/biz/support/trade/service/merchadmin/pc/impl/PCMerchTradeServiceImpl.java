@@ -1007,32 +1007,50 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
     @Override
-    public List<PCMerchTradeListVO.tradeVOExport> export(PCMerchTradeQTO.IdListQTO qo) {
+    public List<PCMerchTradeListVO.waitSendTradeExport> export(PCMerchTradeQTO.IdListQTO qo) {
         if (ObjectUtils.isEmpty(qo.getIdList())){
             throw new BusinessException("请传入ID");
         }
         List<Trade> trades = tradeRepository.listByIds(qo.getIdList());
         if (ObjectUtils.isNotEmpty(trades)) {
-            List<PCMerchTradeListVO.tradeVOExport> list = trades.parallelStream()
+            List<PCMerchTradeListVO.waitSendTradeExport> list = trades.parallelStream()
                     .map(e -> {
-                        PCMerchTradeListVO.tradeVOExport tradeVO = new PCMerchTradeListVO.tradeVOExport();
+                        PCMerchTradeListVO.waitSendTradeExport tradeVO = new PCMerchTradeListVO.waitSendTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
-                        CommonShopVO.SimpleVO simpleVO = commonShopRpc.shopDetails(e.getShopId());
-                        if (ObjectUtils.isNotEmpty(simpleVO)) {
-                            tradeVO.setShopName(simpleVO.getShopName());
-                        }
-                        PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(e.getUserId());
-                        if (ObjectUtils.isNotEmpty(userSimpleVO)){
-                            tradeVO.setUserName(userSimpleVO.getUserName());
-                        }
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(),TradeStateEnum.class));
-                        if (e.getTradeState()==10){
-                            tradeVO.setPayType("未支付");
-                        }else {
-                            tradeVO.setPayType(TradePayTypeEnum.getEnum(e.getPayType()).getRemark());
+                        //fillTradeVOE(tradeVO);
+                        return tradeVO;
+                    }).collect(toList());
+            return list;
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<PCMerchTradeListVO.hasSentTradeExport> hasSentExport(PCMerchTradeQTO.IdListQTO qo) {
+        if (ObjectUtils.isEmpty(qo.getIdList())){
+            throw new BusinessException("请传入ID");
+        }
+        List<Trade> trades = tradeRepository.listByIds(qo.getIdList());
+        if (ObjectUtils.isNotEmpty(trades)) {
+            List<PCMerchTradeListVO.hasSentTradeExport> list = trades.parallelStream()
+                    .map(e -> {
+                        PCMerchTradeListVO.hasSentTradeExport tradeVO = new PCMerchTradeListVO.hasSentTradeExport();
+                        BeanUtils.copyProperties(e, tradeVO);
+                        tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(),TradeStateEnum.class));
+                        tradeVO.setPointPriceActuallyPaid(ObjectUtils.isNotEmpty(e.getPointPriceActuallyPaid())?e.getPointPriceActuallyPaid().setScale(0).toString():"0");
+                        //物流信息,快递单号
+                        QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
+                        tradeDeliveryQueryWrapper.eq("trade_id", e.getId());
+                        TradeDelivery tradeDelivery = tradeDeliveryRepository.getOne(tradeDeliveryQueryWrapper);
+                        if(ObjectUtils.isNotEmpty(tradeDelivery)){
+                            tradeVO.setLogisticsNumber(tradeDelivery.getLogisticsNumber());
+                            tradeVO.setDeliveryRemark(tradeDelivery.getDeliveryRemark());
+                            CommonLogisticsCompanyVO.DetailVO logisticsDetailVO = commonLogisticsCompanyRpc.getLogisticsCompany(tradeDelivery.getLogisticsId());
+                            if(ObjectUtils.isNotEmpty(logisticsDetailVO)){
+                                tradeVO.setLogisticsCompanyName(logisticsDetailVO.getName());
+                            }
                         }
-                        tradeVO.setDeliveryType(EnumUtil.getText(e.getDeliveryType(), TradeDeliveryTypeEnum.class));
-                        fillTradeVOE(tradeVO);
                         return tradeVO;
                     }).collect(toList());
             return list;

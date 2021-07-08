@@ -137,8 +137,11 @@ public abstract class PCMerchTradeQTO implements Serializable {
     @ApiModel("PCMerchTradeDTO.IdListQTO")
     public static class IdListQTO implements Serializable{
 
-        @ApiModelProperty("发货单ID列表")
+        @ApiModelProperty("订单ID列表")
         private List<String> idList;
+
+        @ApiModelProperty("1:待支付、待发货 2:全部、待收货、已完成、已关闭")
+        private Integer type;
 
     }
 }
