@@ -1507,7 +1507,7 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         wrapper.eq("search_entry", qto.getSearchEntry());
         wrapper.eq("user_id", qto.getUserId());
         wrapper.eq("flag", false);
-        wrapper.orderByDesc("cdate");
+        wrapper.orderByDesc("id");
         wrapper.last("limit 10");
         List<String> searchHistoryList = searchHistoryMapper.getSearchHistory(wrapper);
         return searchHistoryList;
