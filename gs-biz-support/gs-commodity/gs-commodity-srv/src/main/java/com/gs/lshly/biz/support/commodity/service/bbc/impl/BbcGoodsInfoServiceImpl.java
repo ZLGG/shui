@@ -787,15 +787,18 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 }
             }
         } else {
-            skuVO.setSkuId(skuGoodInfos.get(0).getId());
-            if(skuGoodInfos.get(0).getIsPointGood()){
-                if(skuGoodInfos.get(0).getPointPrice()!=null){
-                	skuVO.setPointPrice(skuGoodInfos.get(0).getPointPrice().doubleValue());
+        	SkuGoodInfo skuGoodInfo = skuGoodInfos.get(0);
+            skuVO.setSkuId(skuGoodInfo.getId());
+            if(skuGoodInfo.getIsPointGood()){
+                if(skuGoodInfo.getPointPrice()!=null){
+                	skuVO.setPointPrice(skuGoodInfo.getPointPrice().doubleValue());
                 }
-                if(skuGoodInfos.get(0).getInMemberPointPrice()!=null){
-                	skuVO.setInMemberPointPrice(skuGoodInfos.get(0).getInMemberPointPrice().doubleValue());
+                if(skuGoodInfo.getInMemberPointPrice()!=null){
+                	skuVO.setInMemberPointPrice(skuGoodInfo.getInMemberPointPrice().doubleValue());
                 }
             }
+            
+            skuVO.setSkuStock(getSkuStockNum(skuGoodInfo.getShopId(), skuGoodInfo.getId()));
         }
         return skuVO;
     }

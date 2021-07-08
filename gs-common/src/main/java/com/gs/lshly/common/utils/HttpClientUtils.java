@@ -284,7 +284,7 @@ public class HttpClientUtils {
         httpPost.setConfig(newRequestConfig);
         httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0" +
                 ".2924.87 Safari/537.36");
-        logger.info("请求方式:{},请求地址:{},请求头:{},请求参数:{}", "POST", url, headers, params);
+        logger.info("请求方式:{},请求地址:{},请求头:{"+headers+"},请求参数:{}", "POST", url, params);
         CloseableHttpResponse response = null;
         String content = "";
         //设置参数 postform 表单参数
