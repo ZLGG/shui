@@ -814,15 +814,15 @@ public class PCMerchGoodsInfoTempServiceImpl implements IPCMerchGoodsInfoTempSer
         if (ObjectUtils.isEmpty(eto.getStockSubtractType())) {
             throw new BusinessException("请选择商品的库存计数方式");
         }
-        if (ObjectUtils.isEmpty(eto.getGoodsValidDays())) {
+        /*if (ObjectUtils.isEmpty(eto.getGoodsValidDays())) {
             throw new BusinessException("请填写有限期天数");
-        }
+        }*/
         if (ObjectUtils.isEmpty(eto.getIsSingle())) {
             throw new BusinessException("请选择商品是单规格还是多规格");
         }
-        if (ObjectUtils.isEmpty(eto.getGoodsWeight())) {
+        /*if (ObjectUtils.isEmpty(eto.getGoodsWeight())) {
             throw new BusinessException("请填写商品的重量");
-        }
+        }*/
         if (ObjectUtils.isEmpty(eto.getSalePrice())) {
             throw new BusinessException("请填写商品的标准售价！");
         }
