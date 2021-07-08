@@ -73,7 +73,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
 
     @Autowired
     private MarketPtSeckillMapper marketPtSeckillMapper;
-    
+
     @DubboReference
     private IGoodsCategoryRpc iGoodsCategoryRpc;
 
@@ -82,7 +82,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
 
     @DubboReference
     private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
-    
+
 
     /**
      * 秒杀活动列表
@@ -153,6 +153,22 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             for (int j = i + 1; j < eto.getSessionTime().size(); j++) {
                 String startTime = eto.getSessionTime().get(j).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String endTime = eto.getSessionTime().get(j).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                if (!DateUtil.compareDate(seStartTime, endTime)) {
+                    if (DateUtil.compareDate(seEndTime, startTime)) {
+                        throw new BusinessException("时间有重叠!");
+                    }
+                }
+            }
+        }
+
+        List<MarketPtSeckillTimeQuantum> list = marketPtSeckillTimeQuantumRepository.list();
+        //判断不同活动场次时间是否重叠
+        for (int i = 0; i < eto.getSessionTime().size(); i++) {
+            String seEndTime = eto.getSessionTime().get(i).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String seStartTime = eto.getSessionTime().get(i).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            for (int j = i + 1; j < list.size(); j++) {
+                String startTime = list.get(j).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                String endTime = list.get(j).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 if (!DateUtil.compareDate(seStartTime, endTime)) {
                     if (DateUtil.compareDate(seEndTime, startTime)) {
                         throw new BusinessException("时间有重叠!");
