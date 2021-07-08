@@ -76,6 +76,12 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     @Autowired
     private IMarketPtSeckillGoodsSkuRepository marketPtSeckillGoodsSkuRepository;
     
+    @Autowired
+    private IMarketPtSeckillRepository marketPtSeckillRepository;
+    
+    @Autowired
+    private IMarketPtSeckillGoodsSpuRepository marketPtSeckillGoodsSpuRepository;
+    
     @DubboReference
     private IBbcGoodsInfoRpc iBbcGoodsInfoRpc;
     @DubboReference
@@ -84,11 +90,8 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
     @DubboReference
     private IGoodsInfoRpc goodsInfoRpc;
     
-    @Autowired
-    private IMarketPtSeckillRepository marketPtSeckillRepository;
-    
-    @Autowired
-    private IMarketPtSeckillGoodsSpuRepository marketPtSeckillGoodsSpuRepository;
+    @DubboReference
+    private IBbcGoodsInfoRpc bbcGoodsInfoRpc;
     
     
     @Value("${activity.pc.cut}")
@@ -699,6 +702,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         			coupons.add(couponVO);
         			seckillGoodsVO.setCoupons(coupons);
 					 */
+        			seckillGoodsVO.setTags(goodsDetail.getTags());
         			seckillGoodsVO.setSaleRate(new BigDecimal("0.9"));
         		}
         	}

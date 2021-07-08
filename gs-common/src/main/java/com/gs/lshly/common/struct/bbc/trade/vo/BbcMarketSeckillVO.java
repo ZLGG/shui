@@ -101,6 +101,9 @@ public abstract class BbcMarketSeckillVO implements Serializable {
         
         @ApiModelProperty("销售量")
         private BigDecimal saleRate;
+        
+        @ApiModelProperty("标签")
+        private List<String> tags;
     }
 	
 	@EqualsAndHashCode(callSuper=false)
