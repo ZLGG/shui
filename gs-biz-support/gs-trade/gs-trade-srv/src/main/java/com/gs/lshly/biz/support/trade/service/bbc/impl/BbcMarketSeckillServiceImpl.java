@@ -485,6 +485,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 								QueryWrapper<MarketPtSeckillGoodsSku> skuQuery = MybatisPlusUtil.query();
 			        			skuQuery.eq("goods_spu_item_id",spu.getId());
 			        			skuQuery.eq("goods_id",goodsId);
+			        			skuQuery.last("limit 0,1");
 			        			sku = marketPtSeckillGoodsSkuRepository.getOne(skuQuery);
 								
 								simpleGooods = iBbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
@@ -653,6 +654,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         			QueryWrapper<MarketPtSeckillGoodsSku> skuQuery = MybatisPlusUtil.query();
         			skuQuery.eq("goods_spu_item_id",itemId);
         			skuQuery.eq("goods_id",goodsId);
+        			skuQuery.last("limit 0,1");
         			sku = marketPtSeckillGoodsSkuRepository.getOne(skuQuery);
         			
         			
@@ -724,6 +726,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
 		QueryWrapper<MarketPtSeckillGoodsSku> skuQuery = MybatisPlusUtil.query();
 		skuQuery.eq("goods_spu_item_id",marketPtSeckillGoodsSpu.getId());
 		skuQuery.eq("goods_id",qto.getGoodsId());
+		skuQuery.last("limit 0,1");
 		MarketPtSeckillGoodsSku sku = marketPtSeckillGoodsSkuRepository.getOne(skuQuery);
 		
 		seckillDetailVO.setSeckillPrice(sku.getSeckillSaleSkuPrice());
@@ -779,6 +782,7 @@ public class BbcMarketSeckillServiceImpl implements IBbcMarketSeckillService {
         	QueryWrapper<MarketPtSeckillGoodsSku> query1 = MybatisPlusUtil.query();	//查询条件
         	query1.eq("goods_spu_item_id",marketPtSeckillGoodsSpu.getId());
         	query1.eq("sku_id", dto.getSkuId());
+        	query1.last("limit 0,1");
             MarketPtSeckillGoodsSku marketPtSeckillGoodsSku = marketPtSeckillGoodsSkuRepository.getOne(query1);
             BeanCopyUtils.copyProperties(marketPtSeckillGoodsSku, vo);
         }
