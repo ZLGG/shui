@@ -196,6 +196,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         if (ObjectUtils.isNotEmpty(qto.getApplyType())) {
             wrapperBoost.eq("gs.appley_type", qto.getApplyType());
         }
+        if (ObjectUtils.isNotEmpty(qto.getId())) {
+            wrapperBoost.eq("gs.id", qto.getId());
+        }
         wrapperBoost.orderByDesc("gs.cdate");
         IPage<PCMerchGoodsInfoVO.SpuListVO> page = MybatisPlusUtil.pager(qto);
 

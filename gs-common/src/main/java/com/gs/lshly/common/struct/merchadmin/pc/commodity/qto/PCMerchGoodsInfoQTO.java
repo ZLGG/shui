@@ -74,6 +74,9 @@ public abstract class PCMerchGoodsInfoQTO implements Serializable {
 
         @ApiModelProperty("审核结果 1:通过 2:不通过")
         private Integer aduitType;
+
+        @ApiModelProperty("商品id")
+        private String id;
     }
 
 
