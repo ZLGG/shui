@@ -52,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -371,6 +372,18 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         //填充退换货处理结果
         TradeRightsVO.RefundResultVO refundResultVO = new TradeRightsVO.RefundResultVO();
         BeanUtils.copyProperties(tradeRights, refundResultVO);
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(10, "待处理");
+        map.put(20, "商家同意");
+        map.put(30, "商户驳回");
+        map.put(40, "买家二次申诉");
+        map.put(50, "平台同意");
+        map.put(60, "平台驳回");
+        map.put(70, "换货完成");
+        map.put(80, "商家确认收货并退款");
+        map.put(90, "用户取消");
+        refundResultVO.setCheckStateText(map.get(tradeRights.getState()));
+
         rightsListViewVO.setRefundResultVO(refundResultVO);
 
         //填充平台处理结果

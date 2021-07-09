@@ -357,6 +357,9 @@ public abstract class TradeRightsVO implements Serializable {
         private Integer state;
 
         @ApiModelProperty("商家处理说明")
+        private String checkStateText;
+
+        @ApiModelProperty("商家处理说明")
         private String rejectReason;
     }
 
