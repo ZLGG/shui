@@ -155,7 +155,7 @@ public class PCMerchGoodsInfoController {
     public void export(@ApiIgnore HttpServletResponse response, PCMerchGoodsInfoQTO.IdListQTO qto,@ApiParam(value = "10:待上架商品导出,20:已上架商品导出",required = false)@RequestParam(value = "type",required = false)Integer type) throws Exception {
         ExportDataDTO exportData = goodsInfoRpc.export(qto);
         if(ObjectUtil.isEmpty(type)){
-            exportData.setFileName("已上架商品信息");
+            exportData.setFileName("商品信息");
         }else {
             if(type == GoodsStateEnum.未上架.getCode().intValue()){
                 exportData.setFileName("待上架商品信息");

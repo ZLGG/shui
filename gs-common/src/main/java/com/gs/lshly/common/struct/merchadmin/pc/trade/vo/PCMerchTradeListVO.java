@@ -466,6 +466,24 @@ public abstract class PCMerchTradeListVO implements Serializable {
     }
 
     @Data
+    @ApiModel("PCMerchTradeListVO.importDate")
+    @Accessors(chain = true)
+    public static class importDate implements Serializable{
+
+        @ApiModelProperty(value = "订单编号",position = 1)
+        private String tradeCode;
+
+        @ApiModelProperty(value = "物流公司",position = 2)
+        private String logisticsCompanyName;
+
+        @ApiModelProperty(value = "快递单号",position = 3)
+        private String logisticsNumber;
+
+        @ApiModelProperty(value = "发货备注",position = 4)
+        private String deliveryRemark;
+    }
+
+    @Data
     @ApiModel("PCMerchTradeListVO.hasSentTradeExport")
     @Accessors(chain = true)
     public static class hasSentTradeExport implements Serializable{
