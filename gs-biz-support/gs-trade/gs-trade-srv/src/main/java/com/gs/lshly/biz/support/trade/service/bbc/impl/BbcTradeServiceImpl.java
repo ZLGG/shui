@@ -477,6 +477,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                             for (Coupon coupon : couponList) {
                                 String couponId = coupon.getCouponId();
                                 BbcUserCouponQTO.ListByCouponIdQTO listByCouponIdQTO = new BbcUserCouponQTO.ListByCouponIdQTO();
+                                
+                                BigDecimal memberPointPrice = goodsInfoVO.getInMemberPointPrice();
+                                if(memberPointPrice.compareTo(coupon.getUseThreshold())<0)
+                                	continue;
+                                
                                 BeanCopyUtils.copyProperties(dto, listByCouponIdQTO);
                                 listByCouponIdQTO.setCouponId(couponId);
                                 List<ListVO> userCouponList = bbcInUserCouponRpc.listByCouponId(listByCouponIdQTO);

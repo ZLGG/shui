@@ -69,10 +69,18 @@ public class BbcCouponServiceImpl implements IBbcCouponService{
         		listCouponVO = new ListCouponVO();
         		String couponId = couponGoodsRelation.getCouponId();
         		Coupon coupon = couponMapper.selectById(couponId);
+        		
+        		if(!coupon.getAuditStatus().equals(1)||!coupon.getCouponStatus().equals(2))
+        			continue;
+        		
         		if(coupon!=null){
 	        		BeanCopyUtils.copyProperties(coupon, listCouponVO);
 	        		if(coupon.getCouponType().equals(1)){
-	        			listCouponVO.setUseTime("领取后"+coupon.getEffectiveDate()+"天内使用");
+	        			if(coupon.getAfterDate()==null||coupon.getAfterDate().equals(0)){
+	        				listCouponVO.setUseTime("领取后立即生效，有效天数:"+coupon.getEffectiveDate()+"天");
+	        			}else{
+	        				listCouponVO.setUseTime("领取后"+coupon.getAfterDate()+"天后生效，有效天数:"+coupon.getEffectiveDate()+"天");
+	        			}
 	        		}else{
 	        			//2021/01/01 2021/08/01
 	        			if(coupon.getStartTime()!=null&&coupon.getEndTime()!=null){
