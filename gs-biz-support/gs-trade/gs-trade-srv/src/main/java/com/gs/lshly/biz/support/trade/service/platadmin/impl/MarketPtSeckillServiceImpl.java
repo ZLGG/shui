@@ -160,8 +160,9 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
                 }
             }
         }
-
-        List<MarketPtSeckillTimeQuantum> list = marketPtSeckillTimeQuantumRepository.list();
+        QueryWrapper<MarketPtSeckillTimeQuantum> wrapper = MybatisPlusUtil.query();
+        wrapper.ne(StrUtil.isNotEmpty(eto.getId()),"id", eto.getId());
+        List<MarketPtSeckillTimeQuantum> list = marketPtSeckillTimeQuantumRepository.list(wrapper);
         //判断不同活动场次时间是否重叠
         for (int i = 0; i < eto.getSessionTime().size(); i++) {
             String seEndTime = eto.getSessionTime().get(i).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
