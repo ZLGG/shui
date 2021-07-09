@@ -81,7 +81,7 @@ public class B2IController {
 	    	remarks3.add(json);
 	    	params.put("remarks3", remarks3.toJSONString());
     	
-    		String str = HttpClientUtils.postForm("http://134.96.185.193:30009/b2i/openapi/simpleBusinessAccept/create", params, headers);
+    		String str = HttpClientUtils.postForm("http://172.20.10.138:30009/b2i/openapi/simpleBusinessAccept/create", params, headers);
     		log.info("请求B2I返回信息==>"+str);
     	} catch (Exception e) {
 			e.printStackTrace();

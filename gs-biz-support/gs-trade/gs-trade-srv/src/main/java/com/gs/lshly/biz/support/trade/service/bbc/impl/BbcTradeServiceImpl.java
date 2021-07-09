@@ -64,6 +64,7 @@ import com.gs.lshly.biz.support.trade.repository.ITradeRightsGoodsRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.bbc.IBbcTradeService;
 import com.gs.lshly.biz.support.trade.service.common.Impl.ICommonMarketCardServiceImpl;
+import com.gs.lshly.biz.support.trade.travelsky.ITravelskyOrderService;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
 import com.gs.lshly.common.ctcc.b2i.SimpleBusinessAccept;
 import com.gs.lshly.common.enums.GoodsCouponTypeEnum;
@@ -115,6 +116,7 @@ import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeGoodsDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO;
+import com.gs.lshly.common.struct.bbc.trade.dto.BbcTravelskyDTO;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradePayBuildDTO.CheckAndPointDoPayETO;
 import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
@@ -251,6 +253,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     
     @Autowired
     private RedisUtil redisUtil;
+    
+    @Autowired
+    private ITravelskyOrderService travelskyOrderService;
     
     @DubboReference
     private IBbcInUserCouponRpc bbcInUserCouponRpc;
@@ -2690,6 +2695,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             responseJson.put("result", "您的订单已支付！");
             return responseJson;
         }
+        
+        
         //修改订单状态//修改支付状态
         if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
                 tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())) {
@@ -2730,6 +2737,23 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             responseJson.put("code", 0);
             responseJson.put("result", "支付成功！");
 
+            //判断有没有信天游商品
+            QueryWrapper<TradeGoods> tradeGoodsQueryWrapper = new QueryWrapper<>();
+            tradeGoodsQueryWrapper.eq("trade_id", trade.getId());
+            List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsQueryWrapper);
+            if(CollectionUtil.isNotEmpty(tradeGoodsList)){
+            	for(TradeGoods tradeGoods:tradeGoodsList){
+            		String goodsId = tradeGoods.getGoodsId();
+            		BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
+            		Integer travelskyCode = detailVO.getThirdProductId();
+            		if(travelskyCode!=null&&travelskyCode>0){
+            			//调信天游接口
+            			BbcTravelskyDTO.ETO dto = new BbcTravelskyDTO.ETO();
+            			dto.setTradeGoodsId(tradeGoods.getId());
+            			travelskyOrderService.createOrder(dto);
+            		}
+            	}
+            }
             return responseJson;
         }
         responseJson.put("code", 1);
