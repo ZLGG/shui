@@ -59,5 +59,9 @@ public class BbcUserRpc implements IBbcUserRpc {
 		return bbcUserService.getUserType(dto);
 	}
 
+    @Override
+    public String getUserPhone(String userId) {
+        return bbcUserService.gePhoneById(userId);
+    }
 
 }

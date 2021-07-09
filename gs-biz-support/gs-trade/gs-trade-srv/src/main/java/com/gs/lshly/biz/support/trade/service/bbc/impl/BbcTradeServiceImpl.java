@@ -253,7 +253,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Autowired
     private RedisUtil redisUtil;
-    
+
     @Autowired
     private ITravelskyOrderService travelskyOrderService;
 
@@ -2672,7 +2672,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    private JSONObject paySuccessTrade(Trade trade) {
+    @Override
+    public JSONObject paySuccessTrade(Trade trade) {
         JSONObject responseJson = new JSONObject();
         if (ObjectUtils.isEmpty(trade)) {
             log.error("trade is null");
@@ -2696,8 +2697,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             responseJson.put("result", "您的订单已支付！");
             return responseJson;
         }
-        
-        
+
+
         //修改订单状态//修改支付状态
         if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
                 tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())) {
@@ -2706,6 +2707,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
             if (type == 20) {
                 trade.setTradeState(TradeStateEnum.已完成.getCode());
+                String tUserId = tradeRepository.getUserId(trade.getId());
+                String tUserPhone = bbcUserRpc.getUserPhone(tUserId);
+                trade.setRecvPhone(tUserPhone);
             } else {
                 trade.setTradeState(TradeStateEnum.待发货.getCode());
             }
@@ -2738,7 +2742,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             			String couponId = coupons[i];
             			couponIdList.add(couponId);
             		}
-            		
+
             		bbcInUserCouponRpc.modifyUserCoupon(couponIdList, trade.getUserId(), UserCouponStatusEnum.已使用.getCode());
             	}
             }
@@ -2757,7 +2761,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             		BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
             		Integer travelskyCode = detailVO.getThirdProductId();
             		if(travelskyCode!=null&&travelskyCode>0){
-            			
+
             			String userId = trade.getUserId();
             			CommonUserVO.DetailVO userDetailVO = commonUserRpc.details(userId);
             			//调信天游接口

@@ -368,4 +368,13 @@ public interface TradeMapper extends BaseMapper<Trade> {
             "and t2.id = t3.goods_id\n" +
             "and t1.id = #{tradeId}")
     Integer getExchangeType(@Param("tradeId")String tradeId);
+
+    @Select("select t2.user_id\n" +
+            "FROM gs_trade t1,\n" +
+            "gs_goods_info t2,\n" +
+            "gs_trade_goods t3\n" +
+            "WHERE t1.id = t3.trade_id\n" +
+            "and t2.id = t3.goods_id\n" +
+            "and t1.id = #{tradeId}")
+    String getUserId(@Param("tradeId")String tradeId);
 }

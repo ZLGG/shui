@@ -1,5 +1,7 @@
 package com.gs.lshly.biz.support.trade.service.bbc;
 
+import com.alibaba.fastjson.JSONObject;
+import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
 import com.gs.lshly.common.struct.BaseDTO;
@@ -11,6 +13,7 @@ import com.gs.lshly.common.struct.bbc.trade.qto.BbcTradeQTO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeResultNotifyVO;
 import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeSettlementVO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,7 +24,7 @@ public interface IBbcTradeService {
     ResponseData<BbcTradeDTO.ListIdDTO> orderSubmit(BbcTradeBuildDTO.DTO dto);
 
     ResponseData<Void> orderPay(BbcTradePayBuildDTO.ETO dto);
-    
+
     /**
      * 手机号码验证+第三方验证
      * @param dto
@@ -38,6 +41,9 @@ public interface IBbcTradeService {
     ResponseData<Void> deliveryAmount(BbcTradeBuildDTO.DTO dto);
 
     String payNotify(BbcTradeResultNotifyVO.notifyVO notifyVO);
+
+    @Transactional(rollbackFor = Exception.class)
+    JSONObject paySuccessTrade(Trade trade);
 
     String paySuccess(String tradeCode);
 
@@ -84,5 +90,5 @@ public interface IBbcTradeService {
      * @param dto
      */
     void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
-    
+
 }

@@ -47,10 +47,10 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @Autowired
     private IUserRepository repository;
-    
+
     @Autowired
     private IUserCtccPointRepository userCtccPointRepository;
-    
+
     @Autowired
     private UserIntegralMapper userIntegralMapper;
     @Autowired
@@ -58,7 +58,7 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @Autowired
     private IBbcUserCtccPointService bbcUserCtccPointService;
-    
+
     @Autowired
     private IBbcUserIntegralService iBbcUserIntegralService;
 
@@ -67,7 +67,7 @@ public class BbcUserServiceImpl implements IBbcUserService {
 
     @DubboReference
     private IBbcUserAuthRpc iBbcUserAuthRpc;
-    
+
 
     /**
      * 获取用户详情
@@ -81,17 +81,17 @@ public class BbcUserServiceImpl implements IBbcUserService {
         BbcUserVO.DetailVO detailVO = new BbcUserVO.DetailVO();
         detailVO.setCountCard(bbcTradeRpc.myMerchantCard(qto));
         BeanUtils.copyProperties(user,detailVO);
-        
+
         /**
          * 获取电信积分数据 DUBBO
          */
         BbcUserCtccPointVO.DetailVO ctccPoint = bbcUserCtccPointService.getCtccPointByUserId(qto.getJwtUserId());
-        
+
         if(ctccPoint!=null){
         	detailVO.setTelecomsIntegral(ctccPoint.getPointBalance());
         	detailVO.setTelecomsPass(ctccPoint.getYearBalance());
         }
-        
+
         detailVO.setCountCard(10);
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(qto.getJwtUserId());
@@ -167,18 +167,18 @@ public class BbcUserServiceImpl implements IBbcUserService {
 		BbcUserVO.DetailVO detailVO = new BbcUserVO.DetailVO();
 		if(null == dto.getJwtUserId())
 			return detailVO;
-        
+
         User user =  repository.getById(dto.getJwtUserId());
         if(user == null)
         	return detailVO;
-        
+
         BeanUtils.copyProperties(user,detailVO);
-        
+
         /**
          * 获取电信积分数据 DUBBO
          */
         BbcUserCtccPointVO.DetailVO ctccPoint = bbcUserCtccPointService.getCtccPointByUserId(dto.getJwtUserId());
-        
+
         if(ctccPoint!=null){
         	detailVO.setTelecomsIntegral(ctccPoint.getPointBalance());
         	detailVO.setTelecomsPass(ctccPoint.getYearBalance());
@@ -186,20 +186,20 @@ public class BbcUserServiceImpl implements IBbcUserService {
         /**
         detailVO.setCountCard(bbcTradeRpc.myMerchantCard(dto));
         detailVO.setCountCard(10);
-        
-        
+
+
         BbcTradeDTO.IdDTO idDTO = new BbcTradeDTO.IdDTO();
         idDTO.setJwtUserId(dto.getJwtUserId());
         detailVO.setTradeStateList( bbcTradeRpc.tradeStateCount(idDTO));
-        
-        
+
+
          * 商城原积分
-        
+
         BbcUserVO.UserIntegralVO integral = iBbcUserIntegralService.integral(dto);
         if (ObjectUtils.isNotEmpty(integral)){
             detailVO.setIntegral(integral.getOkIntegral());
         }
-        
+
         /**
          * 微信信息
         BbcUserVO.ThirdVO thirdVO = iBbcUserAuthRpc.innerGetWXNickName(dto.getJwtUserId());
@@ -215,13 +215,18 @@ public class BbcUserServiceImpl implements IBbcUserService {
 		BbcUserVO.UserTypeVO userTypeVO = new BbcUserVO.UserTypeVO();
 		if(null == dto.getJwtUserId())
 			return userTypeVO;
-        
+
         User user =  repository.getById(dto.getJwtUserId());
         if(user == null)
         	return userTypeVO;
-        
+
         BeanUtils.copyProperties(user,userTypeVO);
         return userTypeVO;
 	}
+
+    @Override
+    public String gePhoneById(String userId) {
+        return repository.getById(userId).getPhone();
+    }
 
 }

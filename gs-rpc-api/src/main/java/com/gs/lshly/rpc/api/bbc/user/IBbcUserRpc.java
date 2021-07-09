@@ -19,7 +19,7 @@ public interface IBbcUserRpc {
      * @return
      */
     BbcUserVO.DetailVO getUserInfo(BbcUserQTO.QTO qto);
-    
+
     /**
      * 会员信息
      * @param qto
@@ -40,11 +40,13 @@ public interface IBbcUserRpc {
     List<BbcUserVO.UserIntegralRecordVO> integralLog(BbcUserDTO.IntegralLogQTO qto);
 
     BbcUserVO.MyIntegralVO myIntegral(String userId);
-    
+
     /**
      * 无需登录，获取用户信息
      * @param dto
      * @return
      */
     BbcUserVO.DetailVO getUserInfoNoLogin(BaseDTO dto);
+
+    String getUserPhone(String userId);
 }

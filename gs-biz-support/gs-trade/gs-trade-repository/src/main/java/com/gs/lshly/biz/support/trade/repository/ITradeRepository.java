@@ -57,4 +57,6 @@ public interface ITradeRepository extends IService<Trade> {
     BbbTradeListVO.InnerGoodsScore selectGoodScore(QueryWrapper<Object> queryWrapper);
 
     Integer getExchangeType(@Param("tradeId")String tradeId);
+
+    String getUserId(@Param("tradeId")String tradeId);
 }

@@ -102,4 +102,9 @@ public class TradeRepositoryImpl extends ServiceImpl<TradeMapper, Trade> impleme
     public Integer getExchangeType(String tradeId) {
         return tradeMapper.getExchangeType(tradeId);
     }
+
+    @Override
+    public String getUserId(String tradeId) {
+        return tradeMapper.getUserId(tradeId);
+    }
 }
