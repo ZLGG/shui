@@ -72,9 +72,9 @@ public class TravelskyOrderServiceImpl implements ITravelskyOrderService {
 	public void createOrder(BbcTravelskyDTO.ETO eto) {
 		String xml = "";
 		try {
-			BbcUserVO.InnerUserInfoVO user = IBbcUserRpc.innerGetUserInfo(eto.getJwtUserId());
-			if (user == null)
-				throw new BusinessException("请求的用户不存在");
+//			BbcUserVO.InnerUserInfoVO user = IBbcUserRpc.innerGetUserInfo(eto.getJwtUserId());
+//			if (user == null)
+//				throw new BusinessException("请求的用户不存在");
 			String tradeGoodsId = eto.getTradeGoodsId();// 交易商品Id
 
 			TradeGoods tradeGoods = tradeGoodsRepository.getById(tradeGoodsId);
@@ -96,13 +96,13 @@ public class TravelskyOrderServiceImpl implements ITravelskyOrderService {
 			Integer price = StringManageUtil.multiply(payAmount, 100);
 			String timestamp = DateUtils.fomatDate(new Date(), "yyyyMMddHHmmss");
 			String message = "sid=" + sid + "&productid=" + thirdProductId + "&timestamp=" + timestamp + "&orderid="
-					+ trade.getId() + "&count=" + tradeGoods.getQuantity() + "&mobile=" + user.getPhone() + "&price="
+					+ trade.getId() + "&count=" + tradeGoods.getQuantity() + "&mobile=" + eto.getPhone() + "&price="
 					+ price + "&key=" + key;
 
 			String sign = MD5(message, "UTF-8").toLowerCase();
 			String get = url + "sid=20001" + "&productid=" + thirdProductId + "&timestamp=" + timestamp + "&orderid="
-					+ trade.getId() + "&count=" + tradeGoods.getQuantity() + "&username=" + user.getUserName()
-					+ "&mobile=" + user.getPhone() + "&price=" + price + "&sign=" + sign;
+					+ trade.getId() + "&count=" + tradeGoods.getQuantity() + "&username=" + eto.getPhone()
+					+ "&mobile=" + eto.getPhone() + "&price=" + price + "&sign=" + sign;
 
 			xml = HttpsUtil.get(get);
 

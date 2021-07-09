@@ -2747,9 +2747,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             		BbcGoodsInfoVO.DetailVO detailVO = bbcGoodsInfoRpc.detailGoodsInfo(new BbcGoodsInfoDTO.IdDTO(goodsId));
             		Integer travelskyCode = detailVO.getThirdProductId();
             		if(travelskyCode!=null&&travelskyCode>0){
+            			
+            			String userId = trade.getUserId();
+            			CommonUserVO.DetailVO userDetailVO = commonUserRpc.details(userId);
             			//调信天游接口
             			BbcTravelskyDTO.ETO dto = new BbcTravelskyDTO.ETO();
             			dto.setTradeGoodsId(tradeGoods.getId());
+            			dto.setPhone(userDetailVO.getPhone());
             			travelskyOrderService.createOrder(dto);
             		}
             	}

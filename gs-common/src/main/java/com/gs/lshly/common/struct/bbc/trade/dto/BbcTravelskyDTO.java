@@ -36,6 +36,9 @@ public abstract class BbcTravelskyDTO implements Serializable {
         @ApiModelProperty(value="交易商品id",required=true)
         private String tradeGoodsId;
         
+        @ApiModelProperty(value="用户手机号码",required=true)
+        private String phone;
+        
     }
 
 
