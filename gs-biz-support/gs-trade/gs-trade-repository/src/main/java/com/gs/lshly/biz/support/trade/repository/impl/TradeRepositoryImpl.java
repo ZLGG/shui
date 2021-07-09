@@ -97,4 +97,9 @@ public class TradeRepositoryImpl extends ServiceImpl<TradeMapper, Trade> impleme
     public BbbTradeListVO.InnerGoodsScore selectGoodScore( QueryWrapper<Object> queryWrapper) {
         return tradeMapper.selectGoodScore(queryWrapper);
     }
+
+    @Override
+    public Integer getExchangeType(String tradeId) {
+        return tradeMapper.getExchangeType(tradeId);
+    }
 }

@@ -359,5 +359,13 @@ public interface TradeMapper extends BaseMapper<Trade> {
 
     @Update("update gs_trade set recv_addres_id = #{recvAddressId}, recv_person_name = #{recvPersonName}, recv_phone = #{recvPhone}, recv_full_addres = #{recvFullAddress}, is_modify_address = 1, udate = now() where id = #{id}")
     void modifyOrderAddress(BbcTradeDTO.ModifyOrderAddressDTO dto);
-    
+
+    @Select("select t2.exchange_type\n" +
+            "FROM gs_trade t1,\n" +
+            "gs_goods_info t2,\n" +
+            "gs_trade_goods t3\n" +
+            "WHERE t1.id = t3.trade_id\n" +
+            "and t2.id = t3.goods_id\n" +
+            "and t1.id = #{tradeId}")
+    Integer getExchangeType(@Param("tradeId")String tradeId);
 }

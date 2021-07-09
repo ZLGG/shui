@@ -192,10 +192,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 public class BbcTradeServiceImpl implements IBbcTradeService {
-	
-	private final String PAYING_TRADE = "trade_paying";
-	
-	@Resource
+
+    private final String PAYING_TRADE = "trade_paying";
+
+    @Resource
     private QuartzSchedulerManager quartzSchedulerManager;
 
     private final ITradeRepository tradeRepository;
@@ -250,13 +250,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     @Autowired
     private CouponMapper couponMapper;
-    
+
     @Autowired
     private RedisUtil redisUtil;
     
     @Autowired
     private ITravelskyOrderService travelskyOrderService;
-    
+
     @DubboReference
     private IBbcInUserCouponRpc bbcInUserCouponRpc;
 
@@ -395,7 +395,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         //计算总积分，用户够不够
         BigDecimal totalPrice = BigDecimal.ZERO;//总现金值
-        BigDecimal totalPointPrice = BigDecimal.ZERO;//总积分值 
+        BigDecimal totalPointPrice = BigDecimal.ZERO;//总积分值
         BigDecimal totalInPointPrice = BigDecimal.ZERO;//总IN会员价格
 
         for (ShopSkuVO shopskuvo : shopskuList) {
@@ -482,11 +482,11 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                             for (Coupon coupon : couponList) {
                                 String couponId = coupon.getCouponId();
                                 BbcUserCouponQTO.ListByCouponIdQTO listByCouponIdQTO = new BbcUserCouponQTO.ListByCouponIdQTO();
-                                
+
                                 BigDecimal memberPointPrice = goodsInfoVO.getInMemberPointPrice();
-                                if(memberPointPrice.compareTo(coupon.getUseThreshold())<0)
-                                	continue;
-                                
+                                if (memberPointPrice.compareTo(coupon.getUseThreshold()) < 0)
+                                    continue;
+
                                 BeanCopyUtils.copyProperties(dto, listByCouponIdQTO);
                                 listByCouponIdQTO.setCouponId(couponId);
                                 List<ListVO> userCouponList = bbcInUserCouponRpc.listByCouponId(listByCouponIdQTO);
@@ -505,7 +505,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                                         listCouponVO.setDeductionType(1);
                                         listCouponVO.setId(listVO.getId());
                                         listCouponVO.setUseThreshold(coupon.getUseThreshold());
-                                        listCouponVO.setUseTime("领取后"+coupon.getEffectiveDate()+"天内使用");
+                                        listCouponVO.setUseTime("领取后" + coupon.getEffectiveDate() + "天内使用");
                                         if (defaultCouponList == null || defaultCouponList.size() == 0) {
                                             defaultCouponList.add(listCouponVO);
                                         }
@@ -898,10 +898,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         if (userInfo == null || StringUtils.isEmpty(userInfo.getId())) {
             throw new BusinessException("用户不存在！");
         }
-        
+
         //验证优惠券
         List<String> couponIds = bbcInUserCouponRpc.modifyUserCoupon(dto.getCouponIds(), dto.getJwtUserId(), UserCouponStatusEnum.使用中.getCode());
-        
+
         Integer telecomsIntegral = userInfo.getTelecomsIntegral();
 
         BigDecimal realTradePointAmount = BigDecimal.ZERO;    //实际应该付的积分值
@@ -911,28 +911,28 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         idDto.setJwtUserId(dto.getJwtUserId());
         BbcStockAddressVO.ListVO addressVO = new BbcStockAddressVO.DetailVO();
         if (!dto.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())) {
-        	Boolean flag = true;
-        	//查询是不是虚拟商品购买
-        	List<ShopData> shopList = dto.getShopData();
-        	if(shopList.size()==1){
-        		List<ProductData> prod = shopList.get(0).getProductData();
-        		if(prod.size()==1){
-        			ProductData productData = prod.get(0);
-        			//获取goodsid 判断是不是虚拟商品 
-        			String goodsId = productData.getGoodsId();
-        			BbcGoodsInfoVO.SimpleListVO goodsInfo = bbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
-        			if(goodsInfo.getExchangeType().equals(GoodsExchangeTypeEnum.虚拟.getCode())){
-        				flag = false;
-        			}
-        		}
-        	}
-        	
-        	if(flag){
-	        	//根据id查询地址
-	            addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
-	            if (ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null) {
-	                throw new BusinessException("查询不到收货地址");
-	            }
+            Boolean flag = true;
+            //查询是不是虚拟商品购买
+            List<ShopData> shopList = dto.getShopData();
+            if (shopList.size() == 1) {
+                List<ProductData> prod = shopList.get(0).getProductData();
+                if (prod.size() == 1) {
+                    ProductData productData = prod.get(0);
+                    //获取goodsid 判断是不是虚拟商品
+                    String goodsId = productData.getGoodsId();
+                    BbcGoodsInfoVO.SimpleListVO goodsInfo = bbcGoodsInfoRpc.simpleListVO(new BbcGoodsInfoDTO.IdDTO(goodsId));
+                    if (goodsInfo.getExchangeType().equals(GoodsExchangeTypeEnum.虚拟.getCode())) {
+                        flag = false;
+                    }
+                }
+            }
+
+            if (flag) {
+                //根据id查询地址
+                addressVO = bbcStockAddressRpc.detailStockAddress(idDto);
+                if (ObjectUtils.isEmpty(addressVO) || addressVO.getId() == null) {
+                    throw new BusinessException("查询不到收货地址");
+                }
             }
         }
         BigDecimal totalAmount = BigDecimal.ZERO;//总金额
@@ -1062,7 +1062,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             BeanCopyUtils.copyProperties(shopData, singtonDTO);
 
             Trade trade = saveTrade(singtonDTO, addressVO,
-                    tradeAmount, tradePointAmount, totalGoodsAmount, totalGoodsPointAmount, BigDecimal.ZERO,couponIds);
+                    tradeAmount, tradePointAmount, totalGoodsAmount, totalGoodsPointAmount, BigDecimal.ZERO, couponIds);
             try {
                 producerService.sendHttpMessage(trade.getId());
                 // HttpProducerUtil.sendMessage(trade.getId());
@@ -1091,30 +1091,31 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         /**
          * 把订单ID放到redis里面
          * PermitNode allPermitNode = (PermitNode)redisUtil.get(RbacContants.SESSION_PERMIT_PREFIX + terminal + RbacContants.ALL_PERMIT);
-        
+
          */
-        
-        if(CollectionUtil.isNotEmpty(ids)){
-        	JSONObject o = new JSONObject();
-        	if(redisUtil.get(PAYING_TRADE)!=null){
-        		String data = (String) redisUtil.get(PAYING_TRADE);
-            	o = JSONObject.parseObject(data);
+
+        if (CollectionUtil.isNotEmpty(ids)) {
+            JSONObject o = new JSONObject();
+            if (redisUtil.get(PAYING_TRADE) != null) {
+                String data = (String) redisUtil.get(PAYING_TRADE);
+                o = JSONObject.parseObject(data);
             }
-        	
-            
-        	for(String id:ids){
-        		o.put(id, DateUtils.getAfterMin(30));
-        	}
-        	redisUtil.set(PAYING_TRADE, o.toString());
+
+
+            for (String id : ids) {
+                o.put(id, DateUtils.getAfterMin(30));
+            }
+            redisUtil.set(PAYING_TRADE, o.toString());
         }
-        
-        
+
+
         return ResponseData.data(new BbcTradeDTO.ListIdDTO(ids, totalAmount, totalPointAmount));
     }
 
-    public static void main(String args[]){
-    	System.out.println(DateUtils.parseDate(DateUtils.timeFormatStr, DateUtils.getAfterMin(30)));
+    public static void main(String args[]) {
+        System.out.println(DateUtils.parseDate(DateUtils.timeFormatStr, DateUtils.getAfterMin(30)));
     }
+
     /**
      * 创建订单
      *
@@ -1125,7 +1126,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
      */
     private Trade saveTrade(BbcTradeBuildDTO.SingtonDTO dto, BbcStockAddressVO.ListVO addressVO, BigDecimal tradeAmount,
                             BigDecimal tradePointAmount, BigDecimal goodsAmount, BigDecimal goodsPointAmount,
-                            BigDecimal deliveryAmount,List<String> couponIds) {
+                            BigDecimal deliveryAmount, List<String> couponIds) {
         Trade trade = new Trade();
         trade.setUserId(dto.getJwtUserId());
         trade.setShopId(dto.getShopId());
@@ -1178,12 +1179,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
         trade.setTradeAmount(tradeAmount);
         trade.setTradePointAmount(tradePointAmount);
-        if(CollectionUtils.isNotEmpty(couponIds)){
-        	String cids = "";
-        	for(String couponId:couponIds){
-        		cids +=couponId+",";
-        	}
-        	trade.setCouponIds(cids);
+        if (CollectionUtils.isNotEmpty(couponIds)) {
+            String cids = "";
+            for (String couponId : couponIds) {
+                cids += couponId + ",";
+            }
+            trade.setCouponIds(cids);
         }
         tradeRepository.save(trade);
 
@@ -2567,100 +2568,101 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             return ResponseData.fail(responseJson.toString());
         }
         responseJson.put("result", "支付成功！");
-        
+
         //从redis里面取出数据来
         /**
          * 把订单ID放到redis里面
          */
         JSONObject o = new JSONObject();
-    	if(redisUtil.get(PAYING_TRADE)!=null){
-    		String data = (String) redisUtil.get(PAYING_TRADE);
-        	o = JSONObject.parseObject(data);
-        	for (String tradeId : tradeIds) {
-        		o.remove(tradeId);
-        	}
+        if (redisUtil.get(PAYING_TRADE) != null) {
+            String data = (String) redisUtil.get(PAYING_TRADE);
+            o = JSONObject.parseObject(data);
+            for (String tradeId : tradeIds) {
+                o.remove(tradeId);
+            }
         }
         redisUtil.set(PAYING_TRADE, o.toString());
-        
+
         return ResponseData.success(responseJson.toString());
     }
 
 
     /**
      * 1、走b2i
+     *
      * @param tradeIds
      */
     private void sendCtcc(List<String> tradeIds) {
-    	Boolean flag = true;
+        Boolean flag = true;
         if (tradeIds.size() == 1) {
             QueryWrapper<TradeGoods> tradeGoodsWrapper = new QueryWrapper<>();
             tradeGoodsWrapper.eq("trade_id", tradeIds.get(0));
             List<TradeGoods> tradeGoodsList = tradeGoodsRepository.list(tradeGoodsWrapper);
 
             if (tradeGoodsList.size() == 1) {
-            	TradeGoods tradeGoods = (TradeGoods) tradeGoodsList.get(0);
+                TradeGoods tradeGoods = (TradeGoods) tradeGoodsList.get(0);
                 String goodsId = tradeGoods.getGoodsId();
 
                 //获取商户是否走B2I;
                 BbcGoodsInfoVO.GoodsCtccApiVO goodsCtccApiVO = bbcGoodsInfoRpc.getCtccApiByGoodId(goodsId);
                 if (goodsCtccApiVO != null && goodsCtccApiVO.getCtccApi().equals(GoodsCtccApiEnum.B2I.getCode())) {
                     //走B2I
-                	String userId = tradeGoods.getUserId();
-                	CommonUserVO.DetailVO userDetail = commonUserRpc.details(userId);
-                	B2IDTO.SimpleBusinessAcceptCreateDTO simpleBusinessAcceptCreateDTO = new B2IDTO.SimpleBusinessAcceptCreateDTO();
-                	simpleBusinessAcceptCreateDTO.setCodeNumber(userDetail.getPhone());
-                	simpleBusinessAcceptCreateDTO.setLinkMan(userDetail.getRealName());
-                	simpleBusinessAcceptCreateDTO.setLinkPhone(userDetail.getPhone());
-                	simpleBusinessAcceptCreateDTO.setOutOrderSeq(tradeIds.get(0));
-                	
-                	List<B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList> disCountList = new ArrayList<B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList>();
-                	B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList disCount = new B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList();
-                	disCount.setDiscountCode(goodsCtccApiVO.getCouponCode());
-                	disCount.setDiscountName(goodsCtccApiVO.getCouponName());
-                	disCount.setDiscountType("促销");
-                	disCountList.add(disCount);
-                	simpleBusinessAcceptCreateDTO.setDisCountList(disCountList);
-                	
-                	List<B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3> remarks3 = new ArrayList<B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3>();
-                	B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3 remarks = new B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3();
-                	remarks.setDiscountCode(goodsCtccApiVO.getCouponCode());
-                	remarks.setAttrId(goodsCtccApiVO.getAttrId());
-                	remarks.setAttrValue(goodsCtccApiVO.getAttrValue());
-                	remarks3.add(remarks);
-                	simpleBusinessAcceptCreateDTO.setRemarks3(remarks3);
-                	
-                	
-                	B2IVO.SimpleBusinessAcceptCreateVO simpleBusinessAcceptCreateVO = SimpleBusinessAccept.create(simpleBusinessAcceptCreateDTO);
-                
-                	if(!simpleBusinessAcceptCreateVO.getSuccess())
-                		throw new BusinessException("调B2I接口出错！");
-                	
-                	String data = simpleBusinessAcceptCreateVO.getData();
-                	
-                	//修改订单号
-                	QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
+                    String userId = tradeGoods.getUserId();
+                    CommonUserVO.DetailVO userDetail = commonUserRpc.details(userId);
+                    B2IDTO.SimpleBusinessAcceptCreateDTO simpleBusinessAcceptCreateDTO = new B2IDTO.SimpleBusinessAcceptCreateDTO();
+                    simpleBusinessAcceptCreateDTO.setCodeNumber(userDetail.getPhone());
+                    simpleBusinessAcceptCreateDTO.setLinkMan(userDetail.getRealName());
+                    simpleBusinessAcceptCreateDTO.setLinkPhone(userDetail.getPhone());
+                    simpleBusinessAcceptCreateDTO.setOutOrderSeq(tradeIds.get(0));
+
+                    List<B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList> disCountList = new ArrayList<B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList>();
+                    B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList disCount = new B2IDTO.SimpleBusinessAcceptCreateDTO.DisCountList();
+                    disCount.setDiscountCode(goodsCtccApiVO.getCouponCode());
+                    disCount.setDiscountName(goodsCtccApiVO.getCouponName());
+                    disCount.setDiscountType("促销");
+                    disCountList.add(disCount);
+                    simpleBusinessAcceptCreateDTO.setDisCountList(disCountList);
+
+                    List<B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3> remarks3 = new ArrayList<B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3>();
+                    B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3 remarks = new B2IDTO.SimpleBusinessAcceptCreateDTO.Remarks3();
+                    remarks.setDiscountCode(goodsCtccApiVO.getCouponCode());
+                    remarks.setAttrId(goodsCtccApiVO.getAttrId());
+                    remarks.setAttrValue(goodsCtccApiVO.getAttrValue());
+                    remarks3.add(remarks);
+                    simpleBusinessAcceptCreateDTO.setRemarks3(remarks3);
+
+
+                    B2IVO.SimpleBusinessAcceptCreateVO simpleBusinessAcceptCreateVO = SimpleBusinessAccept.create(simpleBusinessAcceptCreateDTO);
+
+                    if (!simpleBusinessAcceptCreateVO.getSuccess())
+                        throw new BusinessException("调B2I接口出错！");
+
+                    String data = simpleBusinessAcceptCreateVO.getData();
+
+                    //修改订单号
+                    QueryWrapper<TradePay> tradePayWrapper = new QueryWrapper<>();
                     tradePayWrapper.eq("trade_id", tradeIds.get(0));
                     TradePay tradePay = tradePayRepository.getOne(tradePayWrapper);
                     if (ObjectUtils.isNotEmpty(tradePay)) {
-                    	tradePay.setThirdCode(data);
-                    	tradePayRepository.saveOrUpdate(tradePay);
+                        tradePay.setThirdCode(data);
+                        tradePayRepository.saveOrUpdate(tradePay);
                     }
-                    
+
                     flag = false;
                 }
             }
         }
-        if(flag){//走电信积分扣减服务
-        	for(String tradeId:tradeIds){
-        		QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
-        		tradeWrapper.eq("id", tradeIds);
-        		Trade trade = tradeRepository.getOne(tradeWrapper);
-        		
-        		String userId = trade.getUserId();
-        		
-        		BSS30DTO.PointRightsDealForKJDTO pointRightsDealForKJDTO = new BSS30DTO.PointRightsDealForKJDTO();
+        if (flag) {//走电信积分扣减服务
+            for (String tradeId : tradeIds) {
+                QueryWrapper<Trade> tradeWrapper = new QueryWrapper<>();
+                tradeWrapper.eq("id", tradeIds);
+                Trade trade = tradeRepository.getOne(tradeWrapper);
+
+                String userId = trade.getUserId();
+
+                BSS30DTO.PointRightsDealForKJDTO pointRightsDealForKJDTO = new BSS30DTO.PointRightsDealForKJDTO();
 //        		pointRightsDealForKJDTO.
-        	}
+            }
         }
     }
 
@@ -2688,7 +2690,6 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             responseJson.put("result", "没有找到对应支付订单");
             return responseJson;
         }
-
         if (trade.getTradeState().equals(TradeStateEnum.待发货.getCode()) &&
                 tradePay.getPayState().equals(TradePayStateEnum.已支付.getCode())) {
             responseJson.put("code", 1);
@@ -2701,7 +2702,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         if (trade.getTradeState().equals(TradeStateEnum.待支付.getCode()) &&
                 tradePay.getPayState().equals(TradePayStateEnum.待支付.getCode())) {
 
-            trade.setTradeState(TradeStateEnum.待发货.getCode());
+            Integer type = tradeRepository.getExchangeType(trade.getId());
+
+            if (type == 20) {
+                trade.setTradeState(TradeStateEnum.已完成.getCode());
+            } else {
+                trade.setTradeState(TradeStateEnum.待发货.getCode());
+            }
+
             trade.setPayTime(LocalDateTime.now());
             tradeRepository.saveOrUpdate(trade);
             tradePay.setPayState(TradePayStateEnum.已支付.getCode());
@@ -2719,7 +2727,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //                }
 //            }
 //            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
-            
+
             //扣减优惠券
             String couponIds = trade.getCouponIds();
             List<String> couponIdList = new ArrayList<String>();
@@ -2734,6 +2742,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             		bbcInUserCouponRpc.modifyUserCoupon(couponIdList, trade.getUserId(), UserCouponStatusEnum.已使用.getCode());
             	}
             }
+
+
             responseJson.put("code", 0);
             responseJson.put("result", "支付成功！");
 
@@ -2828,5 +2838,5 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         return responseJson.toString();
     }
 
-    
+
 }
