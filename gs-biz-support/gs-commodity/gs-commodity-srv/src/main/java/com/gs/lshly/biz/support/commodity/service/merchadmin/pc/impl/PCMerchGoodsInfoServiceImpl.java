@@ -1334,14 +1334,21 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
 
     @Override
     public List<PCMerchGoodsInfoVO.ExcelGoodsDataVO> exportGoodsData(PCMerchGoodsInfoQTO.IdListQTO qto) {
-        if (qto == null || qto.getIdList() == null || qto.getIdList().size() == 0) {
-            throw new BusinessException("参数不能为空！");
-        }
+
         List<PCMerchGoodsInfoVO.ExcelGoodsDataVO> excelGoodsDataVOS = new ArrayList<>();
 
-        List<GoodsInfo> goodsInfos = repository.listByIds(qto.getIdList());
+        List<GoodsInfo> goodsInfos;
+        if (qto == null || qto.getIdList() == null || qto.getIdList().size() == 0) {
+            QueryWrapper<GoodsInfo> queryWrapper = MybatisPlusUtil.query();
+            queryWrapper.eq("flag",0);
+            queryWrapper.eq("shop_id",qto.getJwtShopId());
+            goodsInfos = repository.list(queryWrapper);
+        }else {
+            goodsInfos = repository.listByIds(qto.getIdList());
+        }
+
         if (goodsInfos == null || goodsInfos.size() == 0) {
-            throw new BusinessException("查询异常！");
+            throw new BusinessException("无相应订单！");
         }
 
         for (GoodsInfo goodsInfo : goodsInfos) {

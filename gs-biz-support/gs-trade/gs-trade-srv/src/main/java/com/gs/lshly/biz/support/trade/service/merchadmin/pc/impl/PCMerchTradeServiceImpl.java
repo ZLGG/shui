@@ -1028,10 +1028,16 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     @Override
     public List<PCMerchTradeListVO.hasSentTradeExport> hasSentExport(PCMerchTradeQTO.IdListQTO qo) {
+        List<Trade> trades;
         if (ObjectUtils.isEmpty(qo.getIdList())){
-            throw new BusinessException("请传入ID");
+            QueryWrapper<Trade> queryWrapper = MybatisPlusUtil.query();
+            queryWrapper.eq("shop_id",qo.getJwtShopId());
+            queryWrapper.eq("flag",0);
+            trades = tradeRepository.list(queryWrapper);
+        }else {
+            trades = tradeRepository.listByIds(qo.getIdList());
         }
-        List<Trade> trades = tradeRepository.listByIds(qo.getIdList());
+
         if (ObjectUtils.isNotEmpty(trades)) {
             List<PCMerchTradeListVO.hasSentTradeExport> list = trades.parallelStream()
                     .map(e -> {

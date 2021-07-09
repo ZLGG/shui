@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.rpc.merchadmin.pc;
 
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.ExportDataDTO;
@@ -17,12 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
- *
  * @author oy
  * @since 2020-11-16
  */
 @DubboService
-public class PCMerchTradeRpc implements IPCMerchTradeRpc{
+public class PCMerchTradeRpc implements IPCMerchTradeRpc {
     @Autowired
     private IPCMerchTradeService pCMerchTradeService;
 
@@ -33,8 +33,8 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc{
     }
 
     @Override
-    public PCMerchTradeListVO.tradeVO detail(PCMerchTradeDTO.IdDTO dto){
-        return  pCMerchTradeService.detail(dto);
+    public PCMerchTradeListVO.tradeVO detail(PCMerchTradeDTO.IdDTO dto) {
+        return pCMerchTradeService.detail(dto);
     }
 
     @Override
@@ -54,21 +54,21 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc{
     }
 
     @Override
-    public TradeVO.PayDatelistVO payDateList(TradeDTO.PayDateList dto){
-        return  pCMerchTradeService.payDateList(dto);
+    public TradeVO.PayDatelistVO payDateList(TradeDTO.PayDateList dto) {
+        return pCMerchTradeService.payDateList(dto);
     }
 
     @Override
-    public TradeVO.OperationlistVO operationList(TradeDTO.OperationList dto){
-        return  pCMerchTradeService.operationList(dto);
+    public TradeVO.OperationlistVO operationList(TradeDTO.OperationList dto) {
+        return pCMerchTradeService.operationList(dto);
     }
 
     @Override
     public ExportDataDTO export(PCMerchTradeQTO.IdListQTO qo) throws Exception {
-        if(qo.getType().intValue() == 1){
-            return ExcelUtil.treatmentBean(pCMerchTradeService.export(qo),PCMerchTradeListVO.waitSendTradeExport.class);
+        if (ObjectUtils.isNotEmpty(qo.getType()) && qo.getType().intValue() == 1) {
+            return ExcelUtil.treatmentBean(pCMerchTradeService.export(qo), PCMerchTradeListVO.waitSendTradeExport.class);
         }
-        return  ExcelUtil.treatmentBean(pCMerchTradeService.hasSentExport(qo),PCMerchTradeListVO.hasSentTradeExport.class);
+        return ExcelUtil.treatmentBean(pCMerchTradeService.hasSentExport(qo), PCMerchTradeListVO.hasSentTradeExport.class);
     }
 
 }

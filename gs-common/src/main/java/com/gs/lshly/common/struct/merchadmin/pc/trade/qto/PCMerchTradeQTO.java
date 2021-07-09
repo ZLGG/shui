@@ -1,6 +1,7 @@
 package com.gs.lshly.common.struct.merchadmin.pc.trade.qto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.BaseQTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -135,7 +136,7 @@ public abstract class PCMerchTradeQTO implements Serializable {
     }
     @Data
     @ApiModel("PCMerchTradeDTO.IdListQTO")
-    public static class IdListQTO implements Serializable{
+    public static class IdListQTO extends BaseDTO {
 
         @ApiModelProperty("订单ID列表")
         private List<String> idList;
