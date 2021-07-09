@@ -85,8 +85,8 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     @Autowired
     private IUserThirdLoginRepository thirdLoginRepository;
 
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
 
     @Autowired
     private RedisUtil redisUtil;
