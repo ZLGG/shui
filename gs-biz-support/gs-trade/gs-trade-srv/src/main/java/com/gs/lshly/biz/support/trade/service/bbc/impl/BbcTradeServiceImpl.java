@@ -2731,7 +2731,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             			couponIdList.add(couponId);
             		}
             		
-            		bbcInUserCouponRpc.modifyUserCoupon(couponIdList, trade.getUserId(), UserCouponStatusEnum.已过期.getCode());
+            		bbcInUserCouponRpc.modifyUserCoupon(couponIdList, trade.getUserId(), UserCouponStatusEnum.已使用.getCode());
             	}
             }
             responseJson.put("code", 0);
