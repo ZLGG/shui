@@ -4,6 +4,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcInUserCouponDTO.CreateDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO.DetailVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 
 import java.util.List;
@@ -72,4 +73,6 @@ public interface IBbcInUserCouponService {
      * @param status
      */
     List<String> modifyUserCoupon(List<String> couponIds, String userId, Integer status) ;
+    
+    DetailVO detailCoupon(String couponId);
 }

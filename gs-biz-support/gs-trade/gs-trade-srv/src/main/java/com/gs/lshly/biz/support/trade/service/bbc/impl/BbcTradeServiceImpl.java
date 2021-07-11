@@ -134,6 +134,7 @@ import com.gs.lshly.common.struct.bbc.user.qto.BbcUserQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.ShopSkuVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserShoppingCarVO.SkuQuantityVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
 import com.gs.lshly.common.struct.common.CommonStockDTO;
@@ -479,7 +480,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                         if (CollectionUtil.isNotEmpty(couponList)) {//有优惠劵
                             //判断用户有没有对应的这个优惠劵
                             for (Coupon coupon : couponList) {
-                                String couponId = coupon.getCouponId();
+                                String couponId = coupon.getCouponId();//优惠券ID
                                 BbcUserCouponQTO.ListByCouponIdQTO listByCouponIdQTO = new BbcUserCouponQTO.ListByCouponIdQTO();
 
                                 BigDecimal memberPointPrice = goodsInfoVO.getInMemberPointPrice();
@@ -497,13 +498,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                                         listCouponVO = new ListCouponVO();
 
                                         //BeanCopyUtils.copyProperties(coupon, listCouponVO);
-                                        listCouponVO.setCouponName(coupon.getCouponName());
-                                        listCouponVO.setCouponType(coupon.getCouponType());
+                                        listCouponVO.setCouponName(listVO.getCouponName());
+                                        listCouponVO.setCouponType(listVO.getCouponType());
                                         listCouponVO.setCouponTypeText(GoodsCouponTypeEnum.getRemarkByCode(coupon.getCouponType()));
-                                        listCouponVO.setDeduction(coupon.getDeductionAmount());
+                                        listCouponVO.setDeduction(listVO.getCouponPrice());
                                         listCouponVO.setDeductionType(1);
                                         listCouponVO.setId(listVO.getId());
-                                        listCouponVO.setUseThreshold(coupon.getUseThreshold());
+                                        listCouponVO.setUseThreshold(listVO.getMinPrice());
                                         listCouponVO.setUseTime("领取后" + coupon.getEffectiveDate() + "天内使用");
                                         if (defaultCouponList == null || defaultCouponList.size() == 0) {
                                             defaultCouponList.add(listCouponVO);
@@ -1113,6 +1114,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
     public static void main(String args[]) {
         System.out.println(DateUtils.parseDate(DateUtils.timeFormatStr, DateUtils.getAfterMin(30)));
+        System.out.println(AESUtil.aesEncrypt("ZZqMst7uTJBq4k4f9v5qBw=="));
     }
 
     /**
@@ -1174,17 +1176,22 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         trade.setPayablePointAmount(goodsPointAmount);
 
         trade.setDiscountAmount(BigDecimal.ZERO);
-        trade.setDiscountPointAmount(BigDecimal.ZERO);
+        //优惠积分价格
+        BigDecimal discountPointAmount = BigDecimal.ZERO;
+        
 
-        trade.setTradeAmount(tradeAmount);
+        trade.setTradeAmount(BigDecimal.ZERO);
         trade.setTradePointAmount(tradePointAmount);
         if (CollectionUtils.isNotEmpty(couponIds)) {
             String cids = "";
             for (String couponId : couponIds) {
+            	BbcInUserCouponVO.DetailVO coupon = bbcInUserCouponRpc.detailCoupon(couponId);
+            	discountPointAmount = discountPointAmount.add(coupon.getCouponPrice());
                 cids += couponId + ",";
             }
             trade.setCouponIds(cids);
         }
+        trade.setDiscountPointAmount(discountPointAmount);
         tradeRepository.save(trade);
 
         return trade;
@@ -2706,8 +2713,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
             if (type == 20) {
                 trade.setTradeState(TradeStateEnum.已完成.getCode());
-                String tUserId = tradeRepository.getUserId(trade.getId());
-                String tUserPhone = AESUtil.aesEncrypt(bbcUserRpc.getUserPhone(tUserId));
+                String tUserPhone = commonUserRpc.details(trade.getUserId()).getPhone();
+                log.info("phone==1===>"+tUserPhone);
+                tUserPhone = AESUtil.aesDecrypt(tUserPhone);
+                log.info("phone==2===>"+tUserPhone);
                 trade.setRecvPhone(tUserPhone);
             } else {
                 trade.setTradeState(TradeStateEnum.待发货.getCode());
@@ -2840,6 +2849,5 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         responseJson.put("result", TradePayResultStateEnum.FAILED.getRemark());
         return responseJson.toString();
     }
-
 
 }

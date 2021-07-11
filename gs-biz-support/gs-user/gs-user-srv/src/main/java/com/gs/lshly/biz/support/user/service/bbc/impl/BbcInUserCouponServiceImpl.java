@@ -33,6 +33,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BbcInUserCouponDTO.CreateDTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcInUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.qto.BbcUserCouponQTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO;
+import com.gs.lshly.common.struct.bbc.user.vo.BbcInUserCouponVO.DetailVO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserCouponVO.ListVO;
 import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.BeanUtils;
@@ -376,5 +377,14 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
 			}
 		}
 		return retList;
+	}
+
+	@Override
+	public DetailVO detailCoupon(String couponId) {
+		UserCoupon userCoupon = couponRepository.getById(couponId);
+		DetailVO detailVO = new DetailVO();
+		if(userCoupon!=null)
+			BeanCopyUtils.copyProperties(userCoupon, detailVO);
+		return detailVO;
 	}
 }

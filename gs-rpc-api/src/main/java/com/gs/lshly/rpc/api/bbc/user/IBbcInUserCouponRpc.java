@@ -57,4 +57,7 @@ public interface IBbcInUserCouponRpc {
      * @param userId
      */
     List<String> modifyUserCoupon(List<String> couponIds,String userId,Integer status);
+    
+    
+    BbcInUserCouponVO.DetailVO detailCoupon(String couponId);
 }
