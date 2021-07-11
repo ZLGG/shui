@@ -349,7 +349,7 @@ public interface TradeMapper extends BaseMapper<Trade> {
 
     /**
      * 计算总计要付的钱
-     * @param qw
+     * @param
      * @return
      */
     @Select("select IFNULL(sum(trade_point_amount), 0) tradePointAmount \n" +
@@ -369,7 +369,7 @@ public interface TradeMapper extends BaseMapper<Trade> {
             "and t1.id = #{tradeId}")
     Integer getExchangeType(@Param("tradeId")String tradeId);
 
-    @Select("select t2.user_id\n" +
+    @Select("select t1.user_id\n" +
             "FROM gs_trade t1,\n" +
             "gs_goods_info t2,\n" +
             "gs_trade_goods t3\n" +

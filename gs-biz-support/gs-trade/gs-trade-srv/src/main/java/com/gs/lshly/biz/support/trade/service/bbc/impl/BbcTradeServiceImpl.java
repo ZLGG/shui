@@ -17,6 +17,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.gs.lshly.common.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -142,10 +143,6 @@ import com.gs.lshly.common.struct.ctcc.dto.B2IDTO;
 import com.gs.lshly.common.struct.ctcc.dto.BSS30DTO;
 import com.gs.lshly.common.struct.ctcc.vo.B2IVO;
 import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
-import com.gs.lshly.common.utils.Base64;
-import com.gs.lshly.common.utils.BeanCopyUtils;
-import com.gs.lshly.common.utils.DateUtils;
-import com.gs.lshly.common.utils.IpUtil;
 import com.gs.lshly.middleware.mq.aliyun.producerService.ProducerService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
@@ -2708,7 +2705,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             if (type == 20) {
                 trade.setTradeState(TradeStateEnum.已完成.getCode());
                 String tUserId = tradeRepository.getUserId(trade.getId());
-                String tUserPhone = bbcUserRpc.getUserPhone(tUserId);
+                String tUserPhone = AESUtil.aesEncrypt(bbcUserRpc.getUserPhone(tUserId));
                 trade.setRecvPhone(tUserPhone);
             } else {
                 trade.setTradeState(TradeStateEnum.待发货.getCode());
@@ -2729,7 +2726,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 //                        log.info("支付成功使用旧的自提码模版发送自提码：{}",trade.getTakeGoodsCode());
 //                    }
 //                }
-//            }
+//            }已经关联了类目不可以直接删除
 //            commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
 
             //扣减优惠券

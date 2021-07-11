@@ -70,6 +70,8 @@ public class GoodsCategoryRpc implements IGoodsCategoryRpc {
 
     @Override
     public void deleteCategory(GoodsCategoryDTO.IdDTO dto) {
+        categoryService.bindAttribute(null, dto);
+        categoryService.bindSpec(null,dto);
         categoryService.deleteCategory(dto);
     }
 
