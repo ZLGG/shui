@@ -678,6 +678,8 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
                 goodsListVO.setLabelVOS(getGoodsLabelVO(info.getId()));
                 goodsListVO.setGoodsImage(ObjectUtils.isEmpty(getImage(info.getGoodsImage())) ? "" : getImage(info.getGoodsImage()));
                 goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(info.getId()));
+                Integer saleQuantity = tradeRpc.getSaleQuantity(info.getId());
+                goodsListVO.setSaleQuantity(saleQuantity);
                 goodsListVOS.add(goodsListVO);
             }
         }
@@ -1150,6 +1152,10 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
 
                 //获取标签
                 goodsListVO.setTags(bbcGoodsLabelService.listGoodsLabelByGoodsId(e.getId()));
+               
+                Integer saleQuantity = tradeRpc.getSaleQuantity(e.getId());
+                goodsListVO.setSaleQuantity(saleQuantity);
+                
                 goodsIds.add(e.getId());
                 goodsListVOS.add(goodsListVO);
             }
