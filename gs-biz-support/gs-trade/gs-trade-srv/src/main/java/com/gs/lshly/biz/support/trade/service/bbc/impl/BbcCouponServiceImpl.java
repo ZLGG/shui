@@ -70,7 +70,7 @@ public class BbcCouponServiceImpl implements IBbcCouponService{
         		String couponId = couponGoodsRelation.getCouponId();
         		Coupon coupon = couponMapper.selectById(couponId);
         		
-        		if(!coupon.getAuditStatus().equals(1)||!coupon.getCouponStatus().equals(2))
+        		if(!coupon.getAuditStatus().equals(1)||coupon.getCouponStatus().equals(2))
         			continue;
         		
         		if(coupon!=null){

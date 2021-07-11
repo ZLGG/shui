@@ -471,8 +471,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                     if (isInUser.equals(1)) {    //是IN会员用IN会员价格
 
                         List<ListCouponVO> optionalCouponList = new ArrayList<ListCouponVO>();
+                        //默认优惠券
                         List<ListCouponVO> defaultCouponList = new ArrayList<ListCouponVO>();
-
+                        
+                        //跟据商品选优惠券
                         List<Coupon> couponList = couponMapper.listByGoodsId(goodsInfoVO.getGoodsId());
                         if (CollectionUtil.isNotEmpty(couponList)) {//有优惠劵
                             //判断用户有没有对应的这个优惠劵
