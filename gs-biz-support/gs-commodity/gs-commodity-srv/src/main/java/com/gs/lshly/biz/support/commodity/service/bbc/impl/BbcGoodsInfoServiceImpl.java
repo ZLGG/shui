@@ -699,15 +699,28 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         return new PageData<>(goodsListVOS, qto.getPageNum(), qto.getPageSize(), pageData.getTotal());
     }
 
+    
+//    private BbcSkuGoodInfoVO.SkuVO getSkuVOById(BbcGoodsInfoQTO.GoodsSkuQTO qto){
+//    	String skuId = qto.getGoodsSkuId();
+//    	SkuGoodInfo skuGoodInfo = skuGoodInfoRepository.getById(skuId);
+//    	BbcSkuGoodInfoVO.SkuVO skuVO = new BbcSkuGoodInfoVO.SkuVO();
+//        
+//    }
+    
     @Override
     public BbcSkuGoodInfoVO.SkuVO getSkuVO(BbcGoodsInfoQTO.GoodsSkuQTO qto) {
     	
     	//判断当前商品是否参于正在进行的活动中
-    	
-    	
         if (StringUtils.isEmpty(qto.getGoodsId())) {
             throw new BusinessException("参数不能为空！");
         }
+        
+//        if(StringUtils.isNotEmpty(qto.getGoodsId())&&
+//        		StringUtils.isNotEmpty(qto.getGoodsSkuId())&&
+//        		qto.getQuantity()!=null){
+//        	return this.getSkuVO(qto);
+//        }
+//        
         QueryWrapper<SkuGoodInfo> boost = MybatisPlusUtil.query();
         boost.eq("good_id", qto.getGoodsId());
         List<SkuGoodInfo> skuGoodInfos = skuGoodInfoRepository.list(boost);
