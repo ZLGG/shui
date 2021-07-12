@@ -153,6 +153,7 @@ public class PCMerchGoodsInfoController {
     @ApiOperation("导出商品相关数据到Excel表格")
     @GetMapping(value = "/exportData")
     public void export(@ApiIgnore HttpServletResponse response, PCMerchGoodsInfoQTO.IdListQTO qto,@ApiParam(value = "10:待上架商品导出,20:已上架商品导出",required = false)@RequestParam(value = "type",required = false)Integer type) throws Exception {
+        qto.setType(type);
         ExportDataDTO exportData = goodsInfoRpc.export(qto);
         if(ObjectUtil.isEmpty(type)){
             exportData.setFileName("商品信息");

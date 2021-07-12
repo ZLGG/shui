@@ -87,6 +87,7 @@ public abstract class PCMerchGoodsInfoQTO implements Serializable {
         @ApiModelProperty("商品id列表")
         private List<String> idList;
 
+        private Integer type;
     }
 
 

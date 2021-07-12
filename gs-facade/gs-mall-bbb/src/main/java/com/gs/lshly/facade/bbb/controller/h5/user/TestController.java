@@ -16,7 +16,7 @@ import java.util.Map;
  * @Date 2021/7/12
  */
 @RestController
-@RequestMapping("test")
+@RequestMapping("/test")
 @Api(tags = "短信测试")
 public class TestController {
 

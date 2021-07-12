@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.platadmin.stock.IStockLogisticsCorpRpc;
@@ -125,8 +127,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public PageData<PCMerchTradeListVO.tradeVO> tradeListPageData(PCMerchTradeQTO.TradeList qto) {
         QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
         wrapper.and(i -> i.eq("t.`shop_id`", qto.getJwtShopId()));
-        if (ObjectUtils.isNotEmpty(qto.getCreateTime())) {
-            wrapper.and(i -> i.eq("", qto.getCreateTime()));
+        if (ObjectUtils.isNotEmpty(qto.getOrderStartTime()) && ObjectUtils.isNotEmpty(qto.getOrderEndTime())) {
+            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(), qto.getOrderEndTime()));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
             wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
@@ -153,8 +155,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 wrapper.and(i -> i.eq("t.`user_id`", userDetailVO.getId()));
             }
         }
-        if (StringUtils.isNotBlank(qto.getKeywords())) {
-            wrapper.and(i -> i.like("t.`trade_code`", qto.getKeywords()));
+        if (StringUtils.isNotBlank(qto.getGoodsName())) {
+            wrapper.and(i -> i.like("t3.`goods_name`", qto.getGoodsName()));
         }
         wrapper.orderByDesc("t.cdate");
 
@@ -1084,13 +1086,13 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
     @Override
-    public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(MultipartFile file, BaseDTO dto){
+    public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file){
 
         PCMerchTradeVO.ExcelReturnVO excelReturnVO = new PCMerchTradeVO.ExcelReturnVO();
         List<PCMerchTradeVO.ErrorMsgVO> errorMsgVOS = new ArrayList<>();
         PCMerchTradeVO.ErrorMsgVO errorMsgVO;
         try{
-            InputStream is = file.getInputStream();
+            InputStream is = new ByteArrayInputStream(file);
             Workbook wb = new XSSFWorkbook(is);
             Sheet sheet = wb.getSheetAt(0);
 
@@ -1153,7 +1155,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 }
 
                 String logisticsNumber = row.getCell(2).getStringCellValue();
-                if (ObjectUtils.isEmpty(logisticsCompanyName)) {
+                if (StringUtils.isBlank(logisticsCompanyName)) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
                     errorMsgVO.setMsg("第"+row.getRowNum()+"行:快递单号为空");
                     errorMsgVOS.add(errorMsgVO);
@@ -1189,8 +1191,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         tradeDelivery.setLogisticsNumber(logisticsNumber);
                         tradeDelivery.setUserId(trade.getUserId());
                         tradeDelivery.setShopId(trade.getShopId());
-                        tradeDelivery.setOperatorId(dto.getJwtUserId());
-                        tradeDelivery.setOperatorName(dto.getJwtUserName());
+                        //tradeDelivery.setOperatorId(dto.getJwtUserId());
+                        //tradeDelivery.setOperatorName(dto.getJwtUserName());
                         tradeDelivery.setDeliveryTime(LocalDateTime.now());
                         tradeDeliveryRepository.save(tradeDelivery);
                     }
@@ -1219,6 +1221,18 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             return excelReturnVO;
         }
 
+    }
+
+    @Override
+    public List<PCMerchTradeVO.DownExcelModelVO> downExcelModel() {
+        List<PCMerchTradeVO.DownExcelModelVO> list = new ArrayList<>();
+        PCMerchTradeVO.DownExcelModelVO modelVO = new PCMerchTradeVO.DownExcelModelVO();
+        modelVO.setTradeCode("订单编号");
+        modelVO.setLogisticsCompanyName("物流公司");
+        modelVO.setLogisticsNumber("快递单号");
+        modelVO.setDeliveryRemark("发货备注");
+        list.add(modelVO);
+        return list;
     }
 
 

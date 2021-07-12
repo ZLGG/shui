@@ -226,7 +226,7 @@ public class ContactSMSServiceImpl implements IContactSMSService {
      * @author yushaoqi
      * @date 2021/7/9
      */
-    public static HashMap<String, String> sendShortMessage(HashMap<String, String> params) {
+    public HashMap<String, String> sendShortMessage(HashMap<String, String> params) {
         SimpleDateFormat transactionsdf = new SimpleDateFormat("yyyyMMddHHmmss");
         SimpleDateFormat requestTimesdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         String transactionFormat = transactionsdf.format(new Date());
@@ -271,7 +271,7 @@ public class ContactSMSServiceImpl implements IContactSMSService {
      * @author yushaoqi
      * @date 2021/7/9
      */
-    public static String CyclicSequence(int Number) {
+    public String CyclicSequence(int Number) {
         Random random = new Random();
         String result = "";
         for (int i = 0; i < Number; i++) {
@@ -293,8 +293,4 @@ public class ContactSMSServiceImpl implements IContactSMSService {
         String replace = s.replace(",", "&comma;");
         return replace;
     }
-
-    public static void main(String[] args) {
-    }
-
 }

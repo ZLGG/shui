@@ -51,9 +51,14 @@ public interface TradeMapper extends BaseMapper<Trade> {
             "WHERE t.`flag`=0  AND ${ew.sqlSegment}")
     List<BbcTradeListVO.stateCountVO> selectTradeStateCount(@Param(Constants.WRAPPER) QueryWrapper<BbcTradeQTO> qw);
 
-    @Select("SELECT t.* " +
-            "FROM `gs_trade` t " +
-            "WHERE t.`flag`=0 AND ${ew.sqlSegment}")
+    @Select("select t.*" +
+            "from gs_trade t," +
+            "gs_trade_goods t2," +
+            "gs_goods_info t3 " +
+            "WHERE t.`id` = t2.trade_id " +
+            "and t3.id = t2.goods_id " +
+            "and t.`flag`=0 " +
+            "AND ${ew.sqlSegment}")
     IPage<PCMerchTradeListVO.tradeVO> selectPCMerchTradePage(IPage<PCMerchTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeQTO.TradeList> qw);
 
     @Select("SELECT t.*,tg.`id` trade_goods_id,tg.`pay_amount` " +

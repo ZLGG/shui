@@ -1342,6 +1342,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             QueryWrapper<GoodsInfo> queryWrapper = MybatisPlusUtil.query();
             queryWrapper.eq("flag",0);
             queryWrapper.eq("shop_id",qto.getJwtShopId());
+            if(ObjectUtils.isNotEmpty(qto.getType())){
+                queryWrapper.eq("goods_state",qto.getType());
+            }
             goodsInfos = repository.list(queryWrapper);
         }else {
             goodsInfos = repository.listByIds(qto.getIdList());
