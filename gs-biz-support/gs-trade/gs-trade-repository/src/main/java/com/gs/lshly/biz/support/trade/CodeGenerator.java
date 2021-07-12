@@ -55,18 +55,18 @@ public class CodeGenerator {
         // 包配置
         packageConfig.setModuleName("");
         packageConfig.setParent("com.gs.lshly");
-        packageConfig.setEntity("biz.support.trade.entity");
-        packageConfig.setMapper("biz.support.trade.mapper");
-        packageConfig.setService("biz.support.trade.repository");
-        packageConfig.setServiceImpl("biz.support.trade.repository.impl");
+        packageConfig.setEntity("biz.support.stock.entity");
+        packageConfig.setMapper("biz.support.stock.mapper");
+        packageConfig.setService("biz.support.stock.repository");
+        packageConfig.setServiceImpl("biz.support.stock.repository.impl");
         //packageConfig.setController("facade.trade.controller.trade");
 
         //路径G
-        globalConfig.setOutputDir("C:/works/program/citydo/gs-mall-new/gs-biz-support/gs-trade/gs-trade-repository/src/main/java");
+        globalConfig.setOutputDir("/Users/chenyang/citydo/gs-mall/gs-biz-support/gs-stock/gs-stock-respository/src/main/java");
         //表名
-        strategy.setInclude("gs_market_pt_seckill_goods_category","gs_market_pt_seckill_goods_sku");
+        strategy.setInclude("gs_template_region");
         // 作者
-        globalConfig.setAuthor("yingjun");
+        globalConfig.setAuthor("chenyang");
 
         autoGenerator.setGlobalConfig(globalConfig);
         autoGenerator.setDataSource(dataSourceConfig);

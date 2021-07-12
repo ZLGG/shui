@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.common.utils.HuToolExcelUtil;
@@ -74,13 +75,20 @@ public class PCMerchTradeController {
 
     @ApiOperation("从Excel表格导入发货信息")
     @PostMapping(value = "/importData")
-    public ResponseData<PCMerchTradeVO.ExcelReturnVO> importData(@RequestParam MultipartFile file, BaseDTO dto) {
+    public ResponseData<PCMerchTradeVO.ExcelReturnVO> importData(@RequestParam("file") MultipartFile file)throws Exception {
         //List<PCMerchTradeListVO.importDate> dataVOS = HuToolExcelUtil.importData(PCMerchTradeListVO.importDate.class,file);
-        return ResponseData.data(pcMerchTradeRpc.updateDeliveryInfoBatch(file,dto));
+        byte[] excel = file.getBytes();
+        return ResponseData.data(pcMerchTradeRpc.updateDeliveryInfoBatch(excel));
     }
 
-
-
-
+    @ApiOperation("下载导入模版")
+    @GetMapping(value = "/downExcelModel")
+    public void downExcelModel(@ApiIgnore HttpServletResponse response)throws Exception {
+        PCMerchTradeQTO.IdListQTO qo = new PCMerchTradeQTO.IdListQTO();
+        qo.setType(1);
+        ExportDataDTO exportData = pcMerchTradeRpc.downExcelModel(qo);
+        exportData.setFileName("发货模版");
+        ExcelUtil.export(exportData, response);
+    }
 
 }

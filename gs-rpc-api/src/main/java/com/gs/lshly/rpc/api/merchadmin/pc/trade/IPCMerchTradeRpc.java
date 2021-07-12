@@ -2,6 +2,7 @@ package com.gs.lshly.rpc.api.merchadmin.pc.trade;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
@@ -39,8 +40,8 @@ public interface IPCMerchTradeRpc {
 
     ExportDataDTO export(PCMerchTradeQTO.IdListQTO qo) throws Exception ;
 
-    PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(MultipartFile file, BaseDTO dto);
+    PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
 
-
+    ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception;
 
 }

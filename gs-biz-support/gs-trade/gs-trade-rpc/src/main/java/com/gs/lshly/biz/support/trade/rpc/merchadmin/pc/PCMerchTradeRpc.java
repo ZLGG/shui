@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.BaseQTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsInfoVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
@@ -75,8 +77,13 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc {
     }
 
     @Override
-    public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(MultipartFile file, BaseDTO dto) {
-       return pCMerchTradeService.updateDeliveryInfoBatch(file,dto);
+    public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file) {
+       return pCMerchTradeService.updateDeliveryInfoBatch(file);
+    }
+
+    @Override
+    public ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception {
+        return ExcelUtil.treatmentBean(pCMerchTradeService.downExcelModel(), PCMerchTradeVO.DownExcelModelVO.class);
     }
 
 }

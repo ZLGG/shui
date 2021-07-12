@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
@@ -33,7 +34,7 @@ public interface IPCMerchTradeService {
 
     List<PCMerchTradeListVO.hasSentTradeExport> hasSentExport(PCMerchTradeQTO.IdListQTO qo);
 
-    PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(MultipartFile file, BaseDTO dto);
+    PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
 
-
+    List<PCMerchTradeVO.DownExcelModelVO> downExcelModel();
 }
