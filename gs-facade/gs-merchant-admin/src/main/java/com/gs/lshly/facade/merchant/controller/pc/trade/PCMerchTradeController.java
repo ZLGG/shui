@@ -46,7 +46,7 @@ public class PCMerchTradeController {
 
     @ApiOperation("交易订单表列表")
     @GetMapping("/list")
-    public ResponseData<PageData<PCMerchTradeListVO.tradeVO>> list(PCMerchTradeQTO.TradeList qto) {
+    public ResponseData<PageData<PCMerchTradeListVO.tradeVO>> list(@RequestParam(name = "TradeListQto") PCMerchTradeQTO.TradeList qto) {
         return ResponseData.data(pcMerchTradeRpc.tradeListPageData(qto));
     }
 

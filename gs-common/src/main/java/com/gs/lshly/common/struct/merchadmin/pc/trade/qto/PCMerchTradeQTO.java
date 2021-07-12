@@ -128,9 +128,18 @@ public abstract class PCMerchTradeQTO implements Serializable {
 
         @ApiModelProperty("配送类型")
         private Integer deliveryType;
-        
+
         @ApiModelProperty("关键字")
         private String keywords;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("下单开始时间")
+        private String orderStartTime;
+
+        @ApiModelProperty("下单结束时间")
+        private String orderEndTime;
 
     }
     @Data

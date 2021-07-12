@@ -125,8 +125,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public PageData<PCMerchTradeListVO.tradeVO> tradeListPageData(PCMerchTradeQTO.TradeList qto) {
         QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
         wrapper.and(i -> i.eq("t.`shop_id`", qto.getJwtShopId()));
-        if (ObjectUtils.isNotEmpty(qto.getCreateTime())) {
-            wrapper.and(i -> i.eq("", qto.getCreateTime()));
+        if (ObjectUtils.isNotEmpty(qto.getOrderStartTime()) && ObjectUtils.isNotEmpty(qto.getOrderEndTime())) {
+            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(), qto.getOrderEndTime()));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
             wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
@@ -153,8 +153,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 wrapper.and(i -> i.eq("t.`user_id`", userDetailVO.getId()));
             }
         }
-        if (StringUtils.isNotBlank(qto.getKeywords())) {
-            wrapper.and(i -> i.like("t.`trade_code`", qto.getKeywords()));
+        if (StringUtils.isNotBlank(qto.getGoodsName())) {
+            wrapper.and(i -> i.like("t3.`goods_name`", qto.getGoodsName()));
         }
         wrapper.orderByDesc("t.cdate");
 
