@@ -474,7 +474,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                         List<ListCouponVO> optionalCouponList = new ArrayList<ListCouponVO>();
                         //默认优惠券
                         List<ListCouponVO> defaultCouponList = new ArrayList<ListCouponVO>();
-                        
+
                         //跟据商品选优惠券
                         List<Coupon> couponList = couponMapper.listByGoodsId(goodsInfoVO.getGoodsId());
                         if (CollectionUtil.isNotEmpty(couponList)) {//有优惠劵
@@ -1178,7 +1178,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         trade.setDiscountAmount(BigDecimal.ZERO);
         //优惠积分价格
         BigDecimal discountPointAmount = BigDecimal.ZERO;
-        
+
 
         trade.setTradeAmount(BigDecimal.ZERO);
         trade.setTradePointAmount(tradePointAmount);
@@ -2712,14 +2712,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             Integer type = tradeRepository.getExchangeType(trade.getId());
 
             if (type == 20) {
+                trade.setTradeState(TradeStateEnum.待发货.getCode());
+            } else {
                 trade.setTradeState(TradeStateEnum.已完成.getCode());
                 String tUserPhone = commonUserRpc.details(trade.getUserId()).getPhone();
                 log.info("phone==1===>"+tUserPhone);
                 tUserPhone = AESUtil.aesDecrypt(tUserPhone);
                 log.info("phone==2===>"+tUserPhone);
                 trade.setRecvPhone(tUserPhone);
-            } else {
-                trade.setTradeState(TradeStateEnum.待发货.getCode());
             }
 
             trade.setPayTime(LocalDateTime.now());
