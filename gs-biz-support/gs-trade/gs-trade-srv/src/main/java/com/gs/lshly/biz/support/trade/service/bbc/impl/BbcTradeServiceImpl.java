@@ -2714,9 +2714,7 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             if (type == 20) {
                 trade.setTradeState(TradeStateEnum.已完成.getCode());
                 String tUserPhone = commonUserRpc.details(trade.getUserId()).getPhone();
-                log.info("phone==1===>"+tUserPhone);
                 tUserPhone = AESUtil.aesDecrypt(tUserPhone);
-                log.info("phone==2===>"+tUserPhone);
                 trade.setRecvPhone(tUserPhone);
             } else {
                 trade.setTradeState(TradeStateEnum.待发货.getCode());

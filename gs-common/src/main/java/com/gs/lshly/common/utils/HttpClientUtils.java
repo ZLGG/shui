@@ -306,10 +306,14 @@ public class HttpClientUtils {
         }
         try {
             response = httpclient.execute(httpPost);
+            logger.info("statusCode==========>"+response.getStatusLine().getStatusCode());
             // 判断返回状态是否为200
             if (response.getStatusLine().getStatusCode() == 200) {
                 content = EntityUtils.toString(response.getEntity(), "UTF-8");
             }
+            
+        }catch(Exception e){
+        	e.printStackTrace();
         } finally {
             if (null != response) {
                 response.close();
