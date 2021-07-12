@@ -28,7 +28,6 @@ import com.gs.lshly.biz.support.user.service.bbc.IBbcUserCtccPointService;
 import com.gs.lshly.common.constants.SecurityConstants;
 import com.gs.lshly.common.ctcc.bss30.QueryCustomerService;
 import com.gs.lshly.common.enums.GenderEnum;
-import com.gs.lshly.common.enums.UserMerchantTtypeEnum;
 import com.gs.lshly.common.enums.UserStateEnum;
 import com.gs.lshly.common.enums.UserTypeEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -48,7 +47,6 @@ import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
 import com.gs.lshly.middleware.sms.IAliSMSService;
-import com.gs.lshly.middleware.sms.ISMSService;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;

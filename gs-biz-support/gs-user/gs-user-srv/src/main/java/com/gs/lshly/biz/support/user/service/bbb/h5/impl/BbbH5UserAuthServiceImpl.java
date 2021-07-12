@@ -1,5 +1,9 @@
 package com.gs.lshly.biz.support.user.service.bbb.h5.impl;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
@@ -21,11 +25,8 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.ISMSService;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
 * <p>
@@ -50,8 +51,8 @@ public class BbbH5UserAuthServiceImpl implements IBbbH5UserAuthService {
     @Autowired
     private IUserThirdLoginRepository thirdLoginRepository;
 
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -94,11 +95,11 @@ public class BbbH5UserAuthServiceImpl implements IBbbH5UserAuthService {
         User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
         String validCode = null;
         try {
-            if (user != null) {
-                validCode = smsService.sendLoginSMSCode(dto.getPhone());
-            } else {
-                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
-            }
+//            if (user != null) {
+//                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+//            } else {
+//                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
+//            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));

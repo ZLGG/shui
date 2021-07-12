@@ -28,7 +28,6 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.ISMSService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,8 +57,8 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
     @Autowired
     private IUserThirdLoginRepository thirdLoginRepository;
 
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -149,11 +148,11 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
         User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
         String validCode = null;
         try {
-            if (user != null) {
-                validCode = smsService.sendLoginSMSCode(dto.getPhone());
-            } else {
-                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
-            }
+//            if (user != null) {
+//                validCode = smsService.sendLoginSMSCode(dto.getPhone());
+//            } else {
+//                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
+//            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
@@ -351,7 +350,8 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
 
     @Override
     public String test() {
-        return smsService.sendPickUpSMSCode("18628300710","13156464","dddd","哈哈哈店铺");
+    	return null;
+//        return smsService.sendPickUpSMSCode("18628300710","13156464","dddd","哈哈哈店铺");
     }
 
     @Override

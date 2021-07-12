@@ -1,5 +1,15 @@
 package com.gs.lshly.biz.support.user.service.bbb.pc.impl;
 
+import java.time.LocalDateTime;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,7 +23,11 @@ import com.gs.lshly.biz.support.user.enums.UserCardStatusEnum;
 import com.gs.lshly.biz.support.user.mapper.UserCardMapper;
 import com.gs.lshly.biz.support.user.mapper.UserIntegralMapper;
 import com.gs.lshly.biz.support.user.mapper.view.UserIntegralView;
-import com.gs.lshly.biz.support.user.repository.*;
+import com.gs.lshly.biz.support.user.repository.IUserIntegralRepository;
+import com.gs.lshly.biz.support.user.repository.IUserPrivateUserRepository;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
+import com.gs.lshly.biz.support.user.repository.IUserSignInRepository;
+import com.gs.lshly.biz.support.user.repository.IUserUser2bApplyRepository;
 import com.gs.lshly.biz.support.user.service.bbb.pc.IBbbUserService;
 import com.gs.lshly.common.enums.ApplyStateEnum;
 import com.gs.lshly.common.enums.TerminalEnum;
@@ -43,16 +57,8 @@ import com.gs.lshly.rpc.api.bbb.pc.trade.IPCBbbMarketMerchantCardUsersRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsIntegralRpc;
 import com.gs.lshly.rpc.api.platadmin.foundation.ISettingsReportRpc;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * <p>
@@ -69,8 +75,8 @@ public class BbbUserServiceImpl implements IBbbUserService {
     private IUserUser2bApplyRepository userUser2bApplyRepository;
     @Autowired
     private IUserRepository userRepository;
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
