@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.common.utils.HuToolExcelUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
@@ -73,9 +74,9 @@ public class PCMerchTradeController {
 
     @ApiOperation("从Excel表格导入发货信息")
     @PostMapping(value = "/importData")
-    public void importData(@RequestParam MultipartFile file, BaseDTO dto) throws Exception {
-        List<PCMerchTradeListVO.importDate> dataVOS = HuToolExcelUtil.importData(PCMerchTradeListVO.importDate.class,file);
-        //pcMerchTradeRpc.updateDeliveryInfoBatch(dataVOS,dto);
+    public ResponseData<PCMerchTradeVO.ExcelReturnVO> importData(@RequestParam MultipartFile file, BaseDTO dto) {
+        //List<PCMerchTradeListVO.importDate> dataVOS = HuToolExcelUtil.importData(PCMerchTradeListVO.importDate.class,file);
+        return ResponseData.data(pcMerchTradeRpc.updateDeliveryInfoBatch(file,dto));
     }
 
 

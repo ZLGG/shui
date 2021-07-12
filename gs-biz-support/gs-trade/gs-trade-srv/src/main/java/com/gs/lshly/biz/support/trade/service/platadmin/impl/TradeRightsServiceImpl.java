@@ -382,15 +382,10 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
 //        map.put(70, "换货完成");
 //        map.put(80, "商家确认收货并退款");
 //        map.put(90, "用户取消");
-        map.put(10, "待处理");
-        map.put(20, "商家同意");
-        map.put(30, "商户驳回");
-        map.put(40, "商户驳回");
-        map.put(50, "商户驳回");
-        map.put(60, "商户驳回");
-        map.put(70, "商户驳回");
-        map.put(80, "商户驳回");
-        map.put(90, "商户驳回");
+
+        map.put(50, "平台同意");
+        map.put(60, "平台驳回");
+
         refundResultVO.setCheckStateText(map.get(tradeRights.getState()));
 
         rightsListViewVO.setRefundResultVO(refundResultVO);
