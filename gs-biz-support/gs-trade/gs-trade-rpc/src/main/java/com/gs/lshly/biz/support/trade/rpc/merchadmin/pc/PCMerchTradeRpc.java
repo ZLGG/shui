@@ -76,14 +76,14 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc {
         return ExcelUtil.treatmentBean(pCMerchTradeService.hasSentExport(qo), PCMerchTradeListVO.hasSentTradeExport.class);
     }
 
-    @Override
+    /*@Override
     public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file) {
        return pCMerchTradeService.updateDeliveryInfoBatch(file);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception {
         return ExcelUtil.treatmentBean(pCMerchTradeService.downExcelModel(), PCMerchTradeVO.DownExcelModelVO.class);
-    }
+    }*/
 
 }

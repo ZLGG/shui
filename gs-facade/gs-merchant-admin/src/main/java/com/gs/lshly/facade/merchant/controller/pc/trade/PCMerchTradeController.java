@@ -73,15 +73,15 @@ public class PCMerchTradeController {
         return ResponseData.data(MsgConst.UPDATE_SUCCESS);
     }
 
-    @ApiOperation("从Excel表格导入发货信息")
+    /*@ApiOperation("从Excel表格导入发货信息")
     @PostMapping(value = "/importData")
     public ResponseData<PCMerchTradeVO.ExcelReturnVO> importData(@RequestParam("file") MultipartFile file)throws Exception {
         //List<PCMerchTradeListVO.importDate> dataVOS = HuToolExcelUtil.importData(PCMerchTradeListVO.importDate.class,file);
         byte[] excel = file.getBytes();
         return ResponseData.data(pcMerchTradeRpc.updateDeliveryInfoBatch(excel));
-    }
+    }*/
 
-    @ApiOperation("下载导入模版")
+    /*@ApiOperation("下载导入模版")
     @GetMapping(value = "/downExcelModel")
     public void downExcelModel(@ApiIgnore HttpServletResponse response)throws Exception {
         PCMerchTradeQTO.IdListQTO qo = new PCMerchTradeQTO.IdListQTO();
@@ -89,6 +89,6 @@ public class PCMerchTradeController {
         ExportDataDTO exportData = pcMerchTradeRpc.downExcelModel(qo);
         exportData.setFileName("发货模版");
         ExcelUtil.export(exportData, response);
-    }
+    }*/
 
 }
