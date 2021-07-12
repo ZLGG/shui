@@ -17,4 +17,6 @@ public interface ICommonLogisticsCompanyRpc {
 
 
     CommonLogisticsCompanyVO.DetailVO getLogisticsName(String logisticsName);
+
+
 }

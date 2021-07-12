@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
 * @author oy
 * @since 2020-11-16
@@ -135,5 +137,31 @@ public abstract class PCMerchTradeVO implements Serializable {
     @ApiModel("PCMerchTradeVO.DetailVO")
     public static class DetailVO extends ListVO {
 
+    }
+
+    @Data
+    @ApiModel("PCMerchTradeVO.ExcelReturnVO")
+    public static class ExcelReturnVO implements Serializable {
+
+        @ApiModelProperty("总数")
+        private Integer totalNum;
+
+        @ApiModelProperty("成功数")
+        private Integer successNum;
+
+        @ApiModelProperty("失败数")
+        private Integer errorNum;
+
+        @ApiModelProperty("错误信息")
+        private List<ErrorMsgVO> errorMsgVOS;
+
+    }
+
+    @Data
+    @ApiModel("PCMerchTradeVO.ErrorMsgVO")
+    public static class ErrorMsgVO implements Serializable {
+
+        @ApiModelProperty("错误信息")
+        private String msg;
     }
 }
