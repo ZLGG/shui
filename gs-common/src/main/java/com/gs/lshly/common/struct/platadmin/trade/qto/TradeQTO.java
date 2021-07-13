@@ -123,7 +123,7 @@ public abstract class TradeQTO implements Serializable {
     public static class TradeList extends BaseQTO {
 
         @ApiModelProperty("创建时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
         private LocalDateTime createTime;
 
         @ApiModelProperty("交易编号")
