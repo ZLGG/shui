@@ -45,7 +45,6 @@ import com.gs.lshly.middleware.mail.Email;
 import com.gs.lshly.middleware.mail.IMailService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.ISMSService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,8 +77,8 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
     @Autowired
     private IMerchantAccountRoleRepository merchantAccountRoleRepository;
 
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -356,7 +355,7 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         }
         String validCode=null;
         try {
-                validCode = smsService.sendLoginSMSCode(phone);
+//                validCode = smsService.sendLoginSMSCode(phone);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
@@ -376,7 +375,7 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         }
         String validCode=null;
         try {
-            validCode = smsService.sendRegistrySMSCode(phone);
+//            validCode = smsService.sendRegistrySMSCode(phone);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));

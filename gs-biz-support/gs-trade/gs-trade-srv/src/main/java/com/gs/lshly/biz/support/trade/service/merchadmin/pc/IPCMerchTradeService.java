@@ -3,15 +3,11 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface IPCMerchTradeService {
 
@@ -34,7 +30,13 @@ public interface IPCMerchTradeService {
 
     List<PCMerchTradeListVO.hasSentTradeExport> hasSentExport(PCMerchTradeQTO.IdListQTO qo);
 
+    /**
+     * 
+     * @param file
+     * @return
+    
     PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
 
     List<PCMerchTradeVO.DownExcelModelVO> downExcelModel();
+     */
 }

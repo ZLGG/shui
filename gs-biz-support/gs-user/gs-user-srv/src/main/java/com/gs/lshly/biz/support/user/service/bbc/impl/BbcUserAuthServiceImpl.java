@@ -46,7 +46,6 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.IAliSMSService;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -95,8 +94,8 @@ public class BbcUserAuthServiceImpl implements IBbcUserAuthService {
     @Autowired
 	private IBbcUserCtccPointService bbcUserCtccPointService;
     
-    @Autowired
-    private IAliSMSService aliSMSService;
+//    @Autowired
+//    private IAliSMSService aliSMSService;
 
 
     @Override

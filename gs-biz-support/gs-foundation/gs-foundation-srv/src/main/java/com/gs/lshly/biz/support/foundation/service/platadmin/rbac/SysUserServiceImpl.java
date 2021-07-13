@@ -3,7 +3,6 @@ package com.gs.lshly.biz.support.foundation.service.platadmin.rbac;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,8 +34,6 @@ import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.IAliSMSService;
-import com.gs.lshly.middleware.sms.ISMSService;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +64,8 @@ public class SysUserServiceImpl implements ISysUserService {
     @Autowired
     private ISysFuncRepository funcRepository;
     
-    @Autowired
-    private IAliSMSService aliSMSService;
+//    @Autowired
+//    private IAliSMSService aliSMSService;
     
     @Autowired
     private RedisUtil redisUtil;
@@ -235,7 +232,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 
                 validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
                 
-                Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+                Boolean flag = true;//aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
             	if(!flag){
             		 throw new BusinessException("短信发送失败!");
             	}

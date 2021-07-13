@@ -2,28 +2,13 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.gs.lshly.common.enums.*;
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.ExportDataDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
-import com.gs.lshly.middleware.sms.ISMSService;
-import com.gs.lshly.rpc.api.platadmin.stock.IStockLogisticsCorpRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,6 +34,11 @@ import com.gs.lshly.biz.support.trade.repository.ITradeRightsGoodsRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeRightsRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeService;
 import com.gs.lshly.biz.support.trade.utils.TradeUtils;
+import com.gs.lshly.common.enums.TradeCancelApplyTypeEnum;
+import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
+import com.gs.lshly.common.enums.TradeRightsEndStateEnum;
+import com.gs.lshly.common.enums.TradeRightsTypeEnum;
+import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.bbc.trade.dto.BbcTradeCancelDTO;
@@ -75,8 +65,6 @@ import com.gs.lshly.rpc.api.merchadmin.pc.user.IPCMerchUserRpc;
 import com.lakala.boss.api.common.Common;
 
 import cn.hutool.core.collection.CollectionUtil;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -100,9 +88,9 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     private ITradeRightsGoodsRepository iTradeRightsGoodsRepository;
     @Autowired
     private TradeMapper tradeMapper;
-
-    @Autowired
-    private ISMSService ismsService;
+//
+//    @Autowired
+//    private ISMSService ismsService;
 
     @DubboReference
     private ICommonShopRpc commonShopRpc;
@@ -1021,9 +1009,9 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
         }
         //封装数据
-        packOperationDate(dto, operationlistVO);
+        //packOperationDate(dto, operationlistVO);
         //封装扇形图数据
-        packDiagramDate(dto, operationlistVO);
+        //packDiagramDate(dto, operationlistVO);
         return operationlistVO;
     }
 
@@ -1085,6 +1073,10 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         return new ArrayList<>();
     }
 
+    /**
+     * 
+     * @param file
+     * @return
     @Override
     public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file){
 
@@ -1414,5 +1406,5 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         }
 
     }
-
+     */
 }

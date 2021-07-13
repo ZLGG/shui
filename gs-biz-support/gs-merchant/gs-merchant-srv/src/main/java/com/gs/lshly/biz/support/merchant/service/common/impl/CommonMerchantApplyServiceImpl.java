@@ -1,16 +1,42 @@
 package com.gs.lshly.biz.support.merchant.service.common.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.merchant.entity.*;
+import com.gs.lshly.biz.support.merchant.entity.Merchant;
+import com.gs.lshly.biz.support.merchant.entity.MerchantApply;
+import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCategory;
+import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCert;
+import com.gs.lshly.biz.support.merchant.entity.Shop;
+import com.gs.lshly.biz.support.merchant.entity.ShopGoodsCategory;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyCategoryTypeEnum;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyStateEnum;
-import com.gs.lshly.biz.support.merchant.repository.*;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCategoryRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCertRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantRepository;
+import com.gs.lshly.biz.support.merchant.repository.IShopGoodsCategoryRepository;
+import com.gs.lshly.biz.support.merchant.repository.IShopRepository;
 import com.gs.lshly.biz.support.merchant.service.common.ICommonMerchantApplyService;
-import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.GoodsCategoryLevelEnum;
+import com.gs.lshly.common.enums.LegalTypeEnum;
+import com.gs.lshly.common.enums.MerchantApplyProgressEnum;
+import com.gs.lshly.common.enums.MerchantApplyTypeEnum;
+import com.gs.lshly.common.enums.MerchantFromTypeEnum;
+import com.gs.lshly.common.enums.ShopTypeEnum;
+import com.gs.lshly.common.enums.TerminalEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.response.ResponseData;
@@ -26,22 +52,12 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchGoodsCategor
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
 import com.gs.lshly.rpc.api.common.ICommonSiteCustomerServiceRpc;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.common.IRemindPlatRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsBrandRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.commodity.IPCMerchAdminGoodsCategoryRpc;
-import io.swagger.annotations.ApiModelProperty;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
 * <p>
@@ -89,8 +105,8 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
     @DubboReference
     private ICommonShopRpc commonShopRpc;
 
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
 
 
     @Override
@@ -193,7 +209,7 @@ public class CommonMerchantApplyServiceImpl implements ICommonMerchantApplyServi
             //获取管理员手机号码
             String phone = commonSiteCustomerServiceRpc.getDataPhone(eto);
             if (StringUtils.isNotBlank(phone)){
-                smsService.sendSettlementInformSMSCode(phone,merchantApply.getShopName());
+//                smsService.sendSettlementInformSMSCode(phone,merchantApply.getShopName());
             }
             //消息触发
             iRemindPlatRpc.addRemindPlatForMerchantApply(new RemindPlatDTO.JustDTO(eto.getJwtUserId(),merchantApply.getId()));

@@ -55,8 +55,8 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
     @DubboReference
     private IPCMerchShopRpc ipcMerchShopRpc;
 
-    @Autowired
-    private  ISMSService ismsService ;
+//    @Autowired
+//    private  ISMSService ismsService ;
 
     @DubboReference
     private ICommonLogisticsCompanyRpc commonLogisticsCompanyRpc;
@@ -128,7 +128,7 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
                 PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(trade.getUserId());
                 if (ObjectUtils.isNotEmpty(userSimpleVO)){
                     if (ObjectUtils.isNotEmpty(userSimpleVO.getUserName())){
-                        String s = ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(),userSimpleVO.getUserName());
+                        String s = "";//ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(),userSimpleVO.getUserName());
                         log.info("发送自提短信成功{}",s);
                     }
                 }

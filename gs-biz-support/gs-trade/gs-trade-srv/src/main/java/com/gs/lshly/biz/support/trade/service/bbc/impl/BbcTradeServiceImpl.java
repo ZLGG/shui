@@ -237,8 +237,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @Autowired
     private TradePayMapper tradePayMapper;
 
-    @Autowired
-    private ISMSService ismsService;
+//    @Autowired
+//    private ISMSService ismsService;
 
     @Autowired
     private ITradeRightsGoodsRepository tradeRightsGoodsRepository;
@@ -2831,10 +2831,10 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 if (StringUtils.isNotEmpty(trade.getRecvPhone()) && ObjectUtils.isNotEmpty(trade.getRecvPersonName()) && StringUtils.isNotEmpty(trade.getTradeCode())) {
                     BbcShopVO.InnerDetailVO innerDetailVO = iBbcShopRpc.innerDetailShop(new BbcShopQTO.InnerShopQTO(trade.getShopId()));
                     if (ObjectUtils.isNotEmpty(innerDetailVO)) {
-                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(), innerDetailVO.getShopName());
+//                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName(), innerDetailVO.getShopName());
                         log.info("支付成功发送自提码：{}", trade.getTakeGoodsCode());
                     } else {
-                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName());
+//                        ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), trade.getRecvPersonName());
                         log.info("支付成功使用旧的自提码模版发送自提码：{}", trade.getTakeGoodsCode());
                     }
                 }

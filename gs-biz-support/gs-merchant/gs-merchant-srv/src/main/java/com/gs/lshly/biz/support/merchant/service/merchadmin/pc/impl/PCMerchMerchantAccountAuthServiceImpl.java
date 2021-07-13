@@ -32,8 +32,6 @@ import com.gs.lshly.common.utils.JwtUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.IAliSMSService;
-import com.gs.lshly.middleware.sms.ISMSService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,11 +59,11 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
     private IMerchantAccountRepository repository;
     @Autowired
     private IShopRepository shopRepository;
-    @Autowired
-    private ISMSService smsService;
-
-    @Autowired
-    private IAliSMSService aliSMSService;
+//    @Autowired
+//    private ISMSService smsService;
+//
+//    @Autowired
+//    private IAliSMSService aliSMSService;
     
     @Autowired
     private RedisUtil redisUtil;
@@ -189,7 +187,7 @@ public class PCMerchMerchantAccountAuthServiceImpl implements IPCMerchMerchantAc
                 
             validCode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
             
-            Boolean flag = aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
+            Boolean flag = true;//aliSMSService.sendRegisterSMS(dto.getPhone(), validCode);
         	if(!flag){
         		 throw new BusinessException("短信发送失败!");
         	}

@@ -1,7 +1,26 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.http.client.utils.DateUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.google.common.hash.Hashing;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradeGoods;
@@ -21,22 +40,8 @@ import com.gs.lshly.common.struct.platadmin.trade.dto.TradeGoodsDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.middleware.sms.IMoZiSMSService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.http.client.utils.DateUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneOffset;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * <p>
@@ -523,32 +528,32 @@ public class PCMerchTradeGoodsServiceImpl implements IPCMerchTradeGoodsService {
 
 
 
-        @Autowired
-        private IMoZiSMSService smsService;
+//        @Autowired
+//        private IMoZiSMSService smsService;
 
 
         //测试接口
         @Override
         public String testDete(String mobiles, String sign, String parameter, String merchantOrderId) {
-            return smsService.sendTemplate(mobiles,sign, parameter, merchantOrderId);
+            return "";//smsService.sendTemplate(mobiles,sign, parameter, merchantOrderId);
         }
 
         //内容发送接口
         @Override
         public String sendContentDate(MoziSMSDTO.SendContentDTO dto) {
-            return smsService.sendTemplate(dto.getMobiles(),dto.getSign(),dto.getContent(),dto.getMerchantOrderId());
+            return "";//smsService.sendTemplate(dto.getMobiles(),dto.getSign(),dto.getContent(),dto.getMerchantOrderId());
         }
 
         //模板发送接口
         @Override
         public String TemplateDate(MoziSMSDTO.TemplateDTO dto) {
-            return smsService.TemplateDate(dto.getMobiles(),dto.getTplId(),dto.getParameter(),dto.getMerchantOrderId());
+            return "";//smsService.TemplateDate(dto.getMobiles(),dto.getTplId(),dto.getParameter(),dto.getMerchantOrderId());
         }
 
         //余额查询接口
         @Override
         public String balanceQueryDate(MoziSMSDTO.BalanceQueryDTO dto) {
-            return smsService.balanceQueryDate(dto.getMerchantId());
+            return "";//smsService.balanceQueryDate(dto.getMerchantId());
         }
 
 

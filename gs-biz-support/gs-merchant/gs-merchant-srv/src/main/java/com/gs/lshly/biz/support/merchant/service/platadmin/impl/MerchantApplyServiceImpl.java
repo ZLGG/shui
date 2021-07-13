@@ -1,18 +1,48 @@
 package com.gs.lshly.biz.support.merchant.service.platadmin.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gs.lshly.biz.support.merchant.entity.*;
+import com.gs.lshly.biz.support.merchant.entity.Merchant;
+import com.gs.lshly.biz.support.merchant.entity.MerchantAccount;
+import com.gs.lshly.biz.support.merchant.entity.MerchantApply;
+import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCategory;
+import com.gs.lshly.biz.support.merchant.entity.MerchantApplyCert;
+import com.gs.lshly.biz.support.merchant.entity.Shop;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyQueryTypeEnum;
 import com.gs.lshly.biz.support.merchant.enums.MerchantApplyStateEnum;
 import com.gs.lshly.biz.support.merchant.enums.UdateSerchTypeEnum;
 import com.gs.lshly.biz.support.merchant.mapper.MerchantApplyMapper;
 import com.gs.lshly.biz.support.merchant.mapper.views.MerchantApplyView;
-import com.gs.lshly.biz.support.merchant.repository.*;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantAccountRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCategoryRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyCertRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantApplyRepository;
+import com.gs.lshly.biz.support.merchant.repository.IMerchantRepository;
+import com.gs.lshly.biz.support.merchant.repository.IShopGoodsCategoryRepository;
+import com.gs.lshly.biz.support.merchant.repository.IShopRepository;
 import com.gs.lshly.biz.support.merchant.service.platadmin.IMerchantApplyService;
-import com.gs.lshly.common.enums.*;
+import com.gs.lshly.common.enums.ApplyStateEnum;
+import com.gs.lshly.common.enums.BusinessTypeEnum;
+import com.gs.lshly.common.enums.LegalTypeEnum;
+import com.gs.lshly.common.enums.MerchantApplyProgressEnum;
+import com.gs.lshly.common.enums.MerchantApplyTypeEnum;
+import com.gs.lshly.common.enums.ShopTypeEnum;
+import com.gs.lshly.common.enums.TradeMarginEnum;
+import com.gs.lshly.common.enums.TrueFalseEnum;
+import com.gs.lshly.common.enums.UserStateEnum;
+import com.gs.lshly.common.enums.UserTypeEnum;
 import com.gs.lshly.common.enums.merchant.ShopStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -29,29 +59,18 @@ import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopTypeDictVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeMarginDTO;
 import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
-import com.gs.lshly.common.utils.BeanCopyUtils;
 import com.gs.lshly.common.utils.DateUtils;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.common.utils.ListUtil;
 import com.gs.lshly.common.utils.PwdUtil;
 import com.gs.lshly.common.utils.SettleNoUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
-import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.common.ILegalDictRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsBrandRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsCategoryRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopTypeDictRpc;
 import com.gs.lshly.rpc.api.platadmin.trade.ITradeMarginRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
 * <p>
@@ -92,8 +111,8 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
     @DubboReference
     private IUserRpc userRpc;
 
-    @Autowired
-    private ISMSService smsService;
+//    @Autowired
+//    private ISMSService smsService;
 
 
     @Override
@@ -417,7 +436,7 @@ public class MerchantApplyServiceImpl implements IMerchantApplyService {
             eto.setType(UserTypeEnum._2B用户.getCode());
             eto.setUserPwd(PwdUtil.encode("123456"));
             UserVO.ListVO user = userRpc.innerSave2BUser(eto);
-            smsService.sendSettlementSMSCode(account.getPhone(),account.getPhone(),"123456");
+//            smsService.sendSettlementSMSCode(account.getPhone(),account.getPhone(),"123456");
         }
 
     }

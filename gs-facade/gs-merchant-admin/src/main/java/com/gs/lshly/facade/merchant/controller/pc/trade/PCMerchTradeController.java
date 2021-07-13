@@ -3,13 +3,13 @@ package com.gs.lshly.facade.merchant.controller.pc.trade;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import com.gs.lshly.common.struct.BaseDTO;
-import com.gs.lshly.common.struct.BaseQTO;
-import com.gs.lshly.common.struct.merchadmin.pc.commodity.dto.PCMerchGoodsInfoDTO;
-import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
-import com.gs.lshly.common.utils.HuToolExcelUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.response.PageData;
@@ -24,10 +24,7 @@ import com.gs.lshly.rpc.api.merchadmin.pc.trade.IPCMerchTradeRpc;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.util.List;
 
 /**
 * <p>
@@ -47,7 +44,7 @@ public class PCMerchTradeController {
 
     @ApiOperation("交易订单表列表")
     @GetMapping("/list")
-    public ResponseData<PageData<PCMerchTradeListVO.tradeVO>> list(@RequestParam(name = "TradeListQto") PCMerchTradeQTO.TradeList qto) {
+    public ResponseData<PageData<PCMerchTradeListVO.tradeVO>> list(PCMerchTradeQTO.TradeList qto) {
         return ResponseData.data(pcMerchTradeRpc.tradeListPageData(qto));
     }
 

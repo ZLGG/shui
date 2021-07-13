@@ -116,8 +116,8 @@ public class BbbPcTradeServiceImpl implements IBbbPcTradeService {
     private IMarketMerchantCardUsersRepository iMarketMerchantCardUsersRepository;
     @Autowired
     private ITradePayRepository iTradePayRepository;
-    @Autowired
-    private ISMSService ismsService;
+//    @Autowired
+//    private ISMSService ismsService;
     @Autowired
     private ITradePayOfflineRepository iTradePayOfflineRepository;
     @Autowired
@@ -827,7 +827,7 @@ public class BbbPcTradeServiceImpl implements IBbbPcTradeService {
             this.addFrequent(null,trade.getId());
             if (trade.getDeliveryType().equals(TradeDeliveryTypeEnum.门店自提.getCode())){
                 if (StringUtils.isNotEmpty(trade.getRecvPhone())&&ObjectUtils.isNotEmpty(trade.getRecvPersonName())&&StringUtils.isNotEmpty(trade.getTradeCode())) {
-                    ismsService.sendPickUpSMSCode( trade.getRecvPhone(),trade.getTakeGoodsCode(),trade.getRecvPersonName());
+//                    ismsService.sendPickUpSMSCode( trade.getRecvPhone(),trade.getTakeGoodsCode(),trade.getRecvPersonName());
                 }
             }
             commonMarketCardService.useCard(trade.getUserCardId(), trade.getUserId());
