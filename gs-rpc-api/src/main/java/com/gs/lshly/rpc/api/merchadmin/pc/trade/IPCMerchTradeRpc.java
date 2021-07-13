@@ -40,8 +40,8 @@ public interface IPCMerchTradeRpc {
 
     ExportDataDTO export(PCMerchTradeQTO.IdListQTO qo) throws Exception ;
 
-    //PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
+    PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
 
-    //ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception;
+    ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception;
 
 }

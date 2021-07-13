@@ -16,7 +16,7 @@ import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
-import com.gs.lshly.middleware.sms.ISMSService;
+//import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.platadmin.stock.IStockLogisticsCorpRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.poi.ss.usermodel.CellType;
@@ -101,8 +101,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     @Autowired
     private TradeMapper tradeMapper;
 
-    @Autowired
-    private ISMSService ismsService;
+    /*@Autowired
+    private ISMSService ismsService;*/
 
     @DubboReference
     private ICommonShopRpc commonShopRpc;
@@ -1178,7 +1178,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                             PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(trade.getUserId());
                             if (ObjectUtils.isNotEmpty(userSimpleVO)) {
                                 if (ObjectUtils.isNotEmpty(userSimpleVO.getUserName())) {
-                                    ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), userSimpleVO.getUserName());
+                                    //ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), userSimpleVO.getUserName());
                                 }
                             }
                         }
@@ -1227,10 +1227,10 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public List<PCMerchTradeVO.DownExcelModelVO> downExcelModel() {
         List<PCMerchTradeVO.DownExcelModelVO> list = new ArrayList<>();
         PCMerchTradeVO.DownExcelModelVO modelVO = new PCMerchTradeVO.DownExcelModelVO();
-        modelVO.setTradeCode("订单编号");
-        modelVO.setLogisticsCompanyName("物流公司");
-        modelVO.setLogisticsNumber("快递单号");
-        modelVO.setDeliveryRemark("发货备注");
+        modelVO.setTradeCode("");
+        modelVO.setLogisticsCompanyName("");
+        modelVO.setLogisticsNumber("");
+        modelVO.setDeliveryRemark("");
         list.add(modelVO);
         return list;
     }
