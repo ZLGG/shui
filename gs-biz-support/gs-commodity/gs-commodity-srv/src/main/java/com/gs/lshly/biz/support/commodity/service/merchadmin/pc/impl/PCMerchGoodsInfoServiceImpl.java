@@ -749,7 +749,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
             createGoodsShopNaigationBind(eto.getJwtMerchantId(), eto.getJwtShopId(), goodsInfo.getId(), eto.getShop2cNavigationId(), TerminalEnum.BBC.getCode());
         }
         //添加商品与服务关联数据
-        GoodsServeCor one = goodsServeCorRepository.getOne(Wrappers.<GoodsServeCor>lambdaQuery().eq(GoodsServeCor::getGoodsId, eto.getId()));
+        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
+        query.eq("goods_id", goodsInfo.getId());
+        GoodsServeCor one = goodsServeCorRepository.getOne(query);
         if (ObjectUtil.isEmpty(one)) {
             one = new GoodsServeCor();
             one.setGoodsId(eto.getId());
@@ -974,7 +976,9 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         }
 
         //添加商品与服务关联数据
-        GoodsServeCor one = goodsServeCorRepository.getOne(Wrappers.<GoodsServeCor>lambdaQuery().eq(GoodsServeCor::getGoodsId, editDetailVO.getId()));
+        QueryWrapper<GoodsServeCor> query = MybatisPlusUtil.query();
+        query.eq("goods_id", goodsInfo.getId());
+        GoodsServeCor one = goodsServeCorRepository.getOne(query);
         if (ObjectUtil.isEmpty(one)) {
             one = new GoodsServeCor();
             one.setGoodsId(goodId);
