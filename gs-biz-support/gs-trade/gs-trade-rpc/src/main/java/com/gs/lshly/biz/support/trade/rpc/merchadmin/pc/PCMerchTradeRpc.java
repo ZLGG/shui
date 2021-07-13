@@ -12,6 +12,7 @@ import com.gs.lshly.common.struct.ExportDataDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 import com.gs.lshly.common.utils.ExcelUtil;
@@ -71,14 +72,14 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc {
         return ExcelUtil.treatmentBean(pCMerchTradeService.hasSentExport(qo), PCMerchTradeListVO.hasSentTradeExport.class);
     }
 
-    /*@Override
+    @Override
     public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file) {
        return pCMerchTradeService.updateDeliveryInfoBatch(file);
-    }*/
+    }
 
-    /*@Override
+    @Override
     public ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception {
         return ExcelUtil.treatmentBean(pCMerchTradeService.downExcelModel(), PCMerchTradeVO.DownExcelModelVO.class);
-    }*/
+    }
 
 }

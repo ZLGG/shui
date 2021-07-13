@@ -6,6 +6,7 @@ import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
 
@@ -34,9 +35,9 @@ public interface IPCMerchTradeService {
      * 
      * @param file
      * @return
-    
+         */
     PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
 
     List<PCMerchTradeVO.DownExcelModelVO> downExcelModel();
-     */
+
 }

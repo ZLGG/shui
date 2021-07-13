@@ -2,6 +2,8 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -9,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,6 +58,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.commodity.vo.PCMerchSkuGoodInfoV
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeVO;
 import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
 import com.gs.lshly.common.struct.platadmin.trade.dto.TradeDTO;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeVO;
@@ -1078,6 +1086,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
      * @param file
      * @return
     @Override
+    **/
     public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file){
 
         PCMerchTradeVO.ExcelReturnVO excelReturnVO = new PCMerchTradeVO.ExcelReturnVO();
@@ -1170,7 +1179,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                             PCMerchUserVO.UserSimpleVO userSimpleVO = ipcMerchUserRpc.innerUserSimple(trade.getUserId());
                             if (ObjectUtils.isNotEmpty(userSimpleVO)) {
                                 if (ObjectUtils.isNotEmpty(userSimpleVO.getUserName())) {
-                                    ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), userSimpleVO.getUserName());
+                                    //ismsService.sendPickUpSMSCode(trade.getRecvPhone(), trade.getTakeGoodsCode(), userSimpleVO.getUserName());
                                 }
                             }
                         }
@@ -1219,10 +1228,10 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public List<PCMerchTradeVO.DownExcelModelVO> downExcelModel() {
         List<PCMerchTradeVO.DownExcelModelVO> list = new ArrayList<>();
         PCMerchTradeVO.DownExcelModelVO modelVO = new PCMerchTradeVO.DownExcelModelVO();
-        modelVO.setTradeCode("订单编号");
-        modelVO.setLogisticsCompanyName("物流公司");
-        modelVO.setLogisticsNumber("快递单号");
-        modelVO.setDeliveryRemark("发货备注");
+        modelVO.setTradeCode("");
+        modelVO.setLogisticsCompanyName("");
+        modelVO.setLogisticsNumber("");
+        modelVO.setDeliveryRemark("");
         list.add(modelVO);
         return list;
     }
@@ -1406,5 +1415,4 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         }
 
     }
-     */
 }
