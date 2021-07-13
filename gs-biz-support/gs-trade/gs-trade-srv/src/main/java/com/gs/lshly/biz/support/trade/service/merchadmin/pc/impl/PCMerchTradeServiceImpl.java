@@ -124,7 +124,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
         wrapper.and(i -> i.eq("t.`shop_id`", qto.getJwtShopId()));
         if (ObjectUtils.isNotEmpty(qto.getOrderStartTime()) && ObjectUtils.isNotEmpty(qto.getOrderEndTime())) {
-            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(), qto.getOrderEndTime()));
+            String endTime = qto.getOrderEndTime().replace("00:00:00", "23:59:59");
+            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(),endTime ));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
             wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
