@@ -152,6 +152,7 @@ import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockDeliveryRpc;
+import com.gs.lshly.rpc.api.bbc.stock.IBbcStockRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcInUserCouponRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserCtccPointRpc;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserIntegralRpc;
@@ -302,9 +303,13 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
     @DubboReference
     private ICommonUserRpc commonUserRpc;
 
-
+    @DubboReference
+    private IBbcStockRpc bbcStockRpc;
+    
     @Autowired
     private ICommonMarketCardServiceImpl commonMarketCardService;
+    
+    
 
     public BbcTradeServiceImpl(ITradeRepository tradeRepository, ITradeGoodsRepository tradeGoodsRepository,
                                ITradePayRepository tradePayRepository, ITradePayOfflineRepository tradePayOfflineRepository, ITradeDeliveryRepository tradeDeliveryRepository, ITradeCancelRepository tradeCancelRepository) {
@@ -360,8 +365,8 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         Integer goodsCount = 0;//商品总数
 
         if (StringUtils.isNotEmpty(dto.getGoodsSkuId())) {//立即购买
-            isInCar = 0;
-
+        	//跟据SKUID查询存存
+        	isInCar = 0;
             BbcGoodsInfoVO.InnerServiceVO innerServiceVO = iBbcGoodsInfoRpc.innerSimpleServiceGoodsVO(dto.getGoodsSkuId());
             ShopSkuVO shopSkuVO = new ShopSkuVO();
             shopSkuVO.setShopId(innerServiceVO.getShopId());
@@ -464,6 +469,12 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
                 } else if (!innerServiceGoodsVO.getGoodsState().equals(GoodsStateEnum.已上架.getCode())) {
                     throw new BusinessException("商品已下架");
                 }
+                
+                Integer stock = bbcStockRpc.getQuantity(dto.getGoodsSkuId());
+            	if(dto.getQuantity()>stock)
+            		throw new BusinessException("库存不足");
+                
+                
                 // 组装商品信息
                 BbcTradeSettlementVO.ShopListVO.goodsInfoVO goodsInfoVO = fillGoodsInfoVO(carId, quantity,
                         innerServiceGoodsVO);
