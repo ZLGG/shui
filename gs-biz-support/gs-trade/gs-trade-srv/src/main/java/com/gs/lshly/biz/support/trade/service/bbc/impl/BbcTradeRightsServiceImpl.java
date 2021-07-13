@@ -658,6 +658,11 @@ public class BbcTradeRightsServiceImpl implements IBbcTradeRightsService {
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("查询不到售后单");
         }
+        
+        //判断状态对不对
+        Integer state = tradeRights.getState();
+        if(state.equals(20))
+        	throw new BusinessException("商家已同意");
         BeanUtils.copyProperties(dto, tradeRights);
         repository.updateById(tradeRights);
         //修改售后商品
