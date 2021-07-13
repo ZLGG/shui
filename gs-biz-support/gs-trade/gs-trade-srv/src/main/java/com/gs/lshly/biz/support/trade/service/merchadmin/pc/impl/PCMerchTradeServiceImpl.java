@@ -162,6 +162,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
         List<PCMerchTradeListVO.tradeVO> voList = new ArrayList<>();
         for (PCMerchTradeListVO.tradeVO tradeVO : page.getRecords()) {
+            tradeVO.setExchangeType(tradeRepository.getExchangeType(tradeVO.getId()));
             //查询售后信息
             QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
             query.and(i -> i.eq("trade_id", tradeVO.getId()));
@@ -273,6 +274,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         }
         //填充用户信息
         fillUserInfo(tradeVO);
+
+        tradeVO.setExchangeType(tradeRepository.getExchangeType(dto.getId()));
 
         return tradeVO;
     }
@@ -1082,7 +1085,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
     /**
-     * 
+     *
      * @param file
      * @return
     @Override

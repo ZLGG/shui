@@ -163,6 +163,9 @@ public abstract class PCMerchTradeListVO implements Serializable {
         @ApiModelProperty("付款总额")
         private BigDecimal amountActuallyPaid;
 
+        @ApiModelProperty("货物类型")
+        private Integer exchangeType;
+
         @Data
         @ApiModel("PCMerchTradeListVO.tradeVO.Right")
         @Accessors(chain = true)
@@ -322,7 +325,7 @@ public abstract class PCMerchTradeListVO implements Serializable {
 			return amountActuallyPaid;
 		}
 
-        
+
     }
     @Data
     @ApiModel("PCMerchTradeListVO.tradeVOExport")
@@ -651,10 +654,10 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         @ApiModelProperty("订单状态内容（主状态）")
         private String tradeStateText;
-        
+
         @ApiModelProperty("是否是积分商品")
         private Integer isPointGood;
-        
+
         @ApiModelProperty("兑换类型（20实物，10虚拟）")
         private Integer exchangeType;
 
