@@ -66,7 +66,7 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc {
 
     @Override
     public ExportDataDTO export(PCMerchTradeQTO.IdListQTO qo) throws Exception {
-        if (ObjectUtils.isNotEmpty(qo.getType()) && qo.getType().intValue() == 1) {
+        if (ObjectUtils.isNotEmpty(qo.getType()) && (qo.getType().intValue() == 10 || qo.getType().intValue() == 20)) {
             return ExcelUtil.treatmentBean(pCMerchTradeService.export(qo), PCMerchTradeListVO.waitSendTradeExport.class);
         }
         return ExcelUtil.treatmentBean(pCMerchTradeService.hasSentExport(qo), PCMerchTradeListVO.hasSentTradeExport.class);
@@ -74,11 +74,11 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc {
 
     @Override
     public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file) {
-       return pCMerchTradeService.updateDeliveryInfoBatch(file);
+        return pCMerchTradeService.updateDeliveryInfoBatch(file);
     }
 
     @Override
-    public ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo)throws Exception {
+    public ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo) throws Exception {
         return ExcelUtil.treatmentBean(pCMerchTradeService.downExcelModel(), PCMerchTradeVO.DownExcelModelVO.class);
     }
 
