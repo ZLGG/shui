@@ -228,20 +228,20 @@ public class GoodsSpecsDictionaryServiceImpl implements IGoodsSpecsDictionarySer
         List<GoodsSpecDictionaryVO.DetailVO> detailVOS = specsDictionaries
                 .stream()
                 .map(e -> ConverToDetailVO(e)).collect(Collectors.toList());
-        for (int i = 0; i < detailVOS.size(); i++) {
-            //查询规格下的规格值
-            for (GoodsSpecDictionaryVO.DetailVO spec : detailVOS) {
 
-                QueryWrapper<GoodsSpecDictionaryItem> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq("spec_id", spec.getId());
+        //查询规格下的规格值
+        for (GoodsSpecDictionaryVO.DetailVO spec : detailVOS) {
 
-                if (dictionaryItemRepository.list(queryWrapper) != null && dictionaryItemRepository.list(queryWrapper).size() > 0) {
-                    List<GoodsSpecDictionaryItemVO.ListVO> listVOS = dictionaryItemRepository.list(queryWrapper).stream()
-                            .map(e -> ConverToItemlVO(e))
-                            .collect(Collectors.toList());
-                    detailVOS.get(i).setList(listVOS);
-                }
+            QueryWrapper<GoodsSpecDictionaryItem> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("spec_id", spec.getId());
+
+            if (dictionaryItemRepository.list(queryWrapper) != null && dictionaryItemRepository.list(queryWrapper).size() > 0) {
+                List<GoodsSpecDictionaryItemVO.ListVO> listVOS = dictionaryItemRepository.list(queryWrapper).stream()
+                        .map(e -> ConverToItemlVO(e))
+                        .collect(Collectors.toList());
+                spec.setList(listVOS);
             }
+
         }
         return detailVOS;
     }
