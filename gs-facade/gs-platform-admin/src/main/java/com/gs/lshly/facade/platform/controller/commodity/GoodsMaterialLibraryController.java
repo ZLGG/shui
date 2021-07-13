@@ -39,14 +39,14 @@ public class GoodsMaterialLibraryController {
 
     @ApiOperation("商品素材库管理列表")
     @GetMapping("")
-    @Func(code = "view", name = "查看")
+    @Func(code = "view", name = "查看列表")
     public ResponseData<PageData<GoodsMaterialLibraryVO.DetailListVO>> list(GoodsMaterialLibraryQTO.QTO qto) {
         return ResponseData.data(GoodsMaterialLibraryRpc.pageData(qto));
     }
 
     @ApiOperation("商品素材库管理详情")
     @GetMapping(value = "/{id}")
-    @Func(code = "view", name = "查看")
+    @Func(code = "detail", name = "查看详情")
     public ResponseData<GoodsMaterialLibraryVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(GoodsMaterialLibraryRpc.detailGoodsMaterialLibrary(new GoodsMaterialLibraryDTO.IdDTO(id)));
     }

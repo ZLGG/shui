@@ -1,6 +1,19 @@
 package com.gs.lshly.facade.platform.controller.commodity;
 
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gs.lshly.common.constants.MsgConst;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
@@ -11,14 +24,9 @@ import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsLabelVO;
 import com.gs.lshly.middleware.auth.rbac.Func;
 import com.gs.lshly.middleware.auth.rbac.Module;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsLabelRpc;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
-import java.util.List;
 
 /**
 * <p>
@@ -40,21 +48,21 @@ public class GoodsLabelController {
 
 	@ApiOperation("商品标签分页列表")
     @GetMapping("")
-    @Func(code="view", name = "查看")
+    @Func(code="view", name = "查看标签分页列表")
     public ResponseData<PageData<GoodsLabelVO.ListVO>> pageDataResponseData(GoodsLabelQTO.QTO qto) {
         return ResponseData.data(goodsLabelRpc.pageData(qto));
     }
 
     @ApiOperation("商品标签列表")
     @GetMapping("/listGoodsLabel")
-    @Func(code="view", name = "查看")
+    @Func(code="listGoodsLabel", name = "查看标签列表")
     public ResponseData<List<GoodsLabelVO.ListVO>> list() {
         return ResponseData.data(goodsLabelRpc.listGoodsLabel());
     }
 
     @ApiOperation("商品标签详情")
     @GetMapping(value = "/{id}")
-    @Func(code="view", name = "查看")
+    @Func(code="detail", name = "查看标签详情")
     public ResponseData<GoodsLabelVO.DetailVO> get(@PathVariable String id) {
         return ResponseData.data(goodsLabelRpc.detailGoodsLabel(new GoodsLabelDTO.IdDTO(id)));
     }

@@ -34,28 +34,28 @@ public class GoodsInfoController {
 
     @ApiOperation("商品管理列表")
     @GetMapping("")
-    @Func(code = "view", name = "查看商品列表")
+    @Func(code = "view", name = "查看列表")
     public ResponseData<PageData<GoodsInfoVO.SpuListVO>> page(GoodsInfoQTO.QTO qto) {
         return ResponseData.data(goodsInfoRpc.pageGoodsData(qto));
     }
 
     @ApiOperation("跟据分类ID查询商品列表")
     @GetMapping("/listByCategoryId")
-    @Func(code = "listByCategoryId", name = "查询商品列表")
+    @Func(code = "listByCategoryId", name = "跟据分类查询列表")
     public ResponseData<List<GoodsInfoVO.SpuListVO>> listByCategoryId(GoodsInfoQTO.ListQTO qto) {
         return ResponseData.data(goodsInfoRpc.listGoodsData(qto));
     }
     
     @ApiOperation("商品管理列表详情")
     @GetMapping(value = "{id}")
-    @Func(code = "view", name = "查看商品详情")
+    @Func(code = "detail", name = "查看详情")
     public ResponseData<GoodsInfoVO.DetailVO> page(@PathVariable String id, @RequestParam("type")Integer type) {
         return ResponseData.data(goodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(id),type));
     }
 
     @ApiOperation("批量上架商品")
     @PutMapping(value = "upCarriageBatch")
-    @Func(code = "upCarriageBatch", name = "批量上架商品")
+    @Func(code = "upCarriageBatch", name = "批量上架")
     public ResponseData<Void> upCarriageBatch(GoodsInfoDTO.IdListDTO dto) {
         goodsInfoRpc.upCarriageGoods(dto);
         return ResponseData.success(MsgConst.GROUNDING_SUCCESS);
@@ -63,7 +63,7 @@ public class GoodsInfoController {
 
     @ApiOperation("批量下架商品")
     @PutMapping(value = "underCarriageBatch")
-    @Func(code = "underCarriageBatch", name = "批量下架商品")
+    @Func(code = "underCarriageBatch", name = "批量下架")
     public ResponseData<Void> underCarriageBatch(GoodsInfoDTO.IdListDTO dto) {
         goodsInfoRpc.underCarriageGoods(dto);
         return ResponseData.success(MsgConst.UNDERCARRIAGE_SUCCESS);
@@ -71,7 +71,7 @@ public class GoodsInfoController {
 
     @ApiOperation("批量删除商品")
     @DeleteMapping(value = "deleteBatches")
-    @Func(code = "deleteBatches", name = "批量删除商品")
+    @Func(code = "deleteBatches", name = "删除")
     public ResponseData<Void> deleteBatches(GoodsInfoDTO.IdListDTO dto) {
         goodsInfoRpc.deleteGoodsBatches(dto);
         return ResponseData.success(MsgConst.DELETE_SUCCESS);
@@ -79,7 +79,7 @@ public class GoodsInfoController {
 
     @ApiOperation("审核商品")
     @PutMapping(value = "checkGoods")
-    @Func(code = "checkGoods", name = "审核商品")
+    @Func(code = "checkGoods", name = "审核")
     public ResponseData<Void> checkGoods(@Valid @RequestBody GoodsInfoDTO.CheckGoodsDTO dto) {
         goodsInfoRpc.checkGoods(dto);
         return ResponseData.success(MsgConst.DETERMINE_SUCCESS);
@@ -87,7 +87,7 @@ public class GoodsInfoController {
 
     @ApiOperation("批量审核商品")
     @PostMapping(value = "checkGoodsBatches")
-    @Func(code = "checkGoodsBatches", name = "批量审核商品")
+    @Func(code = "checkGoodsBatches", name = "批量审核")
     public ResponseData<Void> checkGoodsBatches(@Valid @RequestBody GoodsInfoDTO.CheckGoodsBatchesDTO dto) {
         goodsInfoRpc.checkGoodsBatches(dto);
         return ResponseData.success(MsgConst.DETERMINE_SUCCESS);

@@ -58,7 +58,7 @@ public class GoodsServeController {
      */
     @ApiOperation("商品服务详情")
     @GetMapping(value = "{id}")
-    @Func(code = "view", name = "查看")
+    @Func(code = "detail", name = "查看详情")
     public ResponseData<GoodsServeVO.ListVO> getGoodsServeDetail(@PathVariable String id) {
         return ResponseData.data(goodsServeRpc.getGoodsServeDetail(new GoodsServeDTO.IdDTO(id)));
     }

@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/goods-attribute-dictionary")
 @Api(tags = "平台属性管理")
-@Module(code = "item", parent = "category", name = "属性列表", index = 2)
+@Module(code = "item", parent = "category", name = "规格列表", index = 2)
 public class GoodsAttributeDictionaryController {
 
     @DubboReference
@@ -59,7 +59,7 @@ public class GoodsAttributeDictionaryController {
 
     @ApiOperation("获取属性详情信息")
     @GetMapping(value = "/{id}")
-    @Func(code="view", name = "查看")
+    @Func(code="detail", name = "查看详情")
     public @ResponseBody ResponseData<GoodsAttributeDictionaryVO.DetailVO> getAttributeDetails(@PathVariable String id, GoodsAttributeDictionaryItemQTO.QTO qto) {
         GoodsAttributeDictionaryDTO.IdDTO dto = new GoodsAttributeDictionaryDTO.IdDTO(id);
         GoodsAttributeDictionaryVO.DetailVO detailVO = attributeDictionaryRpc.getAttributeDetails(dto);
@@ -70,7 +70,7 @@ public class GoodsAttributeDictionaryController {
 
     @ApiOperation("获取属性列表")
     @GetMapping(value = "")
-    @Func(code="view", name = "查看")
+    @Func(code="viewList", name = "查看列表")
     public ResponseData<PageData<GoodsAttributeDictionaryVO.ListVO>> listAttributeInfo(){
         GoodsAttributeDictionaryQTO.QTO qto = new GoodsAttributeDictionaryQTO.QTO();
         return ResponseData.data(attributeDictionaryRpc.listAttribute(qto));
@@ -95,7 +95,6 @@ public class GoodsAttributeDictionaryController {
 
     @ApiOperation("获取跟类目关联的属性信息")
     @GetMapping(value = "/listAttribute/{id}")
-    @Func(code="view", name = "查看")
     public ResponseData<List<GoodsAttributeDictionaryVO.ListVO>> listAttribute(@PathVariable String id){
         GoodsCategoryDTO.IdDTO dto = new GoodsCategoryDTO.IdDTO(id);
         return ResponseData.data(attributeDictionaryRpc.listAttributes(dto));
@@ -103,7 +102,6 @@ public class GoodsAttributeDictionaryController {
 
     @ApiOperation("获取跟类目关联的属性以及属性详情信息")
     @GetMapping(value = "/listAttributes/{id}")
-    @Func(code="view", name = "查看")
     public ResponseData<List<GoodsAttributeDictionaryVO.DetailVO>> listAttributes(@PathVariable String id){
         GoodsCategoryDTO.IdDTO dto = new GoodsCategoryDTO.IdDTO(id);
         return ResponseData.data(attributeDictionaryRpc.listAttributeDetail(dto));
@@ -111,7 +109,6 @@ public class GoodsAttributeDictionaryController {
 
     @ApiOperation("查询所有的属性以及属性值列表")
     @GetMapping(value = "/listAttributeDetails")
-    @Func(code="view", name = "查看")
     public ResponseData<List<GoodsAttributeDictionaryVO.DetailVO>> listAttributeDetails(){
         return ResponseData.data(attributeDictionaryRpc.listAttributes());
     }
