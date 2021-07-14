@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gs.lshly.biz.support.user.entity.User;
 import com.gs.lshly.biz.support.user.entity.UserThirdLogin;
@@ -59,6 +60,9 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
 
 //    @Autowired
 //    private ISMSService smsService;
+
+    @Autowired
+    private IContactSMSService iContactSMSService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -148,18 +152,20 @@ public class BbbUserAuthServiceImpl implements IBbbUserAuthService {
         User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
         String validCode = null;
         try {
-//            if (user != null) {
+            if (user != null) {
+                iContactSMSService.userLogin(dto.getPhone());
 //                validCode = smsService.sendLoginSMSCode(dto.getPhone());
-//            } else {
+            } else {
+                iContactSMSService.merchantLogin(dto.getPhone());
 //                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
-//            }
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
         }
         //验证码失效时间10分账
-        log.info("设置-手机号码："+dto.getPhone()+"-验证码："+validCode);
-        redisUtil.set(PhoneValidCodeGroup + dto.getPhone(), validCode, 10 * 60);
+//        log.info("设置-手机号码："+dto.getPhone()+"-验证码："+validCode);
+//        redisUtil.set(PhoneValidCodeGroup + dto.getPhone(), validCode, 10 * 60);
     }
 
     @Override

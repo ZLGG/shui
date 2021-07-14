@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.merchant.service.merchadmin.pc.impl;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,9 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
 
 //    @Autowired
 //    private ISMSService smsService;
+
+    @Autowired
+    private IContactSMSService iContactSMSService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -353,16 +357,17 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         if (ObjectUtils.isEmpty(one)){
             throw new BusinessException("没有查询到此手机对应的商家账户");
         }
-        String validCode=null;
+//        String validCode=null;
         try {
 //                validCode = smsService.sendLoginSMSCode(phone);
+            iContactSMSService.userLogin(phone);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
         }
-        //验证码失效时间10分账
-        log.info("设置-手机号码："+phone+"-验证码："+validCode);
-        redisUtil.set(PhoneValidCodeGroup + phone, validCode, 10 * 60);
+//        //验证码失效时间10分账
+//        log.info("设置-手机号码："+phone+"-验证码："+validCode);
+//        redisUtil.set(PhoneValidCodeGroup + phone, validCode, 10 * 60);
     }
 
     @Override
@@ -373,16 +378,17 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         if (count != null && count > 0) {
             throw new BusinessException("该手机已注册");
         }
-        String validCode=null;
+//        String validCode=null;
         try {
 //            validCode = smsService.sendRegistrySMSCode(phone);
+            iContactSMSService.merchantLogin(phone);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
         }
         //验证码失效时间10分账
-        log.info("设置-手机号码："+phone+"-验证码："+validCode);
-        redisUtil.set(PhoneValidCodeGroup + phone, validCode, 10 * 60);
+//        log.info("设置-手机号码："+phone+"-验证码："+validCode);
+//        redisUtil.set(PhoneValidCodeGroup + phone, validCode, 10 * 60);
     }
 
     @Override
@@ -489,7 +495,5 @@ public class PCMerchMerchantAccountServiceImpl implements IPCMerchMerchantAccoun
         }
 		return detailVO;
 	}
-
-
 
 }
