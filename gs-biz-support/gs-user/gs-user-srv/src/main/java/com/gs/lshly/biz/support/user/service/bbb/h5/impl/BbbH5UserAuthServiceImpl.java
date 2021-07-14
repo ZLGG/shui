@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.user.service.bbb.h5.impl;
 
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,9 @@ public class BbbH5UserAuthServiceImpl implements IBbbH5UserAuthService {
 //    private ISMSService smsService;
 
     @Autowired
+    private IContactSMSService iContactSMSService;
+
+    @Autowired
     private RedisUtil redisUtil;
 
 
@@ -93,20 +97,22 @@ public class BbbH5UserAuthServiceImpl implements IBbbH5UserAuthService {
     public void getPhoneValidCode(BbbH5UserDTO.GetPhoneValidCodeDTO dto) {
         //通过手机查找是已经注册了会员，如果已经注册，则发送用户登陆验证码，否则发送注册验证码
         User user = repository.getOne(new QueryWrapper<User>().eq("phone", dto.getPhone()));
-        String validCode = null;
+//        String validCode = null;
         try {
-//            if (user != null) {
+            if (user != null) {
+                iContactSMSService.userLogin(dto.getPhone());
 //                validCode = smsService.sendLoginSMSCode(dto.getPhone());
-//            } else {
+            } else {
+                iContactSMSService.merchantLogin(dto.getPhone());
 //                validCode = smsService.sendRegistrySMSCode(dto.getPhone());
-//            }
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException("短信发送失败!" + (e.getMessage().contains("限流") ? "发送频率过高" : ""));
         }
         //验证码失效时间10分账
-        log.info("设置-手机号码："+dto.getPhone()+"-验证码："+validCode);
-        redisUtil.set(PhoneValidCodeGroup + dto.getPhone(), validCode, 10 * 60);
+//        log.info("设置-手机号码："+dto.getPhone()+"-验证码："+validCode);
+//        redisUtil.set(PhoneValidCodeGroup + dto.getPhone(), validCode, 10 * 60);
     }
 
     @Override
