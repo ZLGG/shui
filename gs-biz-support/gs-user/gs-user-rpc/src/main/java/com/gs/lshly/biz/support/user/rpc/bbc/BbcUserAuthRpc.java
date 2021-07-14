@@ -7,6 +7,7 @@ import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserInfoDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BBcWxUserPhoneDTO;
 import com.gs.lshly.common.struct.bbc.user.dto.BbcUserDTO;
 import com.gs.lshly.common.struct.bbc.user.vo.BbcUserVO;
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import com.gs.lshly.rpc.api.bbc.user.IBbcUserAuthRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -21,6 +22,9 @@ public class BbcUserAuthRpc implements IBbcUserAuthRpc {
     @Autowired
     private IBbcUserAuthService userAuthService;
 
+    @Autowired
+    private IContactSMSService iContactSMSService;
+
     @Override
     public AuthDTO loadUserByUsername(String username) {
         return userAuthService.loadUserByUsername(username);
@@ -31,7 +35,8 @@ public class BbcUserAuthRpc implements IBbcUserAuthRpc {
         if (StringUtils.isBlank(dto.getPhone())) {
             throw new BusinessException("手机号不能为空");
         }
-        userAuthService.getPhoneValidCode(dto);
+        iContactSMSService.payment(dto.getPhone());
+//        userAuthService.getPhoneValidCode(dto);
     }
 
     @Override
