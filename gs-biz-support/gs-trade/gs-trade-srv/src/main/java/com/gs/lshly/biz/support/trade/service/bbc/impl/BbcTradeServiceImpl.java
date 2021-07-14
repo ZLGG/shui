@@ -147,7 +147,7 @@ import com.gs.lshly.common.struct.platadmin.foundation.vo.SettingsReceiptVO;
 import com.gs.lshly.middleware.mq.aliyun.producerService.ProducerService;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.redis.RedisUtil;
-import com.gs.lshly.middleware.sms.ISMSService;
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import com.gs.lshly.rpc.api.bbc.commodity.IBbcGoodsInfoRpc;
 import com.gs.lshly.rpc.api.bbc.merchant.IBbcShopRpc;
 import com.gs.lshly.rpc.api.bbc.stock.IBbcStockAddressRpc;
@@ -240,6 +240,9 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
 
 //    @Autowired
 //    private ISMSService ismsService;
+
+    @Autowired
+    private IContactSMSService iContactSMSService;
 
     @Autowired
     private ITradeRightsGoodsRepository tradeRightsGoodsRepository;
@@ -2599,6 +2602,16 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
             }
         }
         redisUtil.set(PAYING_TRADE, o.toString());
+
+        /**
+         * 算下我一共要付的积分是多少
+         */
+        String idsStr = CollUtil.isNotEmpty(tradeIds) ? CollUtil.join(tradeIds, "','") : "-1";
+        Integer totalTelecomsIntegral = tradeMapper.sumTradePointAmount(idsStr);
+        // 查询还有多少积分
+        Integer telecomsIntegral1 = iBbcUserRpc.getUserInfoNoLogin(dto).getTelecomsIntegral();
+        // 发送短信
+        iContactSMSService.reminderSuccessfulOrder(dto.getPhone(),o.toString(),totalTelecomsIntegral.toString(),telecomsIntegral1.toString());
 
         return ResponseData.success(responseJson.toString());
     }
