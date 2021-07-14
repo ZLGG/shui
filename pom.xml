@@ -185,9 +185,6 @@
         <!-- 杭州正式环境配置 -->
         <profile>
             <id>hzprod</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <env.dscs>hzprod</env.dscs>
                 <profiles.active>hzprod</profiles.active>
@@ -196,6 +193,9 @@
         <!-- 杭州商城测试配置 -->
         <profile>
             <id>hztest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <env.dscs>hztest</env.dscs>
                 <profiles.active>hztest</profiles.active>
