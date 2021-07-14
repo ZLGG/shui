@@ -156,6 +156,14 @@ public abstract class GoodsInfoDTO implements Serializable {
     }
 
     @Data
+    @ApiModel("GoodsInfoDTO.GoodsIdsDTO")
+    public static class GoodsIdsDTO extends BaseDTO {
+
+        @ApiModelProperty(value = "商品id列表")
+        private List<String> idList = new ArrayList<>();
+    }
+
+    @Data
     @Accessors(chain = true)
     @ApiModel("GoodsInfoDTO.IdsInnerServiceDTO")
     @AllArgsConstructor

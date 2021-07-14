@@ -198,6 +198,11 @@ public class GoodsInfoRpc implements IGoodsInfoRpc {
     }
 
     @Override
+    public List<GoodsInfoVO.InnerGoodsVO> getGoodsDataByIds(GoodsInfoDTO.GoodsIdsDTO dto) {
+        return goodsInfoService.getGoodsDataByIds(dto);
+    }
+
+    @Override
     public List<SpuListVO> listGoodsData(ListQTO qto) {
         return goodsInfoService.listGoodsData(qto);
     }

@@ -2,6 +2,7 @@ package com.gs.lshly.biz.support.trade.rpc.merchadmin.pc;
 
 import java.util.List;
 
+import com.gs.lshly.common.struct.BaseDTO;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -78,8 +79,8 @@ public class PCMerchTradeRpc implements IPCMerchTradeRpc {
     }
 
     @Override
-    public ExportDataDTO downExcelModel(PCMerchTradeQTO.IdListQTO qo) throws Exception {
-        return ExcelUtil.treatmentBean(pCMerchTradeService.downExcelModel(), PCMerchTradeVO.DownExcelModelVO.class);
+    public ExportDataDTO downExcelModel(BaseDTO dto) throws Exception {
+        return ExcelUtil.treatmentBean(pCMerchTradeService.downExcelModel(dto), PCMerchTradeVO.DownExcelModelVO.class);
     }
 
 }

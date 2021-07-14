@@ -3,6 +3,7 @@ package com.gs.lshly.facade.merchant.controller.pc.trade;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.gs.lshly.common.struct.BaseDTO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,10 +84,8 @@ public class PCMerchTradeController {
 
     @ApiOperation("下载导入模版")
     @GetMapping(value = "/downExcelModel")
-    public void downExcelModel(@ApiIgnore HttpServletResponse response)throws Exception {
-        PCMerchTradeQTO.IdListQTO qo = new PCMerchTradeQTO.IdListQTO();
-        qo.setType(1);
-        ExportDataDTO exportData = pcMerchTradeRpc.downExcelModel(qo);
+    public void downExcelModel(@ApiIgnore HttpServletResponse response, BaseDTO dto)throws Exception {
+        ExportDataDTO exportData = pcMerchTradeRpc.downExcelModel(dto);
         exportData.setFileName("发货模版");
         ExcelUtil.export(exportData, response);
     }

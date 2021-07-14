@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc;
 import java.util.List;
 
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
@@ -38,6 +39,6 @@ public interface IPCMerchTradeService {
          */
     PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file);
 
-    List<PCMerchTradeVO.DownExcelModelVO> downExcelModel();
+    List<PCMerchTradeVO.DownExcelModelVO> downExcelModel(BaseDTO dto);
 
 }

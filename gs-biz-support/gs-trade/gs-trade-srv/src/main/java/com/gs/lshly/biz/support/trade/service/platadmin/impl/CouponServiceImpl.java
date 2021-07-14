@@ -4,6 +4,10 @@ import java.util.*;
 
 import com.gs.lshly.biz.support.trade.mapper.CouponGoodsRelationMapper;
 import com.gs.lshly.biz.support.trade.mapper.CouponZoneGoodsRelationMapper;
+import com.gs.lshly.common.exception.BusinessException;
+import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
+import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
+import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +61,9 @@ public class CouponServiceImpl implements ICouponService {
     @Autowired
     private CouponZoneGoodsRelationMapper zoneGoodsRelationMapper;
 
+    @Autowired
+    private IGoodsInfoRpc iGoodsInfoRpc;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -69,6 +76,28 @@ public class CouponServiceImpl implements ICouponService {
         coupon.setUdate(new Date());
         coupon.setAuditStatus(0);
         coupon.setFlag(false);
+
+        if (qto.getLevel() == 3) {
+            //检验门槛金额与商品积分价格
+            if (ObjectUtils.isNotEmpty(qto.getLevelIds())) {
+                List<String> ids = new ArrayList<>();
+                for (CouponQTO.LevelQTO levelQTO : qto.getLevelIds()) {
+                    ids.add(levelQTO.getLevelId());
+                }
+                GoodsInfoDTO.GoodsIdsDTO dto = new GoodsInfoDTO.GoodsIdsDTO();
+                dto.setIdList(ids);
+                List<GoodsInfoVO.InnerGoodsVO> innerGoodsVOS = iGoodsInfoRpc.getGoodsDataByIds(dto);
+                if (ObjectUtils.isEmpty(innerGoodsVOS)) {
+                    throw new BusinessException("该商品不满足发放条件");
+                }
+                for (GoodsInfoVO.InnerGoodsVO goodsVO : innerGoodsVOS) {
+                    if (qto.getUseThreshold().compareTo(goodsVO.getPointPrice()) > 0) {
+                        throw new BusinessException("该商品不满足发放条件");
+                    }
+                }
+            }
+        }
+
         //保存优惠券表
         boolean flag = iCouponRepository.save(coupon);
 
@@ -170,7 +199,7 @@ public class CouponServiceImpl implements ICouponService {
     @Override
     public Boolean deleteCoupon(String ids) {
         List<String> idList = Arrays.asList(ids.split(","));
-        if(CollectionUtil.isEmpty(idList)){
+        if (CollectionUtil.isEmpty(idList)) {
             return false;
         }
         zoneGoodsRelationMapper.deleteByCouponIds(idList);
@@ -200,10 +229,10 @@ public class CouponServiceImpl implements ICouponService {
                     levelVO = new CouponVO.LevelVO();
                     levelVO.setLevelId(couponGoodsRelation.getLevelId());
 
-                    if(CollectionUtil.isNotEmpty(zoneGoodList)){
+                    if (CollectionUtil.isNotEmpty(zoneGoodList)) {
                         List<String> excludeGoodIds = new ArrayList<>();
                         for (CouponZoneGoodsRelation zoneGoodsRelation : zoneGoodList) {
-                            if(zoneGoodsRelation.getZoneId().equals(couponGoodsRelation.getLevelId())){
+                            if (zoneGoodsRelation.getZoneId().equals(couponGoodsRelation.getLevelId())) {
                                 excludeGoodIds.add(zoneGoodsRelation.getGoodId());
                             }
                         }
@@ -263,8 +292,8 @@ public class CouponServiceImpl implements ICouponService {
             wrapper.set("stock_num", updateCouponByConDTO.getStockNum());
         }
 
-        if(ObjectUtils.isNotEmpty(updateCouponByConDTO.getRejectReason())){
-            wrapper.set("reject_reason",updateCouponByConDTO.getRejectReason());
+        if (ObjectUtils.isNotEmpty(updateCouponByConDTO.getRejectReason())) {
+            wrapper.set("reject_reason", updateCouponByConDTO.getRejectReason());
         }
         wrapper.eq("coupon_id", updateCouponByConDTO.getCouponId());
         return iCouponRepository.update(wrapper);

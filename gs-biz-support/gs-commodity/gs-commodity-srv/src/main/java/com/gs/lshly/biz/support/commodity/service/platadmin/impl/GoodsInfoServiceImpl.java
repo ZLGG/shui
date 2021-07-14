@@ -1019,6 +1019,17 @@ public class GoodsInfoServiceImpl implements IGoodsInfoService {
 
     }
 
+    @Override
+    public List<GoodsInfoVO.InnerGoodsVO> getGoodsDataByIds(GoodsInfoDTO.GoodsIdsDTO dto) {
+        QueryWrapper<GoodsInfo> boost = MybatisPlusUtil.query();
+        boost.in("id", dto.getIdList());
+        List<GoodsInfo> goodsInfos = repository.list(boost);
+        if (ObjectUtils.isNotEmpty(goodsInfos)) {
+            return ListUtil.listCover(GoodsInfoVO.InnerGoodsVO.class, goodsInfos);
+        }
+        return new ArrayList<>();
+    }
+
     private String getTemplateName(String goodsId) {
         QueryWrapper<GoodsTempalte> tempalteBoost = MybatisPlusUtil.query();
         tempalteBoost.eq("goods_id", goodsId);

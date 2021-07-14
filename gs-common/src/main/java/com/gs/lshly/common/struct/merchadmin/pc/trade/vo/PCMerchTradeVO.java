@@ -169,16 +169,16 @@ public abstract class PCMerchTradeVO implements Serializable {
     @ApiModel("PCMerchTradeVO.DownExcelModelVO")
     public static class DownExcelModelVO implements Serializable {
 
-        @ApiModelProperty("订单编号")
+        @ApiModelProperty(value = "订单编号",position = 1)
         private String tradeCode;
 
-        @ApiModelProperty("物流公司")
+        @ApiModelProperty(value = "物流公司",position = 2)
         private String logisticsCompanyName;
 
-        @ApiModelProperty("快递单号")
+        @ApiModelProperty(value = "快递单号",position = 3)
         private String logisticsNumber;
 
-        @ApiModelProperty("发货备注")
+        @ApiModelProperty(value = "发货备注",position = 4)
         private String deliveryRemark;
     }
 }
