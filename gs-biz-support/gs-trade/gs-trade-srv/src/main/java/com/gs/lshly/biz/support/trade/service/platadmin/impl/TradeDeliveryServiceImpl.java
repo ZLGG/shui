@@ -15,6 +15,7 @@ import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
 import com.gs.lshly.common.struct.BaseDTO;
 import com.gs.lshly.common.struct.common.CommonLogisticsCompanyVO;
+import com.gs.lshly.common.struct.common.CommonUserVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchMarketMerchantCardVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
 import com.gs.lshly.common.struct.platadmin.merchant.vo.ShopVO;
@@ -27,6 +28,7 @@ import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.common.utils.EnumUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
+import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
 import com.gs.lshly.rpc.api.platadmin.user.IUserRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -63,6 +65,9 @@ public class TradeDeliveryServiceImpl implements ITradeDeliveryService {
     private IUserRpc iUserRpc;
 
     @DubboReference
+    private ICommonUserRpc commonUserRpc;
+
+    @DubboReference
     private ICommonLogisticsCompanyRpc iCommonLogisticsCompanyRpc;
 
     @Override
@@ -89,6 +94,20 @@ public class TradeDeliveryServiceImpl implements ITradeDeliveryService {
         repository.selectListPageForPlatform(page, wrapper);
         List<String> shopId = new ArrayList<>();
         for (TradeDeliveryVO.ListVO listVO:page.getRecords()){
+            Trade trade = iTradeRepository.getById(listVO.getTradeId());
+
+            //设置订单编号
+            listVO.setTradeCode(trade.getTradeCode());
+
+            //查询会员信息
+            CommonUserVO.DetailVO details = commonUserRpc.details(trade.getUserId());
+            if (ObjectUtils.isNotEmpty(details)) {
+                //设置业务号码
+                listVO.setBusinessPhone(details.getPhone());
+            }
+            //查询客户编号
+            String customerID = commonUserRpc.userCtccDetails(trade.getUserId()).getCustNumber();
+            listVO.setCustomerID(customerID);
             if (StringUtils.isNotBlank(listVO.getShopId())){
                 shopId.add(listVO.getShopId());
             }

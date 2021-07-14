@@ -97,7 +97,8 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private ICommonShopRpc iCommonShopRpc;
     @DubboReference
     private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
-
+    @Autowired
+    private  ITradeDeliveryRepository tradeDeliveryRepository;
     @Override
     public PageData<TradeRightsVO.RightsListVO> pageData(TradeRightsQTO.StateDTO qto) {
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
@@ -138,6 +139,7 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), listVOS.size());
         }
         for (TradeRights record : pager.getRecords()) {
+
             TradeRightsVO.RightsListVO rightsListVO = new TradeRightsVO.RightsListVO();
             BeanUtil.copyProperties(record, rightsListVO);
             QueryWrapper<TradeRightsGoods> wrapper = MybatisPlusUtil.query();
@@ -151,6 +153,13 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             rightsListVO.setTradeAmount(tradeGoods.getTradeAmount());
             rightsListVO.setTradePointAmount(tradeGoods.getTradePointAmount());
             rightsListVO.setGoodsName(tradeGoods.getGoodsName());
+
+            //查询快递单号
+            QueryWrapper<TradeDelivery> deliveryWrapper = new QueryWrapper<>();
+            deliveryWrapper.eq("trade_id", record.getTradeId());
+            String logisticsNumber = tradeDeliveryRepository.getOne(deliveryWrapper).getLogisticsNumber();
+            rightsListVO.setLogisticsNumber(logisticsNumber);
+
             listVOS.add(rightsListVO);
         }
         return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), pager.getTotal());

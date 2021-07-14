@@ -88,6 +88,13 @@ public abstract class TradeDeliveryVO implements Serializable {
         @ApiModelProperty("手机号码")
         private String phone;
 
+        @ApiModelProperty("业务号码")
+        private String businessPhone;
+
+        @ApiModelProperty("客户编号")
+        private String customerID;
+
+
 
     }
     @Data

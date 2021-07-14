@@ -146,6 +146,9 @@ public abstract class TradeQTO implements Serializable {
 
         @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
         private Integer sourceType;
+
+        @ApiModelProperty("客户编号")
+        private String customerID;
     }
 
 

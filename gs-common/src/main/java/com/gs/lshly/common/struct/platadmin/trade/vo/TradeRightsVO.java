@@ -206,6 +206,9 @@ public abstract class TradeRightsVO implements Serializable {
         @ApiModelProperty("订单编号")
         private String orderCode;
 
+        @ApiModelProperty("快递编号")
+        private String logisticsNumber;
+
 /*        @ApiModelProperty("售后表ID")
         private String id;
         @ApiModelProperty("申请会员")

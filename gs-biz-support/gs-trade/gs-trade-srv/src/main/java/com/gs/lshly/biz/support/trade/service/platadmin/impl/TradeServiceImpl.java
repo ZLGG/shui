@@ -3,6 +3,7 @@ package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -163,6 +164,12 @@ public class TradeServiceImpl implements ITradeService {
             }
             voList.add(tradeVO);
         }
+        //如果查询条件有客户编号,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getCustomerID())) {
+            voList = voList.stream().filter(tradeVO -> {
+                return tradeVO.getCustomerID().equals(qto.getCustomerID());
+            }).collect(Collectors.toList());
+        }
 
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
@@ -221,6 +228,15 @@ public class TradeServiceImpl implements ITradeService {
         }
         BeanUtils.copyProperties(trade, tradeVO);
 
+        //查询会员信息
+        CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
+        if (ObjectUtils.isNotEmpty(details)) {
+            //设置业务号码
+            tradeVO.setBusinessPhone(details.getPhone());
+        }
+        //查询客户编号
+        String customerID = commonUserRpc.userCtccDetails(tradeVO.getUserId()).getCustNumber();
+        tradeVO.setCustomerID(customerID);
         //填充商家信息
         fillShop(tradeVO);
         fillTradeVO(tradeVO);
