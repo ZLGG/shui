@@ -174,5 +174,11 @@ public interface IGoodsInfoRpc {
      */
     PageData<GoodsInfoVO.ListVO> pageInGoods(BbGoodsInfoQTO.QTO qto);
 
+    /**
+     * 根据ids获取商品信息
+     * @return
+     */
+    List<GoodsInfoVO.InnerGoodsVO> getGoodsDataByIds(GoodsInfoDTO.GoodsIdsDTO dto);
+
 }
 

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.lshly.common.struct.BaseDTO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -124,7 +125,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
         wrapper.and(i -> i.eq("t.`shop_id`", qto.getJwtShopId()));
         if (ObjectUtils.isNotEmpty(qto.getOrderStartTime()) && ObjectUtils.isNotEmpty(qto.getOrderEndTime())) {
-            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(), qto.getOrderEndTime()));
+            String endTime = qto.getOrderEndTime().replace("00:00:00", "23:59:59");
+            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(),endTime ));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
             wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
@@ -1090,6 +1092,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
      * @return
     @Override
     **/
+    @Override
     public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file){
 
         PCMerchTradeVO.ExcelReturnVO excelReturnVO = new PCMerchTradeVO.ExcelReturnVO();
@@ -1228,14 +1231,34 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
     @Override
-    public List<PCMerchTradeVO.DownExcelModelVO> downExcelModel() {
+    public List<PCMerchTradeVO.DownExcelModelVO> downExcelModel(BaseDTO dto) {
+
+        QueryWrapper<Trade> queryWrapper = MybatisPlusUtil.query();
+        queryWrapper.eq("shop_id",dto.getJwtShopId());
+        queryWrapper.eq("trade_state",TradeStateEnum.待发货.getCode());
+        queryWrapper.eq("flag",false);
+        queryWrapper.orderByDesc("cdate");
+        List<Trade> tradeList = tradeRepository.list(queryWrapper);
+
         List<PCMerchTradeVO.DownExcelModelVO> list = new ArrayList<>();
-        PCMerchTradeVO.DownExcelModelVO modelVO = new PCMerchTradeVO.DownExcelModelVO();
-        modelVO.setTradeCode("");
-        modelVO.setLogisticsCompanyName("");
-        modelVO.setLogisticsNumber("");
-        modelVO.setDeliveryRemark("");
-        list.add(modelVO);
+        PCMerchTradeVO.DownExcelModelVO modelVO;
+        if(ObjectUtils.isNotEmpty(tradeList)){
+            for (Trade trade : tradeList) {
+                modelVO = new PCMerchTradeVO.DownExcelModelVO();
+                modelVO.setTradeCode(trade.getTradeCode());
+                modelVO.setLogisticsCompanyName("");
+                modelVO.setLogisticsNumber("");
+                modelVO.setDeliveryRemark("");
+                list.add(modelVO);
+            }
+        }else {
+            modelVO = new PCMerchTradeVO.DownExcelModelVO();
+            modelVO.setTradeCode("");
+            modelVO.setLogisticsCompanyName("");
+            modelVO.setLogisticsNumber("");
+            modelVO.setDeliveryRemark("");
+            list.add(modelVO);
+        }
         return list;
     }
 

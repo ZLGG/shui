@@ -103,7 +103,7 @@ public class AES {
          */
         String cKey = "5922e96c-854f-42";
         // 需要加密的字串
-        String cSrc = "123456qq";
+        String cSrc = "zjdx2021@";
         System.out.println(cSrc);
         // 加密
         String enString = AES.Encrypt(cSrc, cKey);

@@ -187,4 +187,10 @@ public interface IGoodsInfoService {
      * @param dto
      */
     void checkGoodsBatches(GoodsInfoDTO.CheckGoodsBatchesDTO dto);
+
+    /**
+     * 根据ids获取商品信息
+     * @return
+     */
+    List<GoodsInfoVO.InnerGoodsVO> getGoodsDataByIds(GoodsInfoDTO.GoodsIdsDTO dto);
 }

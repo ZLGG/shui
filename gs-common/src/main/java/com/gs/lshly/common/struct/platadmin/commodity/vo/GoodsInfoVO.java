@@ -344,6 +344,21 @@ public abstract class GoodsInfoVO implements Serializable {
     }
 
     @Data
+    @ApiModel("GoodsInfoVO.InnerGoodsVO")
+    public static class InnerGoodsVO implements Serializable {
+
+        @ApiModelProperty("商品id")
+        private String id;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("积分价格")
+        private BigDecimal pointPrice;
+
+    }
+
+    @Data
     @ApiModel("GoodsInfoVO.InnerServiceGoodsInfoVO")
     public static class InnerServiceGoodsInfoVO extends ListVO {
 
