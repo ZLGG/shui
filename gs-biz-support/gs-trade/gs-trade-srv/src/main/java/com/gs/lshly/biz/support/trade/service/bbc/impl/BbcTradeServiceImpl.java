@@ -1786,7 +1786,14 @@ public class BbcTradeServiceImpl implements IBbcTradeService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // 查询订单详细信息
+        ResponseData<BbcTradeListVO.tradeVO> tradeVOResponseData = orderDetail(dto);
+        BbcTradeListVO.tradeVO tradeVO = tradeVOResponseData.getData();
+        // 获取用户详细信息
+        BbcUserVO.InnerUserInfoVO innerUserInfoVO = iBbcUserRpc.innerGetUserInfo(tradeVO.getUserId());
 
+        iContactSMSService.signForSMS(innerUserInfoVO.getPhone(),innerUserInfoVO.getUserName(),
+                tradeVO.getLogisticsCompanyName(),tradeVO.getLogisticsNumber());
         return ResponseData.success();
     }
 
