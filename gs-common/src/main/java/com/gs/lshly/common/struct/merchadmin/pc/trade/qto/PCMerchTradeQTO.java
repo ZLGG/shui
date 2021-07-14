@@ -136,10 +136,12 @@ public abstract class PCMerchTradeQTO implements Serializable {
         private String goodsName;
 
         @ApiModelProperty("下单开始时间")
-        private String orderStartTime;
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime orderStartTime;
 
         @ApiModelProperty("下单结束时间")
-        private String orderEndTime;
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime orderEndTime;
 
     }
     @Data

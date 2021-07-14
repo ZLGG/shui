@@ -92,9 +92,9 @@ public class TradeServiceImpl implements ITradeService {
     @Override
     public PageData<TradeListVO.tradeVO> tradeListPageData(TradeQTO.TradeList qto) {
         QueryWrapper<TradeQTO.TradeList> wrapper = new QueryWrapper<>();
-        wrapper.and(i -> i.eq("1", "1"));
+
         if (ObjectUtils.isNotEmpty(qto.getCreateTime())) {
-            wrapper.and(i -> i.eq("", qto.getCreateTime()));
+            wrapper.and(i -> i.eq("t.`create_time`", qto.getCreateTime()));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
             wrapper.and(i -> i.eq("t.`trade_code`", qto.getTradeCode()));
@@ -137,7 +137,17 @@ public class TradeServiceImpl implements ITradeService {
             CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
             if (ObjectUtils.isNotEmpty(details)) {
                 tradeVO.setUserName(details.getUserName());
+                //设置业务号码
+                tradeVO.setBusinessPhone(details.getPhone());
             }
+            //查询客户编号
+            String customerID = commonUserRpc.userCtccDetails(tradeVO.getUserId()).getCustNumber();
+            tradeVO.setCustomerID(customerID);
+            //查询快递单号
+            QueryWrapper<TradeDelivery> deliveryWrapper = new QueryWrapper<>();
+            deliveryWrapper.eq("trade_id", tradeVO.getId());
+            String logisticsNumber = tradeDeliveryRepository.getOne(deliveryWrapper).getLogisticsNumber();
+            tradeVO.setLogisticsNumber(logisticsNumber);
             //根据交易ID查询交易商品集合
             QueryWrapper<TradePay> query = MybatisPlusUtil.query();
             query.and(i -> i.eq("trade_id", tradeVO.getId()));
@@ -336,7 +346,7 @@ public class TradeServiceImpl implements ITradeService {
 
         //回库存
         cancelTradeReturnStock(dto.getId());
-        
+
         //退钱
         // TODO: 2021-06-04 yingjun
         return flag;
