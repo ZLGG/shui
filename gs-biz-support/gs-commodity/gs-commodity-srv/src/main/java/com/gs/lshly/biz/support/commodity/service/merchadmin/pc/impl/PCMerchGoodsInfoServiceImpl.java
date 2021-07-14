@@ -1342,12 +1342,18 @@ public class PCMerchGoodsInfoServiceImpl implements IPCMerchGoodsInfoService {
         List<PCMerchGoodsInfoVO.ExcelGoodsDataVO> excelGoodsDataVOS = new ArrayList<>();
 
         List<GoodsInfo> goodsInfos;
-        if (qto == null || qto.getIdList() == null || qto.getIdList().size() == 0) {
+        if (ObjectUtils.isEmpty(qto.getIdList())) {
             QueryWrapper<GoodsInfo> queryWrapper = MybatisPlusUtil.query();
             queryWrapper.eq("flag",0);
             queryWrapper.eq("shop_id",qto.getJwtShopId());
             if(ObjectUtils.isNotEmpty(qto.getType())){
                 queryWrapper.eq("goods_state",qto.getType());
+            }
+            if(ObjectUtils.isNotEmpty(qto.getId())){
+                queryWrapper.eq("id",qto.getId());
+            }
+            if(ObjectUtils.isNotEmpty(qto.getGoodsName())){
+                queryWrapper.like("goods_name",qto.getGoodsName());
             }
             goodsInfos = repository.list(queryWrapper);
         }else {

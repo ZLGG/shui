@@ -17,6 +17,7 @@ import com.gs.lshly.common.struct.bbc.trade.vo.BbcTradeListVO;
 import com.gs.lshly.common.struct.merchadmin.h5.trade.qto.H5MerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.h5.trade.vo.H5MerchTradeListVO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.MerchantHomeDashboardDTO;
+import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeListVO;
 import com.gs.lshly.common.struct.platadmin.trade.qto.TradeQTO;
@@ -60,6 +61,16 @@ public interface TradeMapper extends BaseMapper<Trade> {
             "and t.`flag`=0 " +
             "AND ${ew.sqlSegment}")
     IPage<PCMerchTradeListVO.tradeVO> selectPCMerchTradePage(IPage<PCMerchTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeQTO.TradeList> qw);
+
+    @Select("select t.*" +
+            "from gs_trade t," +
+            "gs_trade_goods t2," +
+            "gs_goods_info t3 " +
+            "WHERE t.`id` = t2.trade_id " +
+            "and t3.id = t2.goods_id " +
+            "and t.`flag`=0 " +
+            "AND ${ew.sqlSegment}")
+    List<Trade> selectPCMerchTrade(@Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeQTO.IdListQTO> qw);
 
     @Select("SELECT t.*,tg.`id` trade_goods_id,tg.`pay_amount` " +
             "FROM `gs_trade` t " +

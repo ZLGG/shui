@@ -155,5 +155,21 @@ public abstract class PCMerchTradeQTO implements Serializable {
         //1:待支付、待发货 2:全部、待收货、已完成、已关闭
         private Integer type;
 
+        @ApiModelProperty("下单开始时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime orderStartTime;
+
+        @ApiModelProperty("下单结束时间")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime orderEndTime;
+
+        @ApiModelProperty("交易编号")
+        private String tradeCode;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("收货人电话")
+        private String recvPhone;
     }
 }

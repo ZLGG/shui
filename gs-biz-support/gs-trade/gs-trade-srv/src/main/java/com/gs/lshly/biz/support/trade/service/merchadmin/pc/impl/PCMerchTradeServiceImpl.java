@@ -1,14 +1,15 @@
 package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 import com.gs.lshly.common.struct.BaseDTO;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -75,6 +76,8 @@ import com.lakala.boss.api.common.Common;
 
 import cn.hutool.core.collection.CollectionUtil;
 
+import static java.util.stream.Collectors.*;
+
 /**
  * <p>
  * 服务实现类
@@ -125,7 +128,8 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         QueryWrapper<PCMerchTradeQTO.TradeList> wrapper = new QueryWrapper<>();
         wrapper.and(i -> i.eq("t.`shop_id`", qto.getJwtShopId()));
         if (ObjectUtils.isNotEmpty(qto.getOrderStartTime()) && ObjectUtils.isNotEmpty(qto.getOrderEndTime())) {
-            String endTime = qto.getOrderEndTime().replace("00:00:00", "23:59:59");
+            DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String endTime = dtf2.format(qto.getOrderEndTime()).replace("00:00:00", "23:59:59");
             wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(),endTime ));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
@@ -1030,10 +1034,36 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
     @Override
     public List<PCMerchTradeListVO.waitSendTradeExport> export(PCMerchTradeQTO.IdListQTO qo) {
+        List<Trade> trades;
         if (ObjectUtils.isEmpty(qo.getIdList())) {
-            throw new BusinessException("请传入ID");
+            QueryWrapper<PCMerchTradeQTO.IdListQTO> queryWrapper = MybatisPlusUtil.query();
+            queryWrapper.eq("t.shop_id", qo.getJwtShopId());
+            queryWrapper.eq("t.flag", 0);
+            if(ObjectUtils.isNotEmpty(qo.getType())){
+                queryWrapper.eq("t.trade_state",qo.getType());
+            }
+            if (ObjectUtils.isNotEmpty(qo.getOrderStartTime()) && ObjectUtils.isNotEmpty(qo.getOrderEndTime())) {
+                DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String endTime = dtf2.format(qo.getOrderEndTime()).replace("00:00:00", "23:59:59");
+                queryWrapper.and(i -> i.between("t.create_time", qo.getOrderStartTime(),endTime ));
+            }
+            if(ObjectUtils.isNotEmpty(qo.getTradeCode())){
+                queryWrapper.like("t.trade_code",qo.getTradeCode());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getRecvPhone())){
+                queryWrapper.like("t.recv_phone",qo.getRecvPhone());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getGoodsName())){
+                queryWrapper.like("t3.goods_name",qo.getGoodsName());
+            }
+            queryWrapper.orderByDesc("t.cdate");
+            trades = tradeRepository.selectPCMerchTrade(queryWrapper);
+            if(ObjectUtils.isNotEmpty(trades)){
+                trades = trades.stream().collect(collectingAndThen(toCollection(()->new TreeSet<>(Comparator.comparing(Trade::getId))),ArrayList::new));
+            }
+        } else {
+            trades = tradeRepository.listByIds(qo.getIdList());
         }
-        List<Trade> trades = tradeRepository.listByIds(qo.getIdList());
         if (ObjectUtils.isNotEmpty(trades)) {
             List<PCMerchTradeListVO.waitSendTradeExport> list = trades.parallelStream()
                     .map(e -> {
@@ -1052,10 +1082,31 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public List<PCMerchTradeListVO.hasSentTradeExport> hasSentExport(PCMerchTradeQTO.IdListQTO qo) {
         List<Trade> trades;
         if (ObjectUtils.isEmpty(qo.getIdList())) {
-            QueryWrapper<Trade> queryWrapper = MybatisPlusUtil.query();
-            queryWrapper.eq("shop_id", qo.getJwtShopId());
-            queryWrapper.eq("flag", 0);
-            trades = tradeRepository.list(queryWrapper);
+            QueryWrapper<PCMerchTradeQTO.IdListQTO> queryWrapper = MybatisPlusUtil.query();
+            queryWrapper.eq("t.shop_id", qo.getJwtShopId());
+            queryWrapper.eq("t.flag", 0);
+            if(ObjectUtils.isNotEmpty(qo.getType())){
+                queryWrapper.eq("t.trade_state",qo.getType());
+            }
+            if (ObjectUtils.isNotEmpty(qo.getOrderStartTime()) && ObjectUtils.isNotEmpty(qo.getOrderEndTime())) {
+                DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String endTime = dtf2.format(qo.getOrderEndTime()).replace("00:00:00", "23:59:59");
+                queryWrapper.and(i -> i.between("t.create_time", qo.getOrderStartTime(),endTime ));
+            }
+            if(ObjectUtils.isNotEmpty(qo.getTradeCode())){
+                queryWrapper.like("t.trade_code",qo.getTradeCode());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getRecvPhone())){
+                queryWrapper.like("t.recv_phone",qo.getRecvPhone());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getGoodsName())){
+                queryWrapper.like("t3.goods_name",qo.getGoodsName());
+            }
+            queryWrapper.orderByDesc("t.cdate");
+            trades = tradeRepository.selectPCMerchTrade(queryWrapper);
+            if(ObjectUtils.isNotEmpty(trades)){
+                trades = trades.stream().collect(collectingAndThen(toCollection(()->new TreeSet<>(Comparator.comparing(Trade::getId))),ArrayList::new));
+            }
         } else {
             trades = tradeRepository.listByIds(qo.getIdList());
         }
