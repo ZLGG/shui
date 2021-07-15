@@ -3,13 +3,13 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.gs.lshly.biz.support.foundation.entity.SysUser;
-import com.gs.lshly.biz.support.foundation.repository.ISysUserRepository;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
 import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
 import com.gs.lshly.biz.support.trade.repository.ITradeRepository;
 import com.gs.lshly.biz.support.trade.service.merchadmin.pc.IPCMerchTradeDeliveryService;
+import com.gs.lshly.biz.support.user.entity.User;
+import com.gs.lshly.biz.support.user.repository.IUserRepository;
 import com.gs.lshly.common.enums.TradeDeliveryTypeEnum;
 import com.gs.lshly.common.enums.TradeStateEnum;
 import com.gs.lshly.common.exception.BusinessException;
@@ -20,6 +20,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.dto.PCMerchTradeDeliveryDT
 import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeDeliveryQTO;
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeDeliveryVO;
 import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
+import com.gs.lshly.common.utils.AESUtil;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.middleware.sms.IContactSMSService;
 import com.gs.lshly.middleware.sms.ISMSService;
@@ -55,7 +56,7 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
     private IContactSMSService iContactSMSService;
 
     @Autowired
-    private ISysUserRepository iSysUserRepository;
+    private IUserRepository userRepository;
 
     @DubboReference
     private IPCMerchUserRpc ipcMerchUserRpc;
@@ -159,11 +160,11 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
         tradeRepository.saveOrUpdate(trade);
 
         // 查询用户信息
-        SysUser user = iSysUserRepository.getById(trade.getUserId());
+        User user = userRepository.getById(trade.getUserId());
         // 查询物流信息
         CommonLogisticsCompanyVO.DetailVO logisticsCompany = commonLogisticsCompanyRpc.getLogisticsCompany(eto.getLogisticsId());
         // 发送收货短信
-        iContactSMSService.shipmentReminder(user.getPhone(),user.getName(),logisticsCompany.getName(),eto.getLogisticsNumber());
+        iContactSMSService.shipmentReminder(AESUtil.aesDecrypt(user.getPhone()),AESUtil.aesDecrypt(user.getUserName()),logisticsCompany.getName(),eto.getLogisticsNumber());
 
     }
 

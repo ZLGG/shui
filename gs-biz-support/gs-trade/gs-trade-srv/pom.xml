@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>wholesale.grainoil.gs</groupId>
-            <artifactId>gs-foundation-repository</artifactId>
+            <artifactId>gs-user-repository</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
