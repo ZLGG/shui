@@ -36,7 +36,7 @@ public class TradeController {
     private ITradeRpc tradeRpc;
 
     @ApiOperation("交易订单表列表")
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResponseData<PageData<TradeListVO.tradeVO>> list(@RequestBody TradeQTO.TradeList qto) {
         return ResponseData.data(tradeRpc.tradeListPageData(qto));
     }
