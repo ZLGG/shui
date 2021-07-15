@@ -184,7 +184,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
             if (ObjectUtils.isNotEmpty(details)) {
                 tradeVO.setUserName(details.getUserName());
-                tradeVO.setBusinessPhone(details.getPhone());
+                tradeVO.setPhone(details.getPhone());
             }
             //售后状态
             QueryWrapper<TradeRights> rightsQueryWrapper = new QueryWrapper<>();
