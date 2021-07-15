@@ -46,8 +46,8 @@ public class PCMerchTradeController {
     private IPCMerchTradeRpc pcMerchTradeRpc;
 
     @ApiOperation("交易订单表列表")
-    @GetMapping("/list")
-    public ResponseData<PageData<PCMerchTradeListVO.tradeVO>> list(PCMerchTradeQTO.TradeList qto) {
+    @PostMapping("/list")
+    public ResponseData<PageData<PCMerchTradeListVO.tradeVO>> list(@RequestBody PCMerchTradeQTO.TradeList qto) {
         return ResponseData.data(pcMerchTradeRpc.tradeListPageData(qto));
     }
 

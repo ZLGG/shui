@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
@@ -142,13 +143,19 @@ public class TradeServiceImpl implements ITradeService {
                 tradeVO.setBusinessPhone(details.getPhone());
             }
             //查询客户编号
-            String customerID = commonUserRpc.userCtccDetails(tradeVO.getUserId()).getCustNumber();
-            tradeVO.setCustomerID(customerID);
+            CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(tradeVO.getUserId());
+            if (ObjectUtil.isNotEmpty(userCtccDetails)) {
+                String customerID = userCtccDetails.getCustNumber();
+                tradeVO.setCustomerID(customerID);
+            }
             //查询快递单号
             QueryWrapper<TradeDelivery> deliveryWrapper = new QueryWrapper<>();
             deliveryWrapper.eq("trade_id", tradeVO.getId());
-            String logisticsNumber = tradeDeliveryRepository.getOne(deliveryWrapper).getLogisticsNumber();
-            tradeVO.setLogisticsNumber(logisticsNumber);
+            TradeDelivery delivery = tradeDeliveryRepository.getOne(deliveryWrapper);
+            if (ObjectUtil.isNotEmpty(delivery)) {
+                String logisticsNumber = delivery.getLogisticsNumber();
+                tradeVO.setLogisticsNumber(logisticsNumber);
+            }
             //根据交易ID查询交易商品集合
             QueryWrapper<TradePay> query = MybatisPlusUtil.query();
             query.and(i -> i.eq("trade_id", tradeVO.getId()));
@@ -168,6 +175,13 @@ public class TradeServiceImpl implements ITradeService {
         if (ObjectUtils.isNotEmpty(qto.getCustomerID())) {
             voList = voList.stream().filter(tradeVO -> {
                 return tradeVO.getCustomerID().equals(qto.getCustomerID());
+            }).collect(Collectors.toList());
+        }
+
+        //如果查询条件有业务号码,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getBusinessPhone())) {
+            voList = voList.stream().filter(tradeVO -> {
+                return tradeVO.getBusinessPhone().equals(qto.getBusinessPhone());
             }).collect(Collectors.toList());
         }
 
@@ -235,8 +249,11 @@ public class TradeServiceImpl implements ITradeService {
             tradeVO.setBusinessPhone(details.getPhone());
         }
         //查询客户编号
-        String customerID = commonUserRpc.userCtccDetails(tradeVO.getUserId()).getCustNumber();
-        tradeVO.setCustomerID(customerID);
+        CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(tradeVO.getUserId());
+        if (ObjectUtil.isNotEmpty(userCtccDetails)) {
+            String customerID = userCtccDetails.getCustNumber();
+            tradeVO.setCustomerID(customerID);
+        }
         //填充商家信息
         fillShop(tradeVO);
         fillTradeVO(tradeVO);

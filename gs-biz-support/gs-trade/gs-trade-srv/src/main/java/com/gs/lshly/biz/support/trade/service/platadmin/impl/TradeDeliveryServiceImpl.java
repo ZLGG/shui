@@ -1,5 +1,6 @@
 package com.gs.lshly.biz.support.trade.service.platadmin.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -106,8 +107,12 @@ public class TradeDeliveryServiceImpl implements ITradeDeliveryService {
                 listVO.setBusinessPhone(details.getPhone());
             }
             //查询客户编号
-            String customerID = commonUserRpc.userCtccDetails(trade.getUserId()).getCustNumber();
-            listVO.setCustomerID(customerID);
+            CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(trade.getUserId());
+            if (ObjectUtil.isNotEmpty(userCtccDetails)) {
+                String customerID = userCtccDetails.getCustNumber();
+                listVO.setCustomerID(customerID);
+            }
+
             if (StringUtils.isNotBlank(listVO.getShopId())){
                 shopId.add(listVO.getShopId());
             }

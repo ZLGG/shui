@@ -149,6 +149,9 @@ public abstract class TradeQTO implements Serializable {
 
         @ApiModelProperty("客户编号")
         private String customerID;
+
+        @ApiModelProperty("业务号码")
+        private String businessPhone;
     }
 
 

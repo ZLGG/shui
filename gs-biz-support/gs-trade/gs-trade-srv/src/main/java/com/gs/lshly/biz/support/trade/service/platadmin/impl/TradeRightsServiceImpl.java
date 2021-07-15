@@ -18,6 +18,7 @@ import com.gs.lshly.biz.support.trade.service.platadmin.ITradeRightsService;
 import com.gs.lshly.common.enums.*;
 import com.gs.lshly.common.exception.BusinessException;
 import com.gs.lshly.common.response.PageData;
+import com.gs.lshly.common.struct.common.CommonUserVO;
 import com.gs.lshly.common.struct.platadmin.commodity.dto.GoodsInfoDTO;
 import com.gs.lshly.common.struct.platadmin.commodity.vo.GoodsInfoVO;
 import com.gs.lshly.common.struct.platadmin.merchant.dto.ShopDTO;
@@ -32,6 +33,7 @@ import com.gs.lshly.common.struct.platadmin.user.dto.UserDTO;
 import com.gs.lshly.common.struct.platadmin.user.vo.UserVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
 import com.gs.lshly.rpc.api.common.ICommonShopRpc;
+import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.IGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.commodity.ISkuGoodsInfoRpc;
 import com.gs.lshly.rpc.api.platadmin.merchant.IShopRpc;
@@ -54,6 +56,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -99,6 +102,8 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
     private ISkuGoodsInfoRpc iSkuGoodsInfoRpc;
     @Autowired
     private  ITradeDeliveryRepository tradeDeliveryRepository;
+    @DubboReference
+    private ICommonUserRpc commonUserRpc;
     @Override
     public PageData<TradeRightsVO.RightsListVO> pageData(TradeRightsQTO.StateDTO qto) {
         QueryWrapper<TradeRights> query = MybatisPlusUtil.query();
@@ -154,14 +159,37 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             rightsListVO.setTradePointAmount(tradeGoods.getTradePointAmount());
             rightsListVO.setGoodsName(tradeGoods.getGoodsName());
 
+            //查询客户编号
+            CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(record.getUserId());
+            if (ObjectUtil.isNotEmpty(userCtccDetails)) {
+                String customerID = userCtccDetails.getCustNumber();
+                rightsListVO.setCustomerID(customerID);
+            }
+
             //查询快递单号
             QueryWrapper<TradeDelivery> deliveryWrapper = new QueryWrapper<>();
             deliveryWrapper.eq("trade_id", record.getTradeId());
-            String logisticsNumber = tradeDeliveryRepository.getOne(deliveryWrapper).getLogisticsNumber();
-            rightsListVO.setLogisticsNumber(logisticsNumber);
+            TradeDelivery delivery = tradeDeliveryRepository.getOne(deliveryWrapper);
+            if (ObjectUtil.isNotEmpty(delivery)) {
+                String logisticsNumber = delivery.getLogisticsNumber();
+                rightsListVO.setLogisticsNumber(logisticsNumber);
+            }
 
             listVOS.add(rightsListVO);
         }
+        //如果查询条件有快递单号,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getLogisticsNumber())) {
+            listVOS = listVOS.stream().filter(rightsListVO -> {
+                return rightsListVO.getLogisticsNumber().equals(qto.getLogisticsNumber());
+            }).collect(Collectors.toList());
+        }
+        //如果查询条件有客户编号,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getCustomerID())) {
+            listVOS = listVOS.stream().filter(rightsListVO -> {
+                return rightsListVO.getCustomerID().equals(qto.getCustomerID());
+            }).collect(Collectors.toList());
+        }
+
         return new PageData<>(listVOS, qto.getPageNum(), qto.getPageSize(), pager.getTotal());
 /*        if (ObjectUtils.isNotEmpty(qto.getCdate()) || ObjectUtils.isNotEmpty(qto.getCdateState())) {
             GetQuery(query, qto.getCdateState(), qto.getCdate(), qto.getCdateLittleDate());

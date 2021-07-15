@@ -94,6 +94,12 @@ public abstract class TradeRightsQTO implements Serializable {
 
         @ApiModelProperty("退款申请类型([10:取消订单退款,20:售后申请退款])")
         private Integer refundMoneyType;
+
+        @ApiModelProperty("快递编号")
+        private String logisticsNumber;
+
+        @ApiModelProperty("客户编号")
+        private String customerID;
 /*        @ApiModelProperty("支付创建时间(介于大于等于)")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;*/
