@@ -223,7 +223,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         //如果查询条件有业务号码,添加筛选
         if (ObjectUtils.isNotEmpty(qto.getPhone())) {
             voList = voList.stream().filter(rightsListVO -> {
-                return rightsListVO.getPhone().equals(qto.getPhone());
+                return qto.getPhone().equals(rightsListVO.getPhone());
             }).collect(Collectors.toList());
         }
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
@@ -1103,6 +1103,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         PCMerchTradeListVO.waitSendTradeExport tradeVO = new PCMerchTradeListVO.waitSendTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
+                        tradeVO.setTradePointAmount(ObjectUtils.isNotEmpty(e.getTradePointAmount()) ? e.getTradePointAmount().setScale(0).toString() : "0");
                         //fillTradeVOE(tradeVO);
                         return tradeVO;
                     }).collect(toList());
@@ -1153,7 +1154,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         PCMerchTradeListVO.hasSentTradeExport tradeVO = new PCMerchTradeListVO.hasSentTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
-                        tradeVO.setPointPriceActuallyPaid(ObjectUtils.isNotEmpty(e.getPointPriceActuallyPaid()) ? e.getPointPriceActuallyPaid().setScale(0).toString() : "0");
+                        tradeVO.setTradePointAmount(ObjectUtils.isNotEmpty(e.getTradePointAmount()) ? e.getTradePointAmount().setScale(0).toString() : "0");
                         //物流信息,快递单号
                         QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
                         tradeDeliveryQueryWrapper.eq("trade_id", e.getId());

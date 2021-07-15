@@ -175,14 +175,21 @@ public class TradeServiceImpl implements ITradeService {
         //如果查询条件有客户编号,添加筛选
         if (ObjectUtils.isNotEmpty(qto.getCustomerID())) {
             voList = voList.stream().filter(tradeVO -> {
-                return tradeVO.getCustomerID().equals(qto.getCustomerID());
+                return qto.getCustomerID().equals(tradeVO.getCustomerID());
             }).collect(Collectors.toList());
         }
 
         //如果查询条件有业务号码,添加筛选
         if (ObjectUtils.isNotEmpty(qto.getBusinessPhone())) {
             voList = voList.stream().filter(tradeVO -> {
-                return tradeVO.getBusinessPhone().equals(qto.getBusinessPhone());
+                return qto.getBusinessPhone().equals(tradeVO.getBusinessPhone());
+            }).collect(Collectors.toList());
+        }
+
+        //如果查询条件有快递单号,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getLogisticsNumber())) {
+            voList = voList.stream().filter(tradeVO -> {
+                return qto.getLogisticsNumber().equals(tradeVO.getLogisticsNumber());
             }).collect(Collectors.toList());
         }
 

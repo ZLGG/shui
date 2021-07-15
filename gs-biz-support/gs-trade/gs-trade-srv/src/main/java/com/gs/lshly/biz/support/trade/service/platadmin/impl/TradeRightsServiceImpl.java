@@ -185,13 +185,13 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
         //如果查询条件有快递单号,添加筛选
         if (ObjectUtils.isNotEmpty(qto.getLogisticsNumber())) {
             listVOS = listVOS.stream().filter(rightsListVO -> {
-                return rightsListVO.getLogisticsNumber().equals(qto.getLogisticsNumber());
+                return qto.getLogisticsNumber().equals(rightsListVO.getLogisticsNumber());
             }).collect(Collectors.toList());
         }
         //如果查询条件有客户编号,添加筛选
         if (ObjectUtils.isNotEmpty(qto.getCustomerID())) {
             listVOS = listVOS.stream().filter(rightsListVO -> {
-                return rightsListVO.getCustomerID().equals(qto.getCustomerID());
+                return equals(qto.getCustomerID().equals(rightsListVO.getCustomerID()));
             }).collect(Collectors.toList());
         }
 
