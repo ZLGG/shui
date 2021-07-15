@@ -1096,6 +1096,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         PCMerchTradeListVO.waitSendTradeExport tradeVO = new PCMerchTradeListVO.waitSendTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
+                        tradeVO.setTradePointAmount(ObjectUtils.isNotEmpty(e.getTradePointAmount()) ? e.getTradePointAmount().setScale(0).toString() : "0");
                         //fillTradeVOE(tradeVO);
                         return tradeVO;
                     }).collect(toList());
@@ -1146,7 +1147,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         PCMerchTradeListVO.hasSentTradeExport tradeVO = new PCMerchTradeListVO.hasSentTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
-                        tradeVO.setPointPriceActuallyPaid(ObjectUtils.isNotEmpty(e.getPointPriceActuallyPaid()) ? e.getPointPriceActuallyPaid().setScale(0).toString() : "0");
+                        tradeVO.setTradePointAmount(ObjectUtils.isNotEmpty(e.getTradePointAmount()) ? e.getTradePointAmount().setScale(0).toString() : "0");
                         //物流信息,快递单号
                         QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
                         tradeDeliveryQueryWrapper.eq("trade_id", e.getId());

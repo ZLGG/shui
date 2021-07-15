@@ -450,7 +450,7 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
 
         @ApiModelProperty(value = "实付积分",position = 4)
-        private String pointPriceActuallyPaid;
+        private String tradePointAmount;
 
 
         @ApiModelProperty(value = "运费",position = 5)
@@ -515,7 +515,7 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
 
         @ApiModelProperty(value = "实付积分",position = 4)
-        private String pointPriceActuallyPaid;
+        private String tradePointAmount;
 
 
         @ApiModelProperty(value = "运费",position = 5)
