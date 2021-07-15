@@ -1249,7 +1249,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 }
 
                 String logisticsNumber = row.getCell(2).getStringCellValue();
-                if (StringUtils.isBlank(logisticsCompanyName)) {
+                if (StringUtils.isBlank(logisticsNumber)) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
                     errorMsgVO.setMsg("第" + row.getRowNum() + "行:快递单号为空");
                     errorMsgVOS.add(errorMsgVO);
@@ -1292,6 +1292,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     }
                     //修改订单状态
                     trade.setTradeState(TradeStateEnum.待收货.getCode());
+                    trade.setDeliveryTime(LocalDateTime.now());
                     tradeRepository.saveOrUpdate(trade);
                     success++;
                 } catch (Exception e) {
