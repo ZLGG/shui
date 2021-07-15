@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.gs.lshly.biz.support.foundation.entity.SysUser;
+import com.gs.lshly.biz.support.foundation.repository.ISysUserRepository;
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +89,10 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
     private ITradeRightsImgRepository iTradeRightsImgRepository;
     @Autowired
     private ITradeRightsLogRepository iTradeRightsLogRepository;
+    @Autowired
+    private IContactSMSService iContactSMSService;
+    @Autowired
+    private ISysUserRepository iSysUserRepository;
     @DubboReference
     private IPCMerchShopRpc ipcMerchShopRpc;
     @DubboReference
@@ -479,6 +486,7 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
         if (ObjectUtil.isEmpty(tradeRights)) {
             throw new BusinessException("未查询到售后数据!");
         }
+        SysUser user = iSysUserRepository.getById(tradeRights.getUserId());
         TradeRightsLog tradeRightsLog = new TradeRightsLog();
         tradeRightsLog.setRightsId(tradeRights.getId());
         if (dto.getState().equals(TradeRightsEndStateEnum.商家同意.getCode())) {
@@ -498,6 +506,9 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + "，实退积分：" + dto.getRefundPoint()
                         + "，收件人:" + dto.getMerPersonName() + "。收件人电话：" + dto.getMerPhone()
                         + "。退货地址：" + dto.getMerFullAddres() + "。");
+
+                //发送退款短信
+                iContactSMSService.refundReminder(user.getPhone(),user.getName());
             } else if (dto.getRightsType().equals(TradeRightsTypeEnum.仅退款.getCode())) {
                 tradeRights.setState(dto.getState());
                 tradeRights.setRefundAmount(dto.getRefundAmount());
@@ -508,7 +519,8 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
                 tradeRightsLog.setContent("实退金额：" + dto.getRefundAmount() + "，实退积分：" + dto.getRefundPoint());
                 //todo yingjun 仅退款 退款
                 bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(), dto.getRefundPoint());
-
+                // 发送退款短信
+                iContactSMSService.refundReminder(user.getPhone(),user.getName());
             }
         } else if (dto.getState().equals(TradeRightsEndStateEnum.商户驳回.getCode())) {
             tradeRights.setState(dto.getState());
@@ -528,8 +540,13 @@ public class PCMerchTradeRightsServiceImpl implements IPCMerchTradeRightsService
             //todo 回库存
             //todo yingjun 仅退款 退款
             bbcUserCtccPointRpc.addCtccPoint(tradeRights.getUserId(), dto.getRefundPoint());
+            // 发送退款短信
+            iContactSMSService.refundReminder(user.getPhone(),user.getName());
         }
         iTradeRightsLogRepository.save(tradeRightsLog);
+
+        // 发送完成售后短信
+        iContactSMSService.afterSalesServiceReminder(user.getPhone(),user.getName());
 
      /*   //售后表的状态是是否为申请
         TradeRights tradeRights = repository.getById(dto);

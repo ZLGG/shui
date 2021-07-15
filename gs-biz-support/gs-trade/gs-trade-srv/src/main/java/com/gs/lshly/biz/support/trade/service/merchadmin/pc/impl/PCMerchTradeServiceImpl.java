@@ -173,6 +173,13 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             query.and(i -> i.eq("trade_id", tradeVO.getId()));
             query.last("limit 0,1");
             TradeRights one = iTradeRightsRepository.getOne(query);
+
+            // 如果不是查全部 并且存在售后就不添加
+            if (ObjectUtils.isNotEmpty(qto.getTradeState())){
+                if (ObjectUtils.isNotEmpty(one)){
+                    continue;
+                }
+            }
             if (ObjectUtils.isNotEmpty(one)) {
                 PCMerchTradeListVO.tradeVO.Right right = new PCMerchTradeListVO.tradeVO.Right();
                 right.setRightsState(one.getState()).setRemark(one.getRightsRemark());
@@ -1096,6 +1103,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         PCMerchTradeListVO.waitSendTradeExport tradeVO = new PCMerchTradeListVO.waitSendTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
+                        tradeVO.setTradePointAmount(ObjectUtils.isNotEmpty(e.getTradePointAmount()) ? e.getTradePointAmount().setScale(0).toString() : "0");
                         //fillTradeVOE(tradeVO);
                         return tradeVO;
                     }).collect(toList());
@@ -1146,7 +1154,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                         PCMerchTradeListVO.hasSentTradeExport tradeVO = new PCMerchTradeListVO.hasSentTradeExport();
                         BeanUtils.copyProperties(e, tradeVO);
                         tradeVO.setTradeState(EnumUtil.getText(e.getTradeState(), TradeStateEnum.class));
-                        tradeVO.setPointPriceActuallyPaid(ObjectUtils.isNotEmpty(e.getPointPriceActuallyPaid()) ? e.getPointPriceActuallyPaid().setScale(0).toString() : "0");
+                        tradeVO.setTradePointAmount(ObjectUtils.isNotEmpty(e.getTradePointAmount()) ? e.getTradePointAmount().setScale(0).toString() : "0");
                         //物流信息,快递单号
                         QueryWrapper<TradeDelivery> tradeDeliveryQueryWrapper = new QueryWrapper<>();
                         tradeDeliveryQueryWrapper.eq("trade_id", e.getId());
