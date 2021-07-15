@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,6 +66,9 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
     
     @Autowired
     private IUserCtccInRepository userCtccInRepository;
+
+    @Autowired
+    private IContactSMSService iContactSMSService;
 
     @Override
     public List<BbcInUserCouponVO.ListVO> queryInUserCouponList(BbcInUserCouponQTO.QTO qto) {
@@ -352,6 +356,8 @@ public class BbcInUserCouponServiceImpl implements IBbcInUserCouponService {
         		couponRepository.saveOrUpdate(userCoupon);
         	}
         }
+
+//        iContactSMSService.couponIssuanceReminder(dto.getPhone(),);
 	}
 
 	@Override

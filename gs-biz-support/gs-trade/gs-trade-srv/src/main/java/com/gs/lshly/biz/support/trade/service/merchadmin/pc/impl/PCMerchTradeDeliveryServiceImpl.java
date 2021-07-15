@@ -3,6 +3,8 @@ package com.gs.lshly.biz.support.trade.service.merchadmin.pc.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.gs.lshly.biz.support.foundation.entity.SysUser;
+import com.gs.lshly.biz.support.foundation.repository.ISysUserRepository;
 import com.gs.lshly.biz.support.trade.entity.Trade;
 import com.gs.lshly.biz.support.trade.entity.TradeDelivery;
 import com.gs.lshly.biz.support.trade.repository.ITradeDeliveryRepository;
@@ -19,6 +21,7 @@ import com.gs.lshly.common.struct.merchadmin.pc.trade.qto.PCMerchTradeDeliveryQT
 import com.gs.lshly.common.struct.merchadmin.pc.trade.vo.PCMerchTradeDeliveryVO;
 import com.gs.lshly.common.struct.merchadmin.pc.user.vo.PCMerchUserVO;
 import com.gs.lshly.middleware.mybatisplus.MybatisPlusUtil;
+import com.gs.lshly.middleware.sms.IContactSMSService;
 import com.gs.lshly.middleware.sms.ISMSService;
 import com.gs.lshly.rpc.api.common.ICommonLogisticsCompanyRpc;
 import com.gs.lshly.rpc.api.merchadmin.pc.merchant.IPCMerchShopRpc;
@@ -48,6 +51,11 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
     private final ITradeDeliveryRepository tradeDeliveryRepository;
 
     private final ITradeRepository tradeRepository;
+    @Autowired
+    private IContactSMSService iContactSMSService;
+
+    @Autowired
+    private ISysUserRepository iSysUserRepository;
 
     @DubboReference
     private IPCMerchUserRpc ipcMerchUserRpc;
@@ -149,6 +157,13 @@ public class PCMerchTradeDeliveryServiceImpl implements IPCMerchTradeDeliverySer
         //修改订单状态
         trade.setTradeState(TradeStateEnum.待收货.getCode());
         tradeRepository.saveOrUpdate(trade);
+
+        // 查询用户信息
+        SysUser user = iSysUserRepository.getById(trade.getUserId());
+        // 查询物流信息
+        CommonLogisticsCompanyVO.DetailVO logisticsCompany = commonLogisticsCompanyRpc.getLogisticsCompany(eto.getLogisticsId());
+        // 发送收货短信
+        iContactSMSService.shipmentReminder(user.getPhone(),user.getName(),logisticsCompany.getName(),eto.getLogisticsNumber());
 
     }
 
