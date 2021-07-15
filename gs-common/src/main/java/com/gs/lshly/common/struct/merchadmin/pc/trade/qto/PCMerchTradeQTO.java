@@ -123,6 +123,9 @@ public abstract class PCMerchTradeQTO implements Serializable {
         @ApiModelProperty("收货人电话")
         private String recvPhone;
 
+        @ApiModelProperty("业务号码")
+        private String phone;
+
         @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
         private Integer sourceType;
 
@@ -136,11 +139,11 @@ public abstract class PCMerchTradeQTO implements Serializable {
         private String goodsName;
 
         @ApiModelProperty("下单开始时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime orderStartTime;
 
         @ApiModelProperty("下单结束时间")
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
         private LocalDateTime orderEndTime;
 
     }
@@ -171,5 +174,8 @@ public abstract class PCMerchTradeQTO implements Serializable {
 
         @ApiModelProperty("收货人电话")
         private String recvPhone;
+
+        @ApiModelProperty("电话")
+        private String phone;
     }
 }

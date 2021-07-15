@@ -6,12 +6,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.utils.AESUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -130,7 +129,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         if (ObjectUtils.isNotEmpty(qto.getOrderStartTime()) && ObjectUtils.isNotEmpty(qto.getOrderEndTime())) {
             DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String endTime = dtf2.format(qto.getOrderEndTime()).replace("00:00:00", "23:59:59");
-            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(),endTime ));
+            wrapper.and(i -> i.between("t.create_time", qto.getOrderStartTime(), endTime));
         }
         if (StringUtils.isNotBlank(qto.getTradeCode())) {
             wrapper.and(i -> i.like("t.`trade_code`", qto.getTradeCode()));
@@ -187,6 +186,24 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
             if (ObjectUtils.isNotEmpty(details)) {
                 tradeVO.setUserName(details.getUserName());
+                tradeVO.setPhone(AESUtil.aesEncrypt(details.getPhone()));
+            }
+            //售后状态
+            QueryWrapper<TradeRights> rightsQueryWrapper = new QueryWrapper<>();
+            rightsQueryWrapper.eq("trade_id", tradeVO.getId());
+            TradeRights tradeRights = iTradeRightsRepository.getOne(rightsQueryWrapper);
+            if (ObjectUtils.isNotEmpty(tradeRights)) {
+                HashMap<Integer, String> map = new HashMap<>();
+                map.put(10, "待处理");
+                map.put(20, "商家同意");
+                map.put(30, "商户驳回");
+                map.put(40, "买家二次申诉");
+                map.put(50, "平台同意");
+                map.put(60, "平台驳回");
+                map.put(70, "换货完成");
+                map.put(80, "商家确认收货并退款");
+                map.put(90, "用户取消");
+                tradeVO.setTradeStateText(map.get(tradeRights.getState()));
             }
             //根据交易ID查询交易商品集合
             fillTradeVO(tradeVO);
@@ -196,6 +213,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             voList.add(tradeVO);
         }
 
+        //如果查询条件有业务号码,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getPhone())) {
+            voList = voList.stream().filter(rightsListVO -> {
+                return rightsListVO.getPhone().equals(qto.getPhone());
+            }).collect(Collectors.toList());
+        }
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
 
@@ -1039,27 +1062,30 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             QueryWrapper<PCMerchTradeQTO.IdListQTO> queryWrapper = MybatisPlusUtil.query();
             queryWrapper.eq("t.shop_id", qo.getJwtShopId());
             queryWrapper.eq("t.flag", 0);
-            if(ObjectUtils.isNotEmpty(qo.getType())){
-                queryWrapper.eq("t.trade_state",qo.getType());
+            if (ObjectUtils.isNotEmpty(qo.getType())) {
+                queryWrapper.eq("t.trade_state", qo.getType());
             }
             if (ObjectUtils.isNotEmpty(qo.getOrderStartTime()) && ObjectUtils.isNotEmpty(qo.getOrderEndTime())) {
                 DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String endTime = dtf2.format(qo.getOrderEndTime()).replace("00:00:00", "23:59:59");
-                queryWrapper.and(i -> i.between("t.create_time", qo.getOrderStartTime(),endTime ));
+                queryWrapper.and(i -> i.between("t.create_time", qo.getOrderStartTime(), endTime));
             }
-            if(ObjectUtils.isNotEmpty(qo.getTradeCode())){
-                queryWrapper.like("t.trade_code",qo.getTradeCode());
+            if (ObjectUtils.isNotEmpty(qo.getTradeCode())) {
+                queryWrapper.like("t.trade_code", qo.getTradeCode());
             }
-            if(ObjectUtils.isNotEmpty(qo.getRecvPhone())){
-                queryWrapper.like("t.recv_phone",qo.getRecvPhone());
+            if (ObjectUtils.isNotEmpty(qo.getRecvPhone())) {
+                queryWrapper.like("t.recv_phone", qo.getRecvPhone());
             }
-            if(ObjectUtils.isNotEmpty(qo.getGoodsName())){
-                queryWrapper.like("t3.goods_name",qo.getGoodsName());
+            if (ObjectUtils.isNotEmpty(qo.getGoodsName())) {
+                queryWrapper.like("t3.goods_name", qo.getGoodsName());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getPhone())){
+                queryWrapper.like("t4.phone", AESUtil.aesEncrypt(qo.getPhone()));
             }
             queryWrapper.orderByDesc("t.cdate");
             trades = tradeRepository.selectPCMerchTrade(queryWrapper);
-            if(ObjectUtils.isNotEmpty(trades)){
-                trades = trades.stream().collect(collectingAndThen(toCollection(()->new TreeSet<>(Comparator.comparing(Trade::getId))),ArrayList::new));
+            if (ObjectUtils.isNotEmpty(trades)) {
+                trades = trades.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(Trade::getId))), ArrayList::new));
             }
         } else {
             trades = tradeRepository.listByIds(qo.getIdList());
@@ -1085,27 +1111,30 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             QueryWrapper<PCMerchTradeQTO.IdListQTO> queryWrapper = MybatisPlusUtil.query();
             queryWrapper.eq("t.shop_id", qo.getJwtShopId());
             queryWrapper.eq("t.flag", 0);
-            if(ObjectUtils.isNotEmpty(qo.getType())){
-                queryWrapper.eq("t.trade_state",qo.getType());
+            if (ObjectUtils.isNotEmpty(qo.getType())) {
+                queryWrapper.eq("t.trade_state", qo.getType());
             }
             if (ObjectUtils.isNotEmpty(qo.getOrderStartTime()) && ObjectUtils.isNotEmpty(qo.getOrderEndTime())) {
                 DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String endTime = dtf2.format(qo.getOrderEndTime()).replace("00:00:00", "23:59:59");
-                queryWrapper.and(i -> i.between("t.create_time", qo.getOrderStartTime(),endTime ));
+                queryWrapper.and(i -> i.between("t.create_time", qo.getOrderStartTime(), endTime));
             }
-            if(ObjectUtils.isNotEmpty(qo.getTradeCode())){
-                queryWrapper.like("t.trade_code",qo.getTradeCode());
+            if (ObjectUtils.isNotEmpty(qo.getTradeCode())) {
+                queryWrapper.like("t.trade_code", qo.getTradeCode());
             }
-            if(ObjectUtils.isNotEmpty(qo.getRecvPhone())){
-                queryWrapper.like("t.recv_phone",qo.getRecvPhone());
+            if (ObjectUtils.isNotEmpty(qo.getRecvPhone())) {
+                queryWrapper.like("t.recv_phone", qo.getRecvPhone());
             }
-            if(ObjectUtils.isNotEmpty(qo.getGoodsName())){
-                queryWrapper.like("t3.goods_name",qo.getGoodsName());
+            if (ObjectUtils.isNotEmpty(qo.getGoodsName())) {
+                queryWrapper.like("t3.goods_name", qo.getGoodsName());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getPhone())){
+                queryWrapper.like("t4.phone", AESUtil.aesEncrypt(qo.getPhone()));
             }
             queryWrapper.orderByDesc("t.cdate");
             trades = tradeRepository.selectPCMerchTrade(queryWrapper);
-            if(ObjectUtils.isNotEmpty(trades)){
-                trades = trades.stream().collect(collectingAndThen(toCollection(()->new TreeSet<>(Comparator.comparing(Trade::getId))),ArrayList::new));
+            if (ObjectUtils.isNotEmpty(trades)) {
+                trades = trades.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(Trade::getId))), ArrayList::new));
             }
         } else {
             trades = tradeRepository.listByIds(qo.getIdList());
@@ -1138,18 +1167,17 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     }
 
     /**
-     *
      * @param file
      * @return
+     * @Override
+     **/
     @Override
-    **/
-    @Override
-    public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file){
+    public PCMerchTradeVO.ExcelReturnVO updateDeliveryInfoBatch(byte[] file) {
 
         PCMerchTradeVO.ExcelReturnVO excelReturnVO = new PCMerchTradeVO.ExcelReturnVO();
         List<PCMerchTradeVO.ErrorMsgVO> errorMsgVOS = new ArrayList<>();
         PCMerchTradeVO.ErrorMsgVO errorMsgVO;
-        try{
+        try {
             InputStream is = new ByteArrayInputStream(file);
             Workbook wb = new XSSFWorkbook(is);
             Sheet sheet = wb.getSheetAt(0);
@@ -1175,7 +1203,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 Trade trade = null;
                 if (ObjectUtils.isEmpty(tradeCode)) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                    errorMsgVO.setMsg("第"+row.getRowNum()+"行:订单编号为空");
+                    errorMsgVO.setMsg("第" + row.getRowNum() + "行:订单编号为空");
                     errorMsgVOS.add(errorMsgVO);
                     errorNum++;
                     continue;
@@ -1185,7 +1213,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     trade = tradeRepository.getOne(queryWrapper);
                     if (ObjectUtils.isEmpty(trade)) {
                         errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                        errorMsgVO.setMsg("第"+row.getRowNum()+"行:订单不存在");
+                        errorMsgVO.setMsg("第" + row.getRowNum() + "行:订单不存在");
                         errorMsgVOS.add(errorMsgVO);
                         errorNum++;
                         continue;
@@ -1195,7 +1223,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 String logisticsCompanyId = null;
                 if (ObjectUtils.isEmpty(logisticsCompanyName)) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                    errorMsgVO.setMsg("第"+row.getRowNum()+"行:物流公司为空");
+                    errorMsgVO.setMsg("第" + row.getRowNum() + "行:物流公司为空");
                     errorMsgVOS.add(errorMsgVO);
                     errorNum++;
                     continue;
@@ -1203,7 +1231,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     CommonLogisticsCompanyVO.DetailVO detailVO = commonLogisticsCompanyRpc.getLogisticsName(logisticsCompanyName);
                     if (ObjectUtils.isEmpty(detailVO)) {
                         errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                        errorMsgVO.setMsg("第"+row.getRowNum()+"行:物流公司不存在");
+                        errorMsgVO.setMsg("第" + row.getRowNum() + "行:物流公司不存在");
                         errorMsgVOS.add(errorMsgVO);
                         errorNum++;
                         continue;
@@ -1215,7 +1243,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 String logisticsNumber = row.getCell(2).getStringCellValue();
                 if (StringUtils.isBlank(logisticsCompanyName)) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                    errorMsgVO.setMsg("第"+row.getRowNum()+"行:快递单号为空");
+                    errorMsgVO.setMsg("第" + row.getRowNum() + "行:快递单号为空");
                     errorMsgVOS.add(errorMsgVO);
                     errorNum++;
                     continue;
@@ -1224,7 +1252,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
 
                 if (!trade.getTradeState().equals(TradeStateEnum.待发货.getCode())) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                    errorMsgVO.setMsg("第"+row.getRowNum()+"行:不是待发货状态");
+                    errorMsgVO.setMsg("第" + row.getRowNum() + "行:不是待发货状态");
                     errorMsgVOS.add(errorMsgVO);
                     errorNum++;
                     continue;
@@ -1260,7 +1288,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                     success++;
                 } catch (Exception e) {
                     errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
-                    errorMsgVO.setMsg("第"+row.getRowNum()+"行:发货更新失败");
+                    errorMsgVO.setMsg("第" + row.getRowNum() + "行:发货更新失败");
                     errorMsgVOS.add(errorMsgVO);
                     errorNum++;
                     continue;
@@ -1271,7 +1299,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             excelReturnVO.setErrorNum(errorNum);
             excelReturnVO.setErrorMsgVOS(errorMsgVOS);
             return excelReturnVO;
-        }catch (Exception e){
+        } catch (Exception e) {
             errorMsgVO = new PCMerchTradeVO.ErrorMsgVO();
             errorMsgVO.setMsg("发货更新失败");
             errorMsgVOS.add(errorMsgVO);
@@ -1285,15 +1313,15 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
     public List<PCMerchTradeVO.DownExcelModelVO> downExcelModel(BaseDTO dto) {
 
         QueryWrapper<Trade> queryWrapper = MybatisPlusUtil.query();
-        queryWrapper.eq("shop_id",dto.getJwtShopId());
-        queryWrapper.eq("trade_state",TradeStateEnum.待发货.getCode());
-        queryWrapper.eq("flag",false);
+        queryWrapper.eq("shop_id", dto.getJwtShopId());
+        queryWrapper.eq("trade_state", TradeStateEnum.待发货.getCode());
+        queryWrapper.eq("flag", false);
         queryWrapper.orderByDesc("cdate");
         List<Trade> tradeList = tradeRepository.list(queryWrapper);
 
         List<PCMerchTradeVO.DownExcelModelVO> list = new ArrayList<>();
         PCMerchTradeVO.DownExcelModelVO modelVO;
-        if(ObjectUtils.isNotEmpty(tradeList)){
+        if (ObjectUtils.isNotEmpty(tradeList)) {
             for (Trade trade : tradeList) {
                 modelVO = new PCMerchTradeVO.DownExcelModelVO();
                 modelVO.setTradeCode(trade.getTradeCode());
@@ -1302,7 +1330,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
                 modelVO.setDeliveryRemark("");
                 list.add(modelVO);
             }
-        }else {
+        } else {
             modelVO = new PCMerchTradeVO.DownExcelModelVO();
             modelVO.setTradeCode("");
             modelVO.setLogisticsCompanyName("");
