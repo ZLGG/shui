@@ -166,6 +166,9 @@ public abstract class PCMerchTradeListVO implements Serializable {
         @ApiModelProperty("货物类型")
         private Integer exchangeType;
 
+        @ApiModelProperty("业务号码")
+        private String businessPhone;
+
         @Data
         @ApiModel("PCMerchTradeListVO.tradeVO.Right")
         @Accessors(chain = true)
@@ -178,7 +181,15 @@ public abstract class PCMerchTradeListVO implements Serializable {
 
         }
 
-		public String getId() {
+        public Integer getExchangeType() {
+            return exchangeType;
+        }
+
+        public String getBusinessPhone() {
+            return businessPhone;
+        }
+
+        public String getId() {
 			return id;
 		}
 
