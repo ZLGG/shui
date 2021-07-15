@@ -162,6 +162,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         }
         QueryWrapper<MarketPtSeckillTimeQuantum> wrapper = MybatisPlusUtil.query();
         wrapper.ne(StrUtil.isNotEmpty(eto.getId()),"id", eto.getId());
+        wrapper.eq("flag", 0);
         List<MarketPtSeckillTimeQuantum> list = marketPtSeckillTimeQuantumRepository.list(wrapper);
         //判断不同活动场次时间是否重叠
         for (int i = 0; i < eto.getSessionTime().size(); i++) {

@@ -29,7 +29,7 @@
             <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
             <version>1.1.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.alibaba/dubbo -->
+        <!-- https://mvnrepository.com/artifact/com.alibaba/dubbo 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
@@ -40,6 +40,7 @@
             <artifactId>uccp.dobbo.interfaces</artifactId>
             <version>1.0</version>
         </dependency>
+        -->
         <dependency>
             <groupId>wholesale.grainoil.gs</groupId>
             <artifactId>gs-redis</artifactId>

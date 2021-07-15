@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gs.lshly.rpc.api.common.ICommonUserRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,8 @@ public class TradePayServiceImpl implements ITradePayService {
     private IUserRpc iUserRpc;
     @DubboReference
     private IShopRpc iShopRpc;
-
+    @DubboReference
+    private ICommonUserRpc commonUserRpc;
     @Override
     public PageData<TradePayVO.ListVO> pageData(TradePayQTO.QTO qto) {
         QueryWrapper<TradePay> query = MybatisPlusUtil.query();
@@ -186,7 +188,9 @@ public class TradePayServiceImpl implements ITradePayService {
             if (ObjectUtils.isNotEmpty(mini)){
                 relationDetailVO.setPhone(mini.getPhone());
             }
-
+            //查询客户编号
+            String customerID = commonUserRpc.userCtccDetails(i.getUserId()).getCustNumber();
+            relationDetailVO.setCustomerID(customerID);
             return relationDetailVO;
         }).collect(Collectors.toList());
         return new PageData<>(listVO,qto.getPageNum(),qto.getPageSize(),page.getTotal());

@@ -44,6 +44,8 @@ public interface ITradeRepository extends IService<Trade> {
 
     IPage<PCMerchTradeListVO.tradeVO> selectPCMerchTradePage(IPage<PCMerchTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeQTO.TradeList> qw);
 
+    List<Trade> selectPCMerchTrade(@Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeQTO.IdListQTO> qw);
+
     IPage<H5MerchTradeListVO.tradeVO> selectH5MerchTradePage(IPage<H5MerchTradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<H5MerchTradeQTO.TradeList> qw);
 
     IPage<TradeListVO.tradeVO> selectTradePage(IPage<TradeListVO.tradeVO> page, @Param(Constants.WRAPPER) QueryWrapper<TradeQTO.TradeList> qw);

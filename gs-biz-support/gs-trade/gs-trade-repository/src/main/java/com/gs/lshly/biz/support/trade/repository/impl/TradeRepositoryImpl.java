@@ -69,6 +69,11 @@ public class TradeRepositoryImpl extends ServiceImpl<TradeMapper, Trade> impleme
     }
 
     @Override
+    public List<Trade> selectPCMerchTrade(QueryWrapper<PCMerchTradeQTO.IdListQTO> qw) {
+        return tradeMapper.selectPCMerchTrade(qw);
+    }
+
+    @Override
     public IPage<H5MerchTradeListVO.tradeVO> selectH5MerchTradePage(IPage<H5MerchTradeListVO.tradeVO> page, QueryWrapper<H5MerchTradeQTO.TradeList> qw) {
         return tradeMapper.selectH5MerchTradePage(page,qw);
     }

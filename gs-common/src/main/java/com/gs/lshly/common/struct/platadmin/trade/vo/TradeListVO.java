@@ -150,6 +150,28 @@ public abstract class TradeListVO implements Serializable {
         @ApiModelProperty("平台取消订单处理说明")
         private String cancelReason;
 
+		@ApiModelProperty("业务号码")
+		private String businessPhone;
+
+		@ApiModelProperty("客户编号")
+		private String customerID;
+
+		public String getCustomerID() {
+			return customerID;
+		}
+
+		public void setCustomerID(String customerID) {
+			this.customerID = customerID;
+		}
+
+		public String getBusinessPhone() {
+			return businessPhone;
+		}
+
+		public void setBusinessPhone(String businessPhone) {
+			this.businessPhone = businessPhone;
+		}
+
 		public String getId() {
 			return id;
 		}
@@ -409,7 +431,7 @@ public abstract class TradeListVO implements Serializable {
 			this.cancelReason = cancelReason;
 		}
 
-        
+
     }
 
     @Data
@@ -493,13 +515,13 @@ public abstract class TradeListVO implements Serializable {
 
         @ApiModelProperty("是否允许评论")
         private Integer commentFlag;
-        
+
         @ApiModelProperty("交易积分价格")
         private BigDecimal tradePointAmount;
-        
+
         @ApiModelProperty("交易价格")
         private BigDecimal tradeAmount;
-        
+
         @ApiModelProperty("优惠积分价格")
         private BigDecimal discountPointAmount;
 
