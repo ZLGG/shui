@@ -173,6 +173,13 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             query.and(i -> i.eq("trade_id", tradeVO.getId()));
             query.last("limit 0,1");
             TradeRights one = iTradeRightsRepository.getOne(query);
+
+            // 如果不是查全部 并且存在售后就不添加
+            if (ObjectUtils.isNotEmpty(qto.getTradeState())){
+                if (ObjectUtils.isNotEmpty(one)){
+                    continue;
+                }
+            }
             if (ObjectUtils.isNotEmpty(one)) {
                 PCMerchTradeListVO.tradeVO.Right right = new PCMerchTradeListVO.tradeVO.Right();
                 right.setRightsState(one.getState()).setRemark(one.getRightsRemark());
