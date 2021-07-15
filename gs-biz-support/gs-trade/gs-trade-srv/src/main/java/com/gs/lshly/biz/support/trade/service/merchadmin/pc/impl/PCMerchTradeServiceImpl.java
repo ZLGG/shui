@@ -7,8 +7,10 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.gs.lshly.common.struct.BaseDTO;
+import com.gs.lshly.common.utils.AESUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -184,7 +186,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
             if (ObjectUtils.isNotEmpty(details)) {
                 tradeVO.setUserName(details.getUserName());
-                tradeVO.setPhone(details.getPhone());
+                tradeVO.setPhone(AESUtil.aesEncrypt(details.getPhone()));
             }
             //售后状态
             QueryWrapper<TradeRights> rightsQueryWrapper = new QueryWrapper<>();
@@ -211,6 +213,12 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             voList.add(tradeVO);
         }
 
+        //如果查询条件有业务号码,添加筛选
+        if (ObjectUtils.isNotEmpty(qto.getPhone())) {
+            voList = voList.stream().filter(rightsListVO -> {
+                return rightsListVO.getPhone().equals(qto.getPhone());
+            }).collect(Collectors.toList());
+        }
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
     }
 

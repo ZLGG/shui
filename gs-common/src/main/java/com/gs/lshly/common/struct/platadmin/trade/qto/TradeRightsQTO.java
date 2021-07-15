@@ -100,6 +100,12 @@ public abstract class TradeRightsQTO implements Serializable {
 
         @ApiModelProperty("客户编号")
         private String customerID;
+
+        @ApiModelProperty("客户编号")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private LocalDateTime cdate;
+
+
 /*        @ApiModelProperty("支付创建时间(介于大于等于)")
         @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
         private LocalDateTime cdate;*/

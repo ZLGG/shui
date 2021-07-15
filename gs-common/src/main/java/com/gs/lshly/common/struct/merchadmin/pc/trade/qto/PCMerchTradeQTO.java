@@ -123,6 +123,9 @@ public abstract class PCMerchTradeQTO implements Serializable {
         @ApiModelProperty("收货人电话")
         private String recvPhone;
 
+        @ApiModelProperty("业务号码")
+        private String phone;
+
         @ApiModelProperty("来源类型:10:2C,20:2B,30:POS")
         private Integer sourceType;
 

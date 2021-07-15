@@ -10,6 +10,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gs.lshly.biz.support.trade.mapper.TradeMapper;
 import com.gs.lshly.common.struct.platadmin.trade.vo.TradeGoodsVO;
+import com.gs.lshly.common.utils.AESUtil;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +141,7 @@ public class TradeServiceImpl implements ITradeService {
             if (ObjectUtils.isNotEmpty(details)) {
                 tradeVO.setUserName(details.getUserName());
                 //设置业务号码
-                tradeVO.setBusinessPhone(details.getPhone());
+                tradeVO.setBusinessPhone(AESUtil.aesEncrypt(details.getPhone()));
             }
             //查询客户编号
             CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(tradeVO.getUserId());
@@ -246,7 +247,7 @@ public class TradeServiceImpl implements ITradeService {
         CommonUserVO.DetailVO details = commonUserRpc.details(tradeVO.getUserId());
         if (ObjectUtils.isNotEmpty(details)) {
             //设置业务号码
-            tradeVO.setBusinessPhone(details.getPhone());
+            tradeVO.setBusinessPhone(AESUtil.aesEncrypt(details.getPhone()));
         }
         //查询客户编号
         CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(tradeVO.getUserId());

@@ -104,7 +104,7 @@ public class TradeDeliveryServiceImpl implements ITradeDeliveryService {
             CommonUserVO.DetailVO details = commonUserRpc.details(trade.getUserId());
             if (ObjectUtils.isNotEmpty(details)) {
                 //设置业务号码
-                listVO.setBusinessPhone(details.getPhone());
+                listVO.setBusinessPhone(AESUtil.aesEncrypt(details.getPhone()));
             }
             //查询客户编号
             CommonUserVO.UserCtccDetailVO userCtccDetails = commonUserRpc.userCtccDetails(trade.getUserId());

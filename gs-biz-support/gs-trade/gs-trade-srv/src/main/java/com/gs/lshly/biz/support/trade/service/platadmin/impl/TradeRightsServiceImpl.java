@@ -119,6 +119,11 @@ public class TradeRightsServiceImpl implements ITradeRightsService {
             //根据订单编号查询
             query.and(i -> i.like("order_code", qto.getOrderCode()));
         }
+        if (ObjectUtil.isNotEmpty(qto.getCdate())) {
+            //根据创建时间查询
+            query.and(i -> i.eq("cdate", qto.getCdate()));
+        }
+
 /*        if (ObjectUtils.isNotEmpty(qto.getState())) {
             //根据平台审核状态查询
             if (qto.getState().equals(TradeRightsNewStateEnum.处理中.getCode())) {
