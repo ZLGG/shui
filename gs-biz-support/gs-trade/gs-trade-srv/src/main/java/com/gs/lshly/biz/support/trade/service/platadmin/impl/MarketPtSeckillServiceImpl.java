@@ -146,10 +146,23 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             throw new BusinessException("参数不能未空!");
         }
 
+        boolean b1 = DateUtil.compareDate(eto.getSignEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),eto.getSignEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        boolean b2 = DateUtil.compareDate(eto.getSeckillEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), eto.getSeckillStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        if (!b1) {
+            throw new BusinessException("报名的结束时间必须大于开始时间");
+        }
+        if (!b2) {
+            throw new BusinessException("开售的结束时间必须大于开始时间");
+        }
+
         //判断场次时间是否重叠
         for (int i = 0; i < eto.getSessionTime().size() - 1; i++) {
             String seEndTime = eto.getSessionTime().get(i).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             String seStartTime = eto.getSessionTime().get(i).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            if (!DateUtil.compareDate(seEndTime, seStartTime)) {
+                throw new BusinessException("每个场次的结束时间必须大于开始时间");
+            }
             for (int j = i + 1; j < eto.getSessionTime().size(); j++) {
                 String startTime = eto.getSessionTime().get(j).getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String endTime = eto.getSessionTime().get(j).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -161,7 +174,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             }
         }
         QueryWrapper<MarketPtSeckillTimeQuantum> wrapper = MybatisPlusUtil.query();
-        wrapper.ne(StrUtil.isNotEmpty(eto.getId()),"id", eto.getId());
+        wrapper.ne(StrUtil.isNotEmpty(eto.getId()), "id", eto.getId());
         wrapper.eq("flag", 0);
         List<MarketPtSeckillTimeQuantum> list = marketPtSeckillTimeQuantumRepository.list(wrapper);
         //判断不同活动场次时间是否重叠
@@ -273,7 +286,7 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
             for (MarketPtSeckillGoodsSpu record : page.getRecords()) {
                 MarketPtSeckillVO.KillGoodsVO killGoodsVO = new MarketPtSeckillVO.KillGoodsVO();
                 BeanUtil.copyProperties(record, killGoodsVO);
-                GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(record.getGoodsId()),1);
+                GoodsInfoVO.DetailVO goodsDetail = iGoodsInfoRpc.getGoodsDetail(new GoodsInfoDTO.IdDTO(record.getGoodsId()), 1);
                 killGoodsVO.setKillSpuId(record.getId());
                 killGoodsVO.setGoodsName(goodsDetail.getGoodsName());
                 killGoodsVO.setGoodsImage(goodsDetail.getGoodsImage());
@@ -400,10 +413,10 @@ public class MarketPtSeckillServiceImpl implements IMarketPtSeckillService {
         return activityListVO;
     }
 
-	@Override
-	public List<String> listGoodsIdBySeckillIng() {
-		return marketPtSeckillMapper.listGoodsIdBySeckillIng();
-	}
+    @Override
+    public List<String> listGoodsIdBySeckillIng() {
+        return marketPtSeckillMapper.listGoodsIdBySeckillIng();
+    }
 
 /*    @Override
     @Transactional

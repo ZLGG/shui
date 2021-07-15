@@ -364,13 +364,14 @@ public class BbcGoodsInfoServiceImpl implements IBbcGoodsInfoService {
         IPage<GoodsInfo> page = MybatisPlusUtil.pager(qto);
         IPage<GoodsInfo> pageData = goodsInfoMapper.getGoodsPageInfo(page, boost);
         List<GoodsInfo> goodsInfos = pageData.getRecords();
-
+//        List<GoodsInfo> goodsInfosList = goodsInfoMapper.selectList(boost);
         //声明商品数据的储存容器
         List<BbcGoodsInfoVO.GoodsListVO> goodsListVOS = new ArrayList<>();
 
         //按销售或者评价排序
         if (qto.getOrderByProperties() != null && (qto.getOrderByProperties().equals(OrderByConditionEnum.销售.getCode()) || qto.getOrderByProperties().equals(OrderByConditionEnum.评价.getCode()))) {
             goodsListVOS = getGoodsList2(goodsInfos, qto.getOrderByProperties(), qto.getOrderByType());
+//        	goodsListVOS = getGoodsList2(goodsInfosList, qto.getOrderByProperties(), qto.getOrderByType());
         } else {
             //按价格排序
             for (GoodsInfo info : goodsInfos) {

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/platform/goods-attribute-dictionary-item")
 @Api(tags = "平台属性值管理")
-@Module(code = "listAttribute", parent = "category", name = "规格列表", index = 2)
+//@Module(code = "listAttribute", parent = "category", name = "规格列表", index = 2)
 public class GoodsAttributeDictionaryItemController {
 
     @DubboReference
@@ -34,7 +34,7 @@ public class GoodsAttributeDictionaryItemController {
 
     @ApiOperation("删除属性值信息")
     @DeleteMapping(value = "/{id}")
-    @Func(code="delete", name="删除")
+//    @Func(code="delete", name="删除")
     public ResponseData<Void> deleteAttributeItemInfo(@PathVariable String id) {
         GoodsAttributeDictionaryItemDTO.IdDTO dto = new GoodsAttributeDictionaryItemDTO.IdDTO(id);
         itemRpc.deleteAttributeItem(dto);
