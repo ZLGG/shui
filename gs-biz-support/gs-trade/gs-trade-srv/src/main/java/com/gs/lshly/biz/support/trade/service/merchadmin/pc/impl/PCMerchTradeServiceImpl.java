@@ -216,7 +216,7 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
         //如果查询条件有业务号码,添加筛选
         if (ObjectUtils.isNotEmpty(qto.getPhone())) {
             voList = voList.stream().filter(rightsListVO -> {
-                return rightsListVO.getPhone().equals(qto.getPhone());
+                return qto.getPhone().equals(rightsListVO.getPhone());
             }).collect(Collectors.toList());
         }
         return new PageData<>(voList, qto.getPageNum(), qto.getPageSize(), page.getTotal());
