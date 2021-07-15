@@ -65,9 +65,11 @@ public interface TradeMapper extends BaseMapper<Trade> {
     @Select("select t.*" +
             "from gs_trade t," +
             "gs_trade_goods t2," +
-            "gs_goods_info t3 " +
+            "gs_goods_info t3, " +
+            "gs_user t4 "+
             "WHERE t.`id` = t2.trade_id " +
             "and t3.id = t2.goods_id " +
+            "and t4.id = t.user_id "+
             "and t.`flag`=0 " +
             "AND ${ew.sqlSegment}")
     List<Trade> selectPCMerchTrade(@Param(Constants.WRAPPER) QueryWrapper<PCMerchTradeQTO.IdListQTO> qw);

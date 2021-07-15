@@ -174,5 +174,8 @@ public abstract class PCMerchTradeQTO implements Serializable {
 
         @ApiModelProperty("收货人电话")
         private String recvPhone;
+
+        @ApiModelProperty("电话")
+        private String phone;
     }
 }

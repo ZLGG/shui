@@ -1079,6 +1079,9 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             if (ObjectUtils.isNotEmpty(qo.getGoodsName())) {
                 queryWrapper.like("t3.goods_name", qo.getGoodsName());
             }
+            if(ObjectUtils.isNotEmpty(qo.getPhone())){
+                queryWrapper.like("t4.phone", AESUtil.aesEncrypt(qo.getPhone()));
+            }
             queryWrapper.orderByDesc("t.cdate");
             trades = tradeRepository.selectPCMerchTrade(queryWrapper);
             if (ObjectUtils.isNotEmpty(trades)) {
@@ -1124,6 +1127,9 @@ public class PCMerchTradeServiceImpl implements IPCMerchTradeService {
             }
             if (ObjectUtils.isNotEmpty(qo.getGoodsName())) {
                 queryWrapper.like("t3.goods_name", qo.getGoodsName());
+            }
+            if(ObjectUtils.isNotEmpty(qo.getPhone())){
+                queryWrapper.like("t4.phone", AESUtil.aesEncrypt(qo.getPhone()));
             }
             queryWrapper.orderByDesc("t.cdate");
             trades = tradeRepository.selectPCMerchTrade(queryWrapper);
