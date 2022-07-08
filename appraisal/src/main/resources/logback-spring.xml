@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <springProperty scope="context" name="logPath" source="logging.path" defaultValue="./logs"/>
+
+  <!-- file pattern -->
+  <property name="FILE_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}] [%level] [%thread] %logger{35} - %msg %n"/>
+
+
+  <!-- 控制台输出 appender  -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${FILE_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- 出错日志 appender  -->
+  <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${logPath}/error.log</File>
+    <encoder>
+      <pattern>${FILE_PATTERN}</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>512MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <FileNamePattern>${logPath}/archive/error.%d{yyyy-MM-dd}-%i.log.gz</FileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
+
+  <!-- info日志 appender  -->
+  <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${logPath}/info.log</File>
+    <encoder>
+      <pattern>${FILE_PATTERN}</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>512MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <FileNamePattern>${logPath}/archive/info.%d{yyyy-MM-dd}-%i.log.gz</FileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+      <level>INFO</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+  </appender>
+
+  <!-- warn日志 appender  -->
+  <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${logPath}/warn.log</File>
+    <encoder>
+      <pattern>${FILE_PATTERN}</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>512MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <FileNamePattern>${logPath}/archive/warn.%d{yyyy-MM-dd}-%i.log.gz</FileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+      <level>WARN</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
+
+
+  <!--mq消息如果多次消费失败，放弃消费记录日志-->
+  <appender name="MQ_DISCARD" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${logPath}/mq/discard.log</File>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>512MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <FileNamePattern>${logPath}/archive/mq/discard.%d{yyyy-MM-dd}-%i.log.gz</FileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <Pattern>${FILE_PATTERN}</Pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+      <level>DEBUG</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+  </appender>
+
+  <appender name="tasklog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${logPath}/tasklog.log</File>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>512MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <FileNamePattern>${logPath}/archive/tasklog.%d{yyyy-MM-dd}-%i.log.gz</FileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <Pattern>${FILE_PATTERN}</Pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+      <level>DEBUG</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+  </appender>
+
+  <!--机器人回调消息日志-->
+  <appender name="ROBOT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 正在记录的日志文件的路径及文件名 -->
+    <File>${logPath}/robot.log</File>
+    <!-- 日志文件的格式 -->
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+        <pattern>${FILE_PATTERN}</pattern>
+      </layout>
+    </encoder>
+    <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- 除按日期记录之外，还配置了日志文件不能超过512M，若超过512M，日志文件会以索引0开始，
+            命名日志文件，例如log-error-2020-08-27-0.log -->
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>512MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <FileNamePattern>${logPath}/archive/robot.%d{yyyy-MM-dd}-%i.log.gz</FileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- 异步输出，异步的log片段必须在同步段后面，否则不起作用 -->
+  <appender name="ROBOT-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <!--阙值  当队列大小低于这个将丢弃日志 为0的话用不丢弃 -->
+    <discardingThreshold>0</discardingThreshold>
+    <!-- 队列的大小-->
+    <queueSize>512</queueSize>
+    <!-- 不设置neverBolck的话调用的是put方法是阻塞的，设置后调用offer方法是不阻塞的-->
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="ROBOT_LOG"/>
+  </appender>
+
+
+  <logger name="com.qianyu.usercenter.biz.mq.consumer.RobotAutoChatRoomConsumer" additivity="false">
+    <appender-ref ref="ROBOT_LOG"/>
+  </logger>
+
+  <logger name="com.qianyu.usercenter.integration.itaoke.ItaokeOpenApi" additivity="false">
+    <appender-ref ref="ROBOT_LOG"/>
+  </logger>
+
+  <!-- 异步输出，异步的log片段必须在同步段后面，否则不起作用 -->
+  <appender name="INFO-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <!--阙值  当队列大小低于这个将丢弃日志 为0的话用不丢弃 -->
+    <discardingThreshold>0</discardingThreshold>
+    <!-- 队列的大小-->
+    <queueSize>512</queueSize>
+    <!-- 不设置neverBolck的话调用的是put方法是阻塞的，设置后调用offer方法是不阻塞的-->
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="INFO"/>
+  </appender>
+  <appender name="TASK-INFO-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>128</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="tasklog"/>
+  </appender>
+  <appender name="WARN-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>128</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="WARN"/>
+  </appender>
+  <appender name="ERROR-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>128</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="ERROR"/>
+  </appender>
+
+  <logger name="mq_discard_logger" additivity="false" level="info">
+    <appender-ref ref="MQ_DISCARD"/>
+  </logger>
+
+  <logger name="com.qianyu.usercenter.task" level="info" additivity="false">
+    <appender-ref ref="TASK-INFO-ASYNC"/>
+  </logger>
+
+  <springProfile name="default,dev,daily">
+    <!-- 控制台打印sql语句 -->
+    <logger name="com.qianyu.usercenter.dao.mapper" level="debug" additivity="false">
+      <appender-ref ref="STDOUT"/>
+    </logger>
+  </springProfile>
+
+  <springProfile name="default,local,dev,daily">
+    <root level="info">
+      <appender-ref ref="INFO-ASYNC"/>
+      <appender-ref ref="WARN-ASYNC"/>
+      <appender-ref ref="ERROR-ASYNC"/>
+      <appender-ref ref="STDOUT"/>
+      <appender-ref ref="MQ_DISCARD"/>
+    </root>
+  </springProfile>
+
+  <!-- 生产环境只打印warn级别以上日志 -->
+  <springProfile name="gray,prod,online">
+    <root level="info">
+      <appender-ref ref="INFO-ASYNC"/>
+      <appender-ref ref="WARN-ASYNC"/>
+      <appender-ref ref="ERROR-ASYNC"/>
+      <appender-ref ref="MQ_DISCARD"/>
+    </root>
+  </springProfile>
+</configuration>

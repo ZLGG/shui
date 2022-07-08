@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.citydo.appraisal.mapper.AppraisalInfoMapper">
+
+    <resultMap type="com.citydo.appraisal.entity.AppraisalInfo" id="AppraisalInfoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="staffName" column="staff_name" jdbcType="VARCHAR"/>
+        <result property="staffCode" column="staff_code" jdbcType="VARCHAR"/>
+        <result property="assessmentSys" column="assessment_sys" jdbcType="VARCHAR"/>
+        <result property="staffOrg" column="staff_org" jdbcType="VARCHAR"/>
+        <result property="staffPosition" column="staff_position" jdbcType="VARCHAR"/>
+        <result property="approver" column="approver" jdbcType="VARCHAR"/>
+        <result property="approverCode" column="approver_code" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="TINYINT"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="baseField">
+        id,
+               staff_name,
+               staff_code,
+               assessment_sys,
+               staff_org,
+               staff_position,
+               approver,
+               approver_code,
+               level,
+               created_by,
+               modified_by,
+               create_time,
+               update_time,
+               is_delete
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AppraisalInfoMap">
+        select <include refid="baseField"/>
+        from appraisal_info
+        where id = #{id} and is_delete = 0
+    </select>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AppraisalInfoMap">
+        select
+        <include refid="baseField"/>
+        from appraisal_info
+        where is_delete = 0
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="staffName != null and staffName != ''">
+            and staff_name = #{staffName}
+        </if>
+        <if test="staffCode != null and staffCode != ''">
+            and staff_code = #{staffCode}
+        </if>
+        <if test="assessmentSys != null and assessmentSys != ''">
+            and assessment_sys = #{assessmentSys}
+        </if>
+        <if test="staffOrg != null and staffOrg != ''">
+            and staff_org = #{staffOrg}
+        </if>
+        <if test="staffPosition != null and staffPosition != ''">
+            and staff_position = #{staffPosition}
+        </if>
+        <if test="approver != null and approver != ''">
+            and approver = #{approver}
+        </if>
+        <if test="approverCode != null and approverCode != ''">
+            and approver_code = #{approverCode}
+        </if>
+        <if test="level != null">
+            and level = #{level}
+        </if>
+
+    </select>
+    <select id="queryByAppraisalCode" resultMap="AppraisalInfoMap">
+        select <include refid="baseField"/>
+        from appraisal_info
+        where is_delete = 0 and approver_code = #{approverCode}
+    </select>
+
+    <select id="getByAppraisalCodeAndstaffCode" resultMap="AppraisalInfoMap">
+        select <include refid="baseField"/>
+        from appraisal_info
+        where staff_code = #{staffCode} and approver_code = #{approverCode}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into appraisal_info(staff_name, staff_code, assessment_sys, staff_org, staff_position,
+                                   approver, approver_code, level)
+        values (#{staffName}, #{staffCode}, #{assessmentSys}, #{staffOrg}, #{staffPosition}, #{approver},
+                #{approverCode}, #{level})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into appraisal_info(staff_name, staff_code, assessment_sys, staff_org, staff_position,
+        approver, approver_code, level)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.staffName}, #{entity.staffCode}, #{entity.assessmentSys}, #{entity.staffOrg},
+            #{entity.staffPosition}, #{entity.approver}, #{entity.approverCode}, #{entity.level})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update appraisal_info
+        <set>
+            <if test="staffName != null and staffName != ''">
+                staff_name = #{staffName},
+            </if>
+            <if test="staffCode != null and staffCode != ''">
+                staff_code = #{staffCode},
+            </if>
+            <if test="assessmentSys != null and assessmentSys != ''">
+                assessment_sys = #{assessmentSys},
+            </if>
+            <if test="staffOrg != null and staffOrg != ''">
+                staff_org = #{staffOrg},
+            </if>
+            <if test="staffPosition != null and staffPosition != ''">
+                staff_position = #{staffPosition},
+            </if>
+            <if test="approver != null and approver != ''">
+                approver = #{approver},
+            </if>
+            <if test="approverCode != null and approverCode != ''">
+                approver_code = #{approverCode},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from appraisal_info
+        where id = #{id}
+    </delete>
+
+</mapper>
+

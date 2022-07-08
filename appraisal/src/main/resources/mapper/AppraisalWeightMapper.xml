@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.citydo.appraisal.mapper.AppraisalWeightMapper">
+
+    <resultMap type="com.citydo.appraisal.entity.AppraisalWeight" id="AppraisalWeightMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="staffName" column="staff_name" jdbcType="VARCHAR"/>
+        <result property="staffCode" column="staff_code" jdbcType="VARCHAR"/>
+        <result property="staffOrg" column="staff_org" jdbcType="VARCHAR"/>
+        <result property="assessmentSys" column="assessment_sys" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="INTEGER"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="baseField">
+        id,
+               staff_name,
+               staff_code,
+               staff_org,
+               assessment_sys,
+               weight,
+               created_by,
+               modified_by,
+               create_time,
+               update_time,
+               is_delete
+    </sql>
+    <!--查询单个-->
+    <select id="queryById" resultMap="AppraisalWeightMap">
+        select <include refid="baseField"/>
+        from appraisal_weight
+        where id = #{id} and is_delete = 0
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AppraisalWeightMap">
+        select <include refid="baseField"/>
+        from appraisal_weight
+        where is_delete = 0
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="staffName != null and staffName != ''">
+            and staff_name = #{staffName}
+        </if>
+        <if test="staffCode != null and staffCode != ''">
+            and staff_code = #{staffCode}
+        </if>
+        <if test="staffOrg != null and staffOrg != ''">
+            and staff_org = #{staffOrg}
+        </if>
+        <if test="assessmentSys != null and assessmentSys != ''">
+            and assessment_sys = #{assessmentSys}
+        </if>
+        <if test="weight != null">
+            and weight = #{weight}
+        </if>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into appraisal_weight(staff_name, staff_code, staff_org, assessment_sys, weight)
+        values (#{staffName}, #{staffCode}, #{staffOrg}, #{assessmentSys}, #{weight})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into appraisal_weight(staff_name, staff_code, staff_org, assessment_sys, weight)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.staffName}, #{entity.staffCode}, #{entity.staffOrg}, #{entity.assessmentSys}, #{entity.weight})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update appraisal_weight
+        <set>
+            <if test="staffName != null and staffName != ''">
+                staff_name = #{staffName},
+            </if>
+            <if test="staffCode != null and staffCode != ''">
+                staff_code = #{staffCode},
+            </if>
+            <if test="staffOrg != null and staffOrg != ''">
+                staff_org = #{staffOrg},
+            </if>
+            <if test="assessmentSys != null and assessmentSys != ''">
+                assessment_sys = #{assessmentSys},
+            </if>
+            <if test="weight != null">
+                weight = #{weight},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from appraisal_weight
+        where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.citydo.appraisal.mapper.AppraisalPersonMapper">
+
+    <resultMap type="com.citydo.appraisal.entity.AppraisalPerson" id="AppraisalPersonMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="approverName" column="approver_name" jdbcType="VARCHAR"/>
+        <result property="approverCode" column="approver_code" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="baseField">
+        id,
+               approver_name,
+               approver_code,
+               mobile,
+               created_by,
+               modified_by,
+               create_time,
+               update_time,
+               is_delete
+    </sql>
+    <!--查询单个-->
+    <select id="queryById" resultMap="AppraisalPersonMap">
+        select <include refid="baseField"/>
+        from appraisal_person
+        where id = #{id} and is_delete = 0
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AppraisalPersonMap">
+        select <include refid="baseField"/>
+        from appraisal_person
+        where is_delete = 0
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="approverName != null and approverName != ''">
+            and approver_name = #{approverName}
+        </if>
+        <if test="approverCode != null and approverCode != ''">
+            and approver_code = #{approverCode}
+        </if>
+        <if test="mobile != null and mobile != ''">
+            and mobile = #{mobile}
+        </if>
+    </select>
+
+    <select id="getAppraisalPersonByMobile" resultMap="AppraisalPersonMap">
+        select <include refid="baseField"/>
+        from appraisal_person
+        where is_delete = 0 and mobile = #{mobile}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into appraisal_person(approver_name, approver_code, mobile)
+        values (#{approverName}, #{approverCode}, #{mobile})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into appraisal_person(approver_name, approver_code, mobile)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.approverName}, #{entity.approverCode}, #{entity.mobile})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update appraisal_person
+        <set>
+            <if test="approverName != null and approverName != ''">
+                approver_name = #{approverName},
+            </if>
+            <if test="approverCode != null and approverCode != ''">
+                approver_code = #{approverCode},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from appraisal_person
+        where id = #{id}
+    </delete>
+
+</mapper>
+
